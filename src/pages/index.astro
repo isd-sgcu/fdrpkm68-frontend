@@ -1,16 +1,11 @@
 ---
+import MainLayout from "@/layouts/MainLayout.astro";
 
+import RPKM from "@rpkm/sample.astro";
+import FD from "@firstdate/sample.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MainLayout title="Home" description="Hello World@Firstdate and RPKM">
+  <FD />
+  <RPKM />
+</MainLayout>
