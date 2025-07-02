@@ -1,1 +1,26 @@
-<h1 class="text-orange-400 text-2xl">This is Sample from RPKM</h1>
+---
+import Navbar from "@rpkm/components/navbar.astro";
+import "@rpkm/styles/styles.css"
+import Footer from "@rpkm/components/footer.astro";
+import HousePicker from "@rpkm/components/house-picker.astro"
+import GroupPicker from "./components/group-picker.astro";
+import Profile from "./components/profile.astro";
+---
+
+<div class="relative w-[400px] mx-auto my-0 h-fit min-h-[100vh] bg-gradient-to-bl from-[#667eea] to-[#764ba2] overflow-hidden font-ibmplex">
+    <Navbar/>
+    <div class="bg-[url('/bg-rpkm.png')] bg-cover bg-no-repeat w-full h-fit min-h-[100vh] p-4 flex flex-col items-center">
+        <!-- Logo -->
+        <img src="/freshmen-fest-logo.svg" class="w-[301.182px] h-[136px] " />
+
+        <!-- Profile -->
+        <Profile />
+        
+        <!-- House -->
+        <HousePicker />
+
+        <!-- Group -->
+        <GroupPicker/>
+    </div>
+    <Footer/>
+</div>
