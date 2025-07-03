@@ -3,3 +3,72 @@
 .font-ibmplex {
   font-family: 'IBM Plex Sans Thai', sans-serif;
 }
+
+/* x - 7.5, y - 10 */
+.cut-houses-1 {
+  clip-path: polygon(
+    0% 10%,
+    7.5% 0%,
+    92.5% 0%,
+    100% 10%,
+    100% 20%,
+    92.5% 30%,
+    92.5% 50%,
+    100% 60%,
+    100% 90%,
+    92.5% 100%,
+    7.5% 100%,
+    0% 90%,
+    0% 60%,
+    7.5% 50%,
+    7.5% 30%,
+    0% 20%
+  );
+}
+
+/* x - 6, y - 8 */
+.trapezoid-l-1{
+  clip-path: polygon(
+    0% 22.5%, 
+    6% 30.5%, 
+    6% 49.5%, 
+    0% 57.5%);
+}
+
+/* x - 6, y - 8 */
+.trapezoid-r-1{
+  clip-path: polygon(
+    100% 22.5%, 
+    94% 30.5%, 
+    94% 49.5%, 
+    100% 57.5%);
+}
+
+/* Room's ID Input */
+.cut-input-1{
+  clip-path: polygon(
+    0% 10%,
+    5% 0%,
+    95% 0%,
+    100% 10%,
+    100% 90%,
+    95% 100%,
+    5% 100%,
+    0% 90%
+  );
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: white;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #D38DD8;
+  height: 90px;
+  border-radius: 9999px;
+}

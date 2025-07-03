@@ -1,1 +1,272 @@
-<div>This is House Picker</div>
+---
+import HouseDetailCard from "@rpkm/elements/house-detail-card.astro";
+import HousePickingCard from "@rpkm/elements/house-picking-card.astro";
+
+const houseDisplayData = [
+  { name: "บ้านสายหมอก", imageURL: "/images/rpkm/house-demo.png", size: "S", amount: 40, capacity: 500 },
+  { name: "บ้านใจกล้า", imageURL: "/images/rpkm/house-demo.png", size: "M", amount: 174, capacity: 500 },
+  { name: "บ้านอบอุ่น", imageURL: "/images/rpkm/house-demo.png", size: "XXL", amount: 500, capacity: 500 },
+  { name: "บ้านแมวน้ำ", imageURL: "", size: "L", amount: 174, capacity: 500 },
+  { name: "บ้านลึกลับ", imageURL: "/images/rpkm/house-demo.png", size: "XL", amount: 174, capacity: 500 },
+  { name: "บ้านสายชิล", imageURL: "", size: "S", amount: 174, capacity: 500 },
+  { name: "บ้านสายรุ้ง", imageURL: "/images/rpkm/house-demo.png", size: "M", amount: 180, capacity: 500 },
+  { name: "บ้านทิวเขา", imageURL: "/images/rpkm/house-demo.png", size: "L", amount: 165, capacity: 500 },
+  { name: "บ้านน้ำค้าง", imageURL: "", size: "XL", amount: 150, capacity: 500 },
+  { name: "บ้านอรุณรุ่ง", imageURL: "/images/rpkm/house-demo.png", size: "S", amount: 160, capacity: 500 },
+  { name: "บ้านดวงดาว", imageURL: "/images/rpkm/house-demo.png", size: "XXL", amount: 140, capacity: 500 },
+  { name: "บ้านทางช้างเผือก", imageURL: "", size: "M", amount: 172, capacity: 500 },
+];
+
+const housePickingData = [
+  { name: "บ้านยิ้มง่าย", imageURL: "/images/rpkm/house-demo.png", rank: "1" },
+  { name: "บ้านนักสำรวจ", imageURL: "/images/rpkm/house-demo.png", rank: "3" },
+  { name: "บ้านขี้เล่น", imageURL: "/images/rpkm/house-demo.png", rank: "5" },
+  { name: "บ้านแดนสนธยา", imageURL: "/images/rpkm/house-demo.png", rank: "sub" },
+];
+
+const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
+---
+
+<!-- Not Picking Wrapper -->
+<div class="relative w-full h-fit block px-5" id="view-not-picking">
+    <!-- Pink trapezoids -->
+    <div class="absolute left-5 top-1/2 translate-y-[-50%] w-full h-full bg-[#FF1493] z-10 trapezoid-l-1"></div>
+    <div class="absolute right-5 top-1/2 translate-y-[-50%] w-full h-full bg-[#FF1493] z-10 trapezoid-r-1"></div>
+
+    <!-- Border -->
+    <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
+        <!-- Content -->
+        <div class="relative cut-houses-1 bg-[#2B2D42BF] px-5 pt-8 flex flex-col items-center min-h-[248px] h-fit">
+            
+            <!-- Title -->
+            <p class="text-white font-semibold text-2xl z-20">บ้านรับเพื่อนที่เลือกไว้</p>
+
+            <!-- Empty Houses -->
+            <div class="pt-5 z-20">
+                <p class="text-3xl text-white font-semibold">คุณยังไม่ได้เลือกบ้าน</p>
+            </div>
+
+            <!-- Button -->
+            <div class={`absolute bottom-5 filter drop-shadow-[0_0_6px_white] z-20`}>
+                <button
+                    id="btn-picking-house"
+                    class="cut-edge-all bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] cursor-pointer"
+                    type="button"
+                    style={`width: 260px; height: 48px;`}
+                >
+                    <p class="text-xl text-white font-medium">เลือกบ้าน</p>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Picking Wrapper -->
+<div class="relative w-full h-fit hidden px-5" id="view-picking">
+    <!-- Pink trapezoids -->
+    <div class="absolute left-5 top-1/2 translate-y-[-50%] w-full h-full bg-[#FF1493] z-10 trapezoid-l-1"></div>
+    <div class="absolute right-5 top-1/2 translate-y-[-50%] w-full h-full bg-[#FF1493] z-10 trapezoid-r-1"></div>
+
+    <!-- Border -->
+    <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
+        <!-- Content -->
+        <div class="relative cut-houses-1 bg-[#2B2D42BF] px-5 pt-8 flex flex-col items-center h-full">
+            
+            <!-- Title -->
+            <p class="text-white font-semibold text-2xl z-20">บ้านรับเพื่อนที่สนใจ</p>
+
+            <!-- Pref Houses -->
+            <div class="pt-5 z-20 flex flex-wrap gap-3 justify-center">
+            {
+                [1, 2, 3, 4, 5].map((rank) => {
+                const match = housePickingData.find(h => parseInt(h.rank) === rank);
+                    return <HousePickingCard house={match ?? { rank }} />;
+                })
+            }
+            </div>
+
+            <!-- White Bar -->
+            <div class="flex items-center my-4">
+                <div class="w-2 h-2 rotate-45 bg-white"></div>
+                <div class="w-[236.008px] h-[2px] bg-white "></div>
+                <div class="w-2 h-2 rotate-45 bg-white"></div>
+            </div>
+
+            <!-- Sub Pref House -->
+            <div class="z-20 flex flex-wrap gap-3 justify-center">
+            {
+                (() => {
+                const match = housePickingData.find(h => h.rank === "sub");
+                    return <HousePickingCard house={match ?? { rank: "sub" }} />;
+                })()
+            }
+            </div>
+
+            <!-- Button -->
+            <div class={`pb-7 pt-5 filter drop-shadow-[0_0_6px_white] z-20`}>
+                <button
+                    id="btn-editing-house"
+                    class="cut-edge-all bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] cursor-pointer flex justify-center items-center gap-2"
+                    type="button"
+                    style={`width: 260px; height: 48px;`}
+                >
+                    <img src="/images/rpkm/edit-icon.svg" width="24" height="24" />
+                    <p class="text-xl text-white font-medium">แก้ไข</p>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Editing Wrapper -->
+<div class="relative w-full h-fit bg-[#313131E5] p-6 flex flex-col items-center hidden" id="view-editing">
+    <!-- Search Bar -->
+    <div class="flex gap-6 justify-center items-center">
+        <img src="/images/rpkm/house-icon.svg" width="26" height="30" />
+        <input 
+            id="house-search" 
+            type="text" 
+            class="px-3 py-1 w-full max-w-[260px] h-[32px] bg-white rounded-full text-[#2B2D42] font-medium"
+            placeholder="ค้นหาบ้าน" 
+        />
+    </div>
+
+    <p class="text-white font-semibold py-2">ขนาดบ้าน</p>
+
+    <!-- Filter -->
+    <div class="flex flex-wrap gap-3 justify-center" id="house-size-filter">
+        {houseSizes.map((size, index) => (
+            <label
+            class={`size-option cursor-pointer px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                index === 0
+                ? "bg-white text-[#8A2BE4]"
+                : "bg-[#8A2BE4] text-white"
+            }`}
+            data-size={size}
+            >
+            <input
+                type="checkbox"
+                name="size"
+                value={size}
+                class="hidden"
+                checked={index === 0}
+            />
+            {size} (จำนวน)
+            </label>
+        ))}
+    </div>
+
+    <!-- House Data -->
+    <div class="grid grid-cols-3 gap-4 mt-6 h-[300px] overflow-y-auto custom-scrollbar" id="house-card-container">
+        {houseDisplayData.map((house) => {
+            return (
+                <div data-size={house.size}>
+                    <HouseDetailCard house={house} />
+                </div>
+            );
+        })}
+    </div>
+
+</div>
+
+<!-- Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const pickBtn = document.getElementById("btn-picking-house");
+    const editBtn = document.getElementById("btn-editing-house");
+
+    const notPickingView = document.getElementById("view-not-picking");
+    const pickingView = document.getElementById("view-picking");
+    const editingView = document.getElementById("view-editing");
+
+    const houseSizeFilter = document.getElementById("house-size-filter");
+    const houseSizeOptions = houseSizeFilter?.querySelectorAll<HTMLElement>(".size-option");
+    const houseCardContainer = document.getElementById("house-card-container");
+    const houseSearchInput = document.getElementById("house-search") as HTMLInputElement | null;
+
+    pickBtn?.addEventListener("click", () => {
+      notPickingView?.classList.add("hidden");
+      pickingView?.classList.remove("hidden");
+    });
+
+    editBtn?.addEventListener("click", () => {
+      if (editingView?.classList.contains("hidden")) {
+        editingView?.classList.remove("hidden");
+        if (editBtn) {
+          editBtn.innerHTML = `<p class="text-xl text-white font-medium">ยืนยันการเลือกบ้าน</p>`;
+        }
+      } else {
+        editingView?.classList.add("hidden");
+        if (editBtn) {
+          editBtn.innerHTML = `
+            <img src="/images/rpkm/edit-icon.svg" width="24" height="24" />
+            <p class="text-xl text-white font-medium">แก้ไข</p>
+          `;
+        }
+      }
+    });
+
+    // House Size Filter
+    houseSizeOptions?.forEach((option) => {
+      option.addEventListener("click", () => {
+        houseSizeOptions.forEach(opt => {
+          opt.classList.remove("bg-white", "text-[#8A2BE4]");
+          opt.classList.add("bg-[#8A2BE4]", "text-white");
+
+          const input = opt.querySelector("input") as HTMLInputElement | null;
+          if (input) input.checked = false;
+        });
+
+        option.classList.remove("bg-[#8A2BE4]", "text-white");
+        option.classList.add("bg-white", "text-[#8A2BE4]");
+
+        const input = option.querySelector("input") as HTMLInputElement | null;
+        if (input) input.checked = true;
+
+        const selectedSize = option.getAttribute("data-size") ?? "ทั้งหมด";
+        const searchValue = houseSearchInput?.value ?? "";
+
+        filterHouseCards(selectedSize, searchValue);
+      });
+    });
+
+    // House Name Filter
+    houseSearchInput?.addEventListener("input", (e) => {
+      const target = e.target as HTMLInputElement | null;
+      if (!target) return;
+      const searchValue = target.value;
+
+      const selectedSizeOption = Array.from(houseSizeOptions ?? []).find(opt => {
+        const input = opt.querySelector("input") as HTMLInputElement | null;
+        return input?.checked;
+      });
+
+      const selectedSize = selectedSizeOption?.getAttribute("data-size") ?? "ทั้งหมด";
+
+      filterHouseCards(selectedSize, searchValue);
+    });
+
+    // House Filter Function
+    function filterHouseCards(size: string, nameSearch: string) {
+      const houseCards = houseCardContainer?.querySelectorAll<HTMLElement>("[data-size]");
+      if (!houseCards) return;
+
+      const searchLower = nameSearch.toLowerCase();
+
+      houseCards.forEach(card => {
+        const cardSize = card.getAttribute("data-size");
+        const nameElement = card.querySelector("p.text-xs, p") as HTMLElement | null;
+        const cardName = nameElement ? nameElement.innerText.toLowerCase() : "";
+
+        const sizeMatch = size === "ทั้งหมด" || cardSize === size;
+        const nameMatch = cardName.includes(searchLower);
+
+        if (sizeMatch && nameMatch) {
+          card.classList.remove("hidden");
+        } else {
+          card.classList.add("hidden");
+        }
+      });
+    }
+  });
+</script>

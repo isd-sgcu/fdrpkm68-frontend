@@ -1,1 +1,112 @@
-<div>This is Group Picker</div>
+<!-- Wrapper -->
+<div class="relative w-full h-fit px-5">
+  <!-- Pink trapezoids -->
+  <div class="absolute left-5 top-1/2 translate-y-[-50%] w-full h-full bg-[#FF1493] z-10 trapezoid-l-1"></div>
+  <div class="absolute right-5 top-1/2 translate-y-[-50%] w-full h-full bg-[#FF1493] z-10 trapezoid-r-1"></div>
+
+  <!-- Border -->
+  <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
+    <!-- Content -->
+    <div class="relative cut-houses-1 bg-[#2B2D42BF] px-5 pt-8 flex flex-col items-center min-h-[340px] h-fit">
+      
+        <!-- Title -->
+        <p class="text-white font-semibold text-2xl z-20">จับกลุ่มเพื่อน (1/3)</p>
+
+        <!-- Content -->
+        <div class="pt-9 z-20 px-5 w-full flex flex-col items-center gap-3">
+        
+            <!-- Input -->
+            <div class="w-full filter drop-shadow-[0_0_2px_white]">
+                <div class="bg-gradient-to-r from-[#FF1493] via-[#D38DD8] to-[#FF1493] px-[6px] py-[3px] cut-input-1">
+                    <div class="bg-[#2B2D42] cut-input-1">
+                        <input
+                            id="room-id-insert"
+                            type="text"
+                            placeholder="โปรดกรอกรหัสห้อง"
+                            class="w-full h-[36px] px-3 py-1 text-[#0FF] placeholder-[#FFFFFF80] text-lg bg-transparent outline-none"
+                            maxlength="6"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="filter drop-shadow-[0_0_4px_white] z-20">
+                <button
+                    id="btn-submit"
+                    disabled
+                    class="cut-edge-all bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] cursor-not-allowed"
+                    type="button"
+                    style="width: 200px; height: 40px;"
+                >
+                    <p class="text-lg font-medium text-white">ยืนยัน</p>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- White Bar -->
+        <div class="flex items-center my-7">
+            <div class="w-2 h-2 rotate-45 bg-white"></div>
+            <div class="w-[236.008px] h-[2px] bg-white "></div>
+            <div class="w-2 h-2 rotate-45 bg-white"></div>
+        </div>
+
+        <!-- Head Clan Button -->
+        <div class="filter drop-shadow-[0_0_6px_white] z-20">
+            <button
+            id="btn-head-clan"
+            class="cut-edge-all bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] cursor-pointer"
+            type="button"
+            style="width: 260px; height: 48px;"
+            >
+            <p class="text-xl text-white font-medium">เป็นหัวแคลน</p>
+            </button>
+        </div>
+
+        <!-- Note -->
+        <p class="py-3 text-xs text-white">*สามารถเลือกบ้านคนเดียวได้</p>
+    </div>
+  </div>
+</div>
+
+<!-- Script -->
+<script>
+  const input = document.getElementById("room-id-insert") as HTMLInputElement | null;
+  const submitBtn = document.getElementById("btn-submit") as HTMLButtonElement | null;
+  const headClanBtn = document.getElementById("btn-head-clan") as HTMLButtonElement | null;
+
+  function formatRoomId(raw: string): string {
+    return raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  }
+
+  function toggleSubmitButton() {
+    if (!input || !submitBtn) return;
+
+    // Input Validation
+    const formattedRoomId = formatRoomId(input.value);
+    input.value = formattedRoomId;
+
+    const isValid = formattedRoomId.length === 6;
+
+    submitBtn.disabled = !isValid;
+
+    if (isValid) {
+      submitBtn.classList.remove("brightness-75", "opacity-50", "cursor-not-allowed");
+      submitBtn.classList.add("cursor-pointer");
+    } else {
+      submitBtn.classList.add("brightness-75", "opacity-50", "cursor-not-allowed");
+      submitBtn.classList.remove("cursor-pointer");
+    }
+  }
+
+  input?.addEventListener("input", toggleSubmitButton);
+  toggleSubmitButton();
+
+  headClanBtn?.addEventListener("click", () => {
+    alert("Hello World!");
+  });
+</script>
+
+
+

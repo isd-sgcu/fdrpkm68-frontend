@@ -1,0 +1,32 @@
+---
+const { house = {} } = Astro.props;
+const { name, imageURL, rank } = house;
+
+const rankWidth = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
+const rankHeight = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
+---
+
+{ name ?
+  <div class="relative w-[80px] h-fit min-h-[100px] bg-white p-1">
+    <img 
+        src={`/images/rpkm/rank-${rank}.svg`} 
+        class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" 
+        width={rankWidth} 
+        height={rankHeight}
+    />
+    <img 
+        src={imageURL ? imageURL : "/images/rpkm/house-blank.png"} 
+        class="w-full h-auto object-cover pb-1" 
+    />
+    <p class="text-xs text-[#2B2D42] font-semibold text-center">{name}</p>
+  </div>
+:
+  <div class="relative w-[80px] h-[100px] border-dashed border-2 border-[#D38DD8]">
+    <img 
+      src={`/images/rpkm/rank-${rank}.svg`} 
+      class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" 
+      width={rankWidth} 
+      height={rankHeight}
+    />
+  </div>
+}
