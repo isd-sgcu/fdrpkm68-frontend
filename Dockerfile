@@ -13,20 +13,23 @@ COPY package.json pnpm-lock.yaml ./
 # Install dependencies
 RUN pnpm install --no-frozen-lockfile
 
-# Copy pre-built application (built in GitHub Actions)
-COPY ./dist ./dist
+# Copy source code
+COPY . .
 
-# Build args for runtime env vars (not used for building)
+# Build args for build-time env vars
 ARG PUBLIC_API_URL
 ARG PUBLIC_SITE_URL
 ENV PUBLIC_API_URL=$PUBLIC_API_URL
 ENV PUBLIC_SITE_URL=$PUBLIC_SITE_URL
 
-# Verify the build was copied correctly
+# Build the application
+RUN pnpm run build
+
+# Verify the build completed correctly
 RUN ls -la ./dist && \
     test -f "./dist/server/entry.mjs" || (echo "❌ Server entry missing" && exit 1) && \
     test -d "./dist/client/_astro" || (echo "❌ Client assets missing" && exit 1) && \
-    echo "✅ Pre-built application verified"
+    echo "✅ Build verification complete"
 
 # Production stage
 FROM node:20-alpine AS runner

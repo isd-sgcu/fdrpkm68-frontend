@@ -94,22 +94,38 @@ jobs:
 
     - name: Build and push Docker image (Dev)
       run: |
-        echo "🐳 Building Docker image with pre-built artifacts..."
+        echo "🐳 Building Docker image..."
         
-        # Verify build artifacts haven't changed
-        find ./dist -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | xargs sha256sum > current-manifest.txt
-        if ! diff build-manifest.txt current-manifest.txt; then
-          echo "❌ Build artifacts changed between build and Docker build!"
-          echo "Original manifest:"
-          cat build-manifest.txt
-          echo "Current manifest:"
-          cat current-manifest.txt
-          exit 1
-        fi
-        echo "✅ Build artifacts verified - no changes detected"
+        # Store the GitHub Actions build for comparison
+        cp -r ./dist ./dist-github
         
-        # Build Docker image (will use existing dist/ directory)
+        # Build Docker image (will rebuild inside container)
         docker build --build-arg PUBLIC_API_URL=${{ env.API_URL }} --build-arg PUBLIC_SITE_URL=${{ env.SITE_URL }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest-dev .
+        
+        # Extract build from Docker image to verify consistency
+        docker create --name temp-container ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        docker cp temp-container:/app/dist ./dist-docker
+        docker rm temp-container
+        
+        # Compare the builds
+        echo "🔍 Comparing GitHub Actions build vs Docker build..."
+        find ./dist-github -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | sed 's|./dist-github|./dist|' | xargs -I {} sh -c 'sha256sum ./dist-github/$(echo {} | sed "s|./dist/||")' > github-manifest.txt
+        find ./dist-docker -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | sed 's|./dist-docker|./dist|' | xargs -I {} sh -c 'sha256sum ./dist-docker/$(echo {} | sed "s|./dist/||")' > docker-manifest.txt
+        
+        if ! diff github-manifest.txt docker-manifest.txt; then
+          echo "⚠️ WARNING: Docker build produced different artifacts!"
+          echo "GitHub build files:"
+          ls -la ./dist-github/client/_astro/
+          echo "Docker build files:"
+          ls -la ./dist-docker/client/_astro/
+          echo "Using Docker build (this is what runs in production)"
+        else
+          echo "✅ Docker build matches GitHub Actions build perfectly"
+        fi
+        
+        # Use Docker build artifacts for bucket upload
+        rm -rf ./dist
+        mv ./dist-docker ./dist
         
         # Push both tags
         docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
@@ -139,15 +155,14 @@ jobs:
 
     - name: Upload static assets to Cloud Storage (Dev)
       run: |
-        echo "📦 Uploading static assets (same files used in Docker image)..."
+        echo "📦 Uploading static assets (EXACT same files from deployed Docker image)..."
         
-        # Final verification - ensure we're uploading the EXACT same files
-        find ./dist -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | xargs sha256sum > final-manifest.txt
-        if ! diff build-manifest.txt final-manifest.txt; then
-          echo "❌ CRITICAL: Static assets don't match the deployed application!"
+        # Verify we're using Docker build artifacts
+        if [ ! -f "./dist/server/entry.mjs" ]; then
+          echo "❌ Docker build artifacts not found!"
           exit 1
         fi
-        echo "✅ Verified: Static assets match deployed application"
+        echo "✅ Using Docker build artifacts (matches deployed container)"
         
         # Upload Astro static assets
         if [ -d "./dist/client/_astro" ]; then
