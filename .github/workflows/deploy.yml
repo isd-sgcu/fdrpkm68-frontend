@@ -51,7 +51,7 @@ jobs:
           ${{ runner.os }}-pnpm-store-
 
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: pnpm install --no-frozen-lockfile
 
     - name: Build Astro application (Development)
       run: pnpm run build
@@ -160,7 +160,7 @@ jobs:
           ${{ runner.os }}-pnpm-store-
 
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: pnpm install --no-frozen-lockfile
 
     - name: Build Astro application (Production)
       run: pnpm run build
@@ -266,7 +266,7 @@ jobs:
           ${{ runner.os }}-pnpm-store-
 
     - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      run: pnpm install --no-frozen-lockfile
 
     - name: Build application (Test)
       run: pnpm run build
