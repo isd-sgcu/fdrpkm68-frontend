@@ -4,14 +4,14 @@ FROM node:20-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm (specific version to match local)
+RUN npm install -g pnpm@10.12.4
 
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Copy source code
 COPY . .
@@ -31,14 +31,14 @@ FROM node:20-alpine AS runner
 # Set working directory
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm (specific version to match local)
+RUN npm install -g pnpm@10.12.4
 
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
 # Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --no-frozen-lockfile
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
