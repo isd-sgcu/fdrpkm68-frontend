@@ -277,3 +277,17 @@ jobs:
           exit 1
         fi
         echo "Build successful!"
+
+    - name: Test Docker build
+      run: |
+        docker build --build-arg PUBLIC_API_URL=http://localhost:8080/api --build-arg PUBLIC_SITE_URL=http://localhost:4321 -t test-build:pr-${{ github.event.pull_request.number }} .
+        echo "Docker build successful!"
+
+    - name: Run Docker container test
+      run: |
+        docker run -d --name test-container -p 4321:4321 test-build:pr-${{ github.event.pull_request.number }}
+        sleep 10
+        curl -f http://localhost:4321/ || (docker logs test-container && exit 1)
+        docker stop test-container
+        docker rm test-container
+        echo "Container test successful!"

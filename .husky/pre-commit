@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Check if we can build
+echo "📦 Testing build..."
+pnpm run build || {
+  echo "❌ Build failed. Please fix errors before committing."
+  exit 1
+}
+
+echo "✅ All pre-commit checks passed!"

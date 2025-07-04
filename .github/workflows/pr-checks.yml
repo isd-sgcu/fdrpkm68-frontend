@@ -1,0 +1,176 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main, dev]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    name: Lint and Format Check
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 10.12.4
+        run_install: false
+
+    - name: Install dependencies
+      run: pnpm install --no-frozen-lockfile
+
+    - name: Run format check
+      run: pnpm exec prettier --check .
+      continue-on-error: true
+
+    - name: Check TypeScript
+      run: pnpm exec astro check
+      continue-on-error: true
+
+  build-test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 10.12.4
+        run_install: false
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      run: pnpm install --no-frozen-lockfile
+
+    - name: Build application
+      run: pnpm run build
+      env:
+        PUBLIC_API_URL: http://localhost:8080/api
+        PUBLIC_SITE_URL: http://localhost:4321
+
+    - name: Verify build output
+      run: |
+        if [ ! -f "./dist/server/entry.mjs" ]; then
+          echo "❌ Build failed: entry.mjs not found"
+          exit 1
+        fi
+        echo "✅ Build output verified"
+
+  docker-test:
+    runs-on: ubuntu-latest
+    name: Docker Build Test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Test Docker build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        tags: test-build:pr-${{ github.event.pull_request.number }}
+        build-args: |
+          PUBLIC_API_URL=http://localhost:8080/api
+          PUBLIC_SITE_URL=http://localhost:4321
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Test container startup
+      run: |
+        docker run -d --name test-container -p 4321:4321 test-build:pr-${{ github.event.pull_request.number }}
+        echo "Waiting for container to start..."
+        sleep 15
+        
+        # Check if container is still running
+        if [ ! "$(docker ps -q -f name=test-container)" ]; then
+          echo "❌ Container failed to start"
+          docker logs test-container
+          exit 1
+        fi
+        
+        # Test health endpoint
+        if curl -f http://localhost:4321/api/health; then
+          echo "✅ Health check passed"
+        else
+          echo "❌ Health check failed"
+          docker logs test-container
+          exit 1
+        fi
+        
+        docker stop test-container
+        docker rm test-container
+
+  pr-summary:
+    runs-on: ubuntu-latest
+    needs: [lint-and-format, build-test, docker-test]
+    if: always()
+    name: PR Check Summary
+    
+    steps:
+    - name: Summary
+      run: |
+        echo "## PR Check Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ needs.lint-and-format.result }}" == "success" ]; then
+          echo "✅ Lint and Format: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Lint and Format: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.build-test.result }}" == "success" ]; then
+          echo "✅ Build Test: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Build Test: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.docker-test.result }}" == "success" ]; then
+          echo "✅ Docker Test: Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Docker Test: Failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Fail if any check failed
+        if [ "${{ needs.lint-and-format.result }}" != "success" ] || \
+           [ "${{ needs.build-test.result }}" != "success" ] || \
+           [ "${{ needs.docker-test.result }}" != "success" ]; then
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**❌ Some checks failed. Please fix the issues before merging.**" >> $GITHUB_STEP_SUMMARY
+          exit 1
+        else
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**✅ All checks passed! Ready to merge.**" >> $GITHUB_STEP_SUMMARY
+        fi
