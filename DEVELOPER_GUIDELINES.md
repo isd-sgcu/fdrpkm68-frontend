@@ -1,5 +1,5 @@
 # 🚀 Developer Guidelines - FreshmenFest 2025 Frontend
-
+test
 ## 📋 **MANDATORY READING** - Project Structure and Rules
 
 This document contains **STRICT GUIDELINES** that all developers must follow. Failure to follow these guidelines will result in failed builds, deployment issues, and code review rejections.
