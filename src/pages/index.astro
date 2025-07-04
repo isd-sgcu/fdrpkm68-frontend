@@ -6,18 +6,24 @@ import RPKM from "@rpkm/sample.astro";
 import FD from "@firstdate/sample.astro";
 
 // Test backend health endpoint
-let healthData = null;
-let healthError = null;
+type HealthData = {
+  status: string;
+  environment: string;
+  timestamp: string;
+} | null;
+
+let healthData: HealthData = null;
+let healthError: string | null = null;
 
 try {
-  const healthResponse = await api.get('/health');
+  const healthResponse = await api.get('/api/health');
   if (healthResponse.success) {
-    healthData = healthResponse.data;
+    healthData = healthResponse.data as HealthData;
   } else {
-    healthError = healthResponse.error;
+    healthError = healthResponse.error ?? null;
   }
 } catch (error) {
-  healthError = `Failed to fetch health: ${error.message}`;
+  healthError = `Failed to fetch health: ${error instanceof Error ? error.message : String(error)}`;
 }
 ---
 
