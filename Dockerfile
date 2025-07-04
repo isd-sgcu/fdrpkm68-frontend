@@ -25,6 +25,12 @@ ENV PUBLIC_SITE_URL=$PUBLIC_SITE_URL
 # Build the application
 RUN pnpm run build
 
+# Verify the build completed correctly
+RUN ls -la ./dist && \
+    test -f "./dist/server/entry.mjs" || (echo "❌ Server entry missing" && exit 1) && \
+    test -d "./dist/client/_astro" || (echo "❌ Client assets missing" && exit 1) && \
+    echo "✅ Build verification complete"
+
 # Production stage
 FROM node:20-alpine AS runner
 
