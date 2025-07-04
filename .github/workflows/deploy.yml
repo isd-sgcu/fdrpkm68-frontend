@@ -72,24 +72,6 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
 
-    - name: Upload static assets to Cloud Storage (Dev)
-      run: |
-        # Upload Astro static assets
-        if [ -d "./dist/client/_astro" ]; then
-          gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
-        fi
-        
-        # Upload public images
-        if [ -d "./public/images" ]; then
-          gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
-        fi
-        
-        # Set cache control headers for static assets
-        gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
-          "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
-        gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
-          "gs://${{ env.BUCKET_NAME }}/images/**" || true
-
     - name: Build and push Docker image (Dev)
       run: |
         # Build image with build args
@@ -120,6 +102,34 @@ jobs:
       run: |
         SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{ env.REGION }} --format="value(status.url)")
         echo "Development service deployed to: $SERVICE_URL"
+
+    - name: Upload static assets to Cloud Storage (Dev)
+      run: |
+        # Only upload if Cloud Run deployment succeeded
+        echo "Uploading static assets after successful deployment..."
+        
+        # Upload Astro static assets
+        if [ -d "./dist/client/_astro" ]; then
+          gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
+          echo "✅ Uploaded _astro assets"
+        else
+          echo "❌ No _astro directory found"
+          exit 1
+        fi
+        
+        # Upload public images
+        if [ -d "./public/images" ]; then
+          gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
+          echo "✅ Uploaded images"
+        fi
+        
+        # Set cache control headers for static assets
+        gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
+          "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
+        gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
+          "gs://${{ env.BUCKET_NAME }}/images/**" || true
+        
+        echo "✅ Static assets uploaded successfully"
 
   # Production deployment  
   deploy-prod:
@@ -179,24 +189,6 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
 
-    - name: Upload static assets to Cloud Storage (Prod)
-      run: |
-        # Upload Astro static assets
-        if [ -d "./dist/client/_astro" ]; then
-          gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
-        fi
-        
-        # Upload public images
-        if [ -d "./public/images" ]; then
-          gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
-        fi
-        
-        # Set cache control headers for static assets
-        gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
-          "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
-        gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
-          "gs://${{ env.BUCKET_NAME }}/images/**" || true
-
     - name: Build and push Docker image (Prod)
       run: |
         # Build image with build args
@@ -227,6 +219,34 @@ jobs:
       run: |
         SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{ env.REGION }} --format="value(status.url)")
         echo "Production service deployed to: $SERVICE_URL"
+
+    - name: Upload static assets to Cloud Storage (Prod)
+      run: |
+        # Only upload if Cloud Run deployment succeeded
+        echo "Uploading static assets after successful deployment..."
+        
+        # Upload Astro static assets
+        if [ -d "./dist/client/_astro" ]; then
+          gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
+          echo "✅ Uploaded _astro assets"
+        else
+          echo "❌ No _astro directory found"
+          exit 1
+        fi
+        
+        # Upload public images
+        if [ -d "./public/images" ]; then
+          gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
+          echo "✅ Uploaded images"
+        fi
+        
+        # Set cache control headers for static assets
+        gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
+          "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
+        gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
+          "gs://${{ env.BUCKET_NAME }}/images/**" || true
+        
+        echo "✅ Static assets uploaded successfully"
 
   # Test job for PRs
   test:
