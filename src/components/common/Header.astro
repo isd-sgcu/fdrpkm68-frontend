@@ -1,0 +1,93 @@
+---
+// Header component for navigation
+const currentPath = Astro.url.pathname;
+---
+
+<header class="bg-white shadow-sm">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center">
+        <a href="/" class="text-xl font-bold text-gray-900">
+          FreshmenFest 2025
+        </a>
+      </div>
+      
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          <a 
+            href="/" 
+            class={`px-3 py-2 rounded-md text-sm font-medium ${
+              currentPath === '/' 
+                ? 'text-blue-600 bg-blue-50' 
+                : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+            }`}
+          >
+            Home
+          </a>
+          <a 
+            href="/about" 
+            class={`px-3 py-2 rounded-md text-sm font-medium ${
+              currentPath === '/about' 
+                ? 'text-blue-600 bg-blue-50' 
+                : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+            }`}
+          >
+            About
+          </a>
+          <a 
+            href="/events" 
+            class={`px-3 py-2 rounded-md text-sm font-medium ${
+              currentPath === '/events' 
+                ? 'text-blue-600 bg-blue-50' 
+                : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+            }`}
+          >
+            Events
+          </a>
+          <a 
+            href="/register" 
+            class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
+          >
+            Register
+          </a>
+        </div>
+      </div>
+      
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button 
+          id="mobile-menu-button"
+          class="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600"
+        >
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="/" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600">Home</a>
+        <a href="/about" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600">About</a>
+        <a href="/events" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600">Events</a>
+        <a href="/register" class="block px-3 py-2 text-base font-medium bg-blue-600 text-white rounded-md">Register</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Mobile menu toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+    }
+  });
+</script>

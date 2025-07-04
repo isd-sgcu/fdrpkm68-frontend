@@ -1,0 +1,283 @@
+name: Deploy Frontend to GCP
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: asia-southeast1
+  REGISTRY_HOSTNAME: asia-southeast1-docker.pkg.dev
+
+jobs:
+  # Development deployment
+  deploy-dev:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    env:
+      BUCKET_NAME: freshmenfest2025-dev-static
+      SERVICE_NAME: freshmenfest2025-dev-frontend
+      API_URL: https://dev.freshmenfest2025.com/api
+      SITE_URL: https://dev.freshmenfest2025.com
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8
+        run_install: false
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build Astro application (Development)
+      run: pnpm run build
+      env:
+        PUBLIC_API_URL: ${{ env.API_URL }}
+        PUBLIC_SITE_URL: ${{ env.SITE_URL }}
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        project_id: ${{ env.GCP_PROJECT_ID }}
+
+    - name: Configure Docker for GCP
+      run: |
+        gcloud auth configure-docker ${{ env.REGISTRY_HOSTNAME }} --quiet
+
+    - name: Upload static assets to Cloud Storage (Dev)
+      run: |
+        # Upload Astro static assets
+        if [ -d "./dist/client/_astro" ]; then
+          gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
+        fi
+        
+        # Upload public images
+        if [ -d "./public/images" ]; then
+          gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
+        fi
+        
+        # Set cache control headers for static assets
+        gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
+          "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
+        gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
+          "gs://${{ env.BUCKET_NAME }}/images/**" || true
+
+    - name: Build and push Docker image (Dev)
+      run: |
+        # Build image with build args
+        docker build \
+          --build-arg PUBLIC_API_URL=${{ env.API_URL }} \
+          --build-arg PUBLIC_SITE_URL=${{ env.SITE_URL }} \
+          -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+          -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:latest-dev \
+          .
+        
+        # Push both tags
+        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:latest-dev
+
+    - name: Deploy to Cloud Run (Dev)
+      run: |
+        gcloud run deploy ${{ env.SERVICE_NAME }} \
+          --image=${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+          --region=${{ env.REGION }} \
+          --platform=managed \
+          --allow-unauthenticated \
+          --port=4321 \
+          --memory=512Mi \
+          --cpu=1 \
+          --min-instances=0 \
+          --max-instances=10 \
+          --concurrency=80 \
+          --timeout=300 \
+          --set-env-vars="NODE_ENV=development,PUBLIC_API_URL=${{ env.API_URL }},PUBLIC_SITE_URL=${{ env.SITE_URL }}" \
+          --execution-environment=gen2
+
+    - name: Get Cloud Run URL (Dev)
+      run: |
+        SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{ env.REGION }} --format="value(status.url)")
+        echo "Development service deployed to: $SERVICE_URL"
+
+  # Production deployment  
+  deploy-prod:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    env:
+      BUCKET_NAME: freshmenfest2025-static
+      SERVICE_NAME: freshmenfest2025-frontend
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8
+        run_install: false
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build Astro application (Production)
+      run: pnpm run build
+      env:
+        PUBLIC_API_URL: ${{ secrets.PROD_API_URL }}
+        PUBLIC_SITE_URL: ${{ secrets.PROD_SITE_URL }}
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        project_id: ${{ env.GCP_PROJECT_ID }}
+
+    - name: Configure Docker for GCP
+      run: |
+        gcloud auth configure-docker ${{ env.REGISTRY_HOSTNAME }} --quiet
+
+    - name: Upload static assets to Cloud Storage (Prod)
+      run: |
+        # Upload Astro static assets
+        if [ -d "./dist/client/_astro" ]; then
+          gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
+        fi
+        
+        # Upload public images
+        if [ -d "./public/images" ]; then
+          gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
+        fi
+        
+        # Set cache control headers for static assets
+        gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
+          "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
+        gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
+          "gs://${{ env.BUCKET_NAME }}/images/**" || true
+
+    - name: Build and push Docker image (Prod)
+      run: |
+        # Build image with build args
+        docker build \
+          --build-arg PUBLIC_API_URL=${{ secrets.PROD_API_URL }} \
+          --build-arg PUBLIC_SITE_URL=${{ secrets.PROD_SITE_URL }} \
+          -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+          -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:latest \
+          .
+        
+        # Push both tags
+        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:latest
+
+    - name: Deploy to Cloud Run (Prod)
+      run: |
+        gcloud run deploy ${{ env.SERVICE_NAME }} \
+          --image=${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+          --region=${{ env.REGION }} \
+          --platform=managed \
+          --allow-unauthenticated \
+          --port=4321 \
+          --memory=512Mi \
+          --cpu=1 \
+          --min-instances=0 \
+          --max-instances=20 \
+          --concurrency=100 \
+          --timeout=300 \
+          --set-env-vars="NODE_ENV=production,PUBLIC_API_URL=${{ secrets.PROD_API_URL }},PUBLIC_SITE_URL=${{ secrets.PROD_SITE_URL }}" \
+          --execution-environment=gen2
+
+    - name: Get Cloud Run URL (Prod)
+      run: |
+        SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{ env.REGION }} --format="value(status.url)")
+        echo "Production service deployed to: $SERVICE_URL"
+
+  # Test job for PRs
+  test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: 8
+        run_install: false
+
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build application (Test)
+      run: pnpm run build
+      env:
+        PUBLIC_API_URL: http://localhost:8080/api
+        PUBLIC_SITE_URL: http://localhost:4321
+
+    - name: Test build output
+      run: |
+        if [ ! -f "./dist/server/entry.mjs" ]; then
+          echo "Build failed: entry.mjs not found"
+          exit 1
+        fi
+        echo "Build successful!"
