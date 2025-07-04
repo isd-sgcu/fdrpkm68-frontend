@@ -1,24 +1,133 @@
 ---
 import MainLayout from "@/layouts/MainLayout.astro";
+import { api } from "@/lib/api";
 
 import RPKM from "@rpkm/sample.astro";
 import FD from "@firstdate/sample.astro";
+
+// Test backend health endpoint
+let healthData = null;
+let healthError = null;
+
+try {
+  const healthResponse = await api.get('/health');
+  if (healthResponse.success) {
+    healthData = healthResponse.data;
+  } else {
+    healthError = healthResponse.error;
+  }
+} catch (error) {
+  healthError = `Failed to fetch health: ${error.message}`;
+}
 ---
 
 <MainLayout title="Home" description="Hello World@Firstdate and RPKM">
-  <div class="p-4">
-    <h1 class="text-2xl font-bold mb-4">FreshmenFest 2025</h1>
-    
-    <!-- Test image from /images/ path -->
-    <div class="mb-4">
-      <img src="/images/logo.svg" alt="Logo" class="w-32 h-32" />
+  <!-- 8K Test Image as Backdrop -->
+  <div class="fixed inset-0 -z-10">
+    <img 
+      src="/images/8ktest.jpg" 
+      alt="8K Test Background" 
+      class="w-full h-full object-cover"
+      style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <!-- Dark overlay for text readability -->
+    <div class="absolute inset-0 bg-black/30"></div>
+  </div>
+
+  <!-- Content with backdrop -->
+  <div class="relative z-10 min-h-screen">
+    <div class="p-8">
+      <h1 class="text-4xl font-bold mb-6 text-white drop-shadow-lg">FreshmenFest 2025</h1>
+      <p class="text-lg text-white/90 mb-8 drop-shadow">Testing 8K image load performance via Cloud Storage CDN</p>
+      
+      <!-- Test grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+          <h3 class="text-white font-semibold mb-2">Logo Test</h3>
+          <img src="/images/logo.svg" alt="Logo" class="w-24 h-24" />
+        </div>
+        
+        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+          <h3 class="text-white font-semibold mb-2">SVG Test</h3>
+          <img src="/images/test-image.svg" alt="Test Image" class="w-32 h-16" />
+        </div>
+        
+        <!-- Backend Health Check -->
+        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+          <h3 class="text-white font-semibold mb-2">Backend Health</h3>
+          {healthData ? (
+            <div class="space-y-2 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                <span class="text-green-300">Healthy</span>
+              </div>
+              <div class="text-white/70">
+                <div>Status: {healthData.status}</div>
+                <div>Environment: {healthData.environment}</div>
+                <div>Time: {healthData.timestamp}</div>
+              </div>
+            </div>
+          ) : (
+            <div class="space-y-2 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-red-400 rounded-full"></span>
+                <span class="text-red-300">Error</span>
+              </div>
+              <div class="text-white/70 text-xs">
+                {healthError}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <!-- Performance info -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-white">
+        <h3 class="text-xl font-semibold mb-3">Load Test Info</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Image Performance -->
+          <div>
+            <h4 class="font-semibold mb-2 text-blue-300">Static Assets (CDN)</h4>
+            <ul class="space-y-1 text-sm">
+              <li>• 8K Background: <code class="bg-black/20 px-1 rounded">/images/8ktest.jpg</code></li>
+              <li>• Resolution: 7680×4320 pixels</li>
+              <li>• Served from: Cloud Storage CDN</li>
+              <li>• Cache headers: 1 day TTL</li>
+              <li>• Loading: eager, fetchpriority: high</li>
+            </ul>
+          </div>
+          
+          <!-- API Performance -->
+          <div>
+            <h4 class="font-semibold mb-2 text-green-300">API Performance</h4>
+            <ul class="space-y-1 text-sm">
+              <li>• Endpoint: <code class="bg-black/20 px-1 rounded">/api/health</code></li>
+              <li>• Routing: Load balancer → Backend</li>
+              <li>• URL rewrite: /api/health → /health</li>
+              <li>• Response: {healthData ? 'Success' : 'Failed'}</li>
+              <li>• Status: {healthData ? 
+                <span class="text-green-400">✓ Connected</span> : 
+                <span class="text-red-400">✗ Error</span>
+              }</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="mt-4 pt-4 border-t border-white/20">
+          <p class="text-xs text-white/60">
+            This page tests both static asset delivery (CDN) and API routing (load balancer) 
+            to verify the complete infrastructure setup.
+          </p>
+        </div>
+      </div>
     </div>
     
-    <div class="mb-4">
-      <img src="/images/test-image.svg" alt="Test Image" class="w-48 h-24" />
+    <div class="mt-8">
+      <FD />
+      <RPKM />
     </div>
   </div>
-  
-  <FD />
-  <RPKM />
 </MainLayout>
