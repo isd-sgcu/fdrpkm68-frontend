@@ -14,15 +14,23 @@ type HealthData = {
 
 let healthData: HealthData = null;
 let healthError: string | null = null;
+let apiLoadTime: number = 0;
+let imageLoadTime: number = 0;
 
+const startTime = performance.now();
 try {
-  const healthResponse = await api.get('/api/health');
+  const healthResponse = await api.get('/health');
+  const endTime = performance.now();
+  apiLoadTime = Math.round(endTime - startTime);
+  
   if (healthResponse.success) {
     healthData = healthResponse.data as HealthData;
   } else {
     healthError = healthResponse.error ?? null;
   }
 } catch (error) {
+  const endTime = performance.now();
+  apiLoadTime = Math.round(endTime - startTime);
   healthError = `Failed to fetch health: ${error instanceof Error ? error.message : String(error)}`;
 }
 ---
@@ -37,6 +45,7 @@ try {
       style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;"
       loading="eager"
       fetchpriority="high"
+      id="bg-image"
     />
     <!-- Dark overlay for text readability -->
     <div class="absolute inset-0 bg-black/30"></div>
@@ -103,6 +112,7 @@ try {
               <li>• Served from: Cloud Storage CDN</li>
               <li>• Cache headers: 1 day TTL</li>
               <li>• Loading: eager, fetchpriority: high</li>
+              <li>• Load time: <span id="image-load-time" class="text-blue-400">Measuring...</span></li>
             </ul>
           </div>
           
@@ -114,6 +124,7 @@ try {
               <li>• Routing: Load balancer → Backend</li>
               <li>• URL rewrite: /api/health → /health</li>
               <li>• Response: {healthData ? 'Success' : 'Failed'}</li>
+              <li>• Load time: <span class="text-green-400">{apiLoadTime}ms</span></li>
               <li>• Status: {healthData ? 
                 <span class="text-green-400">✓ Connected</span> : 
                 <span class="text-red-400">✗ Error</span>
@@ -137,3 +148,50 @@ try {
     </div>
   </div>
 </MainLayout>
+
+<script>
+  // Track 8K image load time using Performance API
+  const bgImage = document.getElementById('bg-image') as HTMLImageElement;
+  const imageLoadTimeElement = document.getElementById('image-load-time');
+  const apiLoadTimeElement = document.createElement('span');
+  apiLoadTimeElement.className = 'text-green-400';
+  
+  function checkResourceTimings() {
+    // Get image network timing
+    const imageUrl = bgImage?.src;
+    if (imageUrl) {
+      const imagePerfEntries = performance.getEntriesByName(imageUrl);
+      if (imagePerfEntries.length > 0) {
+        const imageEntry = imagePerfEntries[0] as PerformanceResourceTiming;
+        const imageNetworkTime = Math.round(imageEntry.duration);
+        if (imageLoadTimeElement) {
+          imageLoadTimeElement.textContent = `${imageNetworkTime}ms`;
+        }
+      }
+    }
+    
+    // Get API network timing - make a client-side call to measure
+    fetch('https://dev.freshmenfest2025.com/api/health')
+      .then(() => {
+        const apiPerfEntries = performance.getEntriesByName('https://dev.freshmenfest2025.com/api/health');
+        if (apiPerfEntries.length > 0) {
+          const apiEntry = apiPerfEntries[apiPerfEntries.length - 1] as PerformanceResourceTiming;
+          const apiNetworkTime = Math.round(apiEntry.duration);
+          // Update API load time display
+          const apiLoadTimeSpan = document.querySelector('span.text-green-400');
+          if (apiLoadTimeSpan && apiLoadTimeSpan.textContent?.includes('ms')) {
+            apiLoadTimeSpan.textContent = `${apiNetworkTime}ms (network)`;
+          }
+        }
+      });
+  }
+  
+  // Check timings after page load
+  if (document.readyState === 'complete') {
+    setTimeout(checkResourceTimings, 100);
+  } else {
+    window.addEventListener('load', () => {
+      setTimeout(checkResourceTimings, 100);
+    });
+  }
+</script>
