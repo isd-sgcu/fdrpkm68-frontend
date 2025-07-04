@@ -7,7 +7,7 @@ on:
     branches: [main, dev]
 
 env:
-  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_PROJECT_ID: fdrpkm
   REGION: asia-southeast1
   REGISTRY_HOSTNAME: asia-southeast1-docker.pkg.dev
 
@@ -63,7 +63,7 @@ jobs:
       uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ env.GCP_PROJECT_ID }}
+        project_id: fdrpkm
 
     - name: Configure Docker for GCP
       run: |
@@ -170,7 +170,7 @@ jobs:
       uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
-        project_id: ${{ env.GCP_PROJECT_ID }}
+        project_id: fdrpkm
 
     - name: Configure Docker for GCP
       run: |
