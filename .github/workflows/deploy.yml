@@ -54,7 +54,27 @@ jobs:
       run: pnpm install --no-frozen-lockfile
 
     - name: Build Astro application (Development)
-      run: pnpm run build
+      run: |
+        echo "🏗️ Building Astro application..."
+        pnpm run build
+        
+        # Create checksum of build artifacts for verification
+        find ./dist -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | xargs sha256sum > build-manifest.txt
+        echo "📄 Build manifest created:"
+        cat build-manifest.txt
+        
+        # Verify critical files exist
+        if [ ! -f "./dist/server/entry.mjs" ]; then
+          echo "❌ Server entry point missing"
+          exit 1
+        fi
+        
+        if [ ! -d "./dist/client/_astro" ]; then
+          echo "❌ Client assets missing"
+          exit 1
+        fi
+        
+        echo "✅ Build verification complete"
       env:
         PUBLIC_API_URL: ${{ env.API_URL }}
         PUBLIC_SITE_URL: ${{ env.SITE_URL }}
@@ -74,7 +94,21 @@ jobs:
 
     - name: Build and push Docker image (Dev)
       run: |
-        # Build image with build args
+        echo "🐳 Building Docker image with pre-built artifacts..."
+        
+        # Verify build artifacts haven't changed
+        find ./dist -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | xargs sha256sum > current-manifest.txt
+        if ! diff build-manifest.txt current-manifest.txt; then
+          echo "❌ Build artifacts changed between build and Docker build!"
+          echo "Original manifest:"
+          cat build-manifest.txt
+          echo "Current manifest:"
+          cat current-manifest.txt
+          exit 1
+        fi
+        echo "✅ Build artifacts verified - no changes detected"
+        
+        # Build Docker image (will use existing dist/ directory)
         docker build --build-arg PUBLIC_API_URL=${{ env.API_URL }} --build-arg PUBLIC_SITE_URL=${{ env.SITE_URL }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest-dev .
         
         # Push both tags
@@ -105,13 +139,27 @@ jobs:
 
     - name: Upload static assets to Cloud Storage (Dev)
       run: |
-        # Only upload if Cloud Run deployment succeeded
-        echo "Uploading static assets after successful deployment..."
+        echo "📦 Uploading static assets (same files used in Docker image)..."
+        
+        # Final verification - ensure we're uploading the EXACT same files
+        find ./dist -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | xargs sha256sum > final-manifest.txt
+        if ! diff build-manifest.txt final-manifest.txt; then
+          echo "❌ CRITICAL: Static assets don't match the deployed application!"
+          exit 1
+        fi
+        echo "✅ Verified: Static assets match deployed application"
         
         # Upload Astro static assets
         if [ -d "./dist/client/_astro" ]; then
+          echo "📄 Files being uploaded:"
+          ls -la ./dist/client/_astro/
+          
           gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
           echo "✅ Uploaded _astro assets"
+          
+          # Verify upload
+          echo "📄 Files in bucket after upload:"
+          gsutil ls gs://${{ env.BUCKET_NAME }}/_astro/
         else
           echo "❌ No _astro directory found"
           exit 1
@@ -129,7 +177,7 @@ jobs:
         gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
           "gs://${{ env.BUCKET_NAME }}/images/**" || true
         
-        echo "✅ Static assets uploaded successfully"
+        echo "🎉 Static assets uploaded successfully and verified!"
 
   # Production deployment  
   deploy-prod:
