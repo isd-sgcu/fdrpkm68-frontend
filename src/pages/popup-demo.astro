@@ -1,0 +1,137 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import Popup from '@/components/common/Popup.astro';
+---
+
+<MainLayout title="Popup Component Demo">
+  <div class="min-h-screen bg-gray-100 p-8 overflow-x-auto">
+    <div class="max-w-7xl mx-auto min-w-fit">
+      <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">
+        FreshmenFest 2025 Popup Components
+      </h1>
+      
+      <!-- Large Popups Section -->
+      <section class="mb-32">
+        <h2 class="text-2xl font-semibold mb-16 text-gray-700">Large Popups</h2>
+        <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-16 justify-items-center">
+          
+          <!-- Black Large -->
+          <Popup size="large" color="black">
+            <div class="text-center text-gray-800">
+              <h3 class="text-2xl font-bold mb-4">Black Popup</h3>
+            </div>
+          </Popup>
+          
+          <!-- Vivid Pink Large -->
+          <Popup size="large" color="vivid-pink">
+            <div class="text-center text-gray-800">
+              <h3 class="text-2xl font-bold mb-4">Vivid Pink Popup</h3>
+            </div>
+          </Popup>
+          
+          <!-- Light Green Large -->
+          <Popup size="large" color="light-green">
+            <div class="text-center text-gray-800">
+              <h3 class="text-2xl font-bold mb-4">Light Green Popup</h3>
+            </div>
+          </Popup>
+          
+          <!-- Light Blue Large -->
+          <Popup size="large" color="light-blue">
+            <div class="text-center text-gray-800">
+              <h3 class="text-2xl font-bold mb-4">Light Blue Popup</h3>
+            </div>
+          </Popup>
+          
+          <!-- Light Pink Large -->
+          <Popup size="large" color="light-pink">
+            <div class="text-center text-gray-800">
+              <h3 class="text-2xl font-bold mb-4">Light Pink Popup</h3>
+            </div>
+          </Popup>
+          
+          <!-- Light Beige Large -->
+          <Popup size="large" color="light-beige">
+            <div class="text-center text-gray-800">
+              <h3 class="text-2xl font-bold mb-4">Light Beige Popup</h3>
+            </div>
+          </Popup>
+          
+        </div>
+      </section>
+
+      <!-- Small Popups Section -->
+      <section class="mb-24">
+        <h2 class="text-2xl font-semibold mb-12 text-gray-700">Small Popups</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-12 justify-items-center">
+          
+          <!-- Black Small -->
+          <Popup size="small" color="black">
+            <div class="text-center text-gray-800">
+              <h4 class="text-lg font-bold mb-2">Black</h4>
+              <p class="text-xs mb-2">#121212</p>
+            </div>
+          </Popup>
+          
+          <!-- Vivid Pink Small -->
+          <Popup size="small" color="vivid-pink">
+            <div class="text-center text-gray-800">
+              <h4 class="text-lg font-bold mb-2">Vivid Pink</h4>
+              <p class="text-xs mb-2">#cb438b</p>
+            </div>
+          </Popup>
+          
+          <!-- Light Green Small -->
+          <Popup size="small" color="light-green">
+            <div class="text-center text-gray-800">
+              <h4 class="text-lg font-bold mb-2">Light Green</h4>
+              <p class="text-xs mb-2">#c6ebc5</p>
+            </div>
+          </Popup>
+          
+          <!-- Light Blue Small -->
+          <Popup size="small" color="light-blue">
+            <div class="text-center text-gray-800">
+              <h4 class="text-lg font-bold mb-2">Light Blue</h4>
+              <p class="text-xs mb-2">#d8f3f1</p>
+            </div>
+          </Popup>
+          
+          <!-- Light Pink Small -->
+          <Popup size="small" color="light-pink">
+            <div class="text-center text-gray-800">
+              <h4 class="text-lg font-bold mb-2">Light Pink</h4>
+              <p class="text-xs mb-2">#ffe4e1</p>
+            </div>
+          </Popup>
+          
+          <!-- Light Beige Small -->
+          <Popup size="small" color="light-beige">
+            <div class="text-center text-gray-800">
+              <h4 class="text-lg font-bold mb-2">Light Beige</h4>
+              <p class="text-xs mb-2">#fffff2</p>
+            </div>
+          </Popup>
+          
+        </div>
+      </section>
+
+      <!-- Usage Example Section -->
+      <section class="mb-20">
+        <h2 class="text-2xl font-semibold mb-12 text-gray-700">Usage Example</h2>
+        <div class="flex justify-center">
+          <Popup size="small" color="vivid-pink">
+            <div class="text-center text-white">
+              <h3 class="text-xl font-bold mb-4">Welcome!</h3>
+              <p class="mb-6">This is how you use the slot content.</p>
+              <button class="px-6 py-2 bg-white text-pink-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                Click Me
+              </button>
+            </div>
+          </Popup>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</MainLayout>
