@@ -1,0 +1,85 @@
+---
+export interface Props {
+  size?: 'lg' | 'md' | 'sm' | 'xs';
+  color?: 'blue' | 'purple';
+  class?: string;
+}
+
+const { 
+  size = 'lg', 
+  color = 'blue',
+  class: className = ''
+} = Astro.props;
+
+const frameSvg = `/images/frame/frame-${color}-${size}.svg`;
+
+// SVG dimensions and content positioning based on actual frame SVG files in Figma
+const getSizeConfig = (size: string) => {
+  switch (size) {
+    case 'lg':
+      return {
+        aspectRatio: '346/550',
+        minHeight: '550px',
+      };
+    case 'md':
+      return {
+        aspectRatio: '346/430',
+        minHeight: '430px',
+      };
+    case 'sm':
+      return {
+        aspectRatio: '346/340',
+        minHeight: '340px',
+      };
+    case 'xs':
+      return {
+        aspectRatio: '346/248',
+        minHeight: '248px',
+      };
+    default:
+      return {
+        aspectRatio: '346/550',
+        minHeight: '550px',
+      };
+  }
+};
+
+const config = getSizeConfig(size);
+---
+
+<div 
+  class={`frame-container relative w-full ${className}`}
+  style={`
+    aspect-ratio: ${config.aspectRatio};
+    min-height: ${config.minHeight};
+  `}
+>
+  <!-- Frame SVG background -->
+  <div 
+    class="absolute inset-0 bg-contain bg-center bg-no-repeat"
+    style={`background-image: url('${frameSvg}'); background-size: 100% 100%;`}
+  ></div>
+  
+  <div 
+    class="absolute inset-0 flex items-center justify-center content-area"
+  >
+    <div class="text-center w-full max-w-full">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .frame-container {
+    position: relative;
+    width: 100%;
+    max-height: 100vh;
+    overflow: visible;
+  }
+  
+  @media (max-width: 480px) {
+    .frame-container {
+      min-height: 200px !important;
+    }
+  }
+</style>
