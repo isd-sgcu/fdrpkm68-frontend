@@ -1,5 +1,228 @@
 @import "tailwindcss";
 
+/* Font Family Registrations for */
+@theme {
+  --font-family-zen-dots: "Zen Dots", cursive;
+  --font-family-orbitron: "Orbitron Variable", "Orbitron", sans-serif;
+  --font-family-ibm-plex-sans-thai: "IBM Plex Sans Thai", sans-serif;
+  --font-sans: 'IBM Plex Sans Thai', 'sans-serif';
+  
+  /* Typography System from Figma Design */
+  /* Basically, the h1 is typically larger than the h2 and so on. but in figma design, the h5 is larger than h4 and so on krub. */
+  --font-size-h5: 40px;
+  --font-size-h4: 36px;
+  --font-size-h3: 32px;
+  --font-size-h2: 28px;
+  --font-size-h1: 24px;
+  --font-size-title2: 20px;
+  --font-size-title1: 16px;
+  --font-size-body: 12px;
+  --font-size-caption: 10px;
+
+  --line-height-default: 1.4;
+}
+
+/* Typography Classes*/
+/* Based on Figma Typography Reference */
+
+/* H5 - 40px */
+.text-h5-regular {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h5);
+  font-weight: 400;
+  line-height: var(--line-height-default);
+}
+
+.text-h5-medium {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h5);
+  font-weight: 500;
+  line-height: var(--line-height-default);
+}
+
+.text-h5-semibold {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h5);
+  font-weight: 600;
+  line-height: var(--line-height-default);
+}
+
+/* H4 - 36px */
+.text-h4-regular {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h4);
+  font-weight: 400;
+  line-height: var(--line-height-default);
+}
+
+.text-h4-medium {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h4);
+  font-weight: 500;
+  line-height: var(--line-height-default);
+}
+
+.text-h4-semibold {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h4);
+  font-weight: 600;
+  line-height: var(--line-height-default);
+}
+
+/* H3 - 32px */
+.text-h3-regular {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h3);
+  font-weight: 400;
+  line-height: var(--line-height-default);
+}
+
+.text-h3-medium {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h3);
+  font-weight: 500;
+  line-height: var(--line-height-default);
+}
+
+.text-h3-semibold {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  line-height: var(--line-height-default);
+}
+
+/* H2 - 28px */
+.text-h2-regular {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h2);
+  font-weight: 400;
+  line-height: var(--line-height-default);
+}
+
+.text-h2-medium {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h2);
+  font-weight: 500;
+  line-height: var(--line-height-default);
+}
+
+.text-h2-semibold {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h2);
+  font-weight: 600;
+  line-height: var(--line-height-default);
+}
+
+/* H1 - 24px */
+.text-h1-regular {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h1);
+  font-weight: 400;
+  line-height: var(--line-height-default);
+}
+
+.text-h1-medium {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h1);
+  font-weight: 500;
+  line-height: var(--line-height-default);
+}
+
+.text-h1-semibold {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-h1);
+  font-weight: 600;
+  line-height: var(--line-height-default);
+}
+
+/* Title 2 - 20px */
+.text-title2-regular {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-title2);
+  font-weight: 400;
+  line-height: var(--line-height-default);
+}
+
+.text-title2-medium {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-title2);
+  font-weight: 500;
+  line-height: var(--line-height-default);
+}
+
+.text-title2-semibold {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-title2);
+  font-weight: 600;
+  line-height: var(--line-height-default);
+}
+
+/* Title 1 - 16px */
+.text-title1-regular {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-title1);
+  font-weight: 400;
+  line-height: var(--line-height-default);
+}
+
+.text-title1-medium {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-title1);
+  font-weight: 500;
+  line-height: var(--line-height-default);
+}
+
+.text-title1-semibold {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-title1);
+  font-weight: 600;
+  line-height: var(--line-height-default);
+}
+
+/* Body - 12px */
+.text-body-regular {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-body);
+  font-weight: 400;
+  line-height: var(--line-height-default);
+}
+
+.text-body-medium {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-body);
+  font-weight: 500;
+  line-height: var(--line-height-default);
+}
+
+.text-body-semibold {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  line-height: var(--line-height-default);
+}
+
+/* Caption - 10px */
+.text-caption-regular {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-caption);
+  font-weight: 400;
+  line-height: var(--line-height-default);
+}
+
+.text-caption-medium {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-caption);
+  font-weight: 500;
+  line-height: var(--line-height-default);
+}
+
+.text-caption-semibold {
+  font-family: var(--font-family-ibm-plex-sans-thai);
+  font-size: var(--font-size-caption);
+  font-weight: 600;
+  line-height: var(--line-height-default);
+}
+
 /* Cut edge Classes */
 
 /* Spec 
