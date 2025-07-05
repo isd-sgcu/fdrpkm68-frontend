@@ -1,0 +1,80 @@
+---
+export interface Props {
+  size?: 'large' | 'small';
+  color?: 'black' | 'vivid-pink' | 'light-green' | 'light-blue' | 'light-pink' | 'light-beige';
+  class?: string;
+}
+
+const { 
+  size = 'large', 
+  color = 'black',
+  class: className = ''
+} = Astro.props;
+
+const borderSvg = `/images/popup-borders/popup-border-${size}-${color}.svg`;
+const aspectRatio = size === 'large' ? '365/783' : '342/366';
+const minHeight = size === 'large' ? '400px' : '200px';
+const contentWidth = size === 'large' ? '80%' : '75%';
+const contentHeight = size === 'large' ? '70%' : '65%';
+---
+
+<div 
+  class={`popup-container relative w-full ${className}`}
+  style={`
+    aspect-ratio: ${aspectRatio};
+    min-height: ${minHeight};
+  `}
+>
+  <!-- Background with border SVG -->
+  <div 
+    class="absolute inset-0 bg-contain bg-center bg-no-repeat"
+    style={`background-image: url('${borderSvg}'); background-size: 100% 100%;`}
+  ></div>
+  
+  <!-- Content area positioned within SVG bounds -->
+  <div 
+    class="absolute flex items-center justify-center content-area"
+    style={`
+      left: 50%;
+      top: 50%;
+      width: ${contentWidth};
+      height: ${contentHeight};
+      transform: translate(-50%, -50%);
+    `}
+  >
+    <div class="text-center w-full px-4">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .popup-container {
+    /* Full width container with proper aspect ratio */
+    position: relative;
+    width: 100%;
+    max-height: 100vh;
+    /* Ensure SVG borders are not clipped */
+    overflow: visible;
+  }
+  
+  @media (max-width: 640px) {
+    .content-area {
+      /* Adjust content area for smaller mobile */
+      width: 90% !important;
+      height: 80% !important;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .popup-container {
+      min-height: 250px !important;
+    }
+    
+    .content-area {
+      /* Adjust content area for very small mobile */
+      width: 95% !important;
+      height: 85% !important;
+    }
+  }
+</style>
