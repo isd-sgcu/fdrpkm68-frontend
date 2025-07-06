@@ -1,13 +1,21 @@
 ---
 const { house = {} } = Astro.props;
-const { name, imageURL, size, amount, capacity } = house;
+const { thName,
+  enName,
+  image,
+  thDescription,
+  enDescription,
+  instagramURL,
+  size, 
+  amount, 
+  capacity} = house;
 
 const colors = [
-    {size: "S", bgColor: "#0FF", textColor: "#000"},
-    {size: "M", bgColor: "#FF1493", textColor: "#fff"},
-    {size: "L", bgColor: "#FFB6C1", textColor: "#000"},
-    {size: "XL", bgColor: "#D38DD8", textColor: "#000"},
-    {size: "XXL", bgColor: "#2B2D42", textColor: "#fff"},
+  {size: "S", bgColor: "#0FF", textColor: "#000"},
+  {size: "M", bgColor: "#FF1493", textColor: "#fff"},
+  {size: "L", bgColor: "#FFB6C1", textColor: "#000"},
+  {size: "XL", bgColor: "#D38DD8", textColor: "#000"},
+  {size: "XXL", bgColor: "#2B2D42", textColor: "#fff"},
 ]
 
 let colorData = colors.find((color) => color.size == size)
@@ -17,17 +25,19 @@ if (!colorData) {
 ---
 
 <div
-  class="relative w-[80px] h-fit min-h-[100px] bg-white p-1 cursor-pointer"
-  data-name={name}
+  class="relative w-[80px] h-[120px] bg-white p-1 cursor-pointer"
+  data-name={thName}
+  id={`house-card-${thName}`}
+  onclick={`alert(${JSON.stringify(thName)})`}
 >
   <img 
-    src={imageURL ? imageURL : "/images/rpkm/house-blank.png"} 
-    class="w-full h-auto object-cover pb-1" 
+    src={image ? "/images/rpkm/houses/" + image : "/images/rpkm/house-blank.png"} 
+    class="object-cover pb-1 w-[73px] h-[73px]" 
   />
   <!-- Upper Content -->
   <div class="flex justify-between items-center gap-[6px] pb-1">
     <p class="w-auto text-xs text-[#2B2D42] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
-      {name}
+      {thName}
     </p>
 
     <p 

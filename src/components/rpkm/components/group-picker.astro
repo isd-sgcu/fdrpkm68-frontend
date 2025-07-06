@@ -387,6 +387,7 @@ const sampleHeadID = "6812345678"
 
       outputURL.textContent = "rpkm.sgcu.in.th/" + input.value
       outputCode.textContent = input.value
+
     } else {
       joinGroupButton.classList.add("brightness-75", "opacity-50", "cursor-not-allowed");
       joinGroupButton.classList.remove("cursor-pointer");
@@ -399,10 +400,12 @@ const sampleHeadID = "6812345678"
   headGroupBtn?.addEventListener("click", () => {
     groupDefaultView?.classList.add("hidden")
     groupHeadView?.classList.remove("hidden")
+    input.value = ""
   });
 
   joinGroupButton?.addEventListener("click", () => {
     groupPopupView?.classList.remove("hidden")
+    input.value = ""
   })
 
   submitGroupButton?.addEventListener("click", () => {
