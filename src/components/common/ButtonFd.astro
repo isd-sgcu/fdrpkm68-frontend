@@ -1,0 +1,610 @@
+---
+import { Check, X } from '@lucide/astro';
+
+export type ColorName = 'light-beige' | 'light-pink' | 'vivid-pink' | 'light-blue' | 'light-green' | 'black' | 'beige';
+
+export interface Props {
+  variant?: 'fill' | 'stroke';
+  color?: ColorName;
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  onclick?: string;
+  registrationStatus?: 'registered' | 'not-registered' | null;
+}
+
+const { 
+  variant = 'fill',
+  color = 'light-beige',
+  size = 'md',
+  disabled = false,
+  type = 'button',
+  class: className = '',
+  onclick = '',
+  registrationStatus = null
+} = Astro.props;
+---
+
+<div 
+  class={`button-container button-container--${variant} button-container--${color} button-container--${size} ${disabled ? 'button-container--disabled' : ''} ${className}`}
+  data-variant={variant}
+  data-color={color}
+  data-size={size}
+>
+  <!-- SVG Background/Border Pattern -->
+  <div class="button-background">
+    <svg class="button-svg" viewBox="0 0 264 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M262 25L236 2H262V25Z" class="svg-triangle"/>
+      <path d="M2 40.6341V2H229.702L262 30.0976V50H13.3043L2 40.6341Z" class="svg-fill"/>
+      <path d="M262 25L236 2H262V25Z" class="svg-stroke" stroke-width="3"/>
+      <path d="M2 40.6341V2H229.702L262 30.0976V50H13.3043L2 40.6341Z" class="svg-stroke" stroke-width="3"/>
+    </svg>
+  </div>
+
+  <button 
+    class="button-main"
+    type={type}
+    disabled={disabled}
+    onclick={onclick}
+    data-variant={variant}
+  >
+    <div class="button-content">
+      <slot name="icon" />
+      <slot />
+      {registrationStatus && (
+        <div class="button-status">
+          {registrationStatus === 'registered' ? (
+            <div class="button-status-icon button-status-icon--success">
+              <Check size={12} color="white" />
+            </div>
+          ) : (
+            <div class="button-status-icon button-status-icon--error">
+              <X size={12} color="white" />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  </button>
+</div>
+
+<style>
+  /* Size configurations */
+  .button-container--sm {
+    --button-width: 200px;
+    --button-height: 40px;
+    --button-font-size: 16px;
+    --button-padding: 8px 20px;
+  }
+  
+  .button-container--md {
+    --button-width: 240px;
+    --button-height: 48px;
+    --button-font-size: 18px;
+    --button-padding: 12px 24px;
+  }
+  
+  .button-container--lg {
+    --button-width: 260px;
+    --button-height: 48px;
+    --button-font-size: 20px;
+    --button-padding: 10px 24px;
+  }
+  
+  /* Color configurations for Fill variants */
+  .button-container--light-beige {
+    --default-fill: #FFFFF2;
+    --default-stroke: #CB438B;
+    --default-text: #121212;
+    --default-shadow: #CB438B;
+    --hover-fill: #FFFFF2;
+    --hover-stroke: #CB438B;
+    --hover-text: #121212;
+    --hover-shadow: #CB438B;
+    --disabled-fill: rgba(255, 255, 242, 0.5);
+    --disabled-stroke: rgba(203, 67, 139, 0.5);
+    --disabled-text: rgba(18, 18, 18, 0.5);
+    --disabled-shadow: rgba(203, 67, 139, 0.5);
+  }
+  
+  /* Stroke variant overrides for light-beige */
+  .button-container--stroke.button-container--light-beige {
+    --default-stroke: #FFFFF2;
+    --default-shadow: #FFFFF2;
+    --default-text: #FFFFF2;
+    --hover-fill: #FFFFF2;
+    --hover-stroke: #FFFFF2;
+    --hover-text: #121212;
+    --hover-shadow: #FFFFF2;
+    --disabled-stroke: rgba(255, 255, 242, 0.2);
+    --disabled-text: rgba(255, 255, 242, 0.2);
+    --disabled-shadow: rgba(255, 255, 242, 0.2);
+  }
+  
+  .button-container--light-pink {
+    --default-fill: #FFE4E1;
+    --default-stroke: #CB438B;
+    --default-text: #121212;
+    --default-shadow: #CB438B;
+    --hover-fill: #121212;
+    --hover-stroke: #121212;
+    --hover-text: #FFFFFF;
+    --hover-shadow: #FFFFF2;
+    --disabled-fill: rgba(255, 228, 225, 0.5);
+    --disabled-stroke: rgba(203, 67, 139, 0.5);
+    --disabled-text: rgba(18, 18, 18, 0.5);
+    --disabled-shadow: rgba(203, 67, 139, 0.5);
+  }
+  
+  /* Stroke variant overrides for light-pink */
+  .button-container--stroke.button-container--light-pink {
+    --default-stroke: #FFE4E1;
+    --default-shadow: #FFE4E1;
+    --default-text: #FFE4E1;
+    --hover-fill: #FFE4E1;
+    --hover-stroke: #FFE4E1;
+    --hover-text: #121212;
+    --hover-shadow: #FFE4E1;
+    --disabled-stroke: rgba(255, 228, 225, 0.2);
+    --disabled-text: rgba(255, 228, 225, 0.2);
+    --disabled-shadow: rgba(255, 228, 225, 0.2);
+  }
+  
+  .button-container--vivid-pink {
+    --default-fill: #CB438B;
+    --default-stroke: #FFFFF2;
+    --default-text: #FFFFFF;
+    --default-shadow: #CB438B;
+    --hover-fill: #121212;
+    --hover-stroke: #CB438B;
+    --hover-text: #FFFFFF;
+    --hover-shadow: #FFFFF2;
+    --disabled-fill: rgba(203, 67, 139, 0.5);
+    --disabled-stroke: rgba(255, 255, 242, 0.5);
+    --disabled-text: rgba(255, 255, 255, 0.5);
+    --disabled-shadow: rgba(203, 67, 139, 0.5);
+  }
+  
+  /* Stroke variant overrides for vivid-pink */
+  .button-container--stroke.button-container--vivid-pink {
+    --default-stroke: #CB438B;
+    --default-shadow: #CB438B;
+    --default-text: #CB438B;
+    --hover-fill: #CB438B;
+    --hover-stroke: #CB438B;
+    --hover-text: #FFFFFF;
+    --hover-shadow: #CB438B;
+    --disabled-stroke: rgba(203, 67, 139, 0.2);
+    --disabled-text: rgba(203, 67, 139, 0.2);
+    --disabled-shadow: rgba(203, 67, 139, 0.2);
+  }
+  
+  
+  .button-container--light-blue {
+    --default-fill: #D8F3F1;
+    --default-stroke: #CB438B;
+    --default-text: #121212;
+    --default-shadow: #CB438B;
+    --hover-fill: #121212;
+    --hover-stroke: #121212;
+    --hover-text: #FFFFFF;
+    --hover-shadow: #FFFFF2;
+    --disabled-fill: rgba(216, 243, 241, 0.5);
+    --disabled-stroke: rgba(203, 67, 139, 0.5);
+    --disabled-text: rgba(18, 18, 18, 0.5);
+    --disabled-shadow: rgba(203, 67, 139, 0.5);
+  }
+  
+  /* Stroke variant overrides for light-blue */
+  .button-container--stroke.button-container--light-blue {
+    --default-stroke: #D8F3F1;
+    --default-shadow: #D8F3F1;
+    --default-text: #D8F3F1;
+    --hover-fill: #D8F3F1;
+    --hover-stroke: #D8F3F1;
+    --hover-text: #121212;
+    --hover-shadow: #D8F3F1;
+    --disabled-stroke: rgba(216, 243, 241, 0.2);
+    --disabled-text: rgba(216, 243, 241, 0.2);
+    --disabled-shadow: rgba(216, 243, 241, 0.2);
+  }
+  
+  .button-container--light-green {
+    --default-fill: #C6EBC5;
+    --default-stroke: #CB438B;
+    --default-text: #121212;
+    --default-shadow: #CB438B;
+    --hover-fill: #121212;
+    --hover-stroke: #121212;
+    --hover-text: #FFFFFF;
+    --hover-shadow: #FFFFF2;
+    --disabled-fill: rgba(198, 235, 197, 0.5);
+    --disabled-stroke: rgba(203, 67, 139, 0.5);
+    --disabled-text: rgba(18, 18, 18, 0.5);
+    --disabled-shadow: rgba(203, 67, 139, 0.5);
+  }
+  
+  /* Stroke variant overrides for light-green */
+  .button-container--stroke.button-container--light-green {
+    --default-stroke: #C6EBC5;
+    --default-shadow: #C6EBC5;
+    --default-text: #C6EBC5;
+    --hover-fill: #C6EBC5;
+    --hover-stroke: #C6EBC5;
+    --hover-text: #121212;
+    --hover-shadow: #C6EBC5;
+    --disabled-stroke: rgba(198, 235, 197, 0.2);
+    --disabled-text: rgba(198, 235, 197, 0.2);
+    --disabled-shadow: rgba(198, 235, 197, 0.2);
+  }
+  
+  .button-container--black {
+    --default-fill: #121212;
+    --default-stroke: #CB438B;
+    --default-text: #FFFFFF;
+    --default-shadow: #121212;
+    --hover-fill: #000000;
+    --hover-stroke: #CB438B;
+    --hover-text: #FFFFFF;
+    --hover-shadow: #CB438B;
+    --disabled-fill: rgba(18, 18, 18, 0.5);
+    --disabled-stroke: rgba(203, 67, 139, 0.5);
+    --disabled-text: rgba(255, 255, 255, 0.5);
+    --disabled-shadow: rgba(18, 18, 18, 0.5);
+  }
+  
+  /* Stroke variant overrides for black */
+  .button-container--stroke.button-container--black {
+    --default-stroke: #121212;
+    --default-shadow: #121212;
+    --default-text: #121212;
+    --hover-fill: #121212;
+    --hover-stroke: #121212;
+    --hover-text: #FFFFFF;
+    --hover-shadow: #121212;
+    --disabled-stroke: rgba(18, 18, 18, 0.2);
+    --disabled-text: rgba(18, 18, 18, 0.2);
+    --disabled-shadow: rgba(18, 18, 18, 0.2);
+  }
+  
+  .button-container--beige {
+    --default-fill: #fff0d2;
+    --default-stroke: #CB438B;
+    --default-text: #121212;
+    --default-shadow: #CB438B;
+    --hover-fill: #121212;
+    --hover-stroke: #121212;
+    --hover-text: #FFFFFF;
+    --hover-shadow: #FFFFF2;
+    --disabled-fill: rgba(255, 240, 210, 0.5);
+    --disabled-stroke: rgba(203, 67, 139, 0.5);
+    --disabled-text: rgba(18, 18, 18, 0.5);
+    --disabled-shadow: rgba(203, 67, 139, 0.5);
+  }
+  
+  /* Stroke variant overrides for beige */
+  .button-container--stroke.button-container--beige {
+    --default-stroke: #fff0d2;
+    --default-shadow: #fff0d2;
+    --default-text: #fff0d2;
+    --hover-fill: #fff0d2;
+    --hover-stroke: #fff0d2;
+    --hover-text: #121212;
+    --hover-shadow: #fff0d2;
+    --disabled-stroke: rgba(255, 240, 210, 0.2);
+    --disabled-text: rgba(255, 240, 210, 0.2);
+    --disabled-shadow: rgba(255, 240, 210, 0.2);
+  }
+  
+  /* Main container styling */
+  .button-container {
+    display: inline-block;
+    position: relative;
+    width: var(--button-width);
+    height: var(--button-height);
+    transition: all 0.2s ease;
+    /* Add default glow effect */
+    filter: drop-shadow(0px 0px 6px var(--default-shadow));
+  }
+  
+  .button-background {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  
+  .button-svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* SVG styling for different states */
+  .svg-fill {
+    fill: var(--default-fill);
+    transition: fill 0.2s ease;
+  }
+  
+  .svg-triangle {
+    fill: var(--default-fill); /* Triangle follows background color */
+    transition: fill 0.2s ease;
+  }
+  
+  .svg-stroke {
+    stroke: var(--default-stroke);
+    fill: none;
+    transition: stroke 0.2s ease;
+  }
+  
+  /* Fill variant shows both fill and stroke, stroke variant shows stroke only */
+  .button-container[data-variant="stroke"] .svg-fill {
+    fill: transparent;
+  }
+  
+  /* Stroke variant - triangle filled with stroke color */
+  .button-container[data-variant="stroke"] .svg-triangle {
+    fill: var(--default-stroke);
+  }
+  
+  /* Fill variant hover - changes background and border color */
+  .button-container[data-variant="fill"]:hover {
+    filter: drop-shadow(0px 0px 12px var(--hover-shadow));
+  }
+  
+  .button-container[data-variant="fill"]:hover .svg-fill {
+    fill: var(--hover-fill);
+  }
+  
+  .button-container[data-variant="fill"]:hover .svg-stroke {
+    stroke: var(--hover-stroke);
+  }
+  
+  .button-container[data-variant="fill"]:hover .svg-triangle {
+    fill: var(--hover-fill);
+  }
+  
+  /* Stroke variant hover - fills with stroke color */
+  .button-container[data-variant="stroke"]:hover {
+    filter: drop-shadow(0px 0px 12px var(--hover-shadow));
+  }
+  
+  .button-container[data-variant="stroke"]:hover .svg-fill {
+    fill: var(--hover-stroke);
+  }
+  
+  .button-container[data-variant="stroke"]:hover .svg-stroke {
+    stroke: var(--hover-stroke);
+  }
+  
+  .button-container[data-variant="stroke"]:hover .svg-triangle {
+    fill: var(--hover-stroke);
+  }
+  
+  /* Container active/press effects (same as hover per Figma) */
+  .button-container[data-variant="fill"]:active {
+    filter: drop-shadow(0px 0px 12px var(--hover-shadow));
+  }
+  
+  .button-container[data-variant="fill"]:active .svg-fill {
+    fill: var(--hover-fill);
+  }
+  
+  .button-container[data-variant="fill"]:active .svg-stroke {
+    stroke: var(--hover-stroke);
+  }
+  
+  .button-container[data-variant="fill"]:active .svg-triangle {
+    fill: var(--hover-fill);
+  }
+  
+  .button-container[data-variant="stroke"]:active {
+    filter: drop-shadow(0px 0px 12px var(--hover-shadow));
+  }
+  
+  .button-container[data-variant="stroke"]:active .svg-fill {
+    fill: var(--hover-stroke);
+  }
+  
+  .button-container[data-variant="stroke"]:active .svg-stroke {
+    stroke: var(--hover-stroke);
+  }
+  
+  .button-container[data-variant="stroke"]:active .svg-triangle {
+    fill: var(--hover-stroke);
+  }
+  
+  .button-main {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-weight: 400;
+    line-height: 1.4;
+    font-size: var(--button-font-size);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    border: none;
+    outline: none;
+    background: transparent;
+    text-shadow: none !important;
+    /* Text color based on variant */
+    color: var(--default-text);
+  }
+  
+  /* Text color for stroke variant - should be stroke color */
+  .button-main[data-variant="stroke"] {
+    color: var(--default-stroke);
+    text-shadow: none !important;
+  }
+  
+  /* Hover state */
+  .button-main:hover {
+    color: var(--hover-text);
+    transition: color 0.15s ease;
+    text-shadow: none !important;
+  }
+  
+  .button-main[data-variant="stroke"]:hover {
+    color: var(--hover-text); /* Use hover text color when stroke variant fills */
+    text-shadow: none !important;
+  }
+  
+  /* Press/Active state (same as hover per Figma) */
+  .button-main:active,
+  .button-main:focus:active {
+    color: var(--hover-text);
+    transition: color 0.1s ease;
+    text-shadow: none !important;
+  }
+  
+  .button-main[data-variant="stroke"]:active {
+    color: var(--hover-text); /* Use hover text color when stroke variant fills */
+    text-shadow: none !important;
+  }
+  
+  /* Focus state */
+  .button-main:focus {
+    outline: none;
+  }
+  
+  /* Disabled states */
+  .button-main:disabled {
+    cursor: not-allowed;
+    color: var(--disabled-text);
+  }
+  
+  .button-main[data-variant="stroke"]:disabled {
+    color: var(--disabled-text);
+    text-shadow: none !important;
+  }
+  
+  .button-main:disabled:hover {
+    color: var(--disabled-text);
+  }
+  
+  .button-main[data-variant="stroke"]:disabled:hover {
+    color: var(--disabled-text);
+    text-shadow: none !important;
+  }
+  
+  /* Disabled container effects */
+  .button-container:has(.button-main:disabled) {
+    filter: drop-shadow(0px 0px 5px var(--disabled-shadow));
+  }
+  
+  .button-container:has(.button-main:disabled) .svg-fill {
+    fill: var(--disabled-fill);
+  }
+  
+  .button-container:has(.button-main:disabled) .svg-stroke {
+    stroke: var(--disabled-stroke);
+  }
+  
+  .button-container:has(.button-main:disabled) .svg-triangle {
+    fill: var(--disabled-fill);
+  }
+  
+  /* Stroke variant disabled - no background fill */
+  .button-container[data-variant="stroke"]:has(.button-main:disabled) .svg-fill {
+    fill: transparent !important;
+  }
+  
+  .button-container[data-variant="stroke"]:has(.button-main:disabled) .svg-triangle {
+    fill: transparent !important;
+  }
+  
+  /* Prevent hover effects on disabled buttons */
+  .button-container:has(.button-main:disabled):hover {
+    filter: drop-shadow(0px 0px 5px var(--disabled-shadow)) !important;
+  }
+  
+  .button-container:has(.button-main:disabled):hover .svg-fill {
+    fill: var(--disabled-fill) !important;
+  }
+  
+  .button-container:has(.button-main:disabled):hover .svg-stroke {
+    stroke: var(--disabled-stroke) !important;
+  }
+  
+  .button-container:has(.button-main:disabled):hover .svg-triangle {
+    fill: var(--disabled-fill) !important;
+  }
+  
+  /* Stroke variant disabled hover - no background fill */
+  .button-container[data-variant="stroke"]:has(.button-main:disabled):hover .svg-fill {
+    fill: transparent !important;
+  }
+  
+  .button-container[data-variant="stroke"]:has(.button-main:disabled):hover .svg-triangle {
+    fill: transparent !important;
+  }
+  
+  /* Prevent active effects on disabled buttons */
+  .button-container:has(.button-main:disabled):active {
+    filter: drop-shadow(0px 0px 5px var(--disabled-shadow)) !important;
+  }
+  
+  .button-container:has(.button-main:disabled):active .svg-fill {
+    fill: var(--disabled-fill) !important;
+  }
+  
+  .button-container:has(.button-main:disabled):active .svg-stroke {
+    stroke: var(--disabled-stroke) !important;
+  }
+  
+  .button-container:has(.button-main:disabled):active .svg-triangle {
+    fill: var(--disabled-fill) !important;
+  }
+  
+  /* Stroke variant disabled active - no background fill */
+  .button-container[data-variant="stroke"]:has(.button-main:disabled):active .svg-fill {
+    fill: transparent !important;
+  }
+  
+  .button-container[data-variant="stroke"]:has(.button-main:disabled):active .svg-triangle {
+    fill: transparent !important;
+  }
+  
+  .button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+    text-shadow: none !important;
+    padding: var(--button-padding);
+  }
+  
+  .button-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+  }
+  
+  .button-status-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .button-status-icon--success {
+    background-color: #22c55e;
+  }
+  
+  .button-status-icon--error {
+    background-color: #ef4444;
+  }
+  
+  /* Focus styles */
+  .button-main:focus-visible {
+    outline: none;
+  }
+</style>
