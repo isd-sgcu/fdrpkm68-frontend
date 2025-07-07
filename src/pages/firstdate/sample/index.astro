@@ -1,0 +1,13 @@
+---
+import QRCode from "qrcode"
+
+// TODO: GET data from Somewhere
+const studentId = "1234567890";
+const nationalId = "1234567890123";
+
+const baseUrl = import.meta.env.PUBLIC_SITE_URL
+const targetUrl = `${baseUrl}/firstdate/sample?studentId=${studentId}&nationalId=${nationalId}`;
+const qrCodeData = await QRCode.toDataURL(targetUrl);
+---
+
+<img src={qrCodeData} alt="QR Code for Icy" class="w-1/2 mx-auto" />
