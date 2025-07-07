@@ -1,4 +1,31 @@
 ---
+/**
+ * Frame Component
+ * 
+ * @component
+ * @example
+ * ```astro
+ * <Frame>
+ *   <div class="p-6">
+ *     <h2>Featured Content</h2>
+ *     <p>Your important content goes here</p>
+ *   </div>
+ * </Frame>
+ * ```
+ * 
+ * @example
+ * ```astro
+ * <!-- Large purple frame for hero sections -->
+ * <Frame size="lg" color="purple">
+ *   <slot />
+ * </Frame>
+ * ```
+ * 
+ * @param {('xs'|'sm'|'md'|'lg')} [size='lg'] - Frame size
+ * @param {('blue'|'purple')} [color='blue'] - Frame color theme
+ * @param {string} [class] - Additional CSS classes
+  */
+
 export interface Props {
   size?: 'lg' | 'md' | 'sm' | 'xs';
   color?: 'blue' | 'purple';
@@ -13,42 +40,32 @@ const {
 
 const frameSvg = `/images/frame/frame-${color}-${size}.svg`;
 
-// SVG dimensions and content positioning based on actual frame SVG files in Figma
-const getSizeConfig = (size: string) => {
-  switch (size) {
-    case 'lg':
-      return {
-        aspectRatio: '346/550',
-        minHeight: '550px',
-      };
-    case 'md':
-      return {
-        aspectRatio: '346/430',
-        minHeight: '430px',
-      };
-    case 'sm':
-      return {
-        aspectRatio: '346/340',
-        minHeight: '340px',
-      };
-    case 'xs':
-      return {
-        aspectRatio: '346/248',
-        minHeight: '248px',
-      };
-    default:
-      return {
-        aspectRatio: '346/550',
-        minHeight: '550px',
-      };
+// Size configuration with aspect ratios and minimum heights
+const sizeConfig = {
+  lg: {
+    aspectRatio: '346/550',
+    minHeight: '550px',
+  },
+  md: {
+    aspectRatio: '346/430',
+    minHeight: '430px',
+  },
+  sm: {
+    aspectRatio: '346/340',
+    minHeight: '340px',
+  },
+  xs: {
+    aspectRatio: '346/248',
+    minHeight: '248px',
   }
 };
 
-const config = getSizeConfig(size);
+const config = sizeConfig[size];
 ---
 
 <div 
-  class={`frame-container relative w-full ${className}`}
+  class={`frame-container relative w-full max-h-screen overflow-visible ${className}`}
+  data-size={size}
   style={`
     aspect-ratio: ${config.aspectRatio};
     min-height: ${config.minHeight};
@@ -56,30 +73,68 @@ const config = getSizeConfig(size);
 >
   <!-- Frame SVG background -->
   <div 
-    class="absolute inset-0 bg-contain bg-center bg-no-repeat"
+    class="absolute inset-0 bg-center bg-no-repeat"
     style={`background-image: url('${frameSvg}'); background-size: 100% 100%;`}
   ></div>
   
+  <!-- Content area with proper clipping -->
   <div 
-    class="absolute inset-0 flex items-center justify-center content-area"
+    class="absolute inset-0 flex items-center justify-center content-area frame-content-clip overflow-y-auto overflow-x-hidden"
   >
-    <div class="text-center w-full max-w-full">
+    <div class="text-center w-full max-w-full px-8 py-6">
       <slot />
     </div>
   </div>
 </div>
 
 <style>
-  .frame-container {
-    position: relative;
-    width: 100%;
-    max-height: 100vh;
-    overflow: visible;
+  /* Size-specific content margins - cannot be easily replicated with Tailwind arbitrary values */
+  .frame-container[data-size="lg"] .frame-content-clip {
+    margin: 8% 10%;
+  }
+  
+  .frame-container[data-size="md"] .frame-content-clip {
+    margin: 6% 9%;
+  }
+  
+  .frame-container[data-size="sm"] .frame-content-clip {
+    margin: 5% 8%;
+  }
+  
+  .frame-container[data-size="xs"] .frame-content-clip {
+    margin: 4% 7%;
+  }
+  
+  /* Custom scrollbar styling */
+  .frame-content-clip {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  }
+  
+  .frame-content-clip::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .frame-content-clip::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .frame-content-clip::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+  }
+  
+  .frame-content-clip::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
   }
   
   @media (max-width: 480px) {
     .frame-container {
       min-height: 200px !important;
+    }
+    
+    .frame-content-clip {
+      margin: 3% 5% !important;
     }
   }
 </style>

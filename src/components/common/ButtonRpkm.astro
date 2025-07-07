@@ -1,4 +1,36 @@
 ---
+/**
+ * ButtonRpkm
+ * @example
+ * // Basic usage
+ * <ButtonRpkm>Click me</ButtonRpkm>
+ * 
+ * @example
+ * // Different colors and sizes
+ * <ButtonRpkm color="blue" size="lg">Large Blue Button</ButtonRpkm>
+ * <ButtonRpkm variant="stroke" color="pink">Outlined Pink</ButtonRpkm>
+ * 
+ * @example
+ * // With icon slot
+ * <ButtonRpkm color="purple">
+ *   <Icon slot="icon" name="play" />
+ *   Start Game
+ * </ButtonRpkm>
+ * 
+ * Features:
+ * - Fill variant: Gradient backgrounds with different patterns based on size
+ * - Stroke variant: SVG-generated borders with edge cuts
+ * - 4 color themes: purple, blue, pink, black
+ * - 4 sizes: xs (104px), sm (128px), md (176px), lg (256px)
+ * - Large buttons get a special triple-point gradient effect
+ * 
+ * @param {('fill'|'stroke')} variant - Button style (default: 'fill')
+ * @param {('purple'|'blue'|'pink'|'black')} color - Color theme (default: 'purple') 
+ * @param {('xs'|'sm'|'md'|'lg')} size - Button size (default: 'md')
+ * @param {boolean} disabled - Disabled state
+ * @param {string} class - Additional CSS classes
+ */
+
 export type RpkmColorName = 'purple' | 'blue' | 'pink' | 'black';
 
 export interface Props {
@@ -6,9 +38,7 @@ export interface Props {
   color?: RpkmColorName;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   disabled?: boolean;
-  type?: 'button' | 'submit' | 'reset';
   class?: string;
-  onclick?: string;
 }
 
 const { 
@@ -16,64 +46,55 @@ const {
   color = 'purple',
   size = 'md',
   disabled = false,
-  type = 'button',
   class: className = '',
-  onclick = ''
+  ...restProps
 } = Astro.props;
 
-// RPKM Colors configuration using exact Figma colors
+// Color configuration for different variants
 const colorConfig = {
   purple: {
     fill: {
       base: 'text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]',
-      active: '',
       disabled: 'disabled:opacity-50'
     },
     stroke: {
       base: 'bg-transparent text-[#8a2be4] relative',
-      active: '',
       disabled: 'disabled:opacity-50'
     }
   },
   blue: {
     fill: {
       base: 'text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]',
-      active: '',
       disabled: 'disabled:opacity-50'
     },
     stroke: {
       base: 'bg-transparent text-[#00ffff] relative',
-      active: '',
       disabled: 'disabled:opacity-50'
     }
   },
   pink: {
     fill: {
       base: 'text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]',
-      active: '',
       disabled: 'disabled:opacity-50'
     },
     stroke: {
       base: 'bg-transparent text-[#ff1493] relative',
-      active: '',
       disabled: 'disabled:opacity-50'
     }
   },
   black: {
     fill: {
       base: 'text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]',
-      active: '',
       disabled: 'disabled:opacity-50'
     },
     stroke: {
       base: 'bg-transparent text-[#2b2d42] relative',
-      active: '',
       disabled: 'disabled:opacity-50'
     }
   }
 };
 
-// Size configuration with Tailwind classes
+// Size configuration for different button sizes
 const sizeConfig = {
   xs: { 
     classes: 'px-3 py-2 text-sm',
@@ -101,74 +122,61 @@ const sizeConfig = {
   }
 };
 
+// Get current configurations
 const currentColorConfig = colorConfig[color][variant];
 const currentSizeConfig = sizeConfig[size];
 
-// Font family classes based on size
-const fontConfig = {
-  xs: 'font-ibm-plex-sans-thai',
-  sm: 'font-ibm-plex-sans-thai',
-  md: 'font-ibm-plex-sans-thai', 
-  lg: 'font-ibm-plex-sans-thai'
-};
-
-// Generate complete class list using Tailwind classes
+// Generate button classes
 const buttonClasses = [
-  // Base button classes
+  // Base styles
   'relative inline-flex items-center justify-center font-medium',
   'transition-all duration-200 ease-in-out',
   'focus:outline-none focus:ring-2 focus:ring-offset-2',
   'disabled:cursor-not-allowed',
   
-  // Size classes
+  // Size and typography
   currentSizeConfig.classes,
   currentSizeConfig.width,
   currentSizeConfig.height,
+  'font-ibm-plex-sans-thai',
   
-  // Font classes
-  fontConfig[size],
-  
-  // Color classes
+  // Color and state
   currentColorConfig.base,
   currentColorConfig.disabled,
   
-  // Add edge cuts for RPKM style
+  // Edge cuts for RPKM style
   'cut-edge-all',
   
   // Custom classes
   className
 ].filter(Boolean).join(' ');
 
-// Custom gradient styles for each color variant (fill only)
+// Generate gradient background for fill variants
 const getGradientStyle = () => {
   if (variant !== 'fill') return '';
   
-  // Exact Figma color variables
-  const figmaColors = {
-    purple: '#8a2be4', // RPKM/Main_Purple
-    blue: '#00ffff',   // RPKM/Main_Blue
-    pink: '#ff1493',   // RPKM/Main_Hot pink
-    black: '#2b2d42',  // RPKM/Main_Navy (for black buttons)
-    navy: '#2b2d42',   // RPKM/Main_Navy
-    subBlack: '#000000' // RPKM/Sub_Black
+  // Figma color palette
+  const colors = {
+    purple: '#8a2be4',
+    blue: '#00ffff',
+    pink: '#ff1493',
+    black: '#2b2d42',
+    navy: '#2b2d42',
+    subBlack: '#000000'
   };
   
-  const mainColor = figmaColors[color];
-  const navyColor = figmaColors.navy;
+  const mainColor = colors[color];
+  const navyColor = colors.navy;
   
-  // For black buttons, use navy and black colors instead of black as main
-  const blackMainColor = color === 'black' ? navyColor : mainColor;
-  const blackSecondColor = color === 'black' ? figmaColors.subBlack : navyColor;
+  // Special handling for black buttons
+  const primaryColor = color === 'black' ? navyColor : mainColor;
+  const secondaryColor = color === 'black' ? colors.subBlack : navyColor;
   
-  // Size-based gradient patterns using only Figma colors
+  // Different gradient patterns based on size
   if (size === 'lg') {
-    // lg buttons: 0% main color, 50% navy, 100% main color
-    // For black: 0% navy, 50% black, 100% navy
-    return `background: linear-gradient(90deg, ${blackMainColor} 0%, ${blackSecondColor} 50%, ${blackMainColor} 100%);`;
+    return `background: linear-gradient(90deg, ${primaryColor} 0%, ${secondaryColor} 50%, ${primaryColor} 100%);`;
   } else {
-    // xs, sm, md buttons: 0% main color, 100% navy
-    // For black: 0% navy, 100% black
-    return `background: linear-gradient(90deg, ${blackMainColor} 0%, ${blackSecondColor} 100%);`;
+    return `background: linear-gradient(90deg, ${primaryColor} 0%, ${secondaryColor} 100%);`;
   }
 };
 
@@ -176,27 +184,28 @@ const getGradientStyle = () => {
 const getSvgBorder = () => {
   if (variant !== 'stroke') return '';
   
-  const figmaColors = {
+  const colors = {
     purple: '#8a2be4',
     blue: '#00ffff',
     pink: '#ff1493',
     black: '#2b2d42'
   };
   
-  const strokeColor = figmaColors[color];
-  const { width: widthClass, height: heightClass } = currentSizeConfig;
+  const strokeColor = colors[color];
+  const widthClass = currentSizeConfig.width;
   
-  // Convert Tailwind width/height to actual pixel values
-  const dimensions: Record<string, { width: number; height: number }> = {
-    'w-26': { width: 104, height: 40 }, // xs
-    'w-32': { width: 128, height: 48 }, // sm
-    'w-44': { width: 176, height: 48 }, // md
-    'w-64': { width: 256, height: 48 }  // lg
+  // Size to pixel mapping for SVG generation
+  const dimensions = {
+    'w-26': { width: 104, height: 40 },
+    'w-32': { width: 128, height: 48 },
+    'w-44': { width: 176, height: 48 },
+    'w-64': { width: 256, height: 48 }
   };
   
-  const { width, height } = dimensions[widthClass] || { width: 176, height: 48 };
+  const { width, height } = dimensions[widthClass as keyof typeof dimensions] || { width: 176, height: 48 };
   const cutSize = 20;
   
+  // Create SVG path with edge cuts
   const svgPath = `M${cutSize},0 L${width},0 L${width},${height - cutSize} L${width - cutSize},${height} L0,${height} L0,${cutSize} Z`;
   
   const svgDataUrl = `data:image/svg+xml,${encodeURIComponent(`
@@ -209,29 +218,14 @@ const getSvgBorder = () => {
 };
 ---
 
-<style>
-  .rpkm-button:focus:not(:disabled) {
-    outline: 2px solid rgba(255, 255, 255, 0.3);
-    outline-offset: 2px;
-  }
-  
-  /* SVG border positioning for stroke variants */
-  .rpkm-button[data-variant="stroke"] {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-  }
-</style>
-
 <button 
-  class={`${buttonClasses} rpkm-button`}
+  class={`${buttonClasses} focus:outline-2 focus:outline-white/30 focus:outline-offset-2 focus:disabled:outline-none ${variant === 'stroke' ? 'bg-no-repeat bg-center bg-contain' : ''}`}
   style={`${getGradientStyle()}${getSvgBorder()}`}
-  type={type}
   disabled={disabled}
-  onclick={onclick}
   data-variant={variant}
   data-color={color}
   data-size={size}
+  {...restProps}
 >
   <slot name="icon" />
   <slot />

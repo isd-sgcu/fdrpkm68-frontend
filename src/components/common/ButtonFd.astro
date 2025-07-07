@@ -1,4 +1,45 @@
 ---
+/**
+ * ButtonFd
+ * @example basic
+ * ```astro
+ * <ButtonFd>Click me</ButtonFd>
+ * <ButtonFd color="vivid-pink">Pink Button</ButtonFd>
+ * <ButtonFd size="lg">Large Button</ButtonFd>
+ * ```
+ * 
+ * @example stroke
+ * ```astro
+ * <!-- Outline style with custom class -->
+ * <ButtonFd variant="stroke" color="vivid-pink" size="lg" class="my-4">
+ *   Large Pink Outline
+ * </ButtonFd>
+ * 
+ * <!-- With icon using slot -->
+ * <ButtonFd color="light-blue">
+ *   <Heart slot="icon" size={20} />
+ *   Like This
+ * </ButtonFd>
+ * 
+ * <!-- Status indicators -->
+ * <ButtonFd registrationStatus="registered" color="light-green">
+ *   Registration Complete
+ * </ButtonFd>
+ * 
+ * <!-- Disabled state -->
+ * <ButtonFd disabled color="black">
+ *   Disabled Button
+ * </ButtonFd>
+ * ```
+ * 
+ * @param variant - Button style: 'fill' for solid background, 'stroke' for outline only
+ * @param color - Color theme from our design system palette
+ * @param size - Button dimensions: 'sm', 'md', or 'lg'
+ * @param disabled - Disables button interaction
+ * @param class - Additional CSS classes
+ * @param registrationStatus - Shows status icon (experimental feature)
+ */
+
 import { Check, X } from '@lucide/astro';
 
 export type ColorName = 'light-beige' | 'light-pink' | 'vivid-pink' | 'light-blue' | 'light-green' | 'black' | 'beige';
@@ -8,9 +49,7 @@ export interface Props {
   color?: ColorName;
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
-  type?: 'button' | 'submit' | 'reset';
   class?: string;
-  onclick?: string;
   registrationStatus?: 'registered' | 'not-registered' | null;
 }
 
@@ -19,22 +58,41 @@ const {
   color = 'light-beige',
   size = 'md',
   disabled = false,
-  type = 'button',
   class: className = '',
-  onclick = '',
-  registrationStatus = null
+  registrationStatus = null,
+  ...restProps
 } = Astro.props;
+
+const sizeConfig = {
+  sm: {
+    container: 'w-[200px] h-[40px]',
+    text: 'text-base',
+    padding: 'px-5 py-2'
+  },
+  md: {
+    container: 'w-[240px] h-[48px]',
+    text: 'text-lg',
+    padding: 'px-6 py-3'
+  },
+  lg: {
+    container: 'w-[260px] h-[48px]',
+    text: 'text-xl',
+    padding: 'px-6 py-2.5'
+  }
+};
+
+const currentSize = sizeConfig[size];
 ---
 
 <div 
-  class={`button-container button-container--${variant} button-container--${color} button-container--${size} ${disabled ? 'button-container--disabled' : ''} ${className}`}
+  class={`button-container button-container--${variant} button-container--${color} relative inline-block transition-all duration-200 ease-in-out ${currentSize.container} ${disabled ? 'button-container--disabled' : ''} ${className}`}
   data-variant={variant}
   data-color={color}
   data-size={size}
 >
   <!-- SVG Background/Border Pattern -->
-  <div class="button-background">
-    <svg class="button-svg" viewBox="0 0 264 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <div class="absolute inset-0 pointer-events-none">
+    <svg class="w-full h-full" viewBox="0 0 264 52" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M262 25L236 2H262V25Z" class="svg-triangle"/>
       <path d="M2 40.6341V2H229.702L262 30.0976V50H13.3043L2 40.6341Z" class="svg-fill"/>
       <path d="M262 25L236 2H262V25Z" class="svg-stroke" stroke-width="3"/>
@@ -43,23 +101,22 @@ const {
   </div>
 
   <button 
-    class="button-main"
-    type={type}
+    class={`button-main relative flex items-center justify-center w-full h-full font-ibm-plex-sans-thai font-normal leading-relaxed ${currentSize.text} cursor-pointer transition-colors duration-200 ease-in-out border-0 outline-none bg-transparent focus:outline-none disabled:cursor-not-allowed ${disabled ? 'opacity-50' : ''}`}
     disabled={disabled}
-    onclick={onclick}
     data-variant={variant}
+    {...restProps}
   >
-    <div class="button-content">
+    <div class={`flex items-center justify-center gap-2 relative z-10 ${currentSize.padding}`}>
       <slot name="icon" />
       <slot />
       {registrationStatus && (
-        <div class="button-status">
+        <div class="flex items-center justify-center ml-2">
           {registrationStatus === 'registered' ? (
-            <div class="button-status-icon button-status-icon--success">
+            <div class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
               <Check size={12} color="white" />
             </div>
           ) : (
-            <div class="button-status-icon button-status-icon--error">
+            <div class="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
               <X size={12} color="white" />
             </div>
           )}
@@ -70,27 +127,7 @@ const {
 </div>
 
 <style>
-  /* Size configurations */
-  .button-container--sm {
-    --button-width: 200px;
-    --button-height: 40px;
-    --button-font-size: 16px;
-    --button-padding: 8px 20px;
-  }
-  
-  .button-container--md {
-    --button-width: 240px;
-    --button-height: 48px;
-    --button-font-size: 18px;
-    --button-padding: 12px 24px;
-  }
-  
-  .button-container--lg {
-    --button-width: 260px;
-    --button-height: 48px;
-    --button-font-size: 20px;
-    --button-padding: 10px 24px;
-  }
+  /* Essential SVG Color Theming */
   
   /* Color configurations for Fill variants */
   .button-container--light-beige {
@@ -297,26 +334,9 @@ const {
     --disabled-shadow: rgba(255, 240, 210, 0.2);
   }
   
-  /* Main container styling */
+  /* Essential container styling - only properties not covered by Tailwind */
   .button-container {
-    display: inline-block;
-    position: relative;
-    width: var(--button-width);
-    height: var(--button-height);
-    transition: all 0.2s ease;
-    /* Add default glow effect */
     filter: drop-shadow(0px 0px 6px var(--default-shadow));
-  }
-  
-  .button-background {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-  
-  .button-svg {
-    width: 100%;
-    height: 100%;
   }
   
   /* SVG styling for different states */
@@ -326,7 +346,7 @@ const {
   }
   
   .svg-triangle {
-    fill: var(--default-fill); /* Triangle follows background color */
+    fill: var(--default-fill);
     transition: fill 0.2s ease;
   }
   
@@ -414,80 +434,29 @@ const {
   }
   
   .button-main {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-weight: 400;
-    line-height: 1.4;
-    font-size: var(--button-font-size);
-    cursor: pointer;
-    transition: color 0.2s ease;
-    border: none;
-    outline: none;
-    background: transparent;
-    text-shadow: none !important;
-    /* Text color based on variant */
     color: var(--default-text);
+    text-shadow: none !important;
+    transition: color 0.2s ease;
   }
   
-  /* Text color for stroke variant - should be stroke color */
+  /* Text color states */
   .button-main[data-variant="stroke"] {
     color: var(--default-stroke);
-    text-shadow: none !important;
   }
   
-  /* Hover state */
   .button-main:hover {
     color: var(--hover-text);
     transition: color 0.15s ease;
-    text-shadow: none !important;
   }
   
-  .button-main[data-variant="stroke"]:hover {
-    color: var(--hover-text); /* Use hover text color when stroke variant fills */
-    text-shadow: none !important;
-  }
-  
-  /* Press/Active state (same as hover per Figma) */
   .button-main:active,
   .button-main:focus:active {
     color: var(--hover-text);
     transition: color 0.1s ease;
-    text-shadow: none !important;
   }
   
-  .button-main[data-variant="stroke"]:active {
-    color: var(--hover-text); /* Use hover text color when stroke variant fills */
-    text-shadow: none !important;
-  }
-  
-  /* Focus state */
-  .button-main:focus {
-    outline: none;
-  }
-  
-  /* Disabled states */
   .button-main:disabled {
-    cursor: not-allowed;
     color: var(--disabled-text);
-  }
-  
-  .button-main[data-variant="stroke"]:disabled {
-    color: var(--disabled-text);
-    text-shadow: none !important;
-  }
-  
-  .button-main:disabled:hover {
-    color: var(--disabled-text);
-  }
-  
-  .button-main[data-variant="stroke"]:disabled:hover {
-    color: var(--disabled-text);
-    text-shadow: none !important;
   }
   
   /* Disabled container effects */
@@ -568,42 +537,7 @@ const {
     fill: transparent !important;
   }
   
-  .button-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    position: relative;
-    z-index: 1;
-    text-shadow: none !important;
-    padding: var(--button-padding);
-  }
-  
-  .button-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 8px;
-  }
-  
-  .button-status-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .button-status-icon--success {
-    background-color: #22c55e;
-  }
-  
-  .button-status-icon--error {
-    background-color: #ef4444;
-  }
-  
-  /* Focus styles */
+  /* Essential focus styles */
   .button-main:focus-visible {
     outline: none;
   }
