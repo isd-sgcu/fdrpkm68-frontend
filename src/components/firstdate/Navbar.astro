@@ -3,7 +3,32 @@
   <a href="/firstdate/home/">
     <img src="/common/logo_freshmenfest.svg" alt="logo" />
   </a>
-  <button>
+  <button id="hamburger-button">
     <img src="/common/hamburger.svg" alt="menu" class="h-3 w-auto -translate-x-4" />
   </button>
 </nav>
+<nav id="nav-menu" class="hidden fixed inset-0 mt-[75px] min-h-screen z-50 bg-white">
+  <ul class="flex flex-col gap-y-2">
+    <li>
+      <a href="/firstdate/home/" class="text-black hover:text-blue-500 transition-colors">
+        Home
+      </a>
+    </li>
+    <li>
+      <a href="/firstdate/home/" class="text-black hover:text-blue-500 transition-colors">
+        CU First Date
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<script is:inline type="module">
+  document.addEventListener("DOMContentLoaded", () => {
+    const hamburgerButton = document.getElementById("hamburger-button");
+    const navMenu = document.getElementById("nav-menu");
+
+    hamburgerButton.addEventListener("click", () => {
+      navMenu.classList.toggle("hidden");
+    });
+  });
+</script>
