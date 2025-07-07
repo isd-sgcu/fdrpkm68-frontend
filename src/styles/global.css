@@ -2,7 +2,7 @@
 
 /* Fonts */
 @import '@fontsource-variable/orbitron';
-@import '@fontsource-variable/ibm-plex-sans-thai';
+@import '@fontsource/ibm-plex-sans-thai';
 @import '@fontsource/zen-dots';
 
 body {
