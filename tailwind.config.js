@@ -4,8 +4,6 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'zen-dots': ['"Zen Dots"', 'cursive'],
-        'ibm-plex-thai': ['IBM Plex Sans Thai', 'sans-serif'],
       },
     },
   },
