@@ -1,11 +1,26 @@
 @import "tailwindcss";
 
+/* Fonts */
+@import '@fontsource/ibm-plex-sans-thai/100.css';
+@import '@fontsource/ibm-plex-sans-thai/200.css';
+@import '@fontsource/ibm-plex-sans-thai/300.css';
+@import '@fontsource/ibm-plex-sans-thai/400.css';
+@import '@fontsource/ibm-plex-sans-thai/500.css';
+@import '@fontsource/ibm-plex-sans-thai/600.css';
+@import '@fontsource/ibm-plex-sans-thai/700.css';
+@import '@fontsource/zen-dots';
+
+body {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+}
+
 /* Font Family Registrations */
 @theme {
   --font-family-zen-dots: "Zen Dots", cursive;
   --font-family-orbitron: "Orbitron Variable", "Orbitron", sans-serif;
   --font-family-ibm-plex-sans-thai: "IBM Plex Sans Thai", sans-serif;
-  --font-sans: 'IBM Plex Sans Thai', 'sans-serif';  
+  --font-sans: 'IBM Plex Sans Thai', 'sans-serif';
+  --font-zen-dots: 'Zen Dots', 'sans-serif';
 }
 
 /* Cut edge Classes */

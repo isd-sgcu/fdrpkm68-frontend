@@ -1,0 +1,22 @@
+---
+import { cn } from "@/lib/utils";
+
+interface Props {
+  textSize?: string;
+  className?: string;
+  blurClassName?: string;
+  translateX?: string;
+  translateY?: string;
+}
+
+const {textSize, className, blurClassName} = Astro.props;
+---
+
+<div class="relative">
+  <p class={cn("z-10", className, textSize)}>
+    <slot />
+  </p>
+  <p class={cn("z-[-10] absolute top-0 left-0", blurClassName, textSize)}>
+    <slot />
+  </p>
+</div>
