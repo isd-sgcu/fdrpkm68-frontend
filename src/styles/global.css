@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+body {
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+}
+
 /* Cut edge Classes */
 
 /* Spec 
