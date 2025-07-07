@@ -1,12 +1,4 @@
----
-import '@fontsource/ibm-plex-sans-thai/100.css';
-import '@fontsource/ibm-plex-sans-thai/200.css';
-import '@fontsource/ibm-plex-sans-thai/300.css';
-import '@fontsource/ibm-plex-sans-thai/400.css';
-import '@fontsource/ibm-plex-sans-thai/500.css';
-import '@fontsource/ibm-plex-sans-thai/600.css';
-import '@fontsource/ibm-plex-sans-thai/700.css';
-
+--- 
 import "@/styles/global.css";
 import Navbar from "@firstdate/Navbar.astro";
 import Footer from "@firstdate/Footer.astro";
@@ -31,7 +23,7 @@ const { title, description } = Astro.props;
   </head>
   <body class="min-h-screen flex flex-col bg-[url(/firstdate/main-bg.png)] bg-cover bg-center bg-no-repeat text-white">
     <Navbar />
-    <main class="flex-grow">
+    <main class="flex-grow px-3">
       <slot />
     </main>
     <Footer varient="firstdate"/>
