@@ -14,6 +14,11 @@ body {
   font-family: 'IBM Plex Sans Thai', sans-serif;
 }
 
+@theme {
+  --font-zen-dots: 'Zen Dots', 'sans-serif';
+  --font-ibm-plex-sans-thai: 'IBM Plex Sans Thai', 'sans-serif';
+}
+
 /* Cut edge Classes */
 
 /* Spec 
