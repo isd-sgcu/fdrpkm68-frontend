@@ -1,6 +1,6 @@
 ---
 /**
- * Popup Component - Fancy containers that actually work
+ * Popup Component
  * 
  * @example
  * ```astro
@@ -82,31 +82,29 @@ const borderSvg = `/images/popup-borders/popup-border-${size}-${color}.svg`;
 ---
 
 <div 
-  class={`popup-container relative w-full ${className}`}
+  class="popup-container w-screen"
   data-size={size}
   style={`
+    position: relative;
     aspect-ratio: ${config.aspectRatio};
     min-height: ${config.minHeight};
   `}
 >
-  <!-- Background with border SVG -->
-  <div 
-    class="absolute inset-0 bg-contain bg-center bg-no-repeat"
-    style={`background-image: url('${borderSvg}'); background-size: 100% 100%;`}
-  ></div>
   
-  <!-- Content area positioned within SVG bounds with proper clipping -->
+  <img 
+    src={borderSvg}
+    alt=""
+    class="absolute inset-0 w-full h-full object-contain"
+  />
+  
+  <!-- Content Area -->
   <div 
-    class="absolute flex items-center justify-center content-area popup-content-clip"
+    class="absolute inset-0 z-10"
     style={`
-      left: 50%;
-      top: 50%;
-      width: ${config.contentWidth};
-      height: ${config.contentHeight};
-      transform: translate(-50%, -50%);
+      padding: ${size === 'large' ? '15%' : '12%'};
     `}
   >
-    <div class="text-center w-full px-4 h-full overflow-y-auto">
+    <div class={`w-full h-full overflow-hidden ${className}`}>
       <slot />
     </div>
   </div>
