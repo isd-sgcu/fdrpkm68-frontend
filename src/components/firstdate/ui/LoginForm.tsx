@@ -18,8 +18,9 @@ function ForgotPasswordStep({
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm">รหัสนิสิต</label>
+        <label className="text-sm" htmlFor="studentId">รหัสนิสิต</label>
         <input
+          id="studentId"
           type="text"
           placeholder="รหัสนิสิต"
           className="text-sm"
@@ -28,8 +29,9 @@ function ForgotPasswordStep({
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm">รหัสบัตรประชาชน</label>
+        <label className="text-sm" htmlFor="citizenId">รหัสบัตรประชาชน</label>
         <input
+          id="citizenId"
           type="text"
           placeholder="รหัสบัตรประชาชน"
           className="text-sm"
@@ -38,8 +40,9 @@ function ForgotPasswordStep({
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm">รหัสผ่านใหม่</label>
+        <label className="text-sm" htmlFor="newPassword">รหัสผ่านใหม่</label>
         <input
+          id="newPassword"
           type="password"
           placeholder="รหัสผ่าน"
           className="text-sm"
@@ -48,8 +51,9 @@ function ForgotPasswordStep({
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm">รหัสผ่านใหม่อีกครั้ง</label>
+        <label className="text-sm" htmlFor="confirmPassword">รหัสผ่านใหม่อีกครั้ง</label>
         <input
+          id="confirmPassword"
           type="password"
           placeholder="รหัสผ่านใหม่อีกครั้ง"
           className="text-sm"
@@ -83,8 +87,9 @@ function LoginStep({
         <h1 className="text-lg font-semibold">เข้าสู่ระบบ</h1>
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm">รหัสนิสิต</label>
+        <label className="text-sm" htmlFor="studentId">รหัสนิสิต</label>
         <input
+          id="studentId"
           type="text"
           placeholder="รหัสนิสิต"
           className="text-sm"
@@ -93,8 +98,9 @@ function LoginStep({
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm">รหัสบัตรประชาชน</label>
+        <label className="text-sm" htmlFor="citizenId">รหัสบัตรประชาชน</label>
         <input
+          id="citizenId"
           type="text"
           placeholder="รหัสบัตรประชาชน"
           className="text-sm"
@@ -103,8 +109,9 @@ function LoginStep({
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="text-sm">รหัสผ่าน</label>
+        <label className="text-sm" htmlFor="password">รหัสผ่าน</label>
         <input
+          id="password"
           type="password"
           placeholder="รหัสผ่าน"
           className="text-sm"

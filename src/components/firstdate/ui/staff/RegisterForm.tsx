@@ -79,29 +79,32 @@ function HealthInformationStep({
 
         <div className="flex flex-col gap-2 text-sm">
             <div className="flex flex-col items-start py-2 gap-2">
-                <label htmlFor="">อาหารที่แพ้</label>
+                <label htmlFor="allergies">อาหารที่แพ้</label>
                 <div className="flex gap-2 justify-between w-full px-12">
                     <div className="flex items-center gap-2">
                         <input 
+                            id="hasAllergies-yes"
                             type="checkbox" 
                             className="w-4 h-4" 
                             checked={healthInfo.hasAllergies === true}
                             onChange={() => handleAllergiesChange(true)} 
                         />
-                        <label htmlFor="">มี</label>
+                        <label htmlFor="hasAllergies-yes">มี</label>
                     </div>
                     <div className="flex items-center gap-2">
                         <input 
+                            id="hasAllergies-no"
                             type="checkbox" 
                             className="w-4 h-4" 
                             checked={healthInfo.hasAllergies === false}
                             onChange={() => handleAllergiesChange(false)} 
                         />
-                        <label htmlFor="">ไม่มี</label>
+                        <label htmlFor="hasAllergies-no">ไม่มี</label>
                     </div>
                 </div>
                 {healthInfo.hasAllergies && (
                     <input 
+                        id="allergies"
                         type="text" 
                         placeholder="อาหารที่แพ้" 
                         className="text-sm mt-2"
@@ -111,29 +114,32 @@ function HealthInformationStep({
                 )}
             </div>
             <div className="flex flex-col items-start py-2 gap-2">
-                <label htmlFor="">ยาที่แพ้</label>
+                <label htmlFor="medications">ยาที่แพ้</label>
                 <div className="flex gap-2 justify-between w-full px-12">
                     <div className="flex items-center gap-2">
                         <input 
+                            id="hasMedications-yes"
                             type="checkbox" 
                             className="w-4 h-4" 
                             checked={healthInfo.hasMedications === true}
                             onChange={() => handleMedicationsChange(true)} 
                         />
-                        <label htmlFor="">มี</label>
+                        <label htmlFor="hasMedications-yes">มี</label>
                     </div>
                     <div className="flex items-center gap-2">
                         <input 
+                            id="hasMedications-no"
                             type="checkbox" 
                             className="w-4 h-4" 
                             checked={healthInfo.hasMedications === false}
                             onChange={() => handleMedicationsChange(false)} 
                         />
-                        <label htmlFor="">ไม่มี</label>
+                        <label htmlFor="hasMedications-no">ไม่มี</label>
                     </div>
                 </div>
                 {healthInfo.hasMedications && (
                     <input 
+                        id="medications"
                         type="text" 
                         placeholder="ยาที่แพ้" 
                         className="text-sm mt-2"
@@ -143,29 +149,32 @@ function HealthInformationStep({
                 )}
             </div>
             <div className="flex flex-col items-start py-2 gap-2">
-                <label htmlFor="">โรคประจำตัว</label>
+                <label htmlFor="chronicDiseases">โรคประจำตัว</label>
                 <div className="flex gap-2 justify-between w-full px-12">
                     <div className="flex items-center gap-2">
                         <input 
+                            id="hasChronicDiseases-yes"
                             type="checkbox" 
                             className="w-4 h-4" 
                             checked={healthInfo.hasChronicDiseases === true}
                             onChange={() => handleChronicDiseasesChange(true)} 
                         />
-                        <label htmlFor="">มี</label>
+                        <label htmlFor="hasChronicDiseases-yes">มี</label>
                     </div>
                     <div className="flex items-center gap-2">
                         <input 
+                            id="hasChronicDiseases-no"
                             type="checkbox" 
                             className="w-4 h-4" 
                             checked={healthInfo.hasChronicDiseases === false}
                             onChange={() => handleChronicDiseasesChange(false)} 
                         />
-                        <label htmlFor="">ไม่มี</label>
+                        <label htmlFor="hasChronicDiseases-no">ไม่มี</label>
                     </div>
                 </div>
                 {healthInfo.hasChronicDiseases && (
                     <input 
+                        id="chronicDiseases"
                         type="text" 
                         placeholder="โรคประจำตัว" 
                         className="text-sm mt-2"
@@ -207,9 +216,10 @@ function ContactInformationStep({
             <h1 className="text-lg font-semibold">ข้อมูลการติดต่อ</h1>
         </div>
         <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="">เบอร์โทรศัพท์</label>
+            <label className="text-sm" htmlFor="phoneNumber">เบอร์โทรศัพท์</label>
             <div className="flex items-center gap-2">
                 <select 
+                    id="phoneCountryCode"
                     className="text-sm"
                     value={contactInfo.phoneCountryCode}
                     onChange={(e) => setContactInfo({...contactInfo, phoneCountryCode: e.target.value})}
@@ -222,6 +232,7 @@ function ContactInformationStep({
                     <option value="fr">+33</option>
                 </select>
                 <input 
+                    id="phoneNumber"
                     type="text" 
                     placeholder="เบอร์โทรศัพท์" 
                     className="text-sm"
@@ -234,9 +245,10 @@ function ContactInformationStep({
         <div className="flex flex-col gap-4">
             <h1 className="text-lg font-semibold text-center py-4">ข้อมูลผู้ปกครอง</h1>
             <div className="flex flex-col gap-2">
-                <label htmlFor="">เบอร์โทรศัพท์ของผู้ปกครอง</label>
+                <label htmlFor="guardianPhoneNumber">เบอร์โทรศัพท์ของผู้ปกครอง</label>
                 <div className="flex items-center gap-2">
                     <select 
+                        id="guardianPhoneCountryCode"
                         className="text-sm"
                         value={contactInfo.guardianPhoneCountryCode}
                         onChange={(e) => setContactInfo({...contactInfo, guardianPhoneCountryCode: e.target.value})}
@@ -249,6 +261,7 @@ function ContactInformationStep({
                         <option value="fr">+33</option>
                     </select>
                     <input 
+                        id="guardianPhoneNumber"
                         type="text" 
                         placeholder="เบอร์โทรศัพท์" 
                         className="text-sm"
@@ -258,8 +271,9 @@ function ContactInformationStep({
                 </div>  
             </div>
             <div className="flex flex-col gap-2">
-                <label htmlFor="">ความสัมพันธ์</label>
+                <label htmlFor="guardianRelationship">ความสัมพันธ์</label>
                 <select 
+                    id="guardianRelationship"
                     className="text-sm"
                     value={contactInfo.guardianRelationship}
                     onChange={(e) => setContactInfo({...contactInfo, guardianRelationship: e.target.value})}
@@ -292,8 +306,9 @@ function PersonalInformationStep({
             <h1 className="text-lg font-semibold">ข้อมูลส่วนตัว</h1>
         </div>
         <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="">คำนำหน้าชื่อ</label>
+            <label className="text-sm" htmlFor="title">คำนำหน้าชื่อ</label>
             <select 
+                id="title"
                 className="text-sm"
                 value={personalInfo.title}
                 onChange={(e) => setPersonalInfo({...personalInfo, title: e.target.value})}
@@ -304,8 +319,9 @@ function PersonalInformationStep({
             </select>
         </div>
         <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="">ชื่อจริง</label>
+            <label className="text-sm" htmlFor="firstName">ชื่อจริง</label>
             <input 
+                id="firstName"
                 className="text-sm" 
                 type="text" 
                 placeholder="ชื่อจริง"
@@ -314,8 +330,9 @@ function PersonalInformationStep({
             />
         </div>
         <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="">นามสกุล</label>
+            <label className="text-sm" htmlFor="lastName">นามสกุล</label>
             <input 
+                id="lastName"
                 className="text-sm" 
                 type="text" 
                 placeholder="นามสกุล"
@@ -324,8 +341,9 @@ function PersonalInformationStep({
             />
         </div>
         <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="">ชื่อเล่น</label>
+            <label className="text-sm" htmlFor="nickname">ชื่อเล่น</label>
             <input 
+                id="nickname"
                 className="text-sm" 
                 type="text" 
                 placeholder="ชื่อเล่น"
@@ -335,8 +353,9 @@ function PersonalInformationStep({
         </div>
         <div className="flex justify-between gap-3">
             <div className="flex flex-col gap-2">
-                <label className="text-sm" htmlFor="">คณะ</label>
+                <label className="text-sm" htmlFor="faculty">คณะ</label>
                 <select 
+                    id="faculty"
                     className="text-sm"
                     value={personalInfo.faculty}
                     onChange={(e) => setPersonalInfo({...personalInfo, faculty: e.target.value})}
@@ -354,8 +373,9 @@ function PersonalInformationStep({
                 </select>
             </div>
             <div className="flex flex-col gap-2">
-                <label className="text-sm" htmlFor="">ชั้นปี</label>
+                <label className="text-sm" htmlFor="year">ชั้นปี</label>
                 <select 
+                    id="year"
                     className="text-sm"
                     value={personalInfo.year}
                     onChange={(e) => setPersonalInfo({...personalInfo, year: e.target.value})}
