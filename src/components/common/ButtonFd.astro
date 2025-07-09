@@ -41,8 +41,9 @@
  */
 
 import { Check, X } from '@lucide/astro';
+import { cn } from '@/lib/utils';
 
-export type ColorName = 'light-beige' | 'light-pink' | 'vivid-pink' | 'light-blue' | 'light-green' | 'black' | 'beige';
+export type ColorName = 'light-beige' | 'light-pink' | 'vivid-pink' | 'light-blue' | 'light-green' | 'black' | 'beige' | 'white';
 
 export interface Props {
   variant?: 'fill' | 'stroke';
@@ -58,24 +59,24 @@ const {
   color = 'light-beige',
   size = 'md',
   disabled = false,
-  class: className = '',
+  class: additionalClasses = '',
   registrationStatus = null,
   ...restProps
 } = Astro.props;
 
 const sizeConfig = {
   sm: {
-    container: 'w-[200px] h-[40px]',
+    container: 'w-[200px] min-h-[40px]',
     text: 'text-base',
     padding: 'px-5 py-2'
   },
   md: {
-    container: 'w-[240px] h-[48px]',
+    container: 'w-[240px] min-h-[48px]',
     text: 'text-lg',
     padding: 'px-6 py-3'
   },
   lg: {
-    container: 'w-[260px] h-[48px]',
+    container: 'w-[260px] min-h-[48px]',
     text: 'text-xl',
     padding: 'px-6 py-2.5'
   }
@@ -85,14 +86,21 @@ const currentSize = sizeConfig[size];
 ---
 
 <div 
-  class={`button-container button-container--${variant} button-container--${color} relative inline-block transition-all duration-200 ease-in-out ${currentSize.container} ${disabled ? 'button-container--disabled' : ''} ${className}`}
+  class={cn(
+    'button-container relative inline-block transition-all duration-200 ease-in-out',
+    `button-container--${variant}`,
+    `button-container--${color}`,
+    currentSize.container,
+    disabled && 'button-container--disabled',
+    additionalClasses
+  )}
   data-variant={variant}
   data-color={color}
   data-size={size}
 >
   <!-- SVG Background/Border Pattern -->
   <div class="absolute inset-0 pointer-events-none">
-    <svg class="w-full h-full" viewBox="0 0 264 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg class="w-full h-full" viewBox="0 0 264 52" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <path d="M262 25L236 2H262V25Z" class="svg-triangle"/>
       <path d="M2 40.6341V2H229.702L262 30.0976V50H13.3043L2 40.6341Z" class="svg-fill"/>
       <path d="M262 25L236 2H262V25Z" class="svg-stroke" stroke-width="3"/>
@@ -101,16 +109,27 @@ const currentSize = sizeConfig[size];
   </div>
 
   <button 
-    class={`button-main relative flex items-center justify-center w-full h-full font-ibm-plex-sans-thai font-normal leading-relaxed ${currentSize.text} cursor-pointer transition-colors duration-200 ease-in-out border-0 outline-none bg-transparent focus:outline-none disabled:cursor-not-allowed ${disabled ? 'opacity-50' : ''}`}
+    class={cn(
+      'button-main relative flex items-center w-full font-ibm-plex-sans-thai font-normal leading-tight cursor-pointer transition-colors duration-200 ease-in-out border-0 outline-none bg-transparent focus:outline-none disabled:cursor-not-allowed overflow-hidden',
+      currentSize.text,
+      currentSize.padding,
+      disabled && 'opacity-50'
+    )}
     disabled={disabled}
     data-variant={variant}
     {...restProps}
   >
-    <div class={`flex items-center justify-center gap-2 relative z-10 ${currentSize.padding}`}>
-      <slot name="icon" />
-      <slot />
+    <div class={cn('flex items-center w-full relative z-10 overflow-hidden')}>
+      <div class="flex-shrink-0">
+        <slot name="icon" />
+      </div>
+      <div class="flex-1 flex justify-center overflow-hidden">
+        <div class="text-center leading-tight">
+          <slot />
+        </div>
+      </div>
       {registrationStatus && (
-        <div class="flex items-center justify-center ml-2">
+        <div class="flex items-center justify-center ml-2 flex-shrink-0">
           {registrationStatus === 'registered' ? (
             <div class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
               <Check size={12} color="white" />
@@ -135,9 +154,9 @@ const currentSize = sizeConfig[size];
     --default-stroke: #CB438B;
     --default-text: #121212;
     --default-shadow: #CB438B;
-    --hover-fill: #FFFFF2;
-    --hover-stroke: #CB438B;
-    --hover-text: #121212;
+    --hover-fill: #CB438B;
+    --hover-stroke: #FFFFF2;
+    --hover-text: #FFFFF2;
     --hover-shadow: #CB438B;
     --disabled-fill: rgba(255, 255, 242, 0.5);
     --disabled-stroke: rgba(203, 67, 139, 0.5);
@@ -147,6 +166,34 @@ const currentSize = sizeConfig[size];
   
   /* Stroke variant overrides for light-beige */
   .button-container--stroke.button-container--light-beige {
+    --default-stroke: #FFFFF2;
+    --default-shadow: #FFFFF2;
+    --default-text: #FFFFF2;
+    --hover-fill: #FFFFF2;
+    --hover-stroke: #FFFFF2;
+    --hover-text: #121212;
+    --hover-shadow: #FFFFF2;
+    --disabled-stroke: rgba(255, 255, 242, 0.2);
+    --disabled-text: rgba(255, 255, 242, 0.2);
+    --disabled-shadow: rgba(255, 255, 242, 0.2);
+  }
+  .button-container--white {
+    --default-fill: #FFFFF2;
+    --default-stroke: #FFFFF2;
+    --default-text: #121212;
+    --default-shadow: #FFFFF2;
+    --hover-fill: #121212;
+    --hover-stroke: #FFFFF2;
+    --hover-text: #FFFFF2;
+    --hover-shadow: #121212;
+    --disabled-fill: rgba(255, 255, 242, 0.5);
+    --disabled-stroke: rgba(203, 67, 139, 0.5);
+    --disabled-text: rgba(18, 18, 18, 0.5);
+    --disabled-shadow: rgba(203, 67, 139, 0.5);
+  }
+  
+  /* Stroke variant overrides for light-beige */
+  .button-container--stroke.button-container--white {
     --default-stroke: #FFFFF2;
     --default-shadow: #FFFFF2;
     --default-text: #FFFFF2;
