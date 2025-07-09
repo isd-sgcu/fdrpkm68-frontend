@@ -1,4 +1,6 @@
 ---
+import { cn } from '@/lib/utils';
+
 /**
  * ButtonRpkm
  * @example
@@ -46,7 +48,7 @@ const {
   color = 'purple',
   size = 'md',
   disabled = false,
-  class: className = '',
+  class: additionalClasses = '',
   ...restProps
 } = Astro.props;
 
@@ -99,25 +101,25 @@ const sizeConfig = {
   xs: { 
     classes: 'px-3 py-2 text-sm',
     width: 'w-26',
-    height: 'h-10',
+    height: 'min-h-10',
     iconSize: 16
   },
   sm: { 
     classes: 'px-4 py-3 text-base',
     width: 'w-32',
-    height: 'h-12',
+    height: 'min-h-12',
     iconSize: 18
   },
   md: { 
     classes: 'px-5 py-3 text-lg',
     width: 'w-44',
-    height: 'h-12',
+    height: 'min-h-12',
     iconSize: 20
   },
   lg: { 
     classes: 'px-6 py-3 text-xl',
     width: 'w-64',
-    height: 'h-12',
+    height: 'min-h-12',
     iconSize: 24
   }
 };
@@ -126,8 +128,8 @@ const sizeConfig = {
 const currentColorConfig = colorConfig[color][variant];
 const currentSizeConfig = sizeConfig[size];
 
-// Generate button classes
-const buttonClasses = [
+// Generate button classes using cn utility
+const buttonClasses = cn(
   // Base styles
   'relative inline-flex items-center justify-center font-medium',
   'transition-all duration-200 ease-in-out',
@@ -148,8 +150,8 @@ const buttonClasses = [
   'cut-edge-all',
   
   // Custom classes
-  className
-].filter(Boolean).join(' ');
+  additionalClasses
+);
 
 // Generate gradient background for fill variants
 const getGradientStyle = () => {
@@ -219,7 +221,11 @@ const getSvgBorder = () => {
 ---
 
 <button 
-  class={`${buttonClasses} focus:outline-2 focus:outline-white/30 focus:outline-offset-2 focus:disabled:outline-none ${variant === 'stroke' ? 'bg-no-repeat bg-center bg-contain' : ''}`}
+  class={cn(
+    buttonClasses,
+    'focus:outline-2 focus:outline-white/30 focus:outline-offset-2 focus:disabled:outline-none',
+    variant === 'stroke' && 'bg-no-repeat bg-center bg-contain'
+  )}
   style={`${getGradientStyle()}${getSvgBorder()}`}
   disabled={disabled}
   data-variant={variant}
@@ -227,6 +233,14 @@ const getSvgBorder = () => {
   data-size={size}
   {...restProps}
 >
-  <slot name="icon" />
-  <slot />
+  <div class="flex items-center w-full relative z-10 overflow-hidden">
+    <div class="flex-shrink-0">
+      <slot name="icon" />
+    </div>
+    <div class="flex-1 flex justify-center overflow-hidden">
+      <div class="text-center leading-tight">
+        <slot />
+      </div>
+    </div>
+  </div>
 </button>
