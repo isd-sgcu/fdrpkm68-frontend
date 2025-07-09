@@ -32,7 +32,7 @@ import { cn } from '@/lib/utils';
  * </Popup>
  * ```
  * 
- * @example When you need to fit a novel in there
+ * @example
  * ```astro
  * <Popup size="large" color="light-blue">
  *   <slot />
@@ -46,13 +46,13 @@ import { cn } from '@/lib/utils';
  * </Popup>
  * ```
  * Props:
- * @param size - 'large' for detailed content, 'small' for quick messages
+ * @param size - 'large' for detailed content, 'medium' for moderate content, 'small' for quick messages
  * @param color - Pick a color that matches your vibe (see list above)
  * @param class - Throw in extra CSS classes if you need custom styling
  */
 
 export interface Props {
-  size?: 'large' | 'small';
+  size?: 'large' | 'medium' | 'small';
   color?: 'black' | 'vivid-pink' | 'light-green' | 'light-blue' | 'light-pink' | 'light-beige';
   class?: string;
 }
@@ -70,6 +70,12 @@ const sizeConfig = {
     minHeight: '400px',
     contentWidth: '80%',
     contentHeight: '70%'
+  },
+  medium: {
+    aspectRatio: '365/575',
+    minHeight: '300px',
+    contentWidth: '78%',
+    contentHeight: '68%'
   },
   small: {
     aspectRatio: '342/366',
@@ -103,7 +109,7 @@ const borderSvg = `/images/popup-borders/popup-border-${size}-${color}.svg`;
   <div 
     class="absolute inset-0 z-10"
     style={`
-      padding: ${size === 'large' ? '15%' : '12%'};
+      padding: ${size === 'large' ? '15%' : size === 'medium' ? '13%' : '12%'};
     `}
   >
     <div class={cn("w-full h-full overflow-hidden", additionalClasses)}>
@@ -157,6 +163,11 @@ const borderSvg = `/images/popup-borders/popup-border-${size}-${color}.svg`;
   .popup-container[data-size="large"] .popup-content-clip {
     /* Large popups have more decorative border space */
     margin: 2%;
+  }
+  
+  .popup-container[data-size="medium"] .popup-content-clip {
+    /* Medium popups have moderate decorative border space */
+    margin: 1.5%;
   }
   
   .popup-container[data-size="small"] .popup-content-clip {
