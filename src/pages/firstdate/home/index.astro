@@ -1,0 +1,86 @@
+---
+import DummyButton from "@/components/firstdate/ui/DummyButton.astro";
+import Layout from "@/layouts/firstdate/WithNavbar.astro";
+
+import BlurText from "@common/BlurText.astro";
+---
+
+<Layout>
+  <div class="px-4">
+    <div class="flex flex-col items-center justify-center w-full mt-5">
+      <BlurText 
+        textSize="text-xl" 
+        className="text-white font-zen-dots" 
+        blurClassName="text-[#FFE4E1] blur-[1.75px] translate-x-[2px] translate-y-[2px] font-zen-dots"
+      >
+        Welcome
+      </BlurText>
+      <BlurText 
+        textSize="text-3xl" 
+        className="text-[#CB438B] font-zen-dots" 
+        blurClassName="text-[#CB438B] blur-[3px] translate-y-[2px] font-zen-dots"
+      >
+        CU109
+      </BlurText>
+    </div>
+    <div>
+      <BlurText 
+        textSize="text-lg" 
+        className="text-white font-zen-dots" 
+        blurClassName="text-black blur-xs translate-y-[3px] font-zen-dots"
+      >
+        Activities
+      </BlurText>
+      <div class="flex w-full justify-center">
+        <div class="flex flex-col w-4/5 gap-y-2 my-3">
+          <DummyButton href="/firstdate/home/">
+            CU First Date
+          </DummyButton>
+          <DummyButton href="/firstdate/home/">
+            CU Fest
+          </DummyButton>
+          <DummyButton href="/firstdate/home/">
+            รับเพื่อนก้าวใหม่
+          </DummyButton>
+          <DummyButton href="/firstdate/home/">
+            Freshmen Night
+          </DummyButton>
+        </div>
+      </div>
+    </div>
+    <div class="pb-6">
+      <BlurText 
+        textSize="text-lg" 
+        className="text-white font-zen-dots" 
+        blurClassName="text-black blur-xs translate-y-[3px] font-zen-dots"
+      >
+        More
+      </BlurText>
+      <div class="flex w-full justify-center">
+        <div class="flex flex-col w-4/5 gap-y-2 my-3">
+          <DummyButton href="/firstdate/home/">
+            <img src="/firstdate/home/qrcode.svg"> QR CODE
+          </DummyButton>
+          <div class="flex flex-col mt-2 gap-y-2">
+            <div class="flex flex-row gap-x-2">
+              <DummyButton href="/firstdate/home/">
+                แผนที่
+              </DummyButton>
+              <DummyButton href="/firstdate/home/">
+                Personal Game
+              </DummyButton>
+            </div>
+            <div class="flex flex-row gap-x-2">
+              <DummyButton href="/firstdate/home/">
+                ปฏิทิน
+              </DummyButton>
+              <DummyButton href="/firstdate/home/">
+                Emergency
+              </DummyButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
