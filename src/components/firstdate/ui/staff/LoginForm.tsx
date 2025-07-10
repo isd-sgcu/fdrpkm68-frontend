@@ -1,5 +1,4 @@
 import { useState } from "react";
-import PDPAConsent from "../PDPAConsent";
 
 function ForgotPasswordStep({
   form,
@@ -132,7 +131,6 @@ function LoginStep({
 
 export default function LoginForm() {
   const [step, setStep] = useState<number>(1);
-  const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
   const [form, setForm] = useState({
     studentId: "",
     citizenId: "",
@@ -143,8 +141,6 @@ export default function LoginForm() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-white">
-      {!isConsentGiven && <PDPAConsent onAccept={() => setIsConsentGiven(true)} />}
-
       <div className="bg-[url(/firstdate/register/staff/form-bg.png)] h-screen bg-contain bg-center bg-no-repeat w-full flex items-center justify-center">
       <div className="max-w-[270px] w-full md:max-w-[400px]">
         {step === 1 && (
