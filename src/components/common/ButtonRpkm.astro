@@ -41,6 +41,9 @@ export interface Props {
   size?: 'xs' | 'sm' | 'md' | 'lg';
   disabled?: boolean;
   class?: string;
+  href: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  rel?: string;
 }
 
 const { 
@@ -49,6 +52,9 @@ const {
   size = 'md',
   disabled = false,
   class: additionalClasses = '',
+  href,
+  target,
+  rel,
   ...restProps
 } = Astro.props;
 
@@ -220,17 +226,21 @@ const getSvgBorder = () => {
 };
 ---
 
-<button 
+<a 
+  href={href}
+  target={target}
+  rel={rel}
   class={cn(
     buttonClasses,
-    'focus:outline-2 focus:outline-white/30 focus:outline-offset-2 focus:disabled:outline-none',
-    variant === 'stroke' && 'bg-no-repeat bg-center bg-contain'
+    'focus:outline-2 focus:outline-white/30 focus:outline-offset-2 text-decoration-none',
+    variant === 'stroke' && 'bg-no-repeat bg-center bg-contain',
+    disabled && 'pointer-events-none'
   )}
   style={`${getGradientStyle()}${getSvgBorder()}`}
-  disabled={disabled}
   data-variant={variant}
   data-color={color}
   data-size={size}
+  aria-disabled={disabled}
   {...restProps}
 >
   <div class="flex items-center w-full relative z-10 overflow-hidden">
@@ -243,4 +253,4 @@ const getSvgBorder = () => {
       </div>
     </div>
   </div>
-</button>
+</a>

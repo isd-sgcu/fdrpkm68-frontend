@@ -52,6 +52,9 @@ export interface Props {
   disabled?: boolean;
   class?: string;
   registrationStatus?: 'registered' | 'not-registered' | null;
+  href: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  rel?: string;
 }
 
 const { 
@@ -61,6 +64,9 @@ const {
   disabled = false,
   class: additionalClasses = '',
   registrationStatus = null,
+  href,
+  target,
+  rel,
   ...restProps
 } = Astro.props;
 
@@ -108,15 +114,18 @@ const currentSize = sizeConfig[size];
     </svg>
   </div>
 
-  <button 
+  <a 
+    href={href}
+    target={target}
+    rel={rel}
     class={cn(
-      'button-main relative flex items-center w-full font-ibm-plex-sans-thai font-normal leading-tight cursor-pointer transition-colors duration-200 ease-in-out border-0 outline-none bg-transparent focus:outline-none disabled:cursor-not-allowed overflow-hidden',
+      'button-main relative flex items-center w-full font-ibm-plex-sans-thai font-normal leading-tight cursor-pointer transition-colors duration-200 ease-in-out border-0 outline-none bg-transparent focus:outline-none overflow-hidden text-decoration-none',
       currentSize.text,
       currentSize.padding,
-      disabled && 'opacity-50'
+      disabled && 'opacity-50 pointer-events-none'
     )}
-    disabled={disabled}
     data-variant={variant}
+    aria-disabled={disabled}
     {...restProps}
   >
     <div class={cn('flex items-center w-full relative z-10 overflow-hidden')}>
@@ -142,7 +151,7 @@ const currentSize = sizeConfig[size];
         </div>
       )}
     </div>
-  </button>
+  </a>
 </div>
 
 <style>
