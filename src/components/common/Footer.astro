@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils"
 
 interface Props {
-  varient?: "firstdate" | "rpkm_home";
+  varient?: "firstdate" | "rpkm_home" | "rpkm_summary";
 }
 
 const bgGradient = {
@@ -14,17 +14,17 @@ const bgGradient = {
     type: "radial", 
     classes: "bg-[radial-gradient(50%_50%_at_50%_50%,_#8A2BE4_0%,_#2B2D42_100%)]"
   },
-  "rpkm-workshops": {
+  "rpkm_workshops": {
     type: "linear",
     classes: "bg-gradient-to-b from-[#667eea] to-[#764ba2]"
   },
-  "rpkm-rubpuen": {
+  "rpkm_rubpuen": {
     type: "linear",
     classes: "bg-gradient-to-b from-[#667eea] to-[#764ba2]"
   },
-  "rpkm-eventSummary": {
+  "rpkm_summary": {
     type: "linear",
-    classes: "bg-gradient-to-b from-[#667eea] to-[#764ba2]"
+    classes: "bg-gradient-to-b from-[#D38DD8] to-[#FF1493]"
   }
 }
 
