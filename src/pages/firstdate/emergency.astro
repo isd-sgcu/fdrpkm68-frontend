@@ -1,0 +1,50 @@
+---
+import Popup from "@/components/common/Popup.astro";
+import ButtonFd from "@/components/common/ButtonFd.astro";
+import Layout from "@/layouts/firstdate/WithNavbar.astro";
+import { Siren, Phone, Home } from '@lucide/astro';
+---
+<Layout>    
+        <div class="flex flex-col w-full">
+            <div class="flex flex-col items-center justify-center mb-8">
+                <h1 class="text-4xl text-white font-zen-dots text-center fill-white drop-shadow-lg drop-shadow-white/50 mt-[26px]">Emergency Contacts</h1>
+                <p class="mt-1.5">ติดต่อเหตุฉุกเฉิน</p>                
+                <section class="w-full">
+                    <Popup
+                        size="medium"   
+                        color="light-pink"                                     
+                        class="flex flex-col items-center justify-venter text-center py-4"
+                    >
+                                        
+                        <a href="tel:+66929519992" class="relative flex size-32 items-center justify-center m-16">                        
+                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-400 opacity-75"></span>
+                            <span class="relative inline-flex size-48 rounded-full bg-pink-500">
+                                <div class="flex flex-col items-center justify-center h-52 w-52">
+                                    <Siren size={84} color="white" />
+                                    <p class="mt-2">ศูนย์ รปภ. จุฬาฯ</p>   
+                                    <p class="mb-4">02-218-0000</p>   
+                                </div>                            
+                            </span>
+                        </a>
+                        <div class="mt-2 gap-2 flex flex-col items-center justify-center">
+                            <ButtonFd variant="fill" color="white" href="tel:191">
+                                <Phone slot="icon" size={20} />
+                            เหตุนอกมหาวิทยาลัย<br>191
+                            </ButtonFd>
+                            <ButtonFd variant="fill" color="white" href="tel:1669">
+                                <Phone slot="icon" size={20} />
+                            อุบัติเหตุร้ายแรง<br>1669
+                            </ButtonFd>
+                        </div>
+                        
+                    </Popup>                
+                </section>
+                <ButtonFd variant="fill" color="white" href="/firstdate/home/">
+                            <Home slot="icon" size={20} />
+                        กลับหน้าหลัก
+                </ButtonFd>
+            </div>            
+
+            
+        </div>
+</Layout>
