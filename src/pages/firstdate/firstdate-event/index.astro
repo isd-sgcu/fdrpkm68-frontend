@@ -1,0 +1,116 @@
+---
+import Layout from "@/layouts/firstdate/WithNavbar.astro";
+import { getEventStatus, type EventType } from "@/lib/eventAPI";
+import SuccessConfetti from "@/components/common/SuccessConfetti.astro";
+
+const eventType: EventType = 'firstdate';
+const eventStatus = await getEventStatus(eventType);
+
+// Check for just registered state from URL params
+const url = new URL(Astro.request.url);
+const justRegistered = url.searchParams.get('registered') === 'true';
+
+// Check if user should be redirected (already registered but not just registered)
+if (eventStatus.isRegistered && !justRegistered) {
+  return Astro.redirect('/firstdate/home/');
+}
+---
+
+<Layout>
+  <div class="min-h-screen px-4 py-6 relative z-10">
+    <!-- Event Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-white mb-2">CU First Date</h1>
+      <p class="text-gray-300">งานแรกพบของน้องใหม่ จุฬา</p>
+    </div>
+
+    <!-- Event Content Based on Status -->
+    {!eventStatus.isRegistered && !eventStatus.isLate && !justRegistered && !eventStatus.isComingSoon && (
+      <!-- State 1: Not Registered -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
+        <h2 class="text-xl font-semibold text-white mb-4">ลงทะเบียนเข้าร่วมงาน</h2>
+        <p class="text-gray-300 mb-6">กดปุ่มด้านล่างเพื่อลงทะเบียนเข้าร่วมงาน CU First Date</p>
+        <button 
+          id="register-btn"
+          class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+        >
+          ลงทะเบียนเลย
+        </button>
+      </div>
+    )}
+
+    {justRegistered && (
+      <!-- State 2: Registration Success (with confetti) -->
+      <SuccessConfetti eventName="CU First Date" />
+    )}
+
+    {eventStatus.isRegistered && !justRegistered && (
+      <!-- State 3: Already Registered -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
+        <div class="text-4xl mb-4">✅</div>
+        <h2 class="text-xl font-semibold text-green-400 mb-4">คุณได้ลงทะเบียนแล้ว</h2>
+        <p class="text-gray-300 mb-6">คุณได้ลงทะเบียนเข้าร่วมงาน CU First Date เรียบร้อยแล้ว</p>
+        <button 
+          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+          onclick="window.location.href='/firstdate/home/'"
+        >
+          กลับหน้าหลัก
+        </button>
+      </div>
+    )}
+
+    {eventStatus.isLate && (
+      <!-- State 4: Registration Closed -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
+        <div class="text-4xl mb-4">⏰</div>
+        <h2 class="text-xl font-semibold text-red-400 mb-4">ปิดลงทะเบียนแล้ว</h2>
+        <p class="text-gray-300 mb-6">ขออภัย การลงทะเบียนสำหรับงาน CU First Date ได้ปิดแล้ว</p>
+        <button 
+          class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+          onclick="window.location.href='/firstdate/home/'"
+        >
+          กลับหน้าหลัก
+        </button>
+      </div>
+    )}
+
+    {eventStatus.isComingSoon && (
+      <!-- State 5: Coming Soon -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
+        <div class="text-4xl mb-4">🔜</div>
+        <h2 class="text-xl font-semibold text-yellow-400 mb-4">Coming Soon</h2>
+        <p class="text-gray-300 mb-6">งาน CU First Date จะเปิดให้ลงทะเบียนเร็วๆ นี้ โปรดติดตามข่าวสาร</p>
+        <button 
+          class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+          onclick="window.location.href='/firstdate/home/'"
+        >
+          กลับหน้าหลัก
+        </button>
+      </div>
+    )}
+  </div>
+</Layout>
+
+
+<script>
+  // Handle registration button click
+  const registerBtn = document.getElementById('register-btn');
+  if (registerBtn) {
+    registerBtn.addEventListener('click', async () => {
+      registerBtn.textContent = 'กำลังลงทะเบียน...';
+      registerBtn.disabled = true;
+      
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Redirect to show success state
+        window.location.href = '/firstdate/firstdate-event/?registered=true';
+      } catch (error) {
+        registerBtn.textContent = 'ลงทะเบียนเลย';
+        registerBtn.disabled = false;
+        alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+      }
+    });
+  }
+</script>
