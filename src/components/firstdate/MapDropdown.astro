@@ -10,9 +10,9 @@ export interface Props {
 const { options, selectedOption, class: additionalClasses = '' } = Astro.props;
 ---
 
-<div class={`relative inline-block ${additionalClasses}`}>
+<div class={`relative ${additionalClasses}`}>
   <button 
-    class="flex items-center justify-between w-full text-white font-semibold text-lg leading-none drop-shadow-lg"
+    class="flex items-center justify-between w-full text-white font-semibold text-lg leading-none fill-white drop-shadow-lg drop-shadow-white/50"
     id="map-dropdown-trigger"
     aria-expanded="false"
     aria-haspopup="true"
@@ -26,7 +26,7 @@ const { options, selectedOption, class: additionalClasses = '' } = Astro.props;
   </button>
   
   <div 
-    class="absolute top-full left-0 mt-1 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 min-w-full z-10 hidden"
+    class="absolute top-full left-0 right-0 mt-1 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 z-10 hidden"
     id="map-dropdown-menu"
   >
     <ul class="py-1">

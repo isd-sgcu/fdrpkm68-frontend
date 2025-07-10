@@ -1,6 +1,8 @@
 ---
 import MapDropdown from "@/components/firstdate/MapDropdown.astro";
 import Layout from "@/layouts/firstdate/WithNavbar.astro";
+import ButtonFd from "@/components/common/ButtonFd.astro";
+import { Home } from '@lucide/astro';
 
 const mapOptions = [
   { label: "แผนที่หลัก", value: "maps-main" },
@@ -12,26 +14,29 @@ const mapOptions = [
 const selectedMap = mapOptions[0];
 ---
 <Layout>    
-    <div class="flex flex-col w-full px-2.5 py-3 gap-[18px]">
+    <div class="flex flex-col w-full px-2.5 py-3 items-center justify-center">
+        <h1 class="text-4xl text-white font-zen-dots text-center fill-white drop-shadow-lg drop-shadow-white/50 my-8">Maps</h1>            
         <!-- Map Frame Container with integrated dropdown -->
-        <div class="relative flex-1 flex items-center justify-center">
+        <section class="relative flex-1 flex items-center justify-center">
             <!-- Background Frame -->
-            <div class="relative w-full max-w-[356px] h-[497px] mx-auto">
+            <div class="relative w-full max-w-[90vw] sm:max-w-[356px] mx-auto" style="aspect-ratio: 356/497;">
                 <img 
                     src="/images/frame/Frame-maps.svg" 
                     alt="Map Frame"
                     class="w-full h-full object-contain"
                 />
                 
-                <div class="absolute top-[2%] left-[1%] right-[1%] z-10">
+                <!-- Dropdown positioned with responsive sizing -->
+                <div class="absolute left-3 top-3 z-10">
                     <MapDropdown 
                         options={mapOptions} 
                         selectedOption={selectedMap}
-                        class="mx-2 w-[220px] border-b-4 border-[#FFB6C1]"
+                        class="w-[200px] sm:w-[220px] border-b-2 sm:border-b-4 border-[#FFB6C1] "
                     />
                 </div>
                 
-                <div class="absolute top-[13.5%] left-[3.1%] right-[3.1%] bottom-[6.8%] bg-white rounded-bl-lg rounded-br-lg overflow-hidden">
+                <!-- Map content with responsive sizing -->
+                <div class="absolute left-2 right-2 bottom-7 top-16 bg-white rounded-lg overflow-hidden">
                     <div 
                         id="map-container" 
                         class="w-full h-full relative cursor-grab active:cursor-grabbing overflow-hidden"
@@ -78,7 +83,16 @@ const selectedMap = mapOptions[0];
                     </div>
                 </div>
             </div>
+        </section>
+        <!-- Map Description -->
+        <div class="my-4 space-y-4 text-center">
+            <h1 class="text-2xl font-medium mt-8-">แผนที่จุฬารวมฝั่งใหญ่</h1>
+            <ButtonFd variant="fill" color="white" href="/firstdate/home/">
+                <Home slot="icon" size={20} />
+                กลับหน้าหลัก
+            </ButtonFd>
         </div>
+
     </div>
 </Layout>
 
