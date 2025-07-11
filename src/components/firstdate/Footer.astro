@@ -2,13 +2,14 @@
 import { cn } from "@/lib/utils"
 
 interface Props {
-  variant?: "firstdate" | "other";
+  variant?: "firstdate" |"fest"| "other";
 }
 
 const { variant } = Astro.props;
 
 const footerGradient = variant === "firstdate" 
   ? "from-[#324B95] to-[#C6EBC5]"
+  : variant === "fest" ? "from-[#FFFFFF] to-[#F2048E]"
   : "from-[#000000] to-[#FFFFFF]";
 ---
 
