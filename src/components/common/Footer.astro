@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils"
 
 interface Props {
-  varient?: "firstdate" | "rpkm_home";
+  variant?: "firstdate" | "rpkm_home";
 }
 
 const bgGradient = {
@@ -28,9 +28,9 @@ const bgGradient = {
   }
 }
 
-const { varient = "firstdate" } = Astro.props;
+const { variant = "firstdate" } = Astro.props;
 
-const footerGradient = bgGradient[varient].classes;
+const footerGradient = bgGradient[variant].classes;
 ---
 
 <footer class="text-xs">
