@@ -2,12 +2,12 @@
 import { cn } from "@/lib/utils"
 
 interface Props {
-  varient?: "firstdate" | "other";
+  variant?: "firstdate" | "other";
 }
 
-const { varient } = Astro.props;
+const { variant } = Astro.props;
 
-const footerGradient = varient === "firstdate" 
+const footerGradient = variant === "firstdate" 
   ? "from-[#324B95] to-[#C6EBC5]"
   : "from-[#000000] to-[#FFFFFF]";
 ---
