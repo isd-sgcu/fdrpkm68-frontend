@@ -2,6 +2,9 @@
 import Layout from "@/layouts/firstdate/WithNavbar.astro";
 import { getEventStatus, type EventType } from "@/lib/eventAPI";
 import SuccessConfetti from "@/components/common/SuccessConfetti.astro";
+import Popup from "@/components/common/Popup.astro";
+import ButtonFd from "@/components/common/ButtonFd.astro";
+import { Home } from '@lucide/astro';
 
 const eventType: EventType = 'rpkm';
 const eventStatus = await getEventStatus(eventType);
@@ -10,33 +13,40 @@ const eventStatus = await getEventStatus(eventType);
 const url = new URL(Astro.request.url);
 const justRegistered = url.searchParams.get('registered') === 'true';
 
-// Check if user should be redirected (already registered but not just registered)
-if (eventStatus.isRegistered && !justRegistered) {
-  return Astro.redirect('/firstdate/home/');
-}
 ---
 
 <Layout>
-  <div class="min-h-screen px-4 py-6 relative z-10">
+  <div class="px-4 py-6 relative z-10 ">
     <!-- Event Header -->
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-white mb-2">รับเพื่อนก้าวใหม่</h1>
-      <p class="text-gray-300">RPKM - กิจกรรมพัฒนาผู้นำ</p>
+    <div class="text-center">
+      <h1 class="text-4xl text-white text-center font-bold fill-white drop-shadow-lg drop-shadow-white/50 mt-[26px]">รับเพื่อนก้าวใหม่</h1>
     </div>
 
     <!-- Event Content Based on Status -->
-    {!eventStatus.isRegistered && !eventStatus.isLate && !justRegistered && !eventStatus.isComingSoon && (
+    {(!eventStatus.isRegistered && !eventStatus.isLate && !justRegistered && !eventStatus.isComingSoon) && (
       <!-- State 1: Not Registered -->
-      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
-        <h2 class="text-xl font-semibold text-white mb-4">ลงทะเบียนเข้าร่วมงาน</h2>
-        <p class="text-gray-300 mb-6">กดปุ่มด้านล่างเพื่อลงทะเบียนเข้าร่วมงาน รับเพื่อนก้าวใหม่</p>
-        <button 
-          id="register-btn"
-          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
-        >
-          ลงทะเบียนเลย
-        </button>
-      </div>
+      
+      <section class="flex flex-col items-center justify-center">
+        <Popup
+        size="medium"   
+        color="vivid-pink"                                     
+        class="flex flex-col items-center justify-center text-center"
+      >        
+        <p>รับเพื่อนก้าวใหม่ คือ กิจกรรมสำหรับนิสิตใหม่ทุกคณะ ได้ร่วมกิจกรรมที่บ้านรับเพื่อน สร้างความสนุกสนาน ประทับใจและกระชับสัมพันธ์ระหว่างนิสิตใหม่จากคณะต่าง ๆ เสริมสัมพันธ์ข้ามคณะ</p>
+        <p class="mt-4">📅 จัดวันที่ 1–3 สิงหาคม 2568</p>
+        <p>📝 ลงทะเบียน “เข้างาน” ล่วงหน้าได้ตั้งแต่วันนี้</p>
+        <p>🫶 เว็บไซต์เปิดให้ลงทะเบียน “เลือกบ้าน” ตั้งแต่วันที่ 20 กรกฏาคม เวลา 20:00 น</p>
+        <p class="mt-4 text-red-500 font-bold">สถานะ: ยังไม่ได้ลงทะเบียน</p>
+      </Popup>       
+        <ButtonFd
+            class="mb-2"
+            color="white"
+            id="register-btn"
+          >
+            ลงทะเบียนเข้าร่วมงาน
+          </ButtonFd>          
+      </section>
+      
     )}
 
     {justRegistered && (
@@ -46,55 +56,76 @@ if (eventStatus.isRegistered && !justRegistered) {
 
     {eventStatus.isRegistered && !justRegistered && (
       <!-- State 3: Already Registered -->
-      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
-        <div class="text-4xl mb-4">✅</div>
-        <h2 class="text-xl font-semibold text-green-400 mb-4">คุณได้ลงทะเบียนแล้ว</h2>
-        <p class="text-gray-300 mb-6">คุณได้ลงทะเบียนเข้าร่วมงาน รับเพื่อนก้าวใหม่ เรียบร้อยแล้ว</p>
-        <button 
-          class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
-          onclick="window.location.href='/firstdate/home/'"
-        >
-          กลับหน้าหลัก
-        </button>
-      </div>
+      <section class="flex flex-col items-center justify-center">
+        <Popup
+        size="medium"   
+        color="light-green"                                     
+        class="flex flex-col items-center justify-center text-center"
+      >        
+        <p>รับเพื่อนก้าวใหม่ คือ กิจกรรมสำหรับนิสิตใหม่ทุกคณะ ได้ร่วมกิจกรรมที่บ้านรับเพื่อน สร้างความสนุกสนาน ประทับใจและกระชับสัมพันธ์ระหว่างนิสิตใหม่จากคณะต่าง ๆ เสริมสัมพันธ์ข้ามคณะ</p>
+        <p class="mt-4">📅 จัดวันที่ 1–3 สิงหาคม 2568</p>
+        <p>📝 ลงทะเบียน “เข้างาน” ล่วงหน้าได้ตั้งแต่วันนี้</p>
+        <p>🫶 เว็บไซต์เปิดให้ลงทะเบียน “เลือกบ้าน” ตั้งแต่วันที่ 20 กรกฏาคม เวลา 20:00 น</p>
+        <p class="mt-4 text-[#C6EBC5] font-bold">สถานะ: ลงทะเบียนเข้างานแล้ว อย่าลืมไปลงทะเบียน “เลือกบ้าน” กันด้วยนะ</p>
+      </Popup>       
+        <ButtonFd
+            class="mb-2"
+            color="white"
+            href="#"
+          >
+            ลงทะเบียนเลือกบ้าน
+          </ButtonFd>          
+      </section>
     )}
 
     {eventStatus.isLate && (
       <!-- State 4: Registration Closed -->
-      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
-        <div class="text-4xl mb-4">⏰</div>
-        <h2 class="text-xl font-semibold text-red-400 mb-4">ปิดลงทะเบียนแล้ว</h2>
-        <p class="text-gray-300 mb-6">ขออภัย การลงทะเบียนสำหรับงาน รับเพื่อนก้าวใหม่ ได้ปิดแล้ว</p>
-        <button 
-          class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
-          onclick="window.location.href='/firstdate/home/'"
-        >
+      <section class="flex flex-col items-center justify-center">
+        <Popup
+        size="medium"   
+        color="light-beige"                                     
+        class="flex flex-col items-center justify-center text-center"
+      >        
+        <p>รับเพื่อนก้าวใหม่ คือ กิจกรรมสำหรับนิสิตใหม่ทุกคณะ ได้ร่วมกิจกรรมที่บ้านรับเพื่อน สร้างความสนุกสนาน ประทับใจและกระชับสัมพันธ์ระหว่างนิสิตใหม่จากคณะต่าง ๆ เสริมสัมพันธ์ข้ามคณะ</p>
+        <p class="mt-4">📅 จัดวันที่ 1–3 สิงหาคม 2568</p>
+        <p>📝 ลงทะเบียน “เข้างาน” ล่วงหน้าได้ตั้งแต่วันนี้</p>
+        <p>🫶 เว็บไซต์เปิดให้ลงทะเบียน “เลือกบ้าน” ตั้งแต่วันที่ 20 กรกฏาคม เวลา 20:00 น</p>        
+      </Popup>       
+      <h1 class="text-4xl text-white text-center font-bold fill-white drop-shadow-lg drop-shadow-white/50 mb-4">ไม่สามารถลงทะเบียนได้</h1>
+        <ButtonFd variant="fill" color="white" href="/firstdate/home/" class="mb-8">
+              <Home slot="icon" size="20" />
           กลับหน้าหลัก
-        </button>
-      </div>
+        </ButtonFd>                     
+      </section>
     )}
 
     {eventStatus.isComingSoon && (
       <!-- State 5: Coming Soon -->
-      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
-        <div class="text-4xl mb-4">🔜</div>
-        <h2 class="text-xl font-semibold text-yellow-400 mb-4">Coming Soon</h2>
-        <p class="text-gray-300 mb-6">งาน รับเพื่อนก้าวใหม่ จะเปิดให้ลงทะเบียนเร็วๆ นี้ โปรดติดตามข่าวสาร</p>
-        <button 
-          class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
-          onclick="window.location.href='/firstdate/home/'"
-        >
+      <section class="flex flex-col items-center justify-center">
+        <Popup
+        size="medium"   
+        color="light-beige"                                     
+        class="flex flex-col items-center justify-center text-center"
+      >        
+        <h1 class="text-4xl text-white font-bold my-2">รับเพื่อนก้าวใหม่</h1>
+        <h1 class="text-4xl text-white font-bold my-2">Coming Soon</h1>
+        <p class="mt-4 text-xl">พร้อมให้ลงทะเบียน<br>ในวันที่ 20 กรกฎาคม 2568</p>
+        <p class="mt-4 text-xl">อดใจอีกสักนิด แล้วไว้พบกัน!</p>
+      </Popup>       
+      <ButtonFd variant="fill" color="white" href="/firstdate/home/">
+              <Home slot="icon" size="20" />
           กลับหน้าหลัก
-        </button>
-      </div>
+        </ButtonFd>        
+      </section>
     )}
+
   </div>
 </Layout>
 
 
 <script>
   // Handle registration button click
-  const registerBtn = document.getElementById('register-btn');
+  const registerBtn = document.getElementById('register-btn') as HTMLButtonElement;
   if (registerBtn) {
     registerBtn.addEventListener('click', async () => {
       registerBtn.textContent = 'กำลังลงทะเบียน...';

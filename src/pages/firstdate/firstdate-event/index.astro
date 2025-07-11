@@ -10,10 +10,7 @@ const eventStatus = await getEventStatus(eventType);
 const url = new URL(Astro.request.url);
 const justRegistered = url.searchParams.get('registered') === 'true';
 
-// Check if user should be redirected (already registered but not just registered)
-if (eventStatus.isRegistered && !justRegistered) {
-  return Astro.redirect('/firstdate/home/');
-}
+// Note: Removed redirect logic to allow viewing "Already Registered" state
 ---
 
 <Layout>

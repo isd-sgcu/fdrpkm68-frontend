@@ -10,12 +10,8 @@ export interface EventStatus {
   isComingSoon?: boolean; // event not available yet
 }
 
-// Mock functions - replace with real API calls
 export const getEventStatus = async (eventType: EventType): Promise<EventStatus> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 100));
-  
-  // Mock data - you can change these for testing different states
+  await new Promise(resolve => setTimeout(resolve, 100));    
   const mockData: Record<EventType, EventStatus> = {
     'firstdate': { isRegistered: false, isLate: false, isComingSoon: false },
     'rpkm': { isRegistered: false, isLate: false, isComingSoon: true },
