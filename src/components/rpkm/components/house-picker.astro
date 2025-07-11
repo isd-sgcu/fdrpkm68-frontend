@@ -2,6 +2,7 @@
 import HouseDetailCard from "@rpkm/elements/house-detail-card.astro";
 import HousePickingCard from "@rpkm/elements/house-picking-card.astro";
 import HouseInfoPopup from "@rpkm/elements/house-info-popup.astro";
+import HouseConfirmPopup from "@rpkm/elements/house-confirm-popup.astro";
 import { houseDisplayData } from "@rpkm/data/house.js";
 
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
@@ -57,15 +58,15 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       <!-- Pref Houses -->
       <div class="pt-5 z-20 flex flex-wrap gap-3 justify-center">
       {
-          [1, 2, 3, 4, 5].map((rank) => (
-            <div data-house-rank={rank}>
-              <HousePickingCard house={{
-                name: undefined,
-                imageURL: undefined,
-                rank: String(rank) as "1" | "2" | "3" | "4" | "5"
-              }} />
-            </div>
-          ))
+        [1, 2, 3, 4, 5].map((rank) => (
+          <div data-house-rank={rank}>
+            <HousePickingCard house={{
+              name: undefined,
+              imageURL: undefined,
+              rank: String(rank) as "1" | "2" | "3" | "4" | "5"
+            }} />
+          </div>
+        ))
       }
       </div>
 
@@ -111,19 +112,18 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
   <div class="relative w-full h-fit min-h-[500px] bg-[#313131E5] p-6 flex flex-col items-center">
     <!-- Search Bar -->
     <div class="flex gap-6 justify-center items-center">
-      <img src="/images/rpkm/house-icon.svg" width="26" height="30" />
+      <button
+        id="popup-close-btn" 
+        class="cursor-pointer w-8 h-8"
+      >
+        <img id="popup-close-btn" src="/images/rpkm/house-icon.svg" />
+      </button>
       <input 
         id="house-search" 
         type="text" 
         class="px-3 py-1 w-full max-w-[260px] h-[32px] bg-white rounded-full text-[#2B2D42] font-medium"
         placeholder="ค้นหาบ้าน" 
       />
-      <button
-        id="popup-close-btn" 
-        class="cursor-pointer w-8 h-8"
-      >
-        <img src="/images/rpkm/exit-icon.svg" class="w-full h-full" />
-      </button>
     </div>
 
     <p class="text-white font-semibold py-2">ขนาดบ้าน</p>
@@ -146,7 +146,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
           class="hidden"
           checked={index === 0}
         />
-          {size} (จำนวน)
+          <span class="size-label">{size} (0)</span>
         </label>
       ))}
     </div>
@@ -163,6 +163,8 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 </div>
 
 <HouseInfoPopup />
+
+<HouseConfirmPopup />
 
 <!-- Script -->
 <script define:vars={{houseData: houseDisplayData}}>
@@ -204,13 +206,67 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       popup?.classList.remove("flex");
     }
 
-    function shuffleArray(array) {
-      const shuffled = [...array];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      return shuffled;
+    function updateHouseCounts() {
+      const sizeLabels = document.querySelectorAll('.size-label');
+      const cards = houseCardContainer?.querySelectorAll(".house-card-wrapper");
+      const searchValue = houseSearchInput?.value?.toLowerCase().trim() || "";
+      
+      sizeLabels.forEach(label => {
+        const sizeOption = label.closest('.size-option');
+        const size = sizeOption?.getAttribute('data-size') || 'ทั้งหมด';
+        let count = 0;
+        
+        if (size === 'ทั้งหมด') {
+          // Count all visible houses
+          cards?.forEach(card => {
+            const cardSize = card.getAttribute("data-size");
+            const thName = card.getAttribute("data-thname");
+            const thNameLower = thName?.toLowerCase() || "";
+            const enName = card.getAttribute("data-enname")?.toLowerCase() || "";
+            
+            // Check if house is available and matches current rank restrictions
+            const isAvailable = !selectedHouses.has(thName);
+            const nameMatch = !searchValue || 
+              thNameLower.includes(searchValue) || 
+              enName.includes(searchValue);
+            let rankMatch = true;
+            
+            if (currentRank === "sub") {
+              rankMatch = cardSize === "XL" || cardSize === "XXL";
+            }
+            
+            if (isAvailable && nameMatch && rankMatch) {
+              count++;
+            }
+          });
+        } else {
+          // Count houses of specific size
+          cards?.forEach(card => {
+            const cardSize = card.getAttribute("data-size");
+            const thName = card.getAttribute("data-thname");
+            const thNameLower = thName?.toLowerCase() || "";
+            const enName = card.getAttribute("data-enname")?.toLowerCase() || "";
+            
+            // Check if house matches size, is available, and matches rank restrictions
+            const sizeMatch = cardSize === size;
+            const isAvailable = !selectedHouses.has(thName);
+            const nameMatch = !searchValue || 
+              thNameLower.includes(searchValue) || 
+              enName.includes(searchValue);
+            let rankMatch = true;
+            
+            if (currentRank === "sub") {
+              rankMatch = cardSize === "XL" || cardSize === "XXL";
+            }
+            
+            if (sizeMatch && isAvailable && nameMatch && rankMatch) {
+              count++;
+            }
+          });
+        }
+        
+        label.textContent = `${size} (${count})`;
+      });
     }
 
     // ===========================================
@@ -329,7 +385,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
                   src="/images/rpkm/houses/${house.imageURL}"
                   class="w-full h-auto object-cover pb-1"
                 />
-                <p class="text-xs text-[#2B2D42] font-semibold text-center">${house.name}</p>
+                <p class="text-xs text-[#2B2D42] font-semibold text-center overflow-hidden whitespace-nowrap text-ellipsis">${house.name}</p>
               </div>
               <div class="flex justify-center">
                 <button class="cursor-pointer flex justify-center items-center">
@@ -531,11 +587,31 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
     // ===========================================
     // Load saved selection on page load
     loadHouseSelection();
+    
+    // Initialize house counts
+    setTimeout(() => {
+      updateHouseCounts();
+    }, 100);
 
     // Add reset function for development/testing
     window.resetHouseSelection = function() {
       clearHouseSelection();
       location.reload();
+    };
+
+    // Add confirmation function for popup
+    window.confirmHouseSubmission = function() {
+      isSubmitted = true;
+      submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ส่งการเลือกบ้านแล้ว</p>`;
+      submitBtn.disabled = true;
+      
+      // Disable all house picking cards
+      document.querySelectorAll("[data-rank]").forEach(card => {
+        card.classList.add("pointer-events-none");
+      });
+
+      // Save final state to localStorage
+      saveHouseSelection();
     };
 
     // ===========================================
@@ -564,6 +640,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       const searchValue = houseSearchInput?.value || "";
 
       filterHouseCards(selectedSize, searchValue);
+      updateHouseCounts();
     });
 
     // House Search Filter
@@ -574,6 +651,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       );
       const selectedSize = selectedOption?.getAttribute("data-size") || "ทั้งหมด";
       filterHouseCards(selectedSize, searchValue);
+      updateHouseCounts();
     });
 
     // Handle house picking card click
@@ -587,6 +665,9 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       
       // Filter houses based on rank
       filterHousesByRank(currentRank);
+      
+      // Update counts after filtering
+      updateHouseCounts();
       
       popup?.classList.remove("hidden");
       popup?.classList.add("flex");
@@ -651,6 +732,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
         // Update UI
         updatePickedHousesDisplay();
         updateAvailableHouses();
+        updateHouseCounts();
         
         // Save to localStorage
         saveHouseSelection();
@@ -665,21 +747,14 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       });
     }
 
-    // Submit button handler
+    // Submit button handler - show confirm popup instead of direct submission
     submitBtn?.addEventListener("click", () => {
       if (isSubmitted) return;
       
-      isSubmitted = true;
-      submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ส่งการเลือกบ้านแล้ว</p>`;
-      submitBtn.disabled = true;
-      
-      // Disable all house picking cards
-      document.querySelectorAll("[data-rank]").forEach(card => {
-        card.classList.add("pointer-events-none");
-      });
-
-      // Save final state to localStorage
-      saveHouseSelection();
+      // Show confirmation popup
+      if (window.showHouseConfirmPopup) {
+        window.showHouseConfirmPopup();
+      }
     });
 
     // Handle house card click in popup
@@ -730,6 +805,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       // Update UI
       updatePickedHousesDisplay();
       updateAvailableHouses();
+      updateHouseCounts();
       
       // Save to localStorage
       saveHouseSelection();
