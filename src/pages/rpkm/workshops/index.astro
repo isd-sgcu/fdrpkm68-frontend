@@ -1,9 +1,28 @@
 ---
-import Sample from "@/components/rpkm/sample.astro";
+import Frame from "@/components/common/Frame.astro";
 import Layout from "@/layouts/rpkm/WithNavbar.astro";
-
+import WorkshopCard from "@/components/rpkm/workshop/WorkshopCard.tsx";
 ---
 
-<Layout>
-<h1>workshops</h1>
-</Layout>   
+<Layout variant="rpkm_workshops">
+<div class='flex flex-col gap-8'>
+  <WorkshopCard 
+    client:load
+    title="Keychain Workshop"
+    description="มาแล้วลูกจ๋า ชุดโกโกวาที่หนูอยากได้ โกโกวาที่หนู อยากใส่ โกโกวาคิมิซึนิดา มาแล้วลูกจ๋า ชุดโกโกวาที่ หนูอยากได้ โกโกวาที่หนูอยากใส่ โกโกวาคิมิซึนิดา..."
+    dates={["1 สิงหาคม 2568", "1 สิงหาคม 2568", "1 สิงหาคม 2568"]}
+    current={300}
+    total={600}
+    workshopId="1"
+  />
+  <WorkshopCard 
+    client:load
+    title="Diffuser Workshop"
+    description="มาแล้วลูกจ๋า ชุดโกโกวาที่หนูอยากได้ โกโกวาที่หนู อยากใส่ โกโกวาคิมิซึนิดา มาแล้วลูกจ๋า ชุดโกโกวาที่ หนูอยากได้ โกโกวาที่หนูอยากใส่ โกโกวาคิมิซึนิดา..."
+    dates={["1 สิงหาคม 2568", "1 สิงหาคม 2568", "1 สิงหาคม 2568"]}
+    current={450}
+    total={600}
+    workshopId="2"
+  />
+</div>
+</Layout>
