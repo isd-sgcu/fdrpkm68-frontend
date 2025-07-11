@@ -1,17 +1,4 @@
 ---
-const { house = {} } = Astro.props;
-const {
-  thName,
-  enName,
-  image,
-  thDescription,
-  enDescription,
-  instagramURL,
-  size,
-  amount,
-  capacity
-} = house;
-
 const colors = [
   { size: "S", bgColor: "#0FF", textColor: "#000" },
   { size: "M", bgColor: "#FF1493", textColor: "#fff" },
@@ -20,10 +7,8 @@ const colors = [
   { size: "XXL", bgColor: "#2B2D42", textColor: "#fff" }
 ];
 
-let colorData = colors.find((color) => color.size == size);
-if (!colorData) {
-  colorData = { size: "", bgColor: "#000", textColor: "#fff" };
-}
+// Default color
+const defaultColor = colors[0];
 ---
 
 <!-- House Popup Overlay -->
@@ -46,24 +31,24 @@ if (!colorData) {
       >
         <!-- House Size -->
         <div
+          id="house-size-badge"
           class="rounded-full absolute left-10 text-xl font-bold -translate-y-1 w-[40px] px-3 py-1 aspect-square flex justify-center items-center"
-          style={`background-color: ${colorData.bgColor}; color: ${colorData.textColor};`}
+          style={`background-color: ${defaultColor.bgColor}; color: ${defaultColor.textColor};`}
         >
-          {size}
+          S
         </div>
 
         <!-- House Image -->
         <div class="flex flex-col gap-1 items-center">
           <div class="flex items-center text-sm gap-[1px]">
             <p class="text-white">
-              <span style={`color: ${amount == capacity ? "#FF1493" : "#68A987"};`}>
-                {amount}
-              </span>/{capacity}
+              <span id="house-amount" style="color: #68A987;">0</span>/<span id="house-capacity">0</span>
             </p>
             <img src="/images/rpkm/person-icon-white.svg" width="18" height="18" />
           </div>
           <img
-            src={"/images/rpkm/houses/" + image}
+            id="house-image"
+            src="/images/rpkm/houses/placeholder.png"
             width="104"
             height="104"
             class="border border-white"
@@ -89,25 +74,26 @@ if (!colorData) {
         </div>
 
         <!-- House Title -->
-        <p id="house-title" class="text-2xl pt-2 text-white font-bold">{thName}</p>
+        <p id="house-title" class="text-2xl pt-2 text-white font-bold">ชื่อบ้าน</p>
 
         <!-- House Description -->
-        <p id="house-description" class="text-xs pt-3 text-white max-w-[250px] text-center">{thDescription}</p>
+        <p id="house-description" class="text-xs pt-3 text-white max-w-[250px] text-center">คำอธิบายบ้าน</p>
 
         <!-- House Giveaway Header -->
-        <p class="text-xl pt-3 text-white font-bold">ฝากถึงน้องๆ</p>
+        <p id="house-giveaway-header" class="text-xl pt-3 text-white font-bold">ฝากถึงน้องๆ</p>
 
         <!-- House Giveaway Description -->
-        <p id="house-message" class="text-xs pt-3 text-white max-w-[250px] text-center">{thDescription}</p>
+        <p id="house-message" class="text-xs pt-3 text-white max-w-[250px] text-center">ข้อความถึงน้องๆ</p>
 
         <!-- House Instagram -->
         <a 
-          href={instagramURL}
+          id="house-instagram-link"
+          href="#"
           target="_blank"
           class="flex gap-2 pt-7 items-center cursor-pointer hover:opacity-80 transition-opacity"
         >
           <img src="/images/rpkm/instagram-icon.svg" width="20" height="20" />
-          <p id="house-instagram" class="text-white font-medium">{enName}</p>
+          <p id="house-instagram" class="text-white font-medium">Instagram</p>
         </a>
 
         <!-- House Buttons -->
@@ -119,7 +105,7 @@ if (!colorData) {
               type="button"
               style="width: 130px; height: 48px;"
             >
-              <p class="text-xl text-[#00FFFF] font-medium">ย้อนกลับ</p>
+              <p id="btn-cancel-text" class="text-xl text-[#00FFFF] font-medium">ย้อนกลับ</p>
             </button>
           </div>
           <div class="filter drop-shadow-[0_0_6px_white] z-20">
@@ -129,7 +115,7 @@ if (!colorData) {
               type="button"
               style="width: 130px; height: 48px;"
             >
-              <p class="text-xl text-white font-medium">เพิ่มบ้านนี้</p>
+              <p id="btn-add-text" class="text-xl text-white font-medium">เพิ่มบ้านนี้</p>
             </button>
           </div>
         </div>
