@@ -1,7 +1,7 @@
 // Mock API functions for event registration status
 // These will be replaced with real API calls later
 
-export type EventType = 'firstdate' | 'rpkm' | 'freshmen-night' | 'cu-fest';
+export type EventType = 'firstdate' | 'rpkm' | 'freshmen-night' | 'cu-fest'| 'personality-game';
 
 export interface EventStatus {
   isRegistered: boolean;
@@ -81,6 +81,20 @@ export const EVENT_CONFIGS: Record<EventType, EventConfig> = {
       late: 'light-beige',
       comingSoon: 'light-beige'
     }
+  },
+  'personality-game': {
+    id: 'personality-game',
+    title: 'Personality Game',
+    description: '',
+    schedule: 'พร้อมให้เล่นในวันที่ xx กรกฎาคม 2568',
+    registrationInfo: 'อดใจอีกสักนิด แล้วไว้พบกัน!',
+    additionalInfo: '',
+    popupColors: {
+      notRegistered: 'vivid-pink',
+      registered: 'light-green',
+      late: 'light-beige',
+      comingSoon: 'light-beige'
+    }
   }
 };
 
@@ -98,7 +112,8 @@ export const getEventStatus = async (eventType: EventType): Promise<EventStatus>
     'firstdate': { isRegistered, isLate: false, isComingSoon: false },
     'rpkm': { isRegistered, isLate: false, isComingSoon: false },
     'freshmen-night': { isRegistered, isLate: false, isComingSoon: false },
-    'cu-fest': { isRegistered, isLate: false, isComingSoon: false }
+    'cu-fest': { isRegistered, isLate: false, isComingSoon: true },
+    'personality-game': { isRegistered, isLate: false, isComingSoon: true },
   };
   
   return mockData[eventType];
@@ -106,7 +121,7 @@ export const getEventStatus = async (eventType: EventType): Promise<EventStatus>
 
 export const registerForEvent = async (eventType: EventType): Promise<{ success: boolean }> => {
   // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise(resolve => setTimeout(resolve, 100));
   
   // Add to registrations set
   registrations.add(eventType);
