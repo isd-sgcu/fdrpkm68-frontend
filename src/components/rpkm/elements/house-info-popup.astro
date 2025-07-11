@@ -39,51 +39,33 @@ const defaultColor = colors[0];
         </div>
 
         <!-- House Image -->
-        <div class="flex flex-col gap-1 items-center">
-          <div class="flex items-center text-sm gap-[1px]">
-            <p class="text-white">
-              <span id="house-amount" style="color: #68A987;">0</span>/<span id="house-capacity">0</span>
-            </p>
-            <img src="/images/rpkm/person-icon-white.svg" width="18" height="18" />
-          </div>
-          <img
-            id="house-image"
-            src="/images/rpkm/houses/house-blank.png"
-            width="104"
-            height="104"
-            class="border border-white"
-          />
+        <img
+          id="house-image"
+          src="/images/rpkm/houses/house-blank.png"
+          width="104"
+          height="104"
+          class="border border-white"
+        />
+
+        <!-- House People -->
+        <div class="absolute right-10 flex items-center text-sm gap-[1px]">
+          <p class="text-white">
+            <span id="house-amount" style="color: #68A987;">0</span>/<span id="house-capacity">0</span>
+          </p>
+          <img src="/images/rpkm/person-icon-white.svg" width="18" height="18" />
         </div>
 
-        <!-- House Toggle Language -->
-        <div class="absolute right-10 flex justify-center -translate-y-1">
-          <button
-            id="lang-th"
-            class="px-2 py-1 rounded-l-xl text-white bg-[#FF1493] font-semibold text-xs cursor-pointer"
-            type="button"
-          >
-            TH
-          </button>
-          <button
-            id="lang-en"
-            class="px-2 py-1 rounded-r-xl text-black bg-white font-semibold text-xs cursor-pointer"
-            type="button"
-          >
-            EN
-          </button>
-        </div>
+        <!-- House Thai Title -->
+        <p id="house-thai-title" class="text-2xl pt-2 text-white font-bold">ชื่อบ้าน</p>
 
-        <!-- House Title -->
-        <p id="house-title" class="text-2xl pt-2 text-white font-bold">ชื่อบ้าน</p>
+        <!-- House Thai Description -->
+        <p id="house-thai-description" class="text-xs pt-3 text-white max-w-[250px] text-center">คำอธิบายบ้าน</p>
 
-        <!-- House Description -->
-        <p id="house-description" class="text-xs pt-3 text-white max-w-[250px] text-center">คำอธิบายบ้าน</p>
+        <!-- House English Title -->
+        <p id="house-eng-title" class="text-xl pt-3 text-white font-bold">House Name</p>
 
-        <!-- House Giveaway Header -->
-        <p id="house-giveaway-header" class="text-xl pt-3 text-white font-bold">ฝากถึงน้องๆ</p>
-
-        <!-- House Giveaway Description -->
-        <p id="house-message" class="text-xs pt-3 text-white max-w-[250px] text-center">ข้อความถึงน้องๆ</p>
+        <!-- House English Description -->
+        <p id="house-eng-description" class="text-xs pt-3 text-white max-w-[250px] text-center">House Description</p>
 
         <!-- House Instagram -->
         <a 
