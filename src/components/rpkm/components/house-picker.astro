@@ -1,21 +1,8 @@
 ---
 import HouseDetailCard from "@rpkm/elements/house-detail-card.astro";
 import HousePickingCard from "@rpkm/elements/house-picking-card.astro";
-import HousePopupCard from "@rpkm/elements/house-popup-card.astro"
 
-type houseDisplayType = {
-  thName: string,
-  enName: string,
-  image: string,
-  thDescription: string,
-  enDescription: string,
-  instagramURL: string,
-  size: string,
-  amount: number,
-  capacity: number
-}
-
-const houseDisplayData: houseDisplayType[] = [
+const houseDisplayData = [
   // 10 S
   {"thName":"บ้านอะอึ๋ม","enName":"Baan A-Aum","image":"BaanA-Aum.png","thDescription":"น้อง ๆ คนไหนกำลังมองหาบ้านที่ขนาดไม่ใหญ่มาก แต่เราอยู่กันอย่างอบอุ่น ได้รู้จักเพื่อนและรุ่นพี่จากหลากหลายคณะทั่วจุฬาฯ บ้านอะอึ๋มมีสิ่งที่น้อง ๆ กำลังมองหาอยู่ แล้วมาเจอกันน้า","enDescription":"If you’re looking for a cozy baan that’s not too big where you can meet new friends from all across Chula, come and join us on Aug 1-3 at Baan A-Aum🏠","instagramURL":"https://www.instagram.com/baanaaum.official?igsh=MXM1Z2d2dTRqcmI2aw==","size":"S","amount":174,"capacity":500},
   {"thName":"บ้านสด","enName":"Baan Sod","image":"BaanSod.png","thDescription":"บ้านสดเป็นบ้านที่พร้อมส่งความสุขและความสนุกให้กับเหล่าเฟรชชี่ แล้วเจอกันที่สดเด้อ เอ้กเพรส!","enDescription":"Sodder Express doesn’t just deliver packages — it delivers friendship, warmth, and non-stop laughs. This ride goes straight to your heart. Miss it and you’ll miss out!","instagramURL":"https://www.instagram.com/baansod.official?igsh=MXNkcXF6ZmQzd2dreQ==","size":"S","amount":174,"capacity":500},
@@ -48,14 +35,6 @@ const houseDisplayData: houseDisplayType[] = [
   {"thName":"บ้านยิ้ม", "enName": "Baan Yim", "image": "BaanYim.png", "thDescription": "ลักยิ้มที่ว่าน่ารัก หรือจะสู้ความรักที่มาจากบ้านยิ้ม", "enDescription": "Who's got that cute smile? 😝🙋🏻‍♀️ \nWell then, time to join BaanYim the House of Smiles, right?", "instagramURL": "https://www.instagram.com/baanyimchula?igsh=MWE2bWVxc2xseWoyaw%3D%3D&utm_source=qr", "size":"XXL","amount":174,"capacity":500},
   {"thName":"บ้านหลายใจ","enName":"Baan Laijai","image":"BaanLaijai.png","thDescription":"ถ้าเขาไม่รักก็มาพักที่บ้านหลายใจ เพราะถึงจะชื่อหลายใจ แต่รักใครรักจริง 😉","enDescription":"He or she says no? Come rest your heart at Lai Jai. Even if Lai Jai means many hearts, we truly love if we love someone.💜","instagramURL":"https://www.instagram.com/baanlaijai/profilecard/?igsh=b2QyajJtdzh1OW8z","size":"XXL","amount":174,"capacity":500}
 ]
-
-type housePickingType = {
-  name: string,
-  imageURL: string,
-  rank: "1" | "2" | "3" | "4" | "5" | "sub"
-}
-
-const housePickingData: housePickingType[] = [];
 
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 ---
@@ -110,52 +89,57 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       <!-- Pref Houses -->
       <div class="pt-5 z-20 flex flex-wrap gap-3 justify-center">
       {
-          [1, 2, 3, 4, 5].map((rank) => {
-          const match = housePickingData.find(h => parseInt(h.rank) === rank);
-              return <HousePickingCard house={match ?? { rank }} />;
-          })
+          [1, 2, 3, 4, 5].map((rank) => (
+            <div data-house-rank={rank}>
+              <HousePickingCard house={{
+                name: undefined,
+                imageURL: undefined,
+                rank: String(rank) as "1" | "2" | "3" | "4" | "5"
+              }} />
+            </div>
+          ))
       }
       </div>
 
       <!-- White Bar -->
       <div class="flex items-center my-4">
-          <div class="w-2 h-2 rotate-45 bg-white"></div>
-          <div class="w-[236.008px] h-[2px] bg-white "></div>
-          <div class="w-2 h-2 rotate-45 bg-white"></div>
+        <div class="w-2 h-2 rotate-45 bg-white"></div>
+        <div class="w-[236.008px] h-[2px] bg-white "></div>
+        <div class="w-2 h-2 rotate-45 bg-white"></div>
       </div>
 
       <!-- Sub Pref House -->
-      <div class="z-20 flex flex-wrap gap-3 justify-center">
-      {
-          (() => {
-          const match = housePickingData.find(h => h.rank === "sub");
-              return <HousePickingCard house={match ?? { rank: "sub" }} />;
-          })()
-      }
+      <div class="z-20 flex flex-wrap gap-6 justify-center">
+        <div data-house-rank="sub">
+          <HousePickingCard house={{
+            name: undefined,
+            imageURL: undefined,
+            rank: "sub"
+          }} />
+        </div>
       </div>
 
       <!-- Button -->
       <div class={`pb-7 pt-5 filter drop-shadow-[0_0_6px_white] z-20`}>
-              <button
-                  id="btn-editing-house"
-                  class="cut-edge-all bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] cursor-pointer flex justify-center items-center gap-2"
-                  type="button"
-                  style={`width: 260px; height: 48px;`}
-              >
-                  <img src="/images/rpkm/edit-icon.svg" width="24" height="24" />
-                  <p class="text-xl text-white font-medium">แก้ไข</p>
-              </button>
-          </div>
+        <button
+            id="btn-submit-house"
+            disabled
+            class="cut-edge-all bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] cursor-pointer flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            type="button"
+            style={`width: 260px; height: 48px;`}
+        >
+            <p class="text-xl text-white font-medium">ยืนยันการเลือกบ้าน</p>
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Editing Wrapper -->
-<div 
-  class="relative w-full h-fit bg-[#313131E5] p-6 flex flex-col items-center hidden" 
-  id="view-editing">
-  <!-- Search Bar -->
-  <div class="flex gap-6 justify-center items-center">
+<!-- House Selection Popup -->
+<div class="fixed inset-0 mx-auto -translate-x-[9px] w-[440px] bg-black/70 hidden items-center justify-center z-50" id="house-selection-popup">
+  <div class="relative w-full h-fit min-h-[500px] bg-[#313131E5] p-6 flex flex-col items-center">
+    <!-- Search Bar -->
+    <div class="flex gap-6 justify-center items-center">
       <img src="/images/rpkm/house-icon.svg" width="26" height="30" />
       <input 
         id="house-search" 
@@ -163,147 +147,358 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
         class="px-3 py-1 w-full max-w-[260px] h-[32px] bg-white rounded-full text-[#2B2D42] font-medium"
         placeholder="ค้นหาบ้าน" 
       />
-  </div>
-
-  <p class="text-white font-semibold py-2">ขนาดบ้าน</p>
-
-  <!-- Filter -->
-  <div class="flex flex-wrap gap-3 justify-center" id="house-size-filter">
-    {houseSizes.map((size, index) => (
-      <label
-        class={`size-option cursor-pointer px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-          index === 0
-          ? "bg-white text-[#8A2BE4]"
-          : "bg-[#8A2BE4] text-white"
-      }`}
-        data-size={size}
+      <button
+        id="popup-close-btn" 
+        class="cursor-pointer w-8 h-8"
       >
-      <input
-        type="checkbox"
-        name="size"
-        value={size}
-        class="hidden"
-        checked={index === 0}
-      />
-        {size} (จำนวน)
-      </label>
-    ))}
-  </div>
+        <img src="/images/rpkm/exit-icon.svg" class="w-full h-full" />
+      </button>
+    </div>
 
-  <!-- House Data -->
-  <div class="grid grid-cols-3 gap-4 mt-6 max-h-[250px] overflow-y-auto custom-scrollbar" id="house-card-container">
-    {houseDisplayData.map((house) => {
-      return (
-        <div data-size={house.size} data-thname={house.thName} data-enname={house.enName}>
+    <p class="text-white font-semibold py-2">ขนาดบ้าน</p>
+
+    <!-- Filter -->
+    <div class="flex flex-wrap gap-3 justify-center" id="house-size-filter">
+      {houseSizes.map((size, index) => (
+        <label
+          class={`size-option cursor-pointer px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+            index === 0
+            ? "bg-white text-[#8A2BE4]"
+            : "bg-[#8A2BE4] text-white"
+        }`}
+        data-size={size}
+        >
+        <input
+          type="checkbox"
+          name="size"
+          value={size}
+          class="hidden"
+          checked={index === 0}
+        />
+          {size} (จำนวน)
+        </label>
+      ))}
+    </div>
+
+    <!-- House Data -->
+    <div class="grid grid-cols-3 gap-4 mt-6 max-h-[250px] overflow-y-auto custom-scrollbar" id="house-card-container">
+      {houseDisplayData.map((house) => (
+        <div class="house-card-wrapper" data-size={house.size} data-thname={house.thName} data-enname={house.enName}>
           <HouseDetailCard house={house} />
         </div>
-      );
-    })}
+      ))}
+    </div>
   </div>
 </div>
 
-<HousePopupCard house={houseDisplayData[0]} />
 
 <!-- Script -->
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const pickBtn = document.getElementById("btn-picking-house");
-    const editBtn = document.getElementById("btn-editing-house");
+<script define:vars={{houseData: houseDisplayData}}>
+document.addEventListener("DOMContentLoaded", () => {
+  // DOM Elements
+  const popup = document.getElementById("house-selection-popup");
+  const houseSearchInput = document.getElementById("house-search");
+  const houseSizeFilter = document.getElementById("house-size-filter");
+  const houseSizeOptions = document.querySelectorAll(".size-option");
+  const houseCardContainer = document.getElementById("house-card-container");
 
-    const notPickingView = document.getElementById("view-not-picking");
-    const pickingView = document.getElementById("view-picking");
-    const editingView = document.getElementById("view-editing");
+  // House Size Filter
+  houseSizeFilter?.addEventListener("click", (e) => {
+    const target = e.target.closest(".size-option");
+    if (!target) return;
 
-    const houseSizeFilter = document.getElementById("house-size-filter");
-    const houseSizeOptions = houseSizeFilter?.querySelectorAll<HTMLElement>(".size-option");
-    const houseCardContainer = document.getElementById("house-card-container");
-    const houseSearchInput = document.getElementById("house-search") as HTMLInputElement
-
-    pickBtn?.addEventListener("click", () => {
-      notPickingView?.classList.add("hidden");
-      pickingView?.classList.remove("hidden");
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Remove active state from all options
+    houseSizeOptions.forEach((opt) => {
+      opt.classList.remove("bg-white", "text-[#8A2BE4]");
+      opt.classList.add("bg-[#8A2BE4]", "text-white");
     });
 
-    editBtn?.addEventListener("click", () => {
-      if (editingView?.classList.contains("hidden")) {
-        editingView?.classList.remove("hidden");
-        if (editBtn) {
-          editBtn.innerHTML = `<p class="text-xl text-white font-medium">ยืนยันการเลือกบ้าน</p>`;
+    // Set active state for clicked option
+    target.classList.remove("bg-[#8A2BE4]", "text-white");
+    target.classList.add("bg-white", "text-[#8A2BE4]");
+
+    const selectedSize = target.getAttribute("data-size") || "ทั้งหมด";
+    const searchValue = houseSearchInput?.value || "";
+
+    filterHouseCards(selectedSize, searchValue);
+  });
+
+  // House Search Filter
+  houseSearchInput?.addEventListener("input", (e) => {
+    const searchValue = e.target.value;
+    const selectedOption = Array.from(houseSizeOptions).find(opt => 
+      opt.classList.contains("bg-white")
+    );
+    const selectedSize = selectedOption?.getAttribute("data-size") || "ทั้งหมด";
+    filterHouseCards(selectedSize, searchValue);
+  });
+
+  // Handle house picking card click
+  document.addEventListener("click", (e) => {
+    if (isSubmitted) return;
+    
+    const btn = e.target.closest("[data-rank]");
+    if (!btn) return;
+    
+    currentRank = btn.getAttribute("data-rank");
+    
+    // Filter houses based on rank
+    filterHousesByRank(currentRank);
+    
+    popup?.classList.remove("hidden");
+    popup?.classList.add("flex");
+  });
+
+  // Function to filter houses based on rank
+  function filterHousesByRank(rank) {
+    const cards = houseCardContainer?.querySelectorAll(".house-card-wrapper");
+    if (!cards) return;
+
+    cards.forEach(card => {
+      const cardSize = card.getAttribute("data-size");
+      
+      if (rank === "sub") {
+        // สำหรับอันดับสำรอง เลือกได้เฉพาะ XL และ XXL
+        if (cardSize === "XL" || cardSize === "XXL") {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
         }
       } else {
-        editingView?.classList.add("hidden");
-        if (editBtn) {
-          editBtn.innerHTML = `
-            <img src="/images/rpkm/edit-icon.svg" width="24" height="24" />
-            <p class="text-xl text-white font-medium">แก้ไข</p>
-          `;
-        }
+        // สำหรับอันดับหลัก เลือกได้ทุกขนาด
+        card.style.display = "block";
       }
     });
+  }
 
-    // House Size Filter
-    houseSizeOptions?.forEach((option) => {
-      option.addEventListener("click", () => {
-        houseSizeOptions.forEach(opt => {
-          opt.classList.remove("bg-white", "text-[#8A2BE4]");
-          opt.classList.add("bg-[#8A2BE4]", "text-white");
+  // Filter Function - แก้ไขให้รองรับการกรองตาม rank
+  function filterHouseCards(size, nameSearch) {
+    const cards = houseCardContainer?.querySelectorAll(".house-card-wrapper");
+    if (!cards) return;
 
-          const input = opt.querySelector("input") as HTMLInputElement | null;
-          if (input) input.checked = false;
-        });
+    const searchLower = nameSearch.toLowerCase().trim();
 
-        option.classList.remove("bg-[#8A2BE4]", "text-white");
-        option.classList.add("bg-white", "text-[#8A2BE4]");
+    cards.forEach(card => {
+      const cardSize = card.getAttribute("data-size");
+      const thName = card.getAttribute("data-thname")?.toLowerCase() || "";
+      const enName = card.getAttribute("data-enname")?.toLowerCase() || "";
 
-        const input = option.querySelector("input") as HTMLInputElement | null;
-        if (input) input.checked = true;
+      const sizeMatch = size === "ทั้งหมด" || cardSize === size;
+      const nameMatch = !searchLower || 
+        thName.includes(searchLower) || 
+        enName.includes(searchLower);
 
-        const selectedSize = option.getAttribute("data-size") ?? "ทั้งหมด";
-        const searchValue = houseSearchInput?.value ?? "";
+      // เพิ่มการตรวจสอบ rank สำหรับอันดับสำรอง
+      let rankMatch = true;
+      if (currentRank === "sub") {
+        rankMatch = cardSize === "XL" || cardSize === "XXL";
+      }
 
-        filterHouseCards(selectedSize, searchValue);
-      });
+      if (sizeMatch && nameMatch && rankMatch) {
+        card.style.display = "block";
+      } else {
+        card.style.display = "none";
+      }
     });
+  }
 
-    // House Name Filter
-    houseSearchInput?.addEventListener("input", (e) => {
-      const target = e.target as HTMLInputElement | null;
-      if (!target) return;
-      const searchValue = target.value;
+  // DOM Elements
+  const closeBtn = document.getElementById("popup-close-btn");
+  const pickBtn = document.getElementById("btn-picking-house");
+  const submitBtn = document.getElementById("btn-submit-house");
+  const notPickingView = document.getElementById("view-not-picking");
+  const pickingView = document.getElementById("view-picking");
 
-      const selectedSizeOption = Array.from(houseSizeOptions ?? []).find(opt => {
-        const input = opt.querySelector("input") as HTMLInputElement | null;
-        return input?.checked;
-      });
+  // State
+  const pickedHouses = { "1": null, "2": null, "3": null, "4": null, "5": null, "sub": null };
+  let selectedHouses = new Set();
+  let currentRank = null;
+  let isSubmitted = false;
 
-      const selectedSize = selectedSizeOption?.getAttribute("data-size") ?? "ทั้งหมด";
+  // Close popup function
+  function closePopup() {
+    popup?.classList.add("hidden");
+    popup?.classList.remove("flex");
+  }
 
-      filterHouseCards(selectedSize, searchValue);
-    });
-
-    // House Filter Function
-    function filterHouseCards(size: string, nameSearch: string) {
-      const houseCards = houseCardContainer?.querySelectorAll("[data-size]");
-      if (!houseCards) return;
-
-      const searchLower = nameSearch.trim().toLowerCase();
-
-      houseCards.forEach(card => {
-        const cardSize = card.getAttribute("data-size") || "";
-        // Read both Thai and English names from data-attributes
-        const thName = (card.getAttribute("data-thname") || "").toLowerCase();
-        const enName = (card.getAttribute("data-enname") || "").toLowerCase();
-
-        const sizeMatch = size === "ทั้งหมด" || cardSize === size;
-        // Match if search is in either name
-        const nameMatch = !searchLower || thName.includes(searchLower) || enName.includes(searchLower);
-
-        if (sizeMatch && nameMatch) {
-          card.classList.remove("hidden");
-        } else {
-          card.classList.add("hidden");
-        }
-      });
+  // Close popup events
+  closeBtn?.addEventListener("click", closePopup);
+  popup?.addEventListener("click", (e) => {
+    if (e.target === popup) {
+      closePopup();
     }
   });
+
+  // เปิดหน้าเลือกบ้าน
+  pickBtn?.addEventListener("click", () => {
+    notPickingView?.classList.add("hidden");
+    pickingView?.classList.remove("hidden");
+  });
+
+  // Handle house selection in popup
+  if (popup) {
+    popup.addEventListener("click", (e) => {
+      const wrapper = e.target.closest(".house-card-wrapper");
+      if (!wrapper || e.target === popup || !e.target.closest("#house-card-container")) return;
+      
+      const thName = wrapper.getAttribute("data-thname");
+      const houseObj = houseData.find(h => h.thName === thName);
+      
+      if (!houseObj || selectedHouses.has(thName)) return;
+
+      // ถ้าอันดับนี้มีบ้านอยู่แล้ว ให้ลบบ้านเก่าออกจาก selectedHouses
+      if (pickedHouses[currentRank]) {
+        selectedHouses.delete(pickedHouses[currentRank].name);
+      }
+
+      // Update state - เลือกไปที่ rank ที่ user กดไว้
+      pickedHouses[currentRank] = {
+        name: houseObj.thName,
+        imageURL: houseObj.image,
+        rank: currentRank
+      };
+      selectedHouses.add(thName);
+
+      // Update UI
+      updatePickedHousesDisplay();
+      updateAvailableHouses();
+      
+      // Close popup
+      closePopup();
+
+      // Enable submit button if all main ranks are filled
+      const mainRanks = ["1", "2", "3", "4", "5"];
+      const allMainRanksFilled = mainRanks.every(rank => pickedHouses[rank] !== null);
+      submitBtn.disabled = !allMainRanksFilled;
+    });
+  }
+
+  // Submit button handler
+  submitBtn?.addEventListener("click", () => {
+    if (isSubmitted) return;
+    
+    isSubmitted = true;
+    submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ส่งการเลือกบ้านแล้ว</p>`;
+    submitBtn.disabled = true;
+    
+    // Disable all house picking cards
+    document.querySelectorAll("[data-rank]").forEach(card => {
+      card.classList.add("pointer-events-none");
+    });
+  });
+
+  // Function to remove house
+  function removeHouse(rank) {
+    const house = pickedHouses[rank];
+    if (!house) return;
+
+    // Remove from selected houses
+    selectedHouses.delete(house.name);
+    
+    // Clear house from picked houses
+    pickedHouses[rank] = null;
+
+    // Update UI
+    updatePickedHousesDisplay();
+    updateAvailableHouses();
+    
+    // Disable submit button if main ranks are not filled
+    const mainRanks = ["1", "2", "3", "4", "5"];
+    const allMainRanksFilled = mainRanks.every(rank => pickedHouses[rank] !== null);
+    submitBtn.disabled = !allMainRanksFilled;
+  }
+
+  // Handle bin icon click
+  document.addEventListener("click", (e) => {
+    if (isSubmitted) return;
+
+    const binBtn = e.target.closest('img[src*="bin-icon.svg"]');
+    if (!binBtn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const houseCard = binBtn.closest("[data-house-rank]");
+    if (!houseCard) return;
+
+    const rank = houseCard.getAttribute("data-house-rank");
+    removeHouse(rank);
+  });
+
+  // Function to update picked houses display
+  function updatePickedHousesDisplay() {
+    const pickedHouseElements = document.querySelectorAll('[data-house-rank]');
+    pickedHouseElements.forEach(element => {
+      const rank = element.getAttribute('data-house-rank');
+      const house = pickedHouses[rank];
+      
+      // Clear existing content
+      while (element.firstChild) {
+        element.firstChild.remove();
+      }
+      
+      // Create new house picking card
+      const card = document.createElement('div');
+      if (house) {
+        card.innerHTML = `
+          <div class="relative h-fit w-fit flex flex-col gap-3">
+            <div class="relative w-[80px] h-fit min-h-[100px] bg-white p-1">
+              <img 
+                src="/images/rpkm/rank-${rank}.svg"
+                class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
+                width="${rank === 'sub' ? 55 : rank <= 2 ? 30 : 24}"
+                height="${rank === 'sub' ? 55 : rank <= 2 ? 30 : 24}"
+              />
+              <img 
+                src="/images/rpkm/houses/${house.imageURL}"
+                class="w-full h-auto object-cover pb-1"
+              />
+              <p class="text-xs text-[#2B2D42] font-semibold text-center">${house.name}</p>
+            </div>
+            <div class="flex justify-center">
+              <button class="cursor-pointer flex justify-center items-center">
+                <img src="/images/rpkm/bin-icon.svg" width="14" height="18"/>
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        card.innerHTML = `
+          <button 
+            class="relative w-[80px] h-[100px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] hover:bg-[#D38DD8]/20 transition-colors cursor-pointer"
+            data-rank="${rank}"
+          >
+            <img 
+              src="/images/rpkm/rank-${rank}.svg"
+              class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
+              width="${rank === 'sub' ? 55 : rank <= 2 ? 30 : 24}"
+              height="${rank === 'sub' ? 55 : rank <= 2 ? 30 : 24}"
+            />
+            <img 
+              src="/images/rpkm/plus-icon.svg"
+              class="w-6 h-6" 
+            />
+          </button>
+        `;
+      }
+      element.appendChild(card.firstElementChild);
+    });
+  }
+
+  // Function to update available house cards
+  function updateAvailableHouses() {
+    const houseCards = houseCardContainer?.querySelectorAll(".house-card-wrapper");
+    houseCards?.forEach(card => {
+      const thName = card.getAttribute("data-thname");
+      if (selectedHouses.has(thName)) {
+        card.classList.add("opacity-50", "pointer-events-none");
+      } else {
+        card.classList.remove("opacity-50", "pointer-events-none");
+      }
+    });
+  }
+});
 </script>

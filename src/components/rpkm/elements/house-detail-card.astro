@@ -28,7 +28,6 @@ if (!colorData) {
   class="relative w-[80px] h-[120px] bg-white p-1 cursor-pointer"
   data-name={thName}
   id={`house-card-${thName}`}
-  onclick={`alert(${JSON.stringify(thName)})`}
 >
   <img 
     src={image ? "/images/rpkm/houses/" + image : "/images/rpkm/house-blank.png"} 
@@ -51,7 +50,7 @@ if (!colorData) {
   <!-- Lower Content -->
   <div class="flex justify-between items-center">
     <div class="flex items-center text-[8px] gap-[1px]">
-      <p>
+      <p class="text-[#313131E5]">
         <span style={`color: ${amount == capacity ? "#FF1493" : "#68A987"};`}>{amount}</span>/{capacity}
       </p>
       <img src="/images/rpkm/person-icon.svg" width="12" height="12" />
