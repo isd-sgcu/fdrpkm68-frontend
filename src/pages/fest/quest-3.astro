@@ -1,0 +1,58 @@
+---
+import Layout from "@/layouts/fest/FestWithNavbar.astro";
+import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
+import ButtonFest from "@/components/common/ButtonFest.astro";
+---
+
+<Layout>
+  
+  
+  <div class="px-4 py-6 flex flex-col space-y-2">
+    <div class="w-full sticky top-0 z-10 backdrop-blur-md px-3 justify-between flex py-2">
+      <a href="/fest/quest-2" class="text-2xl font-bold">{'<'}</a>
+      <div class="text-center">
+        <p class="text-5xl font-bold">
+          Quest 3
+        </p>
+        <p class="text-[48px font-bold font-Orbitron">
+            Dimensions Unfold : Field Trips
+        </p>
+
+      </div>
+      <a href="/fest/quest-4" class="text-2xl font-bold">{'>'}</a>
+    </div>
+
+    <div class="pt-4">
+      <p class="text-justify leading-relaxed hyphens-auto"  style="text-align: justify; text-align-last: left; word-spacing: 0.2em;">
+        พายุสุริยะยังคงรุนแรงอย่างต่อเนื่อง แต่แล้ว… สัญญาณจากมิติแห่งเวลาได้เปิดเส้นทางหลบพายุให้นักท่องเวลาทั้งหลาย!!!
+        ทว่าเส้นทางเหล่านั้น ถูกจำกัดด้วย วัน เวลา และสถานที่ ตามที่ แต่ละดินแดนกำหนดไว้
+      </p>
+
+        <p class="text-justify leading-relaxed hyphens-auto mt-[20px]" style="text-align: justify; text-align-last: left; word-spacing: 0.2em;">
+            จงเลือกเส้นทางที่ต้องการ แล้วมาพบกันตาม วัน เวลา และสถานที่นัดหมายให้ถูกต้อง
+            สิ่งสำคัญที่สุดในภารกิจนี้ อย่าลืมลงชื่อ!! เพื่อยืนยันว่าต้องการเป็นหนึ่งในผู้ร่วมเดินทาง
+            หลบพายุไปด้วยกัน
+        </p>
+        <p class="text-justify leading-relaxed hyphens-auto mt-[20px]" style="text-align: justify; text-align-last: left; word-spacing: 0.2em;">
+             เพราะเปิดรับจำนวนจำกัดหากช้า ระวังจะพลาดความสนุก และอาจจะถูกพายุพัดพาไปจากเพื่อนร่วมทางได้ระวังตัวไว้ให้ดี!!
+        </p>
+        <HorizonlineFest variant="blue" />
+
+        <div class="text-center">
+            <p>วิธีการทำกิจกรรม</p>
+            <p>ลงทะเบียนเพื่อเข้าร่วม ลงกี่กิจกรรมก็ได้ แต่ 1 กิจกรรมลงได้ 1 รอบเท่านั้น</p>
+            <p>ตารางกิจกรรม</p>
+        </div>
+
+        {/*เว้นใส่รูป */}
+        <HorizonlineFest variant="blue" />
+
+        <div>
+            <h1>รายละเอียด Quest ย่อย</h1>
+            <ButtonFest color="white" size="small">Small</ButtonFest>
+            
+        </div>
+
+    </div>
+    
+</Layout>
