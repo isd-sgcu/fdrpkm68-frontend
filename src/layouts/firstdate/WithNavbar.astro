@@ -2,6 +2,7 @@
 import "@/styles/global.css";
 import Navbar from "@firstdate/Navbar.astro";
 import Footer from "@firstdate/Footer.astro";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title?: string;
@@ -20,6 +21,7 @@ const { title, description } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <ClientRouter />
   </head>
   <body class="min-h-screen min-w-screen bg-slate-500">
     <div class="min-h-screen max-w-[440px] mx-auto flex flex-col bg-[url(/firstdate/main-bg.png)] bg-cover bg-center bg-no-repeat text-white ">
