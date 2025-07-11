@@ -29,7 +29,7 @@ if (!colorData) {
 <!-- House Popup Overlay -->
 <div
   id="view-house-popup"
-  class="fixed inset-0 z-50 bg-[rgba(0,0,0,0.7)] flex items-center justify-center transition-opacity duration-200 w-full hidden"
+  class="fixed inset-0 z-50 bg-[rgba(0,0,0,0.7)] translate-x-[9px] flex items-center justify-center transition-opacity duration-200 w-full min-h-[500px] hidden"
 >
   <!-- House Popup Wrapper -->
   <div class="relative w-full max-w-md px-5">
@@ -92,26 +92,30 @@ if (!colorData) {
         <p id="house-title" class="text-2xl pt-2 text-white font-bold">{thName}</p>
 
         <!-- House Description -->
-        <p id="house-description" class="text-xs pt-3 text-white max-w-[250px]">{thDescription}</p>
+        <p id="house-description" class="text-xs pt-3 text-white max-w-[250px] text-center">{thDescription}</p>
 
         <!-- House Giveaway Header -->
         <p class="text-xl pt-3 text-white font-bold">ฝากถึงน้องๆ</p>
 
         <!-- House Giveaway Description -->
-        <p id="house-message" class="text-xs pt-3 text-white max-w-[250px]">{thDescription}</p>
+        <p id="house-message" class="text-xs pt-3 text-white max-w-[250px] text-center">{thDescription}</p>
 
         <!-- House Instagram -->
-        <div class="flex gap-2 pt-7 items-center cursor-pointer">
+        <a 
+          href={instagramURL}
+          target="_blank"
+          class="flex gap-2 pt-7 items-center cursor-pointer hover:opacity-80 transition-opacity"
+        >
           <img src="/images/rpkm/instagram-icon.svg" width="20" height="20" />
           <p id="house-instagram" class="text-white font-medium">{enName}</p>
-        </div>
+        </a>
 
         <!-- House Buttons -->
         <div class="flex gap-5 pt-7">
           <div class="filter z-20">
             <button
               id="btn-cancel-house"
-              class="cut-edge-all border-4 border-[#00FFFF] bg-transparent cursor-pointer"
+              class="cut-edge-all border-4 border-[#00FFFF] bg-transparent cursor-pointer transition-all"
               type="button"
               style="width: 130px; height: 48px;"
             >
@@ -121,7 +125,7 @@ if (!colorData) {
           <div class="filter drop-shadow-[0_0_6px_white] z-20">
             <button
               id="btn-add-house"
-              class="cut-edge-all bg-[linear-gradient(90deg,_#00FFFF_0%,_#2B2D42_100%)] cursor-pointer"
+              class="cut-edge-all bg-[linear-gradient(90deg,_#00FFFF_0%,_#2B2D42_100%)] cursor-pointer transition-all"
               type="button"
               style="width: 130px; height: 48px;"
             >

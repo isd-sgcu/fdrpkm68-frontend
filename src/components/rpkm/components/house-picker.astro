@@ -1,6 +1,7 @@
 ---
 import HouseDetailCard from "@rpkm/elements/house-detail-card.astro";
 import HousePickingCard from "@rpkm/elements/house-picking-card.astro";
+import HousePopupCard from "@rpkm/elements/house-popup-card.astro";
 
 const houseDisplayData = [
   // 10 S
@@ -108,8 +109,10 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
         <div class="w-2 h-2 rotate-45 bg-white"></div>
       </div>
 
+      <p class="text-xs">*บ้านที่ 6 (สำรอง) เลือกได้เฉพาะบ้านไซส์ XL, XXL เท่านั้น</p>
+
       <!-- Sub Pref House -->
-      <div class="z-20 flex flex-wrap gap-6 justify-center">
+      <div class="z-20 flex flex-wrap gap-6 pt-7 justify-center">
         <div data-house-rank="sub">
           <HousePickingCard house={{
             name: undefined,
@@ -120,15 +123,16 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       </div>
 
       <!-- Button -->
-      <div class={`pb-7 pt-5 filter drop-shadow-[0_0_6px_white] z-20`}>
+      <p class="text-xs font-semibold pt-5">*กรุณาเลือกบ้านหลักให้ครบ 5 บ้าน</p>
+      <div class={`pb-7 pt-4 filter drop-shadow-[0_0_6px_white] z-20`}>
         <button
-            id="btn-submit-house"
-            disabled
-            class="cut-edge-all bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] cursor-pointer flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            type="button"
-            style={`width: 260px; height: 48px;`}
+          id="btn-submit-house"
+          disabled
+          class="cut-edge-all bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] cursor-pointer flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          type="button"
+          style={`width: 260px; height: 48px;`}
         >
-            <p class="text-xl text-white font-medium">ยืนยันการเลือกบ้าน</p>
+          <p class="text-xl text-white font-medium">ยืนยันการเลือกบ้าน</p>
         </button>
       </div>
     </div>
@@ -136,7 +140,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 </div>
 
 <!-- House Selection Popup -->
-<div class="fixed inset-0 mx-auto -translate-x-[9px] w-[440px] bg-black/70 hidden items-center justify-center z-50" id="house-selection-popup">
+<div class="fixed inset-0 mx-auto translate-x-[9px] w-[440px] bg-[rgba(0,0,0,0.7)] hidden items-center justify-center z-50" id="house-selection-popup">
   <div class="relative w-full h-fit min-h-[500px] bg-[#313131E5] p-6 flex flex-col items-center">
     <!-- Search Bar -->
     <div class="flex gap-6 justify-center items-center">
@@ -191,16 +195,31 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
   </div>
 </div>
 
+<HousePopupCard house={houseDisplayData[0]} />
 
 <!-- Script -->
 <script define:vars={{houseData: houseDisplayData}}>
 document.addEventListener("DOMContentLoaded", () => {
   // DOM Elements
   const popup = document.getElementById("house-selection-popup");
+  const housePopup = document.getElementById("view-house-popup");
   const houseSearchInput = document.getElementById("house-search");
   const houseSizeFilter = document.getElementById("house-size-filter");
   const houseSizeOptions = document.querySelectorAll(".size-option");
   const houseCardContainer = document.getElementById("house-card-container");
+
+  // State
+  let selectedHouseData = null;
+
+  // House popup elements
+  const houseTitle = housePopup?.querySelector("#house-title");
+  const houseDescription = housePopup?.querySelector("#house-description");
+  const houseMessage = housePopup?.querySelector("#house-message");
+  const houseInstagram = housePopup?.querySelector("#house-instagram");
+  const btnCancelHouse = housePopup?.querySelector("#btn-cancel-house");
+  const btnAddHouse = housePopup?.querySelector("#btn-add-house");
+  const langTH = housePopup?.querySelector("#lang-th");
+  const langEN = housePopup?.querySelector("#lang-en");
 
   // House Size Filter
   houseSizeFilter?.addEventListener("click", (e) => {
@@ -500,5 +519,172 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // Handle house card click in popup - replace direct selection
+  houseCardContainer?.addEventListener("click", (e) => {
+    const wrapper = e.target.closest(".house-card-wrapper");
+    if (!wrapper) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const thName = wrapper.getAttribute("data-thname");
+    selectedHouseData = houseData.find(h => h.thName === thName);
+    
+    if (!selectedHouseData || selectedHouses.has(thName)) return;
+
+    // Show house popup with data
+    showHousePopup(selectedHouseData);
+  });
+
+  // Function to show house popup
+  function showHousePopup(house) {
+    if (!house) return;
+
+    // Update popup content
+    updateHousePopupContent(house, true); // true for Thai
+    
+    // Show popup
+    housePopup?.classList.remove("hidden");
+    housePopup?.classList.add("flex");
+  }
+
+  // Function to update house popup content
+  function updateHousePopupContent(house, isThai = true) {
+    if (!house) return;
+
+    // Update title
+    if (houseTitle) {
+      houseTitle.textContent = isThai ? house.thName : house.enName;
+    }
+
+    // Update description
+    if (houseDescription) {
+      houseDescription.textContent = isThai ? house.thDescription : house.enDescription;
+    }
+
+    // Update message
+    if (houseMessage) {
+      houseMessage.textContent = isThai ? house.thDescription : house.enDescription;
+    }
+
+    // Update instagram
+    if (houseInstagram) {
+      houseInstagram.textContent = house.enName;
+    }
+
+    // Update language buttons
+    if (isThai) {
+      langTH?.classList.add("bg-[#FF1493]", "text-white");
+      langTH?.classList.remove("bg-white", "text-black");
+      langEN?.classList.add("bg-white", "text-black");
+      langEN?.classList.remove("bg-[#FF1493]", "text-white");
+    } else {
+      langEN?.classList.add("bg-[#FF1493]", "text-white");
+      langEN?.classList.remove("bg-white", "text-black");
+      langTH?.classList.add("bg-white", "text-black");
+      langTH?.classList.remove("bg-[#FF1493]", "text-white");
+    }
+
+    // Update house image
+    const houseImg = housePopup?.querySelector("img[src*='/images/rpkm/houses/']");
+    if (houseImg) {
+      houseImg.src = `/images/rpkm/houses/${house.image}`;
+    }
+
+    // Update size badge
+    const sizeBadge = housePopup?.querySelector("div[style*='background-color']");
+    if (sizeBadge) {
+      sizeBadge.textContent = house.size;
+      
+      // Update size badge colors
+      const colors = {
+        "S": { bgColor: "#0FF", textColor: "#000" },
+        "M": { bgColor: "#FF1493", textColor: "#fff" },
+        "L": { bgColor: "#FFB6C1", textColor: "#000" },
+        "XL": { bgColor: "#D38DD8", textColor: "#000" },
+        "XXL": { bgColor: "#2B2D42", textColor: "#fff" }
+      };
+      
+      const colorData = colors[house.size] || { bgColor: "#000", textColor: "#fff" };
+      sizeBadge.style.backgroundColor = colorData.bgColor;
+      sizeBadge.style.color = colorData.textColor;
+    }
+
+    // Update capacity info
+    const capacityInfo = housePopup?.querySelector("p span");
+    if (capacityInfo) {
+      capacityInfo.textContent = house.amount;
+      capacityInfo.style.color = house.amount == house.capacity ? "#FF1493" : "#68A987";
+    }
+  }
+
+  // Language toggle handlers
+  langTH?.addEventListener("click", () => {
+    if (selectedHouseData) {
+      updateHousePopupContent(selectedHouseData, true);
+    }
+  });
+
+  langEN?.addEventListener("click", () => {
+    if (selectedHouseData) {
+      updateHousePopupContent(selectedHouseData, false);
+    }
+  });
+
+  // Cancel button - close house popup only
+  btnCancelHouse?.addEventListener("click", () => {
+    housePopup?.classList.add("hidden");
+    housePopup?.classList.remove("flex");
+    selectedHouseData = null;
+  });
+
+  // Add house button - select house and close both popups
+  btnAddHouse?.addEventListener("click", () => {
+    if (!selectedHouseData || !currentRank) return;
+
+    const thName = selectedHouseData.thName;
+    
+    if (selectedHouses.has(thName)) return;
+
+    // ถ้าอันดับนี้มีบ้านอยู่แล้ว ให้ลบบ้านเก่าออกจาก selectedHouses
+    if (pickedHouses[currentRank]) {
+      selectedHouses.delete(pickedHouses[currentRank].name);
+    }
+
+    // Update state - เลือกไปที่ rank ที่ user กดไว้
+    pickedHouses[currentRank] = {
+      name: selectedHouseData.thName,
+      imageURL: selectedHouseData.image,
+      rank: currentRank
+    };
+    selectedHouses.add(thName);
+
+    // Update UI
+    updatePickedHousesDisplay();
+    updateAvailableHouses();
+    
+    // Close both popups
+    housePopup?.classList.add("hidden");
+    housePopup?.classList.remove("flex");
+    closePopup();
+
+    // Enable submit button if all main ranks are filled
+    const mainRanks = ["1", "2", "3", "4", "5"];
+    const allMainRanksFilled = mainRanks.every(rank => pickedHouses[rank] !== null);
+    submitBtn.disabled = !allMainRanksFilled;
+
+    // Reset selected house data
+    selectedHouseData = null;
+  });
+
+  // Close house popup when clicking outside
+  housePopup?.addEventListener("click", (e) => {
+    if (e.target === housePopup) {
+      housePopup.classList.add("hidden");
+      housePopup.classList.remove("flex");
+      selectedHouseData = null;
+    }
+  });
 });
 </script>
