@@ -295,12 +295,15 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
         let count = 0;
         
         if (size === 'ทั้งหมด') {
-          // Count all houses that match search and rank restrictions
+          // Count all houses that match search and rank restrictions, excluding selected houses
           cards?.forEach(card => {
             const cardSize = card.getAttribute("data-size");
             const thName = card.getAttribute("data-thname");
             const thNameLower = thName?.toLowerCase() || "";
             const enName = card.getAttribute("data-enname")?.toLowerCase() || "";
+            
+            // Skip if house is already selected
+            if (selectedHouses.has(thName)) return;
             
             // Check name match and rank restrictions
             const nameMatch = !searchValue || 
@@ -317,12 +320,15 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
             }
           });
         } else {
-          // Count houses of specific size
+          // Count houses of specific size, excluding selected houses
           cards?.forEach(card => {
             const cardSize = card.getAttribute("data-size");
             const thName = card.getAttribute("data-thname");
             const thNameLower = thName?.toLowerCase() || "";
             const enName = card.getAttribute("data-enname")?.toLowerCase() || "";
+            
+            // Skip if house is already selected
+            if (selectedHouses.has(thName)) return;
             
             // Check matches
             const sizeMatch = cardSize === size;
@@ -497,10 +503,41 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       const houseCards = houseCardContainer?.querySelectorAll(".house-card-wrapper");
       houseCards?.forEach(card => {
         const thName = card.getAttribute("data-thname");
+        
         if (selectedHouses.has(thName)) {
-          card.classList.add("opacity-50", "pointer-events-none");
+          // Hide selected houses completely
+          card.style.display = "none";
         } else {
-          card.classList.remove("opacity-50", "pointer-events-none");
+          // Show available houses
+          const cardSize = card.getAttribute("data-size");
+          const cardThName = card.getAttribute("data-thname")?.toLowerCase() || "";
+          const cardEnName = card.getAttribute("data-enname")?.toLowerCase() || "";
+          
+          // Check current filters
+          const searchValue = houseSearchInput?.value?.toLowerCase().trim() || "";
+          const selectedOption = Array.from(houseSizeOptions).find(opt => 
+            opt.classList.contains("bg-white")
+          );
+          const selectedSize = selectedOption?.getAttribute("data-size") || "ทั้งหมด";
+          
+          // Apply filters
+          const sizeMatch = selectedSize === "ทั้งหมด" || cardSize === selectedSize;
+          const nameMatch = !searchValue || 
+            cardThName.includes(searchValue) || 
+            cardEnName.includes(searchValue);
+          
+          // Check rank restrictions
+          let rankMatch = true;
+          if (currentRank === "sub") {
+            rankMatch = cardSize === "XL" || cardSize === "XXL";
+          }
+          
+          // Show/hide based on all filters
+          if (sizeMatch && nameMatch && rankMatch) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
         }
       });
     }
@@ -527,6 +564,9 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
           card.style.display = "block";
         }
       });
+      
+      // Update visual state after rank filtering
+      updateAvailableHouses();
     }
 
     function filterHouseCards(size, nameSearch) {
@@ -557,6 +597,9 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
           card.style.display = "none";
         }
       });
+      
+      // Update visual state after filtering
+      updateAvailableHouses();
     }
 
     // ===========================================
@@ -794,6 +837,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
         const thName = wrapper.getAttribute("data-thname");
         const houseObj = houseData.find(h => h.thName === thName);
         
+        // Prevent selection of already selected houses
         if (!houseObj || selectedHouses.has(thName)) return;
 
         // ถ้าอันดับนี้มีบ้านอยู่แล้ว ให้ลบบ้านเก่าออกจาก selectedHouses
@@ -848,6 +892,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
       const thName = wrapper.getAttribute("data-thname");
       selectedHouseData = houseData.find(h => h.thName === thName);
       
+      // Prevent showing popup for already selected houses
       if (!selectedHouseData || selectedHouses.has(thName)) return;
 
       // Show house popup with data
@@ -867,6 +912,7 @@ const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 
       const thName = selectedHouseData.thName;
       
+      // Prevent adding already selected houses
       if (selectedHouses.has(thName)) return;
 
       // ถ้าอันดับนี้มีบ้านอยู่แล้ว ให้ลบบ้านเก่าออกจาก selectedHouses
