@@ -86,7 +86,7 @@ const selectedMap = mapOptions[0];
         </section>
         <!-- Map Description -->
         <div class="my-4 space-y-4 text-center">
-            <h1 class="text-2xl font-medium mt-8-">แผนที่จุฬารวมฝั่งใหญ่</h1>
+            <h1 id="map-title" class="text-2xl font-medium mt-8-">{selectedMap.label}</h1>
             <ButtonFd variant="fill" color="white" href="/firstdate/home/">
                 <Home slot="icon" size={20} />
                 กลับหน้าหลัก
@@ -226,6 +226,13 @@ const selectedMap = mapOptions[0];
       currentMap.src = `/images/maps/${value}.svg`;
       currentMap.alt = label;
       mapContainer.setAttribute('data-current-map', value);
+      
+      // Update the map title
+      const mapTitle = document.getElementById('map-title');
+      if (mapTitle) {
+        mapTitle.textContent = label;
+      }
+      
       resetTransform();
     });
   });
