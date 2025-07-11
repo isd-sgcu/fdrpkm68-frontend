@@ -1,21 +1,26 @@
 ---
+import type { EventConfig } from '@/lib/eventAPI';
+
 interface Props {
   eventName: string;
+  eventId?: string;
+  eventConfig: EventConfig;
 }
 
-const { eventName } = Astro.props;
+const { eventName, eventId, eventConfig } = Astro.props;
 import Popup from './Popup.astro';
 ---
 <section class="flex flex-col items-center justify-center">
         <Popup
         size="medium"   
-        color="light-beige"                                     
+        color="light-green"                                     
         class="flex flex-col items-center justify-center text-center"
       >        
-        <p>รับเพื่อนก้าวใหม่ คือ กิจกรรมสำหรับนิสิตใหม่ทุกคณะ ได้ร่วมกิจกรรมที่บ้านรับเพื่อน สร้างความสนุกสนาน ประทับใจและกระชับสัมพันธ์ระหว่างนิสิตใหม่จากคณะต่าง ๆ เสริมสัมพันธ์ข้ามคณะ</p>
-        <p class="mt-4">📅 จัดวันที่ 1–3 สิงหาคม 2568</p>
-        <p>📝 ลงทะเบียน “เข้างาน” ล่วงหน้าได้ตั้งแต่วันนี้</p>
-        <p>🫶 เว็บไซต์เปิดให้ลงทะเบียน “เลือกบ้าน” ตั้งแต่วันที่ 20 กรกฏาคม เวลา 20:00 น</p>        
+        <p>{eventConfig.description}</p>
+        <p class="mt-4">{eventConfig.schedule}</p>
+        <p>{eventConfig.registrationInfo}</p>
+        <p>{eventConfig.additionalInfo}</p>
+        <p class="mt-4 text-[#C6EBC5] font-bold">ลงทะเบียนสำเร็จ!</p>        
       </Popup>       
       <h1 class="text-4xl text-white text-center font-bold fill-white drop-shadow-lg drop-shadow-white/50 mb-8">กำลังโหลด</h1>      
 </section>
@@ -44,7 +49,7 @@ import Popup from './Popup.astro';
       useWorker: true
     });
 
-    const duration = 8000; // 8 seconds
+    const duration = 3000; // 3 seconds
     const end = Date.now() + duration;
     const colors = ['#f43f5e', '#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4', '#84cc16'];
 
@@ -52,38 +57,38 @@ import Popup from './Popup.astro';
     const frame = () => {
       // Left side confetti
       myConfetti({
-        particleCount: 7,
+        particleCount: 3,
         angle: 60,
-        spread: 55,
+        spread: 45,
         origin: { x: 0, y: 0.6 },
         colors: colors,
         gravity: 0.8,
         drift: 1,
-        scalar: 1.2
+        scalar: 1.0
       });
 
       // Right side confetti  
       myConfetti({
-        particleCount: 7,
+        particleCount: 3,
         angle: 120,
-        spread: 55,
+        spread: 45,
         origin: { x: 1, y: 0.6 },
         colors: colors,
         gravity: 0.8,
         drift: -1,
-        scalar: 1.2
+        scalar: 1.0
       });
 
       // Center top confetti
       myConfetti({
-        particleCount: 10,
+        particleCount: 4,
         angle: 90,
-        spread: 70,
+        spread: 50,
         origin: { x: 0.5, y: 0.1 },
         colors: colors,
         gravity: 0.9,
         drift: 0,
-        scalar: 1.1
+        scalar: 1.0
       });
 
       if (Date.now() < end) {
@@ -93,26 +98,8 @@ import Popup from './Popup.astro';
 
     frame();
 
-    // Additional random bursts
-    const interval = setInterval(() => {
-      myConfetti({
-        particleCount: 15,
-        angle: Math.random() * 60 + 60, // 60-120 degrees
-        spread: 60,
-        origin: { 
-          x: Math.random() * 0.6 + 0.2, // 0.2 to 0.8
-          y: Math.random() * 0.3 + 0.1  // 0.1 to 0.4
-        },
-        colors: colors,
-        gravity: 0.8,
-        scalar: 1.0
-      });
-    }, 300);
-
-    // Clear interval and remove canvas after duration
+    // Clean up canvas after confetti is done
     setTimeout(() => {
-      clearInterval(interval);
-      // Clean up canvas after confetti is done
       setTimeout(() => {
         if (canvas && canvas.parentNode) {
           canvas.parentNode.removeChild(canvas);
@@ -126,6 +113,18 @@ import Popup from './Popup.astro';
 
   // Auto-redirect after confetti and display time
   setTimeout(() => {
-    window.location.href = '/firstdate/home/';
-  }, 8000); // Redirect after 8 seconds (total display time)
+    // Get eventId from the URL or use passed prop
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPath = window.location.pathname;
+    const eventIdMatch = currentPath.match(/\/events\/([^\/]+)\//);
+    const eventId = eventIdMatch ? eventIdMatch[1] : null;
+    
+    if (eventId) {
+      // Redirect back to event page to show "already registered" state
+      window.location.href = `/firstdate/events/${eventId}/`;
+    } else {
+      // Fallback to home page
+      window.location.href = '/firstdate/home/';
+    }
+  }, 4000); // Redirect after 4 seconds (total display time)
 </script>
