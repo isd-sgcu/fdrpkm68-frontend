@@ -1,7 +1,7 @@
 import { type ReactNode, useEffect, useRef } from "react";
 
-import { useDialog } from "../../../hooks/useDialog";
-import "../../../lib/dialogManager";
+import { useDialog } from "@/hooks/useDialog";
+import "@/lib/dialogManager";
 
 // Ensure DialogManager is initialized
 

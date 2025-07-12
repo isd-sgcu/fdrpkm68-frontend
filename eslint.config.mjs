@@ -142,6 +142,13 @@ export default [
         },
       ],
       "import/no-relative-packages": "error",
+      // "import/no-relative-parent-imports": "error",
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: ['../*', './*']
+        }
+      ],
       "import/no-useless-path-segments": ["error", { noUselessIndex: true }],
 
       // React Rules
