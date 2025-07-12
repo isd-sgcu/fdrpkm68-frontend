@@ -1,7 +1,7 @@
+import { ChevronLeft } from "lucide-react";
+
 export interface ContactInfo {
-    phoneCountryCode: string;
     phoneNumber: string;
-    guardianPhoneCountryCode: string;
     guardianPhoneNumber: string;
     guardianRelationship: string;
 }
@@ -27,19 +27,6 @@ export default function ContactInformationStep({
         <div className="flex flex-col gap-2">
             <label className="text-sm" htmlFor="phoneNumber">เบอร์โทรศัพท์</label>
             <div className="flex items-center gap-2">
-                <select 
-                    id="phoneCountryCode"
-                    className="text-sm"
-                    value={contactInfo.phoneCountryCode}
-                    onChange={(e) => setContactInfo({...contactInfo, phoneCountryCode: e.target.value})}
-                >
-                    <option value="th">+66</option>
-                    <option value="us">+1</option>
-                    <option value="uk">+44</option>
-                    <option value="jp">+81</option>
-                    <option value="cn">+86</option>
-                    <option value="fr">+33</option>
-                </select>
                 <input 
                     id="phoneNumber"
                     type="text" 
@@ -56,19 +43,6 @@ export default function ContactInformationStep({
             <div className="flex flex-col gap-2">
                 <label htmlFor="guardianPhoneNumber">เบอร์โทรศัพท์ของผู้ปกครอง</label>
                 <div className="flex items-center gap-2">
-                    <select 
-                        id="guardianPhoneCountryCode"
-                        className="text-sm"
-                        value={contactInfo.guardianPhoneCountryCode}
-                        onChange={(e) => setContactInfo({...contactInfo, guardianPhoneCountryCode: e.target.value})}
-                    >
-                        <option value="th">+66</option>
-                        <option value="us">+1</option>
-                        <option value="uk">+44</option>
-                        <option value="jp">+81</option>
-                        <option value="cn">+86</option>
-                        <option value="fr">+33</option>
-                    </select>
                     <input 
                         id="guardianPhoneNumber"
                         type="text" 
@@ -81,21 +55,18 @@ export default function ContactInformationStep({
             </div>
             <div className="flex flex-col gap-2">
                 <label htmlFor="guardianRelationship">ความสัมพันธ์</label>
-                <select 
-                    id="guardianRelationship"
-                    className="text-sm"
+                <input type="text"
                     value={contactInfo.guardianRelationship}
                     onChange={(e) => setContactInfo({...contactInfo, guardianRelationship: e.target.value})}
-                >
-                    <option value="father">พ่อ</option>
-                    <option value="mother">แม่</option>
-                    <option value="guardian">ผู้ปกครอง</option>
-                </select>
+                />
             </div>
         </div>
         <div className="flex flex-col w-full justify-center items-center gap-4">
             <button className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full"  onClick={() => setStep(3)}>ถัดไป</button>
-            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full" onClick={() => setStep(1)}>ย้อนกลับ</button>
+            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full flex items-center justify-center gap-2" onClick={() => setStep(1)}>
+                <ChevronLeft className="w-4 h-4" />
+                <p>ย้อนกลับ</p>
+            </button>
         </div>
     </div>
 }

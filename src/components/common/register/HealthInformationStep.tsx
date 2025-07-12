@@ -1,3 +1,5 @@
+import { ChevronLeft } from "lucide-react";
+
 export interface HealthInfo {
     hasAllergies: boolean | null;
     allergies: string;
@@ -160,16 +162,19 @@ export default function HealthInformationStep({
         <img src="/firstdate/register/divider.png" alt="Divider" className="w-full mb-4" />
         <div className="flex flex-col w-full justify-center items-center gap-4">
             <button 
-                className={`bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full ${
+                className={`bg-gradient-to-t from-[#FFB6C1] to-[#CB438B] py-2 w-36 text-white rounded-full ${
                     healthInfo.hasAllergies === null || healthInfo.hasMedications === null || healthInfo.hasChronicDiseases === null 
                         ? "opacity-50 cursor-not-allowed" : ""
                 }`}  
                 onClick={() => setStep(4)} 
                 disabled={healthInfo.hasAllergies === null || healthInfo.hasMedications === null || healthInfo.hasChronicDiseases === null}
             >
-                ถัดไป
+                ยืนยันข้อมูล
             </button>
-            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full" onClick={() => setStep(2)}>ย้อนกลับ</button>
+            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full flex items-center justify-center gap-2" onClick={() => setStep(2)}>
+                <ChevronLeft className="w-4 h-4" />
+                <p>ย้อนกลับ</p>
+            </button>
         </div>
     </div>
 }

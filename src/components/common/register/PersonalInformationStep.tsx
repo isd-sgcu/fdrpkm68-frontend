@@ -1,3 +1,81 @@
+import { ChevronLeft } from "lucide-react";
+
+interface Faculty {
+    text: string;
+    value: string;
+}
+
+const faculties: Faculty[] = [
+    {
+        text: 'คณะครุศาสตร์',
+        value: 'FACULTY_OF_EDUCATION',
+    }, {
+        text: 'คณะจิตวิทยา',
+        value: 'FACULTY_OF_PSYCHOLOGY',
+    }, {
+        text: "คณะทันตแพทยศาสตร์",
+        value: 'FACULTY_OF_DENTISTRY',
+    }, {
+        text: "คณะนิติศาสตร์",
+        value: 'FACULTY_OF_LAW',
+    }, {
+        text: "คณะนิเทศศาสตร์",
+        value: 'FACULTY_OF_COMMUNICATION_ARTS',
+    }, {
+        text: "คณะพยาบาลศาสตร์",
+        value: "FACULTY_OF_NURSING"
+    }, {
+        text: "คณะพาณิชยศาสตร์และการบัญชี",
+        value: "FACULTY_OF_COMMERCE_AND_ACCOUNTANCY",
+    }, {
+        text: "คณะแพทยศาสตร์",
+        value: "FACULTY_OF_MEDICINE",
+    }, {
+        text: "คณะเภสัชศาสตร์",
+        value: "FACULTY_OF_PHAMACEUTICAL_SCIENCE",
+    }, {
+        text: "คณะรัฐศาสตร์",
+        value: "FACULTY_OF_POLITICAL_SCIENCE",
+    }, {
+        text: "คณะวิทยาศาสตร์",
+        value: "FACULTY_OF_SCIENCE",
+    }, {
+        text: "คณะวิทยาศาสตร์การกีฬา",
+        value: "FACULTY_OF_SPORTS_SCIENCE",
+    }, {
+        text: "คณะวิศวกรรมศาสตร์",
+        value: "FACULTY_OF_ENGINEERING",
+    }, {
+        text: "คณะศิลปกรรมศาสตร์",
+        value: "FACULTY_OF_FINE_AND_APPLIED_ARTS",
+    }, {
+        text: "คณะเศรษฐศาสตร์",
+        value: "FACULTY_OF_ECONOMICS",
+    }, {
+        text: "คณะสถาปัตยกรรมศาสตร์",
+        value: "FACULTY_OF_ARCHITECTURE",
+    }, {
+        text: "คณะสหเวชศาสตร์",
+        value: "FACULTY_OF_ALLIED_HEALTH_SCIENCES",
+    }, {
+        text: "คณะสัตวแพทยศาสตร์",
+        value: "FACULTY_OF_VETERINARY_SCIENCE",
+    }, {
+        text: "คณะอักษรศาสตร์",
+        value: "FACULTY_OF_ARTS",
+    }, {
+        text: "สถาบันนวัตกรรมบูรณาการแห่งจุฬาลงกรณ์มหาวิทยาลัย",
+        value: "SCHOOL_OF_INTEGRATED_INNOVATION",
+    }, {
+        text: "สำนักวิชาทรัพยากรการเกษตร",
+        value: "SCHOOL_OF_AGRICULTURAL_RESOURCES",
+    }, {
+        text: "บัณฑิตวิทยาลัย",
+        value: "GRADUATE_SCHOOL",
+    }
+];
+
+
 export interface PersonalInfo {
     title: string;
     firstName: string;
@@ -71,7 +149,7 @@ export default function PersonalInformationStep({
                 onChange={(e) => setPersonalInfo({...personalInfo, nickname: e.target.value})}
             />
         </div>
-        <div className="flex justify-between gap-3">
+        <div className="flex justify-between gap-3 flex-col">
             <div className="flex flex-col gap-2">
                 <label className="text-sm" htmlFor="faculty">คณะ</label>
                 <select 
@@ -80,16 +158,11 @@ export default function PersonalInformationStep({
                     value={personalInfo.faculty}
                     onChange={(e) => setPersonalInfo({...personalInfo, faculty: e.target.value})}
                 >
-                    <option value="engineering">วิศวกรรมศาสตร์</option>
-                    <option value="science">วิทยาศาสตร์</option>
-                    <option value="arts">ศิลปศาสตร์</option>
-                    <option value="business">บริหารธุรกิจ</option>
-                    <option value="law">นิติศาสตร์</option>
-                    <option value="education">ศึกษาศาสตร์</option>
-                    <option value="medicine">แพทยศาสตร์</option>
-                    <option value="dentistry">ทันตแพทยศาสตร์</option>
-                    <option value="pharmacy">เภสัชศาสตร์</option>
-                    <option value="nursing">พยาบาลศาสตร์</option>
+                    {
+                        faculties.map((faculty) => (
+                            <option key={faculty.value} value={faculty.value}>{faculty.text}</option>
+                        ))
+                    }
                 </select>
             </div>
             <div className="flex flex-col gap-2">
@@ -111,7 +184,10 @@ export default function PersonalInformationStep({
         </div>
         <div className="flex flex-col w-full justify-center items-center gap-4">
             <button className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full"  onClick={() => setStep(2)}>ถัดไป</button>
-            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full" onClick={() => window.location.href = "/"}>ย้อนกลับ</button>
+            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full flex items-center justify-center gap-2" onClick={() => window.location.href = "/"}>
+                <ChevronLeft className="w-4 h-4" />
+                <p>ย้อนกลับ</p>
+            </button>
         </div>
     </div>
 }

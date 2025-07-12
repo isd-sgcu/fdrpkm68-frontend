@@ -20,11 +20,9 @@ export default function RegisterForm({ userType }: { userType: 'student' | 'staf
     });
 
     const [contactInfo, setContactInfo] = useState<ContactInfo>({
-        phoneCountryCode: 'th',
         phoneNumber: '',
-        guardianPhoneCountryCode: 'th',
         guardianPhoneNumber: '',
-        guardianRelationship: 'father'
+        guardianRelationship: ''
     });
 
     const [healthInfo, setHealthInfo] = useState<HealthInfo>({
