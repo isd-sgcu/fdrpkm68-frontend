@@ -55,9 +55,10 @@ export interface Props {
   disabled?: boolean;
   class?: string;
   registrationStatus?: "registered" | "not-registered" | null;
-  href: string;
+  href?: string;
   target?: "_blank" | "_self" | "_parent" | "_top";
   rel?: string;
+  id?: string;
 }
 
 const {
@@ -70,6 +71,7 @@ const {
   href,
   target,
   rel,
+  id,
   ...restProps
 } = Astro.props;
 
@@ -129,49 +131,92 @@ const currentSize = sizeConfig[size];
     </svg>
   </div>
 
-  <a
-    href={href}
-    target={target}
-    rel={rel}
-    class={cn(
-      "button-main font-ibm-plex-sans-thai text-decoration-none relative flex w-full cursor-pointer items-center overflow-hidden border-0 bg-transparent leading-tight font-normal transition-colors duration-200 ease-in-out outline-none focus:outline-none",
-      currentSize.text,
-      currentSize.padding,
-      disabled && "pointer-events-none opacity-50"
-    )}
-    data-variant={variant}
-    aria-disabled={disabled}
-    {...restProps}
-  >
-    <div class={cn("relative z-10 flex w-full items-center overflow-hidden")}>
-      <div class="flex-shrink-0">
-        <slot name="icon" />
-      </div>
-      <div class="flex flex-1 justify-center overflow-hidden">
-        <div class="text-center leading-tight">
-          <slot />
+  {
+    href ? (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        id={id}
+        class={cn(
+          "button-main font-ibm-plex-sans-thai text-decoration-none relative flex w-full cursor-pointer items-center overflow-hidden border-0 bg-transparent leading-tight font-normal transition-colors duration-200 ease-in-out outline-none focus:outline-none",
+          currentSize.text,
+          currentSize.padding,
+          disabled && "pointer-events-none opacity-50"
+        )}
+        data-variant={variant}
+        aria-disabled={disabled}
+        {...restProps}
+      >
+        <div
+          class={cn(
+            "relative z-10 flex w-full items-center justify-center overflow-hidden"
+          )}
+        >
+          <div class="flex w-full items-center justify-center">
+            <slot name="icon" />
+            <div class="flex-1 text-center leading-tight">
+              <slot />
+            </div>
+            {registrationStatus && (
+              <div class="ml-2 flex flex-shrink-0 items-center justify-center">
+                {registrationStatus === "registered" ? (
+                  <div class="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+                    <Check size={12} color="white" />
+                  </div>
+                ) : (
+                  <div class="flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
+                    <X size={12} color="white" />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      {
-        registrationStatus === "registered" && (
-          <div class="ml-2 flex flex-shrink-0 items-center justify-center">
-            <div class="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
-              <Check size={12} color="white" />
+      </a>
+    ) : (
+      <button
+        id={id}
+        type="button"
+        disabled={disabled}
+        class={cn(
+          "button-main font-ibm-plex-sans-thai relative flex w-full cursor-pointer items-center overflow-hidden border-0 bg-transparent leading-tight font-normal transition-colors duration-200 ease-in-out outline-none focus:outline-none",
+          currentSize.text,
+          currentSize.padding,
+          disabled && "pointer-events-none opacity-50"
+        )}
+        data-variant={variant}
+        aria-disabled={disabled}
+        {...restProps}
+      >
+        <div
+          class={cn(
+            "relative z-10 flex w-full items-center justify-center overflow-hidden"
+          )}
+        >
+          <div class="flex w-full items-center justify-center">
+            <slot name="icon" />
+            <div class="flex-1 text-center leading-tight">
+              <slot />
             </div>
+            {registrationStatus && (
+              <div class="ml-2 flex flex-shrink-0 items-center justify-center">
+                {registrationStatus === "registered" ? (
+                  <div class="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+                    <Check size={12} color="white" />
+                  </div>
+                ) : (
+                  <div class="flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
+                    <X size={12} color="white" />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        )
-      }
-      {
-        registrationStatus === "not-registered" && (
-          <div class="ml-2 flex flex-shrink-0 items-center justify-center">
-            <div class="flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
-              <X size={12} color="white" />
-            </div>
-          </div>
-        )
-      }
-    </div>
-  </a>
+        </div>
+      </button>
+    )
+  }
 </div>
 
 <style>
@@ -216,9 +261,9 @@ const currentSize = sizeConfig[size];
     --hover-text: #fffff2;
     --hover-shadow: #121212;
     --disabled-fill: rgba(255, 255, 242, 0.5);
-    --disabled-stroke: rgba(203, 67, 139, 0.5);
+    --disabled-stroke: rgba(255, 255, 242, 0.5);
     --disabled-text: rgba(18, 18, 18, 0.5);
-    --disabled-shadow: rgba(203, 67, 139, 0.5);
+    --disabled-shadow: rgba(255, 255, 242, 0.5);
   }
 
   /* Stroke variant overrides for light-beige */
@@ -230,9 +275,9 @@ const currentSize = sizeConfig[size];
     --hover-stroke: #fffff2;
     --hover-text: #121212;
     --hover-shadow: #fffff2;
-    --disabled-stroke: rgba(255, 255, 242, 0.2);
-    --disabled-text: rgba(255, 255, 242, 0.2);
-    --disabled-shadow: rgba(255, 255, 242, 0.2);
+    --disabled-stroke: rgba(255, 255, 242, 0.5);
+    --disabled-text: rgba(18, 18, 18, 0.5);
+    --disabled-shadow: rgba(255, 255, 242, 0.5);
   }
 
   .button-container--light-pink {
