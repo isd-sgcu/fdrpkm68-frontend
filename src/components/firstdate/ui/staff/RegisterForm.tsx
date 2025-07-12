@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PDPAConsent from "../PDPAConsent";
+import PDPAConsent from "../../../common/PDPAConsent";
 
 interface PersonalInfo {
     title: string;
