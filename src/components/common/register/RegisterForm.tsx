@@ -6,7 +6,7 @@ import ContactInformationStep, { type ContactInfo } from "./ContactInformationSt
 import PersonalInformationStep, { type PersonalInfo } from "./PersonalInformationStep";
 
 export default function RegisterForm({ userType }: { userType: 'student' | 'staff' }) {
-    const bgUrl = userType === 'student' ? '/firstdate/register/form-bg.png' : '/firstdate/register/staff/form-bg.png';
+    const bgUrl = userType === 'student' ? '/firstdate/register/student-form-bg.png' : '/firstdate/register/staff/form-bg.png';
     const [step, setStep] = useState<number>(1);
     const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
     
@@ -37,7 +37,10 @@ export default function RegisterForm({ userType }: { userType: 'student' | 'staf
     return <div className="flex flex-col items-center justify-center min-h-screen text-white">
         {!isConsentGiven && <PDPAConsent onAccept={() => setIsConsentGiven(true)} />}
         
-        <div className={`bg-[url(${bgUrl})] h-screen bg-contain bg-center bg-no-repeat w-full flex items-center justify-center`}>
+        <div 
+            className="h-screen bg-contain bg-center bg-no-repeat w-full flex items-center justify-center"
+            style={{ backgroundImage: `url(${bgUrl})` }}
+        >
         <div className="max-w-[270px] w-full md:max-w-[330px]">
             {step === 1 && (
                 <PersonalInformationStep 

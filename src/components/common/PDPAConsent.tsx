@@ -1,4 +1,5 @@
 import { useState } from "react";
+import BlurText from "./BlurText.astro";
 
 export default function PDPAConsent({ onAccept = () => {} }: { onAccept: () => void }) {
   const [accepted, setAccepted] = useState(false);
@@ -7,10 +8,10 @@ export default function PDPAConsent({ onAccept = () => {} }: { onAccept: () => v
     <div className="absolute z-10 bg-[hsla(0,0%,0%,0.75)] h-screen w-screen flex items-center justify-center">
       <div className="max-w-2xl m-4 max-h-[95vh] p-6 bg-white rounded-lg shadow-lg overflow-y-auto">
       <div className="text-center mb-4 ">
-        <h1 className="text-pink-500 text-3xl font-bold">PDPA</h1>
+        <p className="text-4xl font-bold bg-gradient-to-t from-[#FFB6C1] to-[#CB438B] bg-clip-text text-transparent">PDPA</p>
         <hr className="my-2 border-black" />
-        <h2 className="text-lg font-semibold text-black">นโยบายคุ้มครองข้อมูลส่วนบุคคล</h2>
-        <h3 className="text-md font-medium text-black">โครงการ Freshmen Festival 2025</h3>
+        <h2 className="text-lg font-bold text-black">นโยบายคุ้มครองข้อมูลส่วนบุคคล</h2>
+        <h3 className="text-md font-bold text-black">โครงการ Freshmen Festival 2025</h3>
       </div>
 
       <div className="overflow-y-scroll max-h-96 py-2 px-1 text-gray-800">
