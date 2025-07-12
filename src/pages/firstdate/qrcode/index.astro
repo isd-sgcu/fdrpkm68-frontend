@@ -1,6 +1,8 @@
 ---
 import QRCode from "qrcode"
 
+import Layout from "@/layouts/firstdate/WithNavbar.astro"
+
 // TODO: GET data from Somewhere
 const studentId = "1234567890";
 const nationalId = "1234567890123";
@@ -10,4 +12,6 @@ const targetUrl = `${baseUrl}/firstdate/sample?studentId=${studentId}&nationalId
 const qrCodeData = await QRCode.toDataURL(targetUrl);
 ---
 
-<img src={qrCodeData} alt="QR Code for Icy" class="w-1/2 mx-auto" />
+<Layout>
+  <img src={qrCodeData} alt="QR Code" />
+</Layout>
