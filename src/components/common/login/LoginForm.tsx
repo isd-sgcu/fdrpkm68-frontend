@@ -18,7 +18,7 @@ export default function LoginForm({ userType }: { userType: 'student' | 'staff' 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-white">
       <div 
-        className="h-screen bg-contain bg-center bg-no-repeat w-full flex items-center justify-center"
+        className="min-h-screen bg-contain bg-center bg-no-repeat w-full flex items-center justify-center"
         style={{ backgroundImage: `url(${bgUrl})` }}
       >
         <div className="max-w-[270px] w-full md:max-w-[330px]">
