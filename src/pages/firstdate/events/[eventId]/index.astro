@@ -1,17 +1,18 @@
 ---
+import { Home } from "@lucide/astro";
+
+import ButtonFd from "@/components/common/ButtonFd.astro";
+import Popup from "@/components/common/Popup.astro";
+import SuccessConfetti from "@/components/common/SuccessConfetti.astro";
 import Layout from "@/layouts/firstdate/WithNavbar.astro";
 import { getEventStatus, EVENT_CONFIGS, type EventType } from "@/lib/eventAPI";
-import SuccessConfetti from "@/components/common/SuccessConfetti.astro";
-import Popup from "@/components/common/Popup.astro";
-import ButtonFd from "@/components/common/ButtonFd.astro";
-import { Home } from '@lucide/astro';
 
 // Get the eventId from the URL parameters
 const { eventId } = Astro.params;
 
 // Validate eventId
 if (!eventId || !(eventId in EVENT_CONFIGS)) {
-  return Astro.redirect('/firstdate/home/');
+  return Astro.redirect("/firstdate/home/");
 }
 
 const eventType = eventId as EventType;
@@ -20,7 +21,7 @@ const eventStatus = await getEventStatus(eventType);
 
 // Check for just registered state from URL params
 const url = new URL(Astro.request.url);
-const justRegistered = url.searchParams.get('registered') === 'true';
+const justRegistered = url.searchParams.get("registered") === "true";
 
 // If just registered, simulate adding to registration
 if (justRegistered) {
@@ -31,180 +32,202 @@ if (justRegistered) {
 ---
 
 <Layout>
-  <div class="px-4 py-6 relative z-10">
+  <div class="relative z-10 px-4 py-6">
     <!-- Event Header -->
     <div class="text-center">
-      <h1 class="text-4xl text-white text-center font-bold fill-white drop-shadow-lg drop-shadow-white/50 mt-[26px]">{eventConfig.title}</h1>
+      <h1
+        class="mt-[26px] fill-white text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50"
+      >
+        {eventConfig.title}
+      </h1>
     </div>
 
     <!-- Event Content Based on Status -->
-    {(!eventStatus.isRegistered && !eventStatus.isLate && !justRegistered && !eventStatus.isComingSoon) && (
-      <!-- State 1: Not Registered -->
-      <section class="flex flex-col items-center justify-center">
-        <Popup
-          size="medium"   
-          color={eventConfig.popupColors.notRegistered}                                     
-          class="flex flex-col items-center justify-center text-center"
-        >        
-          <p>{eventConfig.description}</p>
-          <p class="mt-4">{eventConfig.schedule}</p>
-          <p>{eventConfig.registrationInfo}</p>
-          <p>{eventConfig.additionalInfo}</p>
-          <p class="mt-4 text-red-500 font-bold">สถานะ: ยังไม่ได้ลงทะเบียน</p>
-        </Popup>       
-        
-        <div class="flex flex-col gap-2 w-full items-center justify-center">
-          <ButtonFd
-            class="mb-1"
-            color="white"
-            id="register-btn"
-            data-event-id={eventId}
-          >
-            ลงทะเบียนเข้าร่วมงาน
-          </ButtonFd>
-          
-          {(eventType === 'firstdate' || eventType === 'freshmen-night') && (
-            <ButtonFd
-              class="mb-2"
-              color="white"
-              href="/firstdate/map/"
+    {
+      !eventStatus.isRegistered &&
+        !eventStatus.isLate &&
+        !justRegistered &&
+        !eventStatus.isComingSoon && (
+          // <!-- State 1: Not Registered -->
+          <section class="flex flex-col items-center justify-center">
+            <Popup
+              size="medium"
+              color={eventConfig.popupColors.notRegistered}
+              class="flex flex-col items-center justify-center text-center"
             >
-              แผนที่งาน
+              <p>{eventConfig.description}</p>
+              <p class="mt-4">{eventConfig.schedule}</p>
+              <p>{eventConfig.registrationInfo}</p>
+              <p>{eventConfig.additionalInfo}</p>
+              <p class="mt-4 font-bold text-red-500">
+                สถานะ: ยังไม่ได้ลงทะเบียน
+              </p>
+            </Popup>
+
+            <div class="flex w-full flex-col items-center justify-center gap-2">
+              <ButtonFd
+                class="mb-1"
+                color="white"
+                id="register-btn"
+                data-event-id={eventId}
+              >
+                ลงทะเบียนเข้าร่วมงาน
+              </ButtonFd>
+
+              {(eventType === "firstdate" ||
+                eventType === "freshmen-night") && (
+                <ButtonFd class="mb-2" color="white" href="/firstdate/map/">
+                  แผนที่งาน
+                </ButtonFd>
+              )}
+            </div>
+          </section>
+        )
+    }
+
+    {
+      justRegistered && (
+        // <!-- State 2: Registration Success (with confetti) -->
+        <SuccessConfetti
+          eventName={eventConfig.title}
+          eventId={eventId}
+          eventConfig={eventConfig}
+        />
+      )
+    }
+
+    {
+      eventStatus.isRegistered && !justRegistered && (
+        // <!-- State 3: Already Registered -->
+        <section class="flex flex-col items-center justify-center">
+          <Popup
+            size="medium"
+            color={eventConfig.popupColors.registered}
+            class="flex flex-col items-center justify-center text-center"
+          >
+            <p>{eventConfig.description}</p>
+            <p class="mt-4">{eventConfig.schedule}</p>
+            <p>{eventConfig.registrationInfo}</p>
+            <p>{eventConfig.additionalInfo}</p>
+            <p class="mt-4 font-bold text-[#C6EBC5]">
+              {eventType === "rpkm"
+                ? 'สถานะ: ลงทะเบียนเข้างานแล้ว อย่าลืมไปลงทะเบียน "เลือกบ้าน" กันด้วยนะ'
+                : "สถานะ: ลงทะเบียนเข้างานแล้ว"}
+            </p>
+          </Popup>
+
+          {eventType === "firstdate" || eventType === "freshmen-night" ? (
+            // <!-- Special buttons for firstdate and freshmen-night events -->
+            <div class="flex w-full flex-col items-center justify-center gap-2">
+              <ButtonFd class="mb-1" color="white" href="/firstdate/qr-code/">
+                แสดง QR CODE เข้างาน
+              </ButtonFd>
+              <ButtonFd class="mb-1" color="white" href="/firstdate/maps/">
+                แผนที่งาน
+              </ButtonFd>
+            </div>
+          ) : eventType === "rpkm" ? (
+            // <!-- Special button for RPKM event -->
+            <div class="flex w-full flex-col items-center justify-center gap-2">
+              <ButtonFd
+                class="mb-1"
+                color="white"
+                href="/firstdate/rpkm/house-selection/"
+              >
+                ลงทะเบียนเลือกบ้าน
+              </ButtonFd>
+            </div>
+          ) : (
+            // <!-- Default button for other events -->
+            <ButtonFd class="mb-2" color="white" href="/firstdate/home/">
+              กลับหน้าหลัก
             </ButtonFd>
           )}
-        </div>
-      </section>
-    )}
+        </section>
+      )
+    }
 
-    {justRegistered && (
-      <!-- State 2: Registration Success (with confetti) -->
-      <SuccessConfetti eventName={eventConfig.title} eventId={eventId} eventConfig={eventConfig} />
-    )}
-
-    {eventStatus.isRegistered && !justRegistered && (
-      <!-- State 3: Already Registered -->
-      <section class="flex flex-col items-center justify-center">
-        <Popup
-          size="medium"   
-          color={eventConfig.popupColors.registered}                                     
-          class="flex flex-col items-center justify-center text-center"
-        >        
-          <p>{eventConfig.description}</p>
-          <p class="mt-4">{eventConfig.schedule}</p>
-          <p>{eventConfig.registrationInfo}</p>
-          <p>{eventConfig.additionalInfo}</p>
-          <p class="mt-4 text-[#C6EBC5] font-bold">
-            {eventType === 'rpkm' 
-              ? 'สถานะ: ลงทะเบียนเข้างานแล้ว อย่าลืมไปลงทะเบียน "เลือกบ้าน" กันด้วยนะ'
-              : 'สถานะ: ลงทะเบียนเข้างานแล้ว'
-            }
-          </p>
-        </Popup>       
-        
-        {(eventType === 'firstdate' || eventType === 'freshmen-night') ? (
-          <!-- Special buttons for firstdate and freshmen-night events -->
-          <div class="flex flex-col gap-2 w-full items-center justify-center">
-            <ButtonFd
-              class="mb-1"
-              color="white"
-              href="/firstdate/qr-code/"
-            >
-              แสดง QR CODE เข้างาน
-            </ButtonFd>
-            <ButtonFd
-              class="mb-1"
-              color="white"
-              href="/firstdate/maps/"
-            >
-              แผนที่งาน
-            </ButtonFd>
-          </div>
-        ) : eventType === 'rpkm' ? (
-          <!-- Special button for RPKM event -->
-          <div class="flex flex-col gap-2 w-full items-center justify-center">
-            <ButtonFd
-              class="mb-1"
-              color="white"
-              href="/firstdate/rpkm/house-selection/"
-            >
-              ลงทะเบียนเลือกบ้าน
-            </ButtonFd>
-          </div>
-        ) : (
-          <!-- Default button for other events -->
+    {
+      eventStatus.isLate && (
+        // <!-- State 4: Registration Closed -->
+        <section class="flex flex-col items-center justify-center">
+          <Popup
+            size="medium"
+            color={eventConfig.popupColors.late}
+            class="flex flex-col items-center justify-center text-center"
+          >
+            <p>{eventConfig.description}</p>
+            <p class="mt-4">{eventConfig.schedule}</p>
+            <p>{eventConfig.registrationInfo}</p>
+            <p>{eventConfig.additionalInfo}</p>
+          </Popup>
+          <h1 class="mb-4 fill-white text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50">
+            ไม่สามารถลงทะเบียนได้
+          </h1>
           <ButtonFd
-            class="mb-2"
+            variant="fill"
             color="white"
             href="/firstdate/home/"
+            class="mb-8"
           >
+            <Home slot="icon" size="20" />
             กลับหน้าหลัก
           </ButtonFd>
-        )}
-      </section>
-    )}
+        </section>
+      )
+    }
 
-    {eventStatus.isLate && (
-      <!-- State 4: Registration Closed -->
-      <section class="flex flex-col items-center justify-center">
-        <Popup
-          size="medium"   
-          color={eventConfig.popupColors.late}                                     
-          class="flex flex-col items-center justify-center text-center"
-        >        
-          <p>{eventConfig.description}</p>
-          <p class="mt-4">{eventConfig.schedule}</p>
-          <p>{eventConfig.registrationInfo}</p>
-          <p>{eventConfig.additionalInfo}</p>        
-        </Popup>       
-        <h1 class="text-4xl text-white text-center font-bold fill-white drop-shadow-lg drop-shadow-white/50 mb-4">ไม่สามารถลงทะเบียนได้</h1>
-        <ButtonFd variant="fill" color="white" href="/firstdate/home/" class="mb-8">
-          <Home slot="icon" size="20" />
-          กลับหน้าหลัก
-        </ButtonFd>                     
-      </section>
-    )}
-
-    {eventStatus.isComingSoon && (
-      <!-- State 5: Coming Soon -->
-      <section class="flex flex-col items-center justify-center">
-        <Popup
-          size="medium"   
-          color={eventConfig.popupColors.comingSoon}                                     
-          class="flex flex-col items-center justify-center text-center"
-        >        
-          <h1 class="text-4xl text-white font-bold my-2">{eventConfig.title}</h1>
-          <h1 class="text-4xl text-white font-bold my-2">Coming Soon</h1>
-          <p class="mt-4 text-xl">พร้อมให้ลงทะเบียน<br>ในเร็วๆ นี้</p>
-          <p class="mt-4 text-xl">อดใจอีกสักนิด แล้วไว้พบกัน!</p>
-        </Popup>       
-        <ButtonFd variant="fill" color="white" href="/firstdate/home/">
-          <Home slot="icon" size="20" />
-          กลับหน้าหลัก
-        </ButtonFd>        
-      </section>
-    )}
+    {
+      eventStatus.isComingSoon && (
+        // <!-- State 5: Coming Soon -->
+        <section class="flex flex-col items-center justify-center">
+          <Popup
+            size="medium"
+            color={eventConfig.popupColors.comingSoon}
+            class="flex flex-col items-center justify-center text-center"
+          >
+            <h1 class="my-2 text-4xl font-bold text-white">
+              {eventConfig.title}
+            </h1>
+            <h1 class="my-2 text-4xl font-bold text-white">Coming Soon</h1>
+            <p class="mt-4 text-xl">
+              พร้อมให้ลงทะเบียน
+              <br />
+              ในเร็วๆ นี้
+            </p>
+            <p class="mt-4 text-xl">อดใจอีกสักนิด แล้วไว้พบกัน!</p>
+          </Popup>
+          <ButtonFd variant="fill" color="white" href="/firstdate/home/">
+            <Home slot="icon" size="20" />
+            กลับหน้าหลัก
+          </ButtonFd>
+        </section>
+      )
+    }
   </div>
 </Layout>
 
 <script>
   // Handle registration button click
-  const registerBtn = document.getElementById('register-btn') as HTMLButtonElement;
+  const registerBtn = document.getElementById(
+    "register-btn"
+  ) as HTMLButtonElement;
   if (registerBtn) {
-    registerBtn.addEventListener('click', async () => {
-      const eventId = registerBtn.getAttribute('data-event-id');
-      registerBtn.textContent = 'กำลังลงทะเบียน...';
+    registerBtn.addEventListener("click", async () => {
+      const eventId = registerBtn.getAttribute("data-event-id");
+      registerBtn.textContent = "กำลังลงทะเบียน...";
       registerBtn.disabled = true;
-      
+
       try {
         // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
         // Show confetti and redirect
         window.location.href = `/firstdate/events/${eventId}/?registered=true`;
       } catch (error) {
-        registerBtn.textContent = 'ลงทะเบียนเข้าร่วมงาน';
+        registerBtn.textContent = "ลงทะเบียนเข้าร่วมงาน";
         registerBtn.disabled = false;
-        alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
       }
     });
   }
