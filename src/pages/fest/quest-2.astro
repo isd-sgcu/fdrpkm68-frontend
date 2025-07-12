@@ -2,18 +2,11 @@
 import Layout from "@/layouts/fest/FestWithNavbar.astro";
 import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
 import ButtonFest from "@/components/common/ButtonFest.astro";
-
-const listLandmarks = [
-  "สำนักงานวิทยทรัพยากร \nจุฬาลงกรณ์มหาวิทยาลัย (หอกลาง)",
-  "อาคารจามจุรี 9",
-  "อุทยาน 100 ปี จุฬาลงกรณ์มหาวิทยาลัย",
-  "ตึกจักรพงษ์ \n(หอประวัติจุฬาลงกรณ์มหาวิทยาลัย)",
-  "ศาลเจ้าแม่ทับทิม สะพานเหลือง",
-  "CU Sports Complex \n(อาคารเฉลิมราชสุดากีฬาสถาน)",
-  "CU Plern Space",
-  "ศาลาพระเกี้ยว",
-  "ศาลเจ้าพ่อเสือ ตั่วเหล่าเอี๊ย สามย่าน",
-  "อาคารมหาจุฬาลงกรณ์",
+const awardConditions = [
+  "สะสมกิจกรรมชุมชน ผ่าน แต้ม LINE OA",
+  "สะสม 5 แต้ม จะได้รับ Bronze Set",
+  "สะสม 10 แต้ม จะได้รับ Silver Set ",
+  "สะสม 15 แต้ม จะได้รับ Gold Set",
 ];
 ---
 
@@ -22,24 +15,35 @@ const listLandmarks = [
     <div
       class="sticky top-0 z-10 flex w-full justify-between px-3 py-2 backdrop-blur-md"
     >
-      <a href="/" class="mt-2.5 text-2xl font-bold">{"<"}</a>
+      <a href="/fest/quest-1" class="mt-2.5 text-2xl font-bold">{"<"}</a>
       <div class="flex flex-col gap-1 text-center">
-        <p class="font-family-orbitron text-5xl">Quest 1</p>
-        <p class="text-2xl font-extralight">Chula Stamp Journey</p>
-        <p class="text-2xl font-extralight">จุฬา แสตมป์ เจอนี่!</p>
+        <p class="font-family-orbitron text-5xl">Quest 2</p>
+        <p class="text-2xl font-extralight">Chula QR Quest</p>
       </div>
-      <a href="/fest/quest-2" class="mt-2.5 text-2xl font-bold">{">"}</a>
+      <a href="/fest/quest-3" class="mt-2.5 text-2xl font-bold">{">"}</a>
     </div>
     <div class="pt-4">
+      <div
+        class="my-5 flex flex-row items-start gap-1 justify-self-center text-center font-semibold tracking-wide whitespace-pre-line text-shadow-md text-shadow-sky-300"
+        lang="th"
+      >
+        <p class="text-2xl">นิสิต</p>
+        <p class="mt-1.5">
+          {` = นักเรียนในรั้วมหาวิทยาลัย....\nเท่านั้นหรือ?`}
+        </p>
+      </div>
       <!-- <img src="/images/quest-1-banner.jpg" alt="Quest 1 Banner" class="w-full h-auto rounded-lg shadow-md mb-4" /> -->
       <p
-        class="text-justify indent-20 leading-relaxed hyphens-auto whitespace-pre-line"
+        class="text-justify leading-relaxed hyphens-auto whitespace-pre-line"
         lang="th"
         style="text-align: justify; text-align-last: left; word-spacing: 0.2em;"
       >
         {
-          `เหล่านักท่องเวลาถูกพายุสุริยะพัดพาไป
-        ในดินแดนอันเต็มไปด้วยผู้คน ประวัติศาสตร์ วัฒนธรรม ความเชื่อ หลายต่อหลายดินแดน แต่สุดท้ายเเล้ว ทุกดินแดน กลับมีจุดร่วมเดียวกัน นั่นคือความเป็นชุมชนจุฬาฯ ในฐานะนิสิตจุฬาฯ หนึ่งในองค์ประกอบเล็ก ๆ ที่สำคัญของชุมชนนี้ ควรจะใช้ความรู้ ความสามารถที่มี เพื่อเติมเต็มพัฒนาชุมชนจุฬาฯ ที่ดำเนิน และเป็นอยู่มาอย่างยาวนานตั้งเเต่อดีต จวบจนปัจจุบัน และคาดหวังว่าจะยังคงดำเนินต่อไป ในอนาคต นักท่องเวลาทุกคนจะได้ CU109 FRESHY GUIDEBOOK ป็นตัวช่วยพิเศษที่จะใช้เก็บบันทึก ประสบการณ์ การผจญภัยในแต่ละมิติเวลา และ จะได้รับการประทับตราแสตมป์ เพื่อเป็นหลักฐาน ว่าเหล่านักท่องเวลาได้สำรวจพื้นที่ต่าง ๆ ในแต่ละ มิติเวลามาแล้ว`
+          `เวลาไม่เคยหยุดเดิน มีเพียงตัวเรา…. ที่จะใช้ทุกนาทีอย่างคุ้มค่าหรือไม่ 
+      
+      เหล่านักท่องเวลายังคงต้องสำรวจสถานที่ประวัติศาสตร์ วัฒนธรรมที่ซ่อนตัวอยู่ในชุมชน จุฬาฯภารกิจนี้มีความพิเศษคือทุกคนจะได้มี ส่วนร่วมในแต่ละดินแดน ทั้งชิมของกิน ชมสถานที่น่าสนใจหรือแม้แต่นักท่องเวลาเป็นสายมูเตลู รับรองว่าชุมชนจุฬาฯ จะไม่ทำให้ผิดหวัง!! 
+      
+      หากนักท่องเวลาทำภารกิจนี้ได้สำเร็จ `
         }
       </p>
       <p
@@ -47,9 +51,8 @@ const listLandmarks = [
         lang="th"
       >
         {
-          `นับจากนี้ไป
-          จะมีอะไรให้ได้ท้าทายเหล่านักท่องเวลา
-          อย่างเเน่นอน`
+          `เตรียมตัวมารับของตอบแทนจากมิติ 
+        แห่งห้วงเวลากันได้เลย`
         }
       </p>
       <HorizonlineFest variant="blue" />
@@ -58,49 +61,27 @@ const listLandmarks = [
         lang="th"
       >
         <p class="font-bold">ระยะเวลากิจกรรม</p>
-        <p class="text-base">19 กรกฎาคม - 3 สิงหาคม 2568</p>
+        <p class="text-base">19 กรกฎาคม - 14 สิงหาคม 2568</p>
       </div>
       <HorizonlineFest variant="blue" />
       <p
-        class="my-5 text-center text-xl font-bold tracking-wide whitespace-pre-line"
+        class="mt-3 mb-2 text-center text-xl font-bold tracking-wide whitespace-pre-line"
         lang="th"
       >
         {`วิธีการทำกิจกรรม`}
       </p>
       <div
-        class="mb-3 text-justify indent-20 leading-relaxed hyphens-auto whitespace-pre-line"
+        class="mb-3 text-justify indent-10 leading-relaxed hyphens-auto whitespace-pre-line"
         lang="th"
         style="text-align: justify; text-align-last: left; word-spacing: 0.2em;"
       >
-        <p>
-          <strong>เยี่ยมชมสถานที่สำคัญทั้งในและรอบ มหาวิทยาลัย ปั๊มตราจากแลนด์มาร์กทั้ง 10 ที่ ลงในพาสปอร์ตสะสมแสตมป์</strong> 
-          {`โดยจะได้รับพาสปอร์ตสะสมแสตมป์ใน CU109 FRESHY GUIDEBOOK หรือสามารถรับพาสปอร์ตแสตมป์ได้ที่ อาคารจามจุรี 9 ชั้น 1, สำนักงานวิทยทรัพยากร จุฬาลงกรณ์มหาวิทยาลัย (หอกลาง) ชั้น 1 และ CU Plern Space (ใกล้เครื่องพิมพ์ Double A)`}
+        <p>สแกน QR Code กับ LINE OA จากการเข้าชมสถานที่สำคัญ และการใช้บริการ
+          ร้านอาหาร ร้านของหวาน ร้านเครื่องดื่ม
+          ที่เป็นที่รู้จักบริเวณรอบจุฬาลงกรณ์มหาวิทยาลัย
+          ผู้เข้าร่วมกิจกรรมสามารถ<strong
+            >นำแต้มใน LINE OA มาแลกเป็นของรางวัลได้</strong
+          >
         </p>
-      </div>
-      <HorizonlineFest variant="blue" />
-      <p
-        class="my-5 text-center text-xl font-bold tracking-wide whitespace-pre-line"
-        lang="th"
-      >
-        {`แลนด์มาร์ก`}
-      </p>
-      <img
-        src="/public/images/fest/mapMark.png"
-        alt="Map of Landmarks"
-        class="aspect-square w-80 justify-self-center"
-      />
-      <div
-        class="mb-3 w-full text-justify text-sm leading-relaxed hyphens-auto whitespace-pre-line"
-        lang="th"
-        style="text-align: justify; text-align-last: left; word-spacing: 0.2em;"
-      >
-        <ul class="mt-2 ml-13 w-fit">
-          {
-            listLandmarks.map((landmark) => (
-              <li class="list-disc">{landmark}</li>
-            ))
-          }
-        </ul>
       </div>
       <HorizonlineFest variant="blue" />
       <div
@@ -108,14 +89,15 @@ const listLandmarks = [
         lang="th"
       >
         <p class="font-bold">เงื่อนไขการรับรางวัล</p>
-        <p class="mt-3 text-base">
-          {`สะสมแสตมป์ครบ 10 ดวง\nจะได้รับของรางวัลสุดพิเศษ`}
-        </p>
+        <ul class="mt-3 flex flex-col items-start text-left">
+          {
+            awardConditions.map((condition) => (
+              <li class="ml-10 list-disc text-base">{condition}</li>
+            ))
+          }
+        </ul>
       </div>
       <div class="flex flex-col items-center gap-4">
-        <ButtonFest href="/firstdate/maps" color="blue" size="big"
-          >แผนที่งาน</ButtonFest
-        >
         <ButtonFest href="/" color="blue" size="big"
           >สะสมแต้มใน LineOA</ButtonFest
         >

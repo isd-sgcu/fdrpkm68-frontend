@@ -1,0 +1,82 @@
+---
+import Layout from "@/layouts/fest/FestWithNavbar.astro";
+import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
+import ButtonFest from "@/components/common/ButtonFest.astro";
+---
+
+<Layout>
+  <div class="flex flex-col space-y-2 px-4 py-6">
+    <div
+      class="sticky top-0 z-10 flex w-full justify-between px-3 py-2 backdrop-blur-md"
+    >
+      <a href="/fest/quest-3" class="mt-2.5 text-2xl font-bold">{"<"}</a>
+      <div class="flex flex-col gap-1 text-center">
+        <p class="font-family-orbitron text-5xl">Quest 3.1</p>
+        <p class="text-2xl font-extralight">เดินเดินจุฬาฯ</p>
+      </div>
+      <a href="/fest/quest-3-2" class="mt-2.5 text-2xl font-bold">{">"}</a>
+    </div>
+    <div class="pt-4">
+      <div
+        class="my-5 flex flex-row items-end gap-1 justify-self-center text-center font-semibold tracking-widest whitespace-pre-line text-shadow-md text-shadow-sky-300"
+        lang="th"
+      >
+        <p class="text-xl">เดินเดินจุฬาฯ ได้รู้จักจุฬาฯ มากขึ้น</p>
+      </div>
+      <!-- <img
+        src="/images/quest-1-banner.jpg"
+        alt="Quest 1 Banner"
+        class="mb-4 h-auto w-full rounded-lg shadow-md"
+      /> -->
+      <p
+        class="text-justify indent-10 leading-relaxed hyphens-auto whitespace-pre-line"
+        lang="th"
+        style="text-align: justify; text-align-last: left; word-spacing: 0.2em;"
+      >
+        {
+          `ชวนเพื่อนนิสิตใหม่ออกมาเดินเล่นด้วยกันใน Walking Tour รอบจุฬาฯ!  มารู้จักมุมสำคัญของ มหาวิทยาลัย ทั้งอาคารที่มีเรื่องเล่า พื้นที่ที่ควรรู้ ก่อนเปิดเทอม และจุดเล็ก ๆ ที่บางทีเราเดินผ่าน ทุกวันแต่ไม่เคยรู้ว่ามีอะไรซ่อนอยู่`
+        }
+      </p>
+      <p
+        class="my-5 text-center font-bold tracking-wide whitespace-pre-line text-shadow-md text-shadow-sky-300"
+        lang="th"
+      >
+        {
+          `ใครอยากรู้จักจุฬาฯ ให้มากกว่าที่เห็นในแผนที่ 
+          ต้องมาเดินด้วยกันนะ`
+        }
+      </p>
+      <div class="mb-7">
+        <strong>จุดเริ่มต้น:</strong> อาคารมหิตลาธิเบศร <br />
+        <div class="flex flex-row gap-2">
+          <p><strong>จุดสิ้นสุดเส้นทาง:</strong></p>
+          <p>อาคารกิจกรรมนิสิต <br /> คณะรัฐศาสตร์</p>
+        </div>
+      </div>
+      <HorizonlineFest variant="blue" />
+      <div
+        class="my-5 text-center text-xl tracking-wide whitespace-pre-line"
+        lang="th"
+      >
+        <p class="font-bold">วัน เวลาจัดกิจกรรม</p>
+        <p class="mt-3 text-left text-base font-bold">รอบละ 30 คน</p>
+        <ul class="ml-5 space-y-1 text-left text-sm">
+          <li class="list-disc">20 กรกฎาคม 14.00 - 16.30 น.</li>
+          <li class="list-disc">23 กรกฎาคม 14.00 - 16.30 น.</li>
+          <li class="list-disc">25 กรกฎาคม 14.00 - 16.30 น.</li>
+        </ul>
+      <p class="text-left text-base mt-2"><strong>จุดนัดพบ:</strong> อาคารมหิตลาธิเบศร</p>
+      </div>
+
+      <div class="flex flex-col items-center gap-4">
+        <ButtonFest
+          href="https://docs.google.com/forms/d/e/1FAIpQLSccX0yiGEwpjEppS7cUMrj4idQDHycRLM1aXMJ-YyfT3hJzWg/viewform?usp=dialog"
+          color="pink"
+          size="big">ลงทะเบียน Quest</ButtonFest
+        >
+      </div>
+      <!-- <p class="text-justify leading-relaxed hyphens-auto" lang="th" style="text-align: justify; text-align-last: left; word-spacing: 0.2em;">เหล่านักท่องเวลาถูกพายุสุริยะพัดพาไป ในดินแดนอันเต็มไปด้วยผู้คน ประวัติศาสตร์ วัฒนธรรม ความเชื่อ หลายต่อหลายดินแดน แต่สุดท้ายแล้ว ทุกดินแดน กลับมีจุดร่วมเดียวกัน นั่นคือความเป็นชุมชนจุฬาฯ ในฐานะนิสิตจุฬาฯ หนึ่งในองค์ประกอบเล็ก ๆ ที่สำคัญของชุมชนนี้ ควรจะใช้ความรู้ ความสามารถที่มี เพื่อเติมเต็มพัฒนาชุมชนจุฬาฯ ที่ดำเนิน และเป็นอยู่มาอย่างยาวนานตั้งแต่อดีต จวบจนปัจจุบัน และคาดหวังว่าจะยังคงดำเนินต่อไป ในอนาคต นักท่องเวลาทุกคนจะได้ CU109 FRESHY GUIDEBOOK เป็นตัวช่วยพิเศษที่จะใช้เก็บบันทึก ประสบการณ์ การผจญภัยในแต่ละมิติเวลา และ จะได้รับการประทับตราแสตมป์ เพื่อเป็นหลักฐาน ว่าเหล่านักท่องเวลาได้สำรวจพื้นที่ต่าง ๆ ในแต่ละ มิติเวลามาแล้ว</p> -->
+      <!-- <p class="text-justify leading-relaxed hyphens-auto" lang="th" style="text-align: justify; text-align-last: left; word-spacing: 0.2em;">เหล่านักท่องเวลาถูกพายุสุริยะพัดพาไป ในดินแดนอันเต็มไปด้วยผู้คน ประวัติศาสตร์ วัฒนธรรม ความเชื่อ หลายต่อหลายดินแดน แต่สุดท้ายแล้ว ทุกดินแดน กลับมีจุดร่วมเดียวกัน นั่นคือความเป็นชุมชนจุฬาฯ ในฐานะนิสิตจุฬาฯ หนึ่งในองค์ประกอบเล็ก ๆ ที่สำคัญของชุมชนนี้ ควรจะใช้ความรู้ ความสามารถที่มี เพื่อเติมเต็มพัฒนาชุมชนจุฬาฯ ที่ดำเนิน และเป็นอยู่มาอย่างยาวนานตั้งแต่อดีต จวบจนปัจจุบัน และคาดหวังว่าจะยังคงดำเนินต่อไป ในอนาคต นักท่องเวลาทุกคนจะได้ CU109 FRESHY GUIDEBOOK เป็นตัวช่วยพิเศษที่จะใช้เก็บบันทึก ประสบการณ์ การผจญภัยในแต่ละมิติเวลา และ จะได้รับการประทับตราแสตมป์ เพื่อเป็นหลักฐาน ว่าเหล่านักท่องเวลาได้สำรวจพื้นที่ต่าง ๆ ในแต่ละ มิติเวลามาแล้ว</p> -->
+    </div>
+  </div>
+</Layout>
