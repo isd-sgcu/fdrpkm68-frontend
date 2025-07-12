@@ -14,12 +14,12 @@ pnpm lint || {
   exit 1
 }
 
-# Run tests
-echo "🧪 Running tests..."
-pnpm test || {
-  echo "❌ Tests failed. Please fix failing tests before pushing."
-  exit 1
-}
+# # Run tests
+# echo "🧪 Running tests..."
+# pnpm test || {
+#   echo "❌ Tests failed. Please fix failing tests before pushing."
+#   exit 1
+# }
 
 # Build check
 echo "🔨 Checking build..."

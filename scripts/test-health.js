@@ -1,11 +1,9 @@
 #!/usr/bin/env node
-
 /**
  * Simple health check script for local testing
  */
-
-const { spawn } = require("child_process");
-const http = require("http");
+import { spawn } from "child_process";
+import http from "http";
 
 // Start the server
 console.log("Starting server...");
