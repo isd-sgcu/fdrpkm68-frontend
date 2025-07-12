@@ -46,6 +46,25 @@ export default function HealthInformationStep({
         });
     };
 
+    const CustomCheckbox = ({ 
+        id, 
+        checked, 
+        onChange, 
+        type, 
+    }: { 
+        id: string; 
+        checked: boolean; 
+        onChange: () => void; 
+        type: 'yes' | 'no';
+    }) => (
+        <img 
+            src={checked ? `/firstdate/register/checked-${type}.png` : `/firstdate/register/unchecked-${type}.png`}
+            alt={checked ? 'Checked' : 'Unchecked'}
+            className="h-10 cursor-pointer"
+            onClick={onChange}
+        />
+    );
+
     return <div className="flex flex-col gap-4 p-2 w-full">
         <div className="flex flex-col w-full justify-center items-center gap-2">
             <img src={globUrl} alt="Background" />
@@ -55,107 +74,89 @@ export default function HealthInformationStep({
         <div className="flex flex-col gap-2 text-sm">
             <div className="flex flex-col items-start py-2 gap-2">
                 <label htmlFor="allergies">อาหารที่แพ้</label>
-                <div className="flex gap-2 justify-between w-full px-12">
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasAllergies-yes"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasAllergies === true}
-                            onChange={() => handleAllergiesChange(true)} 
-                        />
-                        <label htmlFor="hasAllergies-yes">มี</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasAllergies-no"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasAllergies === false}
-                            onChange={() => handleAllergiesChange(false)} 
-                        />
-                        <label htmlFor="hasAllergies-no">ไม่มี</label>
-                    </div>
+                <div className="flex gap-2 justify-between w-full px-2">
+                    <CustomCheckbox
+                        id="hasAllergies-yes"
+                        checked={healthInfo.hasAllergies === true}
+                        onChange={() => handleAllergiesChange(true)}
+                        type="yes"
+                    />
+                    <CustomCheckbox
+                        id="hasAllergies-no"
+                        checked={healthInfo.hasAllergies === false}
+                        onChange={() => handleAllergiesChange(false)}
+                        type="no"
+                    />
                 </div>
                 {healthInfo.hasAllergies && (
-                    <input 
-                        id="allergies"
-                        type="text" 
-                        placeholder="อาหารที่แพ้" 
-                        className="text-sm mt-2"
-                        value={healthInfo.allergies}
-                        onChange={(e) => setHealthInfo({...healthInfo, allergies: e.target.value})}
-                    />
+                    <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px] mt-2">
+                        <input 
+                            id="allergies"
+                            type="text" 
+                            placeholder="อาหารที่แพ้" 
+                            className="text-sm bg-black w-full h-full p-1 rounded-sm"
+                            value={healthInfo.allergies}
+                            onChange={(e) => setHealthInfo({...healthInfo, allergies: e.target.value})}
+                        />
+                    </div>
                 )}
             </div>
             <div className="flex flex-col items-start py-2 gap-2">
                 <label htmlFor="medications">ยาที่แพ้</label>
-                <div className="flex gap-2 justify-between w-full px-12">
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasMedications-yes"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasMedications === true}
-                            onChange={() => handleMedicationsChange(true)} 
-                        />
-                        <label htmlFor="hasMedications-yes">มี</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasMedications-no"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasMedications === false}
-                            onChange={() => handleMedicationsChange(false)} 
-                        />
-                        <label htmlFor="hasMedications-no">ไม่มี</label>
-                    </div>
+                <div className="flex gap-2 justify-between w-full px-2">
+                    <CustomCheckbox
+                        id="hasMedications-yes"
+                        checked={healthInfo.hasMedications === true}
+                        onChange={() => handleMedicationsChange(true)}
+                        type="yes"
+                    />
+                    <CustomCheckbox
+                        id="hasMedications-no"
+                        checked={healthInfo.hasMedications === false}
+                        onChange={() => handleMedicationsChange(false)}
+                        type="no"
+                    />
                 </div>
                 {healthInfo.hasMedications && (
-                    <input 
-                        id="medications"
-                        type="text" 
-                        placeholder="ยาที่แพ้" 
-                        className="text-sm mt-2"
-                        value={healthInfo.medications}
-                        onChange={(e) => setHealthInfo({...healthInfo, medications: e.target.value})}
-                    />
+                    <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px] mt-2">
+                        <input 
+                            id="medications"
+                            type="text" 
+                            placeholder="ยาที่แพ้" 
+                            className="text-sm bg-black w-full h-full p-1 rounded-sm"
+                            value={healthInfo.medications}
+                            onChange={(e) => setHealthInfo({...healthInfo, medications: e.target.value})}
+                        />
+                    </div>
                 )}
             </div>
             <div className="flex flex-col items-start py-2 gap-2">
                 <label htmlFor="chronicDiseases">โรคประจำตัว</label>
-                <div className="flex gap-2 justify-between w-full px-12">
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasChronicDiseases-yes"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasChronicDiseases === true}
-                            onChange={() => handleChronicDiseasesChange(true)} 
-                        />
-                        <label htmlFor="hasChronicDiseases-yes">มี</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasChronicDiseases-no"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasChronicDiseases === false}
-                            onChange={() => handleChronicDiseasesChange(false)} 
-                        />
-                        <label htmlFor="hasChronicDiseases-no">ไม่มี</label>
-                    </div>
+                <div className="flex gap-2 justify-between w-full px-2">
+                    <CustomCheckbox
+                        id="hasChronicDiseases-yes"
+                        checked={healthInfo.hasChronicDiseases === true}
+                        onChange={() => handleChronicDiseasesChange(true)}
+                        type="yes"
+                    />
+                    <CustomCheckbox
+                        id="hasChronicDiseases-no"
+                        checked={healthInfo.hasChronicDiseases === false}
+                        onChange={() => handleChronicDiseasesChange(false)}
+                        type="no"
+                    />
                 </div>
                 {healthInfo.hasChronicDiseases && (
-                    <input 
-                        id="chronicDiseases"
-                        type="text" 
-                        placeholder="โรคประจำตัว" 
-                        className="text-sm mt-2"
-                        value={healthInfo.chronicDiseases}
-                        onChange={(e) => setHealthInfo({...healthInfo, chronicDiseases: e.target.value})}
-                    />
+                    <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px] mt-2">
+                        <input 
+                            id="chronicDiseases"
+                            type="text" 
+                            placeholder="โรคประจำตัว" 
+                            className="text-sm bg-black w-full h-full p-1 rounded-sm"
+                            value={healthInfo.chronicDiseases}
+                            onChange={(e) => setHealthInfo({...healthInfo, chronicDiseases: e.target.value})}
+                        />
+                    </div>
                 )}
             </div>
         </div>

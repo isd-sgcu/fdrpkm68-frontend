@@ -75,7 +75,6 @@ const faculties: Faculty[] = [
     }
 ];
 
-
 export interface PersonalInfo {
     title: string;
     firstName: string;
@@ -103,85 +102,103 @@ export default function PersonalInformationStep({
             <img src={globUrl} alt="Background" />
             <h1 className="text-lg font-semibold">ข้อมูลส่วนตัว</h1>
         </div>
+        
         <div className="flex flex-col gap-2">
             <label className="text-sm" htmlFor="title">คำนำหน้าชื่อ</label>
-            <select 
-                id="title"
-                className="text-sm"
-                value={personalInfo.title}
-                onChange={(e) => setPersonalInfo({...personalInfo, title: e.target.value})}
-            >
-                <option value="mr">นาย</option>
-                <option value="ms">นางสาว</option>
-                <option value="mrs">นาง</option>
-            </select>
+            <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+                <select 
+                    id="title"
+                    className="text-sm bg-black w-full h-full p-1 rounded-sm text-white"
+                    value={personalInfo.title}
+                    onChange={(e) => setPersonalInfo({...personalInfo, title: e.target.value})}
+                >
+                    <option value="mr">นาย</option>
+                    <option value="ms">นางสาว</option>
+                    <option value="mrs">นาง</option>
+                </select>
+            </div>
         </div>
+        
         <div className="flex flex-col gap-2">
             <label className="text-sm" htmlFor="firstName">ชื่อจริง</label>
-            <input 
-                id="firstName"
-                className="text-sm" 
-                type="text" 
-                placeholder="ชื่อจริง"
-                value={personalInfo.firstName}
-                onChange={(e) => setPersonalInfo({...personalInfo, firstName: e.target.value})}
-            />
+            <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+                <input 
+                    id="firstName"
+                    className="text-sm bg-black w-full h-full p-1 rounded-sm" 
+                    type="text" 
+                    placeholder="ชื่อจริง"
+                    value={personalInfo.firstName}
+                    onChange={(e) => setPersonalInfo({...personalInfo, firstName: e.target.value})}
+                />
+            </div>
         </div>
+        
         <div className="flex flex-col gap-2">
             <label className="text-sm" htmlFor="lastName">นามสกุล</label>
-            <input 
-                id="lastName"
-                className="text-sm" 
-                type="text" 
-                placeholder="นามสกุล"
-                value={personalInfo.lastName}
-                onChange={(e) => setPersonalInfo({...personalInfo, lastName: e.target.value})}
-            />
+            <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+                <input 
+                    id="lastName"
+                    className="text-sm bg-black w-full h-full p-1 rounded-sm" 
+                    type="text" 
+                    placeholder="นามสกุล"
+                    value={personalInfo.lastName}
+                    onChange={(e) => setPersonalInfo({...personalInfo, lastName: e.target.value})}
+                />
+            </div>
         </div>
+        
         <div className="flex flex-col gap-2">
             <label className="text-sm" htmlFor="nickname">ชื่อเล่น</label>
-            <input 
-                id="nickname"
-                className="text-sm" 
-                type="text" 
-                placeholder="ชื่อเล่น"
-                value={personalInfo.nickname}
-                onChange={(e) => setPersonalInfo({...personalInfo, nickname: e.target.value})}
-            />
+            <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+                <input 
+                    id="nickname"
+                    className="text-sm bg-black w-full h-full p-1 rounded-sm" 
+                    type="text" 
+                    placeholder="ชื่อเล่น"
+                    value={personalInfo.nickname}
+                    onChange={(e) => setPersonalInfo({...personalInfo, nickname: e.target.value})}
+                />
+            </div>
         </div>
+        
         <div className="flex justify-between gap-3 flex-col">
             <div className="flex flex-col gap-2">
                 <label className="text-sm" htmlFor="faculty">คณะ</label>
-                <select 
-                    id="faculty"
-                    className="text-sm"
-                    value={personalInfo.faculty}
-                    onChange={(e) => setPersonalInfo({...personalInfo, faculty: e.target.value})}
-                >
-                    {
-                        faculties.map((faculty) => (
-                            <option key={faculty.value} value={faculty.value}>{faculty.text}</option>
-                        ))
-                    }
-                </select>
+                <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+                    <select 
+                        id="faculty"
+                        className="text-sm bg-black w-full h-full p-1 rounded-sm text-white"
+                        value={personalInfo.faculty}
+                        onChange={(e) => setPersonalInfo({...personalInfo, faculty: e.target.value})}
+                    >
+                        {
+                            faculties.map((faculty) => (
+                                <option key={faculty.value} value={faculty.value}>{faculty.text}</option>
+                            ))
+                        }
+                    </select>
+                </div>
             </div>
             <div className="flex flex-col gap-2">
                 <label className="text-sm" htmlFor="year">ชั้นปี</label>
-                <select 
-                    id="year"
-                    className="text-sm"
-                    value={personalInfo.year}
-                    onChange={(e) => setPersonalInfo({...personalInfo, year: e.target.value})}
-                >
-                    <option value="1">ปี 1</option>
-                    <option value="2">ปี 2</option>
-                    <option value="3">ปี 3</option>
-                    <option value="4">ปี 4</option>
-                    <option value="5">ปี 5</option>
-                    <option value="6">ปี 6</option>
-                </select>
+                <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+                    <select 
+                        id="year"
+                        className="text-sm bg-black w-full h-full p-1 rounded-sm text-white"
+                        value={personalInfo.year}
+                        onChange={(e) => setPersonalInfo({...personalInfo, year: e.target.value})}
+                    >
+                        <option value="1">ปี 1</option>
+                        <option value="2">ปี 2</option>
+                        <option value="3">ปี 3</option>
+                        <option value="4">ปี 4</option>
+                        <option value="5">ปี 5</option>
+                        <option value="6">ปี 6</option>
+                    </select>
+                </div>
             </div>
         </div>
+        
         <div className="flex flex-col w-full justify-center items-center gap-4">
             <button className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full"  onClick={() => setStep(2)}>ถัดไป</button>
             <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full flex items-center justify-center gap-2" onClick={() => window.location.href = "/"}>

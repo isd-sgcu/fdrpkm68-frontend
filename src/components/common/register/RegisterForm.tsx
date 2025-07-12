@@ -38,7 +38,7 @@ export default function RegisterForm({ userType }: { userType: 'student' | 'staf
         {!isConsentGiven && <PDPAConsent onAccept={() => setIsConsentGiven(true)} />}
         
         <div className={`bg-[url(${bgUrl})] h-screen bg-contain bg-center bg-no-repeat w-full flex items-center justify-center`}>
-        <div className="max-w-[270px] w-full md:max-w-[400px]">
+        <div className="max-w-[270px] w-full md:max-w-[330px]">
             {step === 1 && (
                 <PersonalInformationStep 
                     setStep={setStep} 

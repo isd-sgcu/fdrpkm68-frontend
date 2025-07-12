@@ -16,7 +16,7 @@ export default function LoginForm({ userType }: { userType: 'student' | 'staff' 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen text-white">
       <div className={`bg-[url(${bgUrl})] h-screen bg-contain bg-center bg-no-repeat w-full flex items-center justify-center`}>
-        <div className="max-w-[270px] w-full md:max-w-[400px]">
+        <div className="max-w-[270px] w-full md:max-w-[330px]">
           {step === 1 && (
             <LoginStep
               form={form}
