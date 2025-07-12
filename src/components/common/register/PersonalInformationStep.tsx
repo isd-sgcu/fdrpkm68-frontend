@@ -1,4 +1,5 @@
 import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
 
 interface Faculty {
     text: string;
@@ -65,7 +66,7 @@ const faculties: Faculty[] = [
         value: "FACULTY_OF_ARTS",
     }, {
         text: "สถาบันนวัตกรรมบูรณาการแห่งจุฬาลงกรณ์มหาวิทยาลัย",
-        value: "SCHOOL_OF_INTEGRATED_INNOVATION",
+        value: "SCHOOL_OF_INTEGRATED_INNOVATION_SCII",
     }, {
         text: "สำนักวิชาทรัพยากรการเกษตร",
         value: "SCHOOL_OF_AGRICULTURAL_RESOURCES",
@@ -96,6 +97,32 @@ export default function PersonalInformationStep({
     userType: 'student' | 'staff';
 }) {
     const globUrl = userType === 'student' ? '/firstdate/register/glob.svg' : '/firstdate/register/staff/glob.svg';
+    const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+    const validateForm = () => {
+        const newErrors: {[key: string]: string} = {};
+        
+        if (!personalInfo.firstName.trim()) {
+            newErrors.firstName = 'กรุณากรอกชื่อจริง';
+        }
+        
+        if (!personalInfo.lastName.trim()) {
+            newErrors.lastName = 'กรุณากรอกนามสกุล';
+        }
+        
+        if (!personalInfo.nickname.trim()) {
+            newErrors.nickname = 'กรุณากรอกชื่อเล่น';
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleNext = () => {
+        if (validateForm()) {
+            setStep(2);
+        }
+    };
 
     return <div className="flex flex-col gap-4 p-2 w-full">
         <div className="flex flex-col w-full justify-center items-center gap-2">
@@ -120,45 +147,63 @@ export default function PersonalInformationStep({
         </div>
         
         <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="firstName">ชื่อจริง</label>
+            <label className="text-sm" htmlFor="firstName">ชื่อจริง <span className="text-red-400">*</span></label>
             <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
                 <input 
                     id="firstName"
-                    className="text-sm bg-black w-full h-full p-1 rounded-sm" 
+                    className={`text-sm bg-black w-full h-full p-1 rounded-sm ${errors.firstName ? 'border-red-500' : ''}`}
                     type="text" 
                     placeholder="ชื่อจริง"
                     value={personalInfo.firstName}
-                    onChange={(e) => setPersonalInfo({...personalInfo, firstName: e.target.value})}
+                    onChange={(e) => {
+                        setPersonalInfo({...personalInfo, firstName: e.target.value});
+                        if (errors.firstName) {
+                            setErrors({...errors, firstName: ''});
+                        }
+                    }}
                 />
             </div>
+            {errors.firstName && <span className="text-red-400 text-xs">{errors.firstName}</span>}
         </div>
         
         <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="lastName">นามสกุล</label>
+            <label className="text-sm" htmlFor="lastName">นามสกุล <span className="text-red-400">*</span></label>
             <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
                 <input 
                     id="lastName"
-                    className="text-sm bg-black w-full h-full p-1 rounded-sm" 
+                    className={`text-sm bg-black w-full h-full p-1 rounded-sm ${errors.lastName ? 'border-red-500' : ''}`}
                     type="text" 
                     placeholder="นามสกุล"
                     value={personalInfo.lastName}
-                    onChange={(e) => setPersonalInfo({...personalInfo, lastName: e.target.value})}
+                    onChange={(e) => {
+                        setPersonalInfo({...personalInfo, lastName: e.target.value});
+                        if (errors.lastName) {
+                            setErrors({...errors, lastName: ''});
+                        }
+                    }}
                 />
             </div>
+            {errors.lastName && <span className="text-red-400 text-xs">{errors.lastName}</span>}
         </div>
         
         <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="nickname">ชื่อเล่น</label>
+            <label className="text-sm" htmlFor="nickname">ชื่อเล่น <span className="text-red-400">*</span></label>
             <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
                 <input 
                     id="nickname"
-                    className="text-sm bg-black w-full h-full p-1 rounded-sm" 
+                    className={`text-sm bg-black w-full h-full p-1 rounded-sm ${errors.nickname ? 'border-red-500' : ''}`}
                     type="text" 
                     placeholder="ชื่อเล่น"
                     value={personalInfo.nickname}
-                    onChange={(e) => setPersonalInfo({...personalInfo, nickname: e.target.value})}
+                    onChange={(e) => {
+                        setPersonalInfo({...personalInfo, nickname: e.target.value});
+                        if (errors.nickname) {
+                            setErrors({...errors, nickname: ''});
+                        }
+                    }}
                 />
             </div>
+            {errors.nickname && <span className="text-red-400 text-xs">{errors.nickname}</span>}
         </div>
         
         <div className="flex justify-between gap-3 flex-col">
@@ -200,7 +245,12 @@ export default function PersonalInformationStep({
         </div>
         
         <div className="flex flex-col w-full justify-center items-center gap-4">
-            <button className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full"  onClick={() => setStep(2)}>ถัดไป</button>
+            <button 
+                className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full"  
+                onClick={handleNext}
+            >
+                ถัดไป
+            </button>
             <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full flex items-center justify-center gap-2" onClick={() => window.location.href = "/"}>
                 <ChevronLeft className="w-4 h-4" />
                 <p>ย้อนกลับ</p>
