@@ -159,17 +159,20 @@ const currentSize = sizeConfig[size];
         </div>
       </div>
       {
-        registrationStatus && (
+        registrationStatus === "registered" && (
           <div class="ml-2 flex flex-shrink-0 items-center justify-center">
-            {registrationStatus === "registered" ? (
-              <div class="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
-                <Check size={12} color="white" />
-              </div>
-            ) : (
-              <div class="flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
-                <X size={12} color="white" />
-              </div>
-            )}
+            <div class="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+              <Check size={12} color="white" />
+            </div>
+          </div>
+        )
+      }
+      {
+        registrationStatus === "not-registered" && (
+          <div class="ml-2 flex flex-shrink-0 items-center justify-center">
+            <div class="flex h-5 w-5 items-center justify-center rounded-full bg-red-500">
+              <X size={12} color="white" />
+            </div>
           </div>
         )
       }
