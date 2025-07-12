@@ -2,7 +2,7 @@
 import MainLayout from "@/layouts/MainLayout.astro";
 import { api } from "@/lib/api";
 
-import RPKM from "@rpkm/sample.astro";
+// import RPKM from "@rpkm/sample.astro";
 import FD from "@firstdate/sample.astro";
 
 // Test backend health endpoint
@@ -39,7 +39,7 @@ try {
   <!-- 8K Test Image as Backdrop -->
   <div class="fixed inset-0 -z-10">
     <img 
-      src="/images/8ktest.jpg" 
+      src="/images/8ktest.jpg"
       alt="8K Test Background" 
       class="w-full h-full object-cover"
       style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;"
@@ -144,7 +144,7 @@ try {
     
     <div class="mt-8">
       <FD />
-      <RPKM />
+      <!-- <RPKM /> -->
     </div>
   </div>
 </MainLayout>

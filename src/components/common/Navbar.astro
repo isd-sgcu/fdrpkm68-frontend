@@ -1,0 +1,29 @@
+---
+interface Props {
+  navigateBackHref?: string;
+  hideLogo?: boolean;
+  bgTransparent?: boolean;
+}
+
+const { navigateBackHref, hideLogo = false, bgTransparent = false } = Astro.props;
+---
+
+<nav class={`flex items-center h-16 w-full justify-between p-1 ${bgTransparent ? 'bg-transparent' : 'bg-white'}`}>
+  <div>
+    {navigateBackHref && (
+      <a href={navigateBackHref} class="p-2">
+        <img src="/common/arrow-left.svg" alt="back" class="h-4 w-auto" />
+      </a>
+    )}
+  </div>
+  
+  {!hideLogo && (
+    <a href="/firstdate/home/">
+      <img src="/common/logo_freshmenfest.svg" alt="logo" />
+    </a>
+  )}
+  
+  <button>
+    <img src="/common/hamburger.svg" alt="menu" class="h-3 w-auto -translate-x-4" />
+  </button>
+</nav>
