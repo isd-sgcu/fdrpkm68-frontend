@@ -73,7 +73,7 @@ export function useDialog(dialogId: string): UseDialogReturn {
   const getDialogManager = useCallback((): DialogManagerAPI | null => {
     return (
       (window as Window & { DialogManagerV2?: DialogManagerAPI })
-        ?.DialogManagerV2 || null
+        ?.DialogManagerV2 ?? null
     );
   }, []);
 
@@ -138,8 +138,10 @@ export function useDialog(dialogId: string): UseDialogReturn {
 
   // Event handler helpers
   const onOpen = useCallback(
-    (callback: (event: CustomEvent<DialogEventDetail>) => void) => {
-      const handler = (event: Event) => {
+    (
+      callback: (event: CustomEvent<DialogEventDetail>) => void
+    ): (() => void) => {
+      const handler = (event: Event): void => {
         const customEvent = event as CustomEvent<DialogEventDetail>;
         if (customEvent.detail.dialogId === dialogId) {
           callback(customEvent);
@@ -153,8 +155,10 @@ export function useDialog(dialogId: string): UseDialogReturn {
   );
 
   const onClose = useCallback(
-    (callback: (event: CustomEvent<DialogEventDetail>) => void) => {
-      const handler = (event: Event) => {
+    (
+      callback: (event: CustomEvent<DialogEventDetail>) => void
+    ): (() => void) => {
+      const handler = (event: Event): void => {
         const customEvent = event as CustomEvent<DialogEventDetail>;
         if (customEvent.detail.dialogId === dialogId) {
           callback(customEvent);
@@ -168,8 +172,10 @@ export function useDialog(dialogId: string): UseDialogReturn {
   );
 
   const onConfirm = useCallback(
-    (callback: (event: CustomEvent<DialogEventDetail>) => void) => {
-      const handler = (event: Event) => {
+    (
+      callback: (event: CustomEvent<DialogEventDetail>) => void
+    ): (() => void) => {
+      const handler = (event: Event): void => {
         const customEvent = event as CustomEvent<DialogEventDetail>;
         if (customEvent.detail.dialog === dialogId) {
           callback(customEvent);
@@ -183,8 +189,10 @@ export function useDialog(dialogId: string): UseDialogReturn {
   );
 
   const onCascade = useCallback(
-    (callback: (event: CustomEvent<DialogEventDetail>) => void) => {
-      const handler = (event: Event) => {
+    (
+      callback: (event: CustomEvent<DialogEventDetail>) => void
+    ): (() => void) => {
+      const handler = (event: Event): void => {
         const customEvent = event as CustomEvent<DialogEventDetail>;
         if (
           customEvent.detail.from === dialogId ||
@@ -201,14 +209,14 @@ export function useDialog(dialogId: string): UseDialogReturn {
   );
 
   // Listen to dialog events and update state
-  useEffect(() => {
-    const handleDialogOpen = (event: Event) => {
+  useEffect((): (() => void) => {
+    const handleDialogOpen = (event: Event): void => {
       const customEvent = event as CustomEvent<DialogEventDetail>;
       if (customEvent.detail.dialogId === dialogId) {
         setState((prev) => ({
           ...prev,
           isOpen: true,
-          level: customEvent.detail.level || 0,
+          level: customEvent.detail.level ?? 0,
         }));
       }
 
@@ -220,7 +228,7 @@ export function useDialog(dialogId: string): UseDialogReturn {
       }
     };
 
-    const handleDialogClose = (event: Event) => {
+    const handleDialogClose = (event: Event): void => {
       const customEvent = event as CustomEvent<DialogEventDetail>;
       if (customEvent.detail.dialogId === dialogId) {
         setState((prev) => ({
@@ -238,7 +246,7 @@ export function useDialog(dialogId: string): UseDialogReturn {
       }
     };
 
-    const handleDialogCloseAll = () => {
+    const handleDialogCloseAll = (): void => {
       setState((prev) => ({
         ...prev,
         isOpen: false,
@@ -304,7 +312,19 @@ export function useDialog(dialogId: string): UseDialogReturn {
 }
 
 // Hook for managing multiple dialogs
-export function useDialogs(dialogIds: string[]) {
+export function useDialogs(dialogIds: string[]): {
+  dialogs: Record<string, UseDialogReturn>;
+  globalState: {
+    openDialogs: string[];
+    dialogStack: string[];
+    anyOpen: boolean;
+  };
+  closeAll: () => void;
+  openDialog: (dialogId: string) => void;
+  closeDialog: (dialogId: string) => void;
+  toggleDialog: (dialogId: string) => void;
+  isDialogOpen: (dialogId: string) => boolean;
+} {
   // Create individual dialog hooks
   const dialogs = dialogIds.reduce(
     (acc, id) => {
@@ -324,7 +344,7 @@ export function useDialogs(dialogIds: string[]) {
   const getDialogManager = useCallback((): DialogManagerAPI | null => {
     return (
       (window as Window & { DialogManagerV2?: DialogManagerAPI })
-        ?.DialogManagerV2 || null
+        ?.DialogManagerV2 ?? null
     );
   }, []);
 
@@ -337,7 +357,7 @@ export function useDialogs(dialogIds: string[]) {
 
   // Update global state when any dialog changes
   useEffect(() => {
-    const updateGlobalState = () => {
+    const updateGlobalState = (): void => {
       const manager = getDialogManager();
       if (manager) {
         const openDialogs = manager.getOpenDialogs();
@@ -359,7 +379,7 @@ export function useDialogs(dialogIds: string[]) {
     // Initial state
     updateGlobalState();
 
-    return () => {
+    return (): void => {
       document.removeEventListener("dialog-open", updateGlobalState);
       document.removeEventListener("dialog-close", updateGlobalState);
       document.removeEventListener("dialog-close-all", updateGlobalState);
@@ -373,7 +393,7 @@ export function useDialogs(dialogIds: string[]) {
     openDialog: (dialogId: string) => dialogs[dialogId]?.open(),
     closeDialog: (dialogId: string) => dialogs[dialogId]?.close(),
     toggleDialog: (dialogId: string) => dialogs[dialogId]?.toggle(),
-    isDialogOpen: (dialogId: string) => dialogs[dialogId]?.isOpen || false,
+    isDialogOpen: (dialogId: string) => dialogs[dialogId]?.isOpen ?? false,
   };
 }
 

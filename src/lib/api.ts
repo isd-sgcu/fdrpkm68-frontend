@@ -63,23 +63,34 @@ export async function apiRequest<T = unknown>(
 
 // Convenience methods
 export const api = {
-  get: <T>(endpoint: string, options?: RequestInit) =>
+  get: <T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> =>
     apiRequest<T>(endpoint, { ...options, method: "GET" }),
 
-  post: <T>(endpoint: string, data?: unknown, options?: RequestInit) =>
+  post: <T>(
+    endpoint: string,
+    data?: unknown,
+    options?: RequestInit
+  ): Promise<ApiResponse<T>> =>
     apiRequest<T>(endpoint, {
       ...options,
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
     }),
 
-  put: <T>(endpoint: string, data?: unknown, options?: RequestInit) =>
+  put: <T>(
+    endpoint: string,
+    data?: unknown,
+    options?: RequestInit
+  ): Promise<ApiResponse<T>> =>
     apiRequest<T>(endpoint, {
       ...options,
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
     }),
 
-  delete: <T>(endpoint: string, options?: RequestInit) =>
+  delete: <T>(
+    endpoint: string,
+    options?: RequestInit
+  ): Promise<ApiResponse<T>> =>
     apiRequest<T>(endpoint, { ...options, method: "DELETE" }),
 };

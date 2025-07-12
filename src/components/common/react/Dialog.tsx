@@ -1,4 +1,4 @@
-import React, { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 
 import { useDialog } from "../../../hooks/useDialog";
 import "../../../lib/dialogManager";
@@ -49,12 +49,13 @@ export function Dialog({
     };
   }, [hookOnOpen, hookOnClose, hookOnConfirm, onOpen, onClose, onConfirm]);
 
-  // Handle backdrop clicks
-  const _handleBackdropClick = (e: React.MouseEvent): void => {
-    if (closeOnBackdrop && e.target === e.currentTarget) {
-      close();
-    }
-  };
+  // default behavior for backdrop clicks
+  // // Handle backdrop clicks
+  // const _handleBackdropClick = (e: React.MouseEvent): void => {
+  //   if (closeOnBackdrop && e.target === e.currentTarget) {
+  //     close();
+  //   }
+  // };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent): void => {

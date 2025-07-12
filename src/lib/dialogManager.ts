@@ -121,12 +121,12 @@ const initializeDialogManager = (): void => {
 
     // Setup global API
     (window as Window & { DialogManagerV2?: unknown }).DialogManagerV2 = {
-      open: (dialogId: string) => dialogManagerV2.openDialog(dialogId),
-      close: (dialogId: string) => dialogManagerV2.closeDialog(dialogId),
-      closeAll: () => dialogManagerV2.closeAll(),
-      isOpen: (dialogId: string) => dialogManagerV2.isOpen(dialogId),
-      getOpenDialogs: () => dialogManagerV2.getOpenDialogs(),
-      getDialogStack: () => dialogManagerV2.getDialogStack(),
+      open: (dialogId: string): void => dialogManagerV2.openDialog(dialogId),
+      close: (dialogId: string): void => dialogManagerV2.closeDialog(dialogId),
+      closeAll: (): void => dialogManagerV2.closeAll(),
+      isOpen: (dialogId: string): boolean => dialogManagerV2.isOpen(dialogId),
+      getOpenDialogs: (): string[] => dialogManagerV2.getOpenDialogs(),
+      getDialogStack: (): string[] => dialogManagerV2.getDialogStack(),
     };
   }
 };

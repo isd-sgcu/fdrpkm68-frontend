@@ -135,6 +135,7 @@ const selectedMap = mapOptions[0];
     const zoomStep = 0.3;
 
     function updateTransform() {
+      if (!mapContent || !mapContainer) return;
       mapContent.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
       // Update cursor - always allow grab since we can pan at any zoom level
       mapContainer.style.cursor = "grab";
@@ -148,6 +149,7 @@ const selectedMap = mapOptions[0];
     }
 
     function constrainTranslation() {
+      if (!mapContainer || !mapContent) return;
       const containerRect = mapContainer.getBoundingClientRect();
       const contentRect = mapContent.getBoundingClientRect();
 
@@ -248,9 +250,9 @@ const selectedMap = mapOptions[0];
 
     // Map switching functionality
     document.addEventListener("mapChanged", (e) => {
-      const { value, label } = e.detail;
-      currentMap.src = `/images/maps/${value}.svg`;
-      currentMap.alt = label;
+      const { value, label } = (e as CustomEvent).detail;
+      (currentMap as HTMLImageElement).src = `/images/maps/${value}.svg`;
+      (currentMap as HTMLImageElement).alt = label;
       mapContainer.setAttribute("data-current-map", value);
 
       // Update the map title
