@@ -27,8 +27,8 @@ class DialogManagerV2 {
   }
 
   private handleEscapeKey(): void {
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
         const topDialog = this.getTopDialog();
         if (topDialog) {
           this.closeDialog(topDialog);
@@ -41,14 +41,14 @@ class DialogManagerV2 {
     if (!this.openDialogs.has(dialogId)) {
       this.openDialogs.add(dialogId);
       this.dialogStack.push(dialogId);
-      
+
       // Prevent body scroll when dialog is open
       if (this.openDialogs.size === 1) {
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = "hidden";
       }
 
-      const openEvent = new CustomEvent<DialogEventDetail>('dialog-open', {
-        detail: { dialogId, level: this.dialogStack.length }
+      const openEvent = new CustomEvent<DialogEventDetail>("dialog-open", {
+        detail: { dialogId, level: this.dialogStack.length },
       });
       document.dispatchEvent(openEvent);
     }
@@ -64,11 +64,11 @@ class DialogManagerV2 {
 
       // Restore body scroll when no dialogs are open
       if (this.openDialogs.size === 0) {
-        document.body.style.overflow = '';
+        document.body.style.overflow = "";
       }
 
-      const closeEvent = new CustomEvent<DialogEventDetail>('dialog-close', {
-        detail: { dialogId, remaining: this.openDialogs.size }
+      const closeEvent = new CustomEvent<DialogEventDetail>("dialog-close", {
+        detail: { dialogId, remaining: this.openDialogs.size },
       });
       document.dispatchEvent(closeEvent);
     }
@@ -78,22 +78,24 @@ class DialogManagerV2 {
     const dialogsToClose = [...this.openDialogs];
     this.openDialogs.clear();
     this.dialogStack = [];
-    document.body.style.overflow = '';
+    document.body.style.overflow = "";
 
     // Dispatch close events for all dialogs
-    dialogsToClose.forEach(dialogId => {
-      const closeEvent = new CustomEvent<DialogEventDetail>('dialog-close', {
-        detail: { dialogId, remaining: 0 }
+    dialogsToClose.forEach((dialogId) => {
+      const closeEvent = new CustomEvent<DialogEventDetail>("dialog-close", {
+        detail: { dialogId, remaining: 0 },
       });
       document.dispatchEvent(closeEvent);
     });
 
-    const closeAllEvent = new CustomEvent('dialog-close-all');
+    const closeAllEvent = new CustomEvent("dialog-close-all");
     document.dispatchEvent(closeAllEvent);
   }
 
   private getTopDialog(): string | null {
-    return this.dialogStack.length > 0 ? this.dialogStack[this.dialogStack.length - 1] : null;
+    return this.dialogStack.length > 0
+      ? this.dialogStack[this.dialogStack.length - 1]
+      : null;
   }
 
   isOpen(dialogId: string): boolean {
@@ -111,11 +113,14 @@ class DialogManagerV2 {
 
 // Initialize and setup global API
 const initializeDialogManager = (): void => {
-  if (typeof window !== 'undefined' && !(window as any).DialogManagerV2) {
+  if (
+    typeof window !== "undefined" &&
+    !(window as Window & { DialogManagerV2?: unknown }).DialogManagerV2
+  ) {
     const dialogManagerV2 = new DialogManagerV2();
-    
+
     // Setup global API
-    (window as any).DialogManagerV2 = {
+    (window as Window & { DialogManagerV2?: unknown }).DialogManagerV2 = {
       open: (dialogId: string) => dialogManagerV2.openDialog(dialogId),
       close: (dialogId: string) => dialogManagerV2.closeDialog(dialogId),
       closeAll: () => dialogManagerV2.closeAll(),

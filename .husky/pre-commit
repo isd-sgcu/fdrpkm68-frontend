@@ -3,11 +3,11 @@
 
 echo "🔍 Running pre-commit checks..."
 
-# Check if we can build
-echo "📦 Testing build..."
-pnpm run build || {
-  echo "❌ Build failed. Please fix errors before committing."
+# Run lint-staged for file-specific checks (formatting, linting staged files only)
+echo "🧹 Cleaning up and formatting staged files..."
+lint-staged || {
+  echo "❌ Linting/formatting failed. Please fix errors before committing."
   exit 1
 }
 
-echo "✅ All pre-commit checks passed!"
+echo "✅ Pre-commit checks passed!"

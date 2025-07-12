@@ -1,7 +1,7 @@
---- 
+---
 import "@/styles/global.css";
-import Navbar from "@common/Navbar.astro";
 import Footer from "@common/Footer.astro";
+import Navbar from "@common/Navbar.astro";
 
 interface Props {
   title?: string;
@@ -13,11 +13,11 @@ const backgroundImages = {
   rpkm_home: "/images/rpkm/bg/home.png",
   workshops: "/images/rpkm/bg/workshops.png",
   rubpuen: "/images/rpkm/bg/rubpuen.png",
-  eventSummary: "/images/rpkm/bg/eventSummary.png"
+  eventSummary: "/images/rpkm/bg/eventSummary.png",
 };
 
-const { title, description, variant = "rpkm_home"} = Astro.props;
-const backgroundImage = backgroundImages[variant]
+const { title, description, variant = "rpkm_home" } = Astro.props;
+const backgroundImage = backgroundImages[variant];
 ---
 
 <!doctype html>
@@ -31,18 +31,22 @@ const backgroundImage = backgroundImages[variant]
     <meta name="description" content={description} />
   </head>
   <body class="min-h-screen min-w-screen bg-slate-500">
-    <div class="min-h-screen max-w-[440px] mx-auto flex flex-col bg-cover bg-center bg-no-repeat text-white"
-        style={`background-image: url(${backgroundImage})`}
->
+    <div
+      class="mx-auto flex min-h-screen max-w-[440px] flex-col bg-cover bg-center bg-no-repeat text-white"
+      style={`background-image: url(${backgroundImage})`}
+    >
       <Navbar hideLogo bgTransparent />
 
       <!-- Logo -->
-      <img src="/images/rpkm/freshmen-fest-logo.svg" class="mx-auto w-[301.182px] h-[136px]" />
+      <img
+        src="/images/rpkm/freshmen-fest-logo.svg"
+        class="mx-auto h-[136px] w-[301.182px]"
+      />
 
       <main class="flex-grow px-3">
         <slot />
       </main>
-      <Footer variant={variant}/>
+      <Footer variant={variant} />
     </div>
   </body>
 </html>
