@@ -1,39 +1,43 @@
 ---
-import QRCode from "qrcode"
-
-import Layout from "@/layouts/firstdate/WithNavbar.astro"
 import BlurText from "@common/BlurText.astro";
+import ButtonFD from "@common/ButtonFd.astro";
 import Popup from "@common/Popup.astro";
-import ButtonFD from "@common/ButtonFD.astro";
+import QRCode from "qrcode";
+
+import Layout from "@/layouts/firstdate/WithNavbar.astro";
 
 // TODO: GET data from Somewhere
 const studentId = "1234567890";
 const nationalId = "1234567890123";
 
-const baseUrl = import.meta.env.PUBLIC_SITE_URL
+const baseUrl = import.meta.env.PUBLIC_SITE_URL;
 const targetUrl = `${baseUrl}/firstdate/sample?studentId=${studentId}&nationalId=${nationalId}`;
 const qrCodeData = await QRCode.toDataURL(targetUrl);
 ---
 
 <Layout>
-  <div class="flex justify-center mt-10">
-    <BlurText 
-      textSize="text-3xl" 
-      className="text-white font-zen-dots" 
+  <div class="mt-10 flex justify-center">
+    <BlurText
+      textSize="text-3xl"
+      className="font-zen-dots text-white"
       blurClassName="text-white blur-[1.75px] translate-y-[2px] font-zen-dots"
     >
       MY QR CODE
     </BlurText>
   </div>
-  <Popup class="flex flex-col justify-center items-center" size="medium" color="vivid-pink">
-    <div class="text-xs text-center mb-4">
+  <Popup
+    class="flex flex-col items-center justify-center"
+    size="medium"
+    color="vivid-pink"
+  >
+    <div class="mb-4 text-center text-xs">
       <p>*สำหรับใช้ลงทะเบียนเข้างาน</p>
       <p>โปรดแสดงแก่เจ้าหน้าที่ในวันงาน</p>
     </div>
-    <img src={qrCodeData} alt="QR Code" class="w-4/5 h-auto" />
+    <img src={qrCodeData} alt="QR Code" class="h-auto w-4/5" />
     <p class="text-md mt-6">{studentId}</p>
   </Popup>
-  <div class="flex justify-center mb-24">
+  <div class="mb-24 flex justify-center">
     <ButtonFD href="/firstdate/home" color="light-pink" variant="fill">
       กลับสู่หน้าหลัก
     </ButtonFD>
