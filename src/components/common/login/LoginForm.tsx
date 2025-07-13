@@ -1,7 +1,10 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-import ForgotPasswordStep from "./ForgetPasswordStep";
-import LoginStep from "./LoginStep";
+
+import type { ReactNode } from "react";
+import { useCallback, useState } from "react";
+
+import ForgotPasswordStep from "@/components/common/login/ForgetPasswordStep";
+import LoginStep from "@/components/common/login/LoginStep";
 
 interface LoginFormData {
   studentId: string;
@@ -11,17 +14,23 @@ interface LoginFormData {
   confirmPassword: string;
 }
 
-export default function LoginForm({ userType }: { userType: 'student' | 'staff' }) {
-  const bgUrl = userType === 'student' ? '/firstdate/register/student-form-bg.png' : '/firstdate/register/staff/form-bg.png';
+export default function LoginForm({
+  userType,
+}: {
+  userType: "student" | "staff";
+}): ReactNode {
+  const bgUrl =
+    userType === "student"
+      ? "/firstdate/register/student-form-bg.png"
+      : "/firstdate/register/staff/form-bg.png";
   const [step, setStep] = useState<number>(1);
-  
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
     setValue,
-    reset
   } = useForm<LoginFormData>({
     defaultValues: {
       studentId: "",
@@ -29,28 +38,36 @@ export default function LoginForm({ userType }: { userType: 'student' | 'staff' 
       password: "",
       newPassword: "",
       confirmPassword: "",
-    }
+    },
   });
 
   const formValues = watch();
 
-  const onLoginSubmit = (data: LoginFormData) => {
-    console.log('Login form submitted:', data);
+  const onLoginSubmit = useCallback((data: LoginFormData): void => {
+    console.log("Login form submitted:", data);
     // Handle login logic here
-  };
+  }, []);
 
-  const onForgotPasswordSubmit = (data: LoginFormData) => {
-    console.log('Password reset form submitted:', data);
+  const onForgotPasswordSubmit = useCallback((data: LoginFormData): void => {
+    console.log("Password reset form submitted:", data);
     // Handle password reset logic here
-  };
+  }, []);
+
+  const handleForgot = useCallback((): void => {
+    setStep(2);
+  }, []);
+
+  const handleBack = useCallback((): void => {
+    setStep(1);
+  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-white">
-      <div 
-        className="min-h-screen bg-contain bg-center bg-no-repeat w-full flex items-center justify-center"
+    <div className="flex min-h-screen flex-col items-center justify-center text-white">
+      <div
+        className="flex min-h-screen w-full items-center justify-center bg-contain bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${bgUrl})` }}
       >
-        <div className="max-w-[270px] w-full md:max-w-[330px]">
+        <div className="w-full max-w-[270px] md:max-w-[330px]">
           {step === 1 && (
             <LoginStep
               register={register}
@@ -58,7 +75,7 @@ export default function LoginForm({ userType }: { userType: 'student' | 'staff' 
               formValues={formValues}
               setValue={setValue}
               onSubmit={handleSubmit(onLoginSubmit)}
-              onForgot={() => setStep(2)}
+              onForgot={handleForgot}
               userType={userType}
             />
           )}
@@ -69,7 +86,7 @@ export default function LoginForm({ userType }: { userType: 'student' | 'staff' 
               formValues={formValues}
               setValue={setValue}
               onSubmit={handleSubmit(onForgotPasswordSubmit)}
-              onBack={() => setStep(1)}
+              onBack={handleBack}
               userType={userType}
             />
           )}

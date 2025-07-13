@@ -1,9 +1,15 @@
-import { useState } from "react";
-import type { UseFormRegister, FieldErrors, UseFormSetValue } from "react-hook-form";
+import type {
+  FieldErrors,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
 
-interface ForgotPasswordFormData {
+import type { ReactNode } from "react";
+
+interface LoginFormData {
   studentId: string;
   citizenId: string;
+  password: string;
   newPassword: string;
   confirmPassword: string;
 }
@@ -12,19 +18,19 @@ export default function ForgotPasswordStep({
   register,
   errors,
   formValues,
-  setValue,
+  setValue: _setValue,
   onSubmit,
   onBack,
   userType,
 }: {
-  register: UseFormRegister<ForgotPasswordFormData>;
-  errors: FieldErrors<ForgotPasswordFormData>;
-  formValues: ForgotPasswordFormData;
-  setValue: UseFormSetValue<ForgotPasswordFormData>;
+  register: UseFormRegister<LoginFormData>;
+  errors: FieldErrors<LoginFormData>;
+  formValues: LoginFormData;
+  setValue: UseFormSetValue<LoginFormData>;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   onBack?: () => void;
   userType: "student" | "staff";
-}) {
+}): ReactNode {
   const globUrl =
     userType === "student"
       ? "/firstdate/register/glob.svg"
@@ -47,13 +53,17 @@ export default function ForgotPasswordStep({
               id="studentId"
               type="text"
               placeholder="รหัสนิสิต"
-              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.studentId ? 'border-red-500' : ''}`}
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.studentId ? "border-red-500" : ""}`}
               {...register("studentId", {
-                required: "กรุณากรอกรหัสนิสิต"
+                required: "กรุณากรอกรหัสนิสิต",
               })}
             />
           </div>
-          {errors.studentId && <span className="text-red-400 text-xs">{errors.studentId.message}</span>}
+          {errors.studentId && (
+            <span className="text-xs text-red-400">
+              {errors.studentId.message}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -65,17 +75,21 @@ export default function ForgotPasswordStep({
               id="citizenId"
               type="text"
               placeholder="รหัสบัตรประชาชน"
-              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.citizenId ? 'border-red-500' : ''}`}
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.citizenId ? "border-red-500" : ""}`}
               {...register("citizenId", {
                 required: "กรุณากรอกรหัสบัตรประชาชน",
                 pattern: {
                   value: /^[0-9]{13}$/,
-                  message: "กรุณากรอกรหัสบัตรประชาชนให้ถูกต้อง (13 หลัก)"
-                }
+                  message: "กรุณากรอกรหัสบัตรประชาชนให้ถูกต้อง (13 หลัก)",
+                },
               })}
             />
           </div>
-          {errors.citizenId && <span className="text-red-400 text-xs">{errors.citizenId.message}</span>}
+          {errors.citizenId && (
+            <span className="text-xs text-red-400">
+              {errors.citizenId.message}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -87,17 +101,21 @@ export default function ForgotPasswordStep({
               id="newPassword"
               type="password"
               placeholder="รหัสผ่าน"
-              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.newPassword ? 'border-red-500' : ''}`}
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.newPassword ? "border-red-500" : ""}`}
               {...register("newPassword", {
                 required: "กรุณากรอกรหัสผ่านใหม่",
                 minLength: {
                   value: 6,
-                  message: "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"
-                }
+                  message: "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+                },
               })}
             />
           </div>
-          {errors.newPassword && <span className="text-red-400 text-xs">{errors.newPassword.message}</span>}
+          {errors.newPassword && (
+            <span className="text-xs text-red-400">
+              {errors.newPassword.message}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -109,27 +127,35 @@ export default function ForgotPasswordStep({
               id="confirmPassword"
               type="password"
               placeholder="รหัสผ่านใหม่อีกครั้ง"
-              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.confirmPassword ? 'border-red-500' : ''}`}
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.confirmPassword ? "border-red-500" : ""}`}
               {...register("confirmPassword", {
                 required: "กรุณากรอกรหัสผ่านใหม่อีกครั้ง",
                 validate: (value) => {
                   const newPassword = formValues.newPassword;
                   return value === newPassword || "รหัสผ่านไม่ตรงกัน";
-                }
+                },
               })}
             />
           </div>
-          {errors.confirmPassword && <span className="text-red-400 text-xs">{errors.confirmPassword.message}</span>}
+          {errors.confirmPassword && (
+            <span className="text-xs text-red-400">
+              {errors.confirmPassword.message}
+            </span>
+          )}
         </div>
 
-        <button 
+        <button
           type="submit"
           className="flex items-center justify-center bg-white py-2 text-black transition-colors duration-200 hover:bg-gray-100"
         >
           รีเซตรหัสผ่าน
         </button>
         {onBack && (
-          <button type="button" onClick={onBack} className="text-sm text-gray-400 underline">
+          <button
+            type="button"
+            onClick={onBack}
+            className="text-sm text-gray-400 underline"
+          >
             กลับเข้าสู่ระบบ
           </button>
         )}

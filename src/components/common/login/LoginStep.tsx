@@ -1,5 +1,10 @@
-import { useState } from "react";
-import type { UseFormRegister, FieldErrors, UseFormSetValue } from "react-hook-form";
+import type {
+  FieldErrors,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
+
+import type { ReactNode } from "react";
 
 interface LoginFormData {
   studentId: string;
@@ -12,8 +17,8 @@ interface LoginFormData {
 export default function LoginStep({
   register,
   errors,
-  formValues,
-  setValue,
+  formValues: _formValues,
+  setValue: _setValue,
   onSubmit,
   onForgot,
   userType,
@@ -25,7 +30,7 @@ export default function LoginStep({
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   onForgot: () => void;
   userType: "student" | "staff";
-}) {
+}): ReactNode {
   const globUrl =
     userType === "student"
       ? "/firstdate/register/glob.svg"
@@ -48,13 +53,17 @@ export default function LoginStep({
               id="studentId"
               type="text"
               placeholder="รหัสนิสิต"
-              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.studentId ? 'border-red-500' : ''}`}
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.studentId ? "border-red-500" : ""}`}
               {...register("studentId", {
-                required: "กรุณากรอกรหัสนิสิต"
+                required: "กรุณากรอกรหัสนิสิต",
               })}
             />
           </div>
-          {errors.studentId && <span className="text-red-400 text-xs">{errors.studentId.message}</span>}
+          {errors.studentId && (
+            <span className="text-xs text-red-400">
+              {errors.studentId.message}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -66,17 +75,21 @@ export default function LoginStep({
               id="citizenId"
               type="text"
               placeholder="รหัสบัตรประชาชน"
-              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.citizenId ? 'border-red-500' : ''}`}
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.citizenId ? "border-red-500" : ""}`}
               {...register("citizenId", {
                 required: "กรุณากรอกรหัสบัตรประชาชน",
                 pattern: {
                   value: /^[0-9]{13}$/,
-                  message: "กรุณากรอกรหัสบัตรประชาชนให้ถูกต้อง (13 หลัก)"
-                }
+                  message: "กรุณากรอกรหัสบัตรประชาชนให้ถูกต้อง (13 หลัก)",
+                },
               })}
             />
           </div>
-          {errors.citizenId && <span className="text-red-400 text-xs">{errors.citizenId.message}</span>}
+          {errors.citizenId && (
+            <span className="text-xs text-red-400">
+              {errors.citizenId.message}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -88,13 +101,17 @@ export default function LoginStep({
               id="password"
               type="password"
               placeholder="รหัสผ่าน"
-              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.password ? 'border-red-500' : ''}`}
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.password ? "border-red-500" : ""}`}
               {...register("password", {
-                required: "กรุณากรอกรหัสผ่าน"
+                required: "กรุณากรอกรหัสผ่าน",
               })}
             />
           </div>
-          {errors.password && <span className="text-red-400 text-xs">{errors.password.message}</span>}
+          {errors.password && (
+            <span className="text-xs text-red-400">
+              {errors.password.message}
+            </span>
+          )}
         </div>
 
         <button
@@ -105,7 +122,7 @@ export default function LoginStep({
           ลืมรหัสผ่าน?
         </button>
 
-        <button 
+        <button
           type="submit"
           className="flex items-center justify-center bg-white py-2 text-black transition-colors duration-200 hover:bg-gray-100"
         >

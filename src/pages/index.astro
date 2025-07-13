@@ -1,9 +1,10 @@
 ---
+import FD from "@firstdate/sample.astro";
+
 import MainLayout from "@/layouts/MainLayout.astro";
 import { api } from "@/lib/api";
 
 // import RPKM from "@rpkm/sample.astro";
-import FD from "@firstdate/sample.astro";
 
 // Test backend health endpoint
 type HealthData = {
@@ -15,14 +16,13 @@ type HealthData = {
 let healthData: HealthData = null;
 let healthError: string | null = null;
 let apiLoadTime: number = 0;
-let imageLoadTime: number = 0;
 
 const startTime = performance.now();
 try {
-  const healthResponse = await api.get('/health');
+  const healthResponse = await api.get("/health");
   const endTime = performance.now();
   apiLoadTime = Math.round(endTime - startTime);
-  
+
   if (healthResponse.success) {
     healthData = healthResponse.data as HealthData;
   } else {
@@ -38,10 +38,10 @@ try {
 <MainLayout title="Home" description="Hello World@Firstdate and RPKM">
   <!-- 8K Test Image as Backdrop -->
   <div class="fixed inset-0 -z-10">
-    <img 
+    <img
       src="/images/8ktest.jpg"
-      alt="8K Test Background" 
-      class="w-full h-full object-cover"
+      alt="8K Test Background"
+      class="h-full w-full object-cover"
       style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;"
       loading="eager"
       fetchpriority="high"
@@ -54,94 +54,123 @@ try {
   <!-- Content with backdrop -->
   <div class="relative z-10 min-h-screen">
     <div class="p-8">
-      <h1 class="text-4xl font-bold mb-6 text-white drop-shadow-lg">FreshmenFest 2025</h1>
-      <p class="text-lg text-white/90 mb-8 drop-shadow">Testing 8K image load performance via Cloud Storage CDN</p>
-      
+      <h1 class="mb-6 text-4xl font-bold text-white drop-shadow-lg">
+        FreshmenFest 2025
+      </h1>
+      <p class="mb-8 text-lg text-white/90 drop-shadow">
+        Testing 8K image load performance via Cloud Storage CDN
+      </p>
+
       <!-- Test grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-          <h3 class="text-white font-semibold mb-2">Logo Test</h3>
-          <img src="/images/logo.svg" alt="Logo" class="w-24 h-24" />
+      <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+          <h3 class="mb-2 font-semibold text-white">Logo Test</h3>
+          <img src="/images/logo.svg" alt="Logo" class="h-24 w-24" />
         </div>
-        
-        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-          <h3 class="text-white font-semibold mb-2">SVG Test</h3>
-          <img src="/images/test-image.svg" alt="Test Image" class="w-32 h-16" />
+
+        <div class="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+          <h3 class="mb-2 font-semibold text-white">SVG Test</h3>
+          <img
+            src="/images/test-image.svg"
+            alt="Test Image"
+            class="h-16 w-32"
+          />
         </div>
-        
+
         <!-- Backend Health Check -->
-        <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-          <h3 class="text-white font-semibold mb-2">Backend Health</h3>
-          {healthData ? (
-            <div class="space-y-2 text-sm">
-              <div class="flex items-center gap-2">
-                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
-                <span class="text-green-300">Healthy</span>
+        <div class="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+          <h3 class="mb-2 font-semibold text-white">Backend Health</h3>
+          {
+            healthData ? (
+              <div class="space-y-2 text-sm">
+                <div class="flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full bg-green-400" />
+                  <span class="text-green-300">Healthy</span>
+                </div>
+                <div class="text-white/70">
+                  <div>Status: {healthData.status}</div>
+                  <div>Environment: {healthData.environment}</div>
+                  <div>Time: {healthData.timestamp}</div>
+                </div>
               </div>
-              <div class="text-white/70">
-                <div>Status: {healthData.status}</div>
-                <div>Environment: {healthData.environment}</div>
-                <div>Time: {healthData.timestamp}</div>
+            ) : (
+              <div class="space-y-2 text-sm">
+                <div class="flex items-center gap-2">
+                  <span class="h-2 w-2 rounded-full bg-red-400" />
+                  <span class="text-red-300">Error</span>
+                </div>
+                <div class="text-xs text-white/70">{healthError}</div>
               </div>
-            </div>
-          ) : (
-            <div class="space-y-2 text-sm">
-              <div class="flex items-center gap-2">
-                <span class="w-2 h-2 bg-red-400 rounded-full"></span>
-                <span class="text-red-300">Error</span>
-              </div>
-              <div class="text-white/70 text-xs">
-                {healthError}
-              </div>
-            </div>
-          )}
+            )
+          }
         </div>
       </div>
-      
+
       <!-- Performance info -->
-      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-white">
-        <h3 class="text-xl font-semibold mb-3">Load Test Info</h3>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="rounded-lg bg-white/10 p-6 text-white backdrop-blur-sm">
+        <h3 class="mb-3 text-xl font-semibold">Load Test Info</h3>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <!-- Image Performance -->
           <div>
-            <h4 class="font-semibold mb-2 text-blue-300">Static Assets (CDN)</h4>
+            <h4 class="mb-2 font-semibold text-blue-300">
+              Static Assets (CDN)
+            </h4>
             <ul class="space-y-1 text-sm">
-              <li>• 8K Background: <code class="bg-black/20 px-1 rounded">/images/8ktest.jpg</code></li>
+              <li>
+                • 8K Background: <code class="rounded bg-black/20 px-1"
+                  >/images/8ktest.jpg</code
+                >
+              </li>
               <li>• Resolution: 7680×4320 pixels</li>
               <li>• Served from: Cloud Storage CDN</li>
               <li>• Cache headers: 1 day TTL</li>
               <li>• Loading: eager, fetchpriority: high</li>
-              <li>• Load time: <span id="image-load-time" class="text-blue-400">Measuring...</span></li>
+              <li>
+                • Load time: <span id="image-load-time" class="text-blue-400"
+                  >Measuring...</span
+                >
+              </li>
             </ul>
           </div>
-          
+
           <!-- API Performance -->
           <div>
-            <h4 class="font-semibold mb-2 text-green-300">API Performance</h4>
+            <h4 class="mb-2 font-semibold text-green-300">API Performance</h4>
             <ul class="space-y-1 text-sm">
-              <li>• Endpoint: <code class="bg-black/20 px-1 rounded">/api/health</code></li>
+              <li>
+                • Endpoint: <code class="rounded bg-black/20 px-1"
+                  >/api/health</code
+                >
+              </li>
               <li>• Routing: Load balancer → Backend</li>
               <li>• URL rewrite: /api/health → /health</li>
-              <li>• Response: {healthData ? 'Success' : 'Failed'}</li>
-              <li>• Load time: <span class="text-green-400">{apiLoadTime}ms</span></li>
-              <li>• Status: {healthData ? 
-                <span class="text-green-400">✓ Connected</span> : 
-                <span class="text-red-400">✗ Error</span>
-              }</li>
+              <li>• Response: {healthData ? "Success" : "Failed"}</li>
+              <li>
+                • Load time: <span class="text-green-400">{apiLoadTime}ms</span>
+              </li>
+              <li>
+                • Status: {
+                  healthData ? (
+                    <span class="text-green-400">✓ Connected</span>
+                  ) : (
+                    <span class="text-red-400">✗ Error</span>
+                  )
+                }
+              </li>
             </ul>
           </div>
         </div>
-        
-        <div class="mt-4 pt-4 border-t border-white/20">
+
+        <div class="mt-4 border-t border-white/20 pt-4">
           <p class="text-xs text-white/60">
-            This page tests both static asset delivery (CDN) and API routing (load balancer) 
-            to verify the complete infrastructure setup.
+            This page tests both static asset delivery (CDN) and API routing
+            (load balancer) to verify the complete infrastructure setup.
           </p>
         </div>
       </div>
     </div>
-    
+
     <div class="mt-8">
       <FD />
       <!-- <RPKM /> -->
@@ -151,11 +180,11 @@ try {
 
 <script>
   // Track 8K image load time using Performance API
-  const bgImage = document.getElementById('bg-image') as HTMLImageElement;
-  const imageLoadTimeElement = document.getElementById('image-load-time');
-  const apiLoadTimeElement = document.createElement('span');
-  apiLoadTimeElement.className = 'text-green-400';
-  
+  const bgImage = document.getElementById("bg-image") as HTMLImageElement;
+  const imageLoadTimeElement = document.getElementById("image-load-time");
+  const apiLoadTimeElement = document.createElement("span");
+  apiLoadTimeElement.className = "text-green-400";
+
   function checkResourceTimings() {
     // Get image network timing
     const imageUrl = bgImage?.src;
@@ -169,28 +198,31 @@ try {
         }
       }
     }
-    
+
     // Get API network timing - make a client-side call to measure
-    fetch('https://dev.freshmenfest2025.com/api/health')
-      .then(() => {
-        const apiPerfEntries = performance.getEntriesByName('https://dev.freshmenfest2025.com/api/health');
-        if (apiPerfEntries.length > 0) {
-          const apiEntry = apiPerfEntries[apiPerfEntries.length - 1] as PerformanceResourceTiming;
-          const apiNetworkTime = Math.round(apiEntry.duration);
-          // Update API load time display
-          const apiLoadTimeSpan = document.querySelector('span.text-green-400');
-          if (apiLoadTimeSpan && apiLoadTimeSpan.textContent?.includes('ms')) {
-            apiLoadTimeSpan.textContent = `${apiNetworkTime}ms (network)`;
-          }
+    fetch("https://dev.freshmenfest2025.com/api/health").then(() => {
+      const apiPerfEntries = performance.getEntriesByName(
+        "https://dev.freshmenfest2025.com/api/health"
+      );
+      if (apiPerfEntries.length > 0) {
+        const apiEntry = apiPerfEntries[
+          apiPerfEntries.length - 1
+        ] as PerformanceResourceTiming;
+        const apiNetworkTime = Math.round(apiEntry.duration);
+        // Update API load time display
+        const apiLoadTimeSpan = document.querySelector("span.text-green-400");
+        if (apiLoadTimeSpan && apiLoadTimeSpan.textContent?.includes("ms")) {
+          apiLoadTimeSpan.textContent = `${apiNetworkTime}ms (network)`;
         }
-      });
+      }
+    });
   }
-  
+
   // Check timings after page load
-  if (document.readyState === 'complete') {
+  if (document.readyState === "complete") {
     setTimeout(checkResourceTimings, 100);
   } else {
-    window.addEventListener('load', () => {
+    window.addEventListener("load", () => {
       setTimeout(checkResourceTimings, 100);
     });
   }

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+echo "🔍 Running pre-push checks..."
+
+# Type checking (full project)
+echo "🔍 Type checking..."
+pnpm type-check || {
+  echo "❌ Type checking failed. Please fix errors before pushing."
+  exit 1
+}
+
+# Full project linting
+echo "🧹 Running full project lint..."
+pnpm lint || {
+  echo "❌ Linting failed. Please fix errors before pushing."
+  exit 1
+}
+
+# # Run tests
+# echo "🧪 Running tests..."
+# pnpm test || {
+#   echo "❌ Tests failed. Please fix failing tests before pushing."
+#   exit 1
+# }
+
+# Build check
+echo "🔨 Checking build..."
+pnpm build || {
+  echo "❌ Build failed. Please fix build errors before pushing."
+  exit 1
+}
+
+echo "✅ All pre-push checks passed!"
