@@ -2,8 +2,15 @@
 import Layout from "@/layouts/fest/FestWithNavbar.astro";
 import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
 import ButtonFest from "@/components/common/ButtonFest.astro";
+const eventDetails = [
+  "Talk Show จาก Special Guest",
+  "Last Mission",
+  "Show สุดพิเศษ",
+  "เปิดตัวบ้านรับเพื่อน ครั้งเเรก!",
+  "Photobooth",
+  "ต้นไม้อธิษฐาน “จามจุรีประดับใจ”"
+];
 ---
-
 <Layout>
   
   <div class="px-10 py-6 flex flex-col space-y-2"> {/* Fix Padding X = 10 */}
@@ -52,25 +59,12 @@ import ButtonFest from "@/components/common/ButtonFest.astro";
           <p class="text-[20px] font-bold ">
             งานปฐมนิเทศ X <br/>Freshmen Festival 2025 <br/>: ส่งเพื่อนไปก้าวใหม่</p>
         </div>
-        <ul class="list-none mb-[20px]"> 
-          <li class="mb-2"> 
-            <span class="inline-block w-4">•</span>Talk Show จาก Special Guest
-          </li>
-          <li class="mb-2"> 
-            <span class="inline-block w-4">•</span>Last Mission
-          </li>
-          <li class="mb-2"> 
-            <span class="inline-block w-4">•</span>Show สุดพิเศษ
-          </li>
-          <li class="mb-2"> 
-            <span class="inline-block w-4">•</span>เปิดตัวบ้านรับเพื่อน ครั้งเเรก!
-          </li>
-          <li class="mb-2"> 
-            <span class="inline-block w-4">•</span>Photobooth
-          </li>
-          <li class="mb-2"> 
-            <span class="inline-block w-4">•</span>ต้นไม้อธิษฐาน “จามจุรีประดับใจ”
-          </li>
+        <ul class="list-none mb-[20px]">
+          {eventDetails.map((item, index) => (
+            <li class="mb-2">
+              <span class="inline-block w-4">•</span>{item}
+            </li>
+          ))}
         </ul>
         <HorizonlineFest variant="blue" />
       </div>
@@ -102,7 +96,10 @@ import ButtonFest from "@/components/common/ButtonFest.astro";
     </div>
 
     <diV class="mt-[20px] mb-[40px] text-center">
-      <ButtonFest color="pink" size="big">ลงทะเบียน Quest</ButtonFest>
+      <ButtonFest color="pink" size="big"  
+      href="https://docs.google.com/forms/d/e/1FAIpQLSccX0yiGEwpjEppS7cUMrj4idQDHycRLM1aXMJ-YyfT3hJzWg/viewform?usp=dialog">
+      ลงทะเบียน Quest
+    </ButtonFest>
     </diV>
     
   </div>
