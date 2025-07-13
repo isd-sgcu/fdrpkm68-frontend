@@ -4,8 +4,6 @@ import FD from "@firstdate/sample.astro";
 import MainLayout from "@/layouts/MainLayout.astro";
 import { api } from "@/lib/api";
 
-// import RPKM from "@rpkm/sample.astro";
-
 // Test backend health endpoint
 type HealthData = {
   status: string;
@@ -19,7 +17,7 @@ let apiLoadTime: number = 0;
 
 const startTime = performance.now();
 try {
-  const healthResponse = await api.get("/health");
+  const healthResponse = await api.get("/healthz");
   const endTime = performance.now();
   apiLoadTime = Math.round(endTime - startTime);
 
