@@ -4,6 +4,7 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
+// eslint-disable-next-line
 import type { ReactNode } from "react";
 
 interface Faculty {

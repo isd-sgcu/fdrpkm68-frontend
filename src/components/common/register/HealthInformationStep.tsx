@@ -7,8 +7,9 @@ import type {
 } from "react-hook-form";
 import { Controller } from "react-hook-form";
 
-import type { ReactNode } from "react";
 import { useCallback } from "react";
+// eslint-disable-next-line
+import type { ReactNode } from "react";
 
 export interface HealthInfo {
   hasAllergies: boolean | null;
