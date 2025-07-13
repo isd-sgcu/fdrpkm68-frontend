@@ -1,0 +1,160 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Box Component
+ *
+ * @example
+ * ```astro
+ * <Box>
+ *  <slot />
+ * </Box>
+ * ```
+ *
+ * @example lg
+ * ```astro
+ * <Box size="large" color="light-green">
+ *   <slot />
+ * </Box>
+ * ```
+ *
+ * @example sm
+ * ```astro
+ * <Box size="small" color="vivid-pink">
+ *   <slot />
+ * </Box>
+ * ```
+ *
+ * Props:
+ * @param size large, small
+ * @param colorlight-green, vivid-pink, light-blue, light-pink
+ * @param class
+ */
+
+export interface Props {
+  size?: "large" | "small";
+  color?: "light-green" | "vivid-pink" | "light-blue" | "light-pink";
+  class?: string;
+}
+
+const {
+  size = "large",
+  color = "light-green",
+  class: additionalClasses = "",
+} = Astro.props;
+
+const sizeConfig = {
+  large: {
+    aspectRatio: "383/709",
+    minHeight: "400px",
+    contentWidth: "80%",
+    contentHeight: "70%",
+  },
+  small: {
+    aspectRatio: "334/450",
+    minHeight: "200px",
+    contentWidth: "75%",
+    contentHeight: "65%",
+  },
+};
+
+const config = sizeConfig[size];
+const boxSvg = `/images/firstdate/box/box-${size}-${color}.svg`;
+---
+
+<div
+  class="box-container w-screen"
+  data-size={size}
+  style={`
+    position: relative;
+    aspect-ratio: ${config.aspectRatio};
+    min-height: ${config.minHeight};
+  `}
+>
+  <img
+    src={boxSvg}
+    alt=""
+    class="absolute inset-0 h-full w-full object-contain"
+  />
+
+  <div
+    class="absolute inset-0 z-10"
+    style={`
+      padding: ${size === "large" ? "15%" : "12%"};
+    `}
+  >
+    <div class={cn("h-full w-full overflow-hidden", additionalClasses)}>
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .box-container {
+    position: relative;
+    width: 100%;
+    max-height: 100vh;
+    overflow: visible;
+  }
+
+  .box-content-clip {
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .box-content-clip > div {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  }
+
+  .box-content-clip > div::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .box-content-clip > div::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .box-content-clip > div::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+  }
+
+  .box-content-clip > div::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .box-container[data-size="large"] .box-content-clip {
+    margin: 2%;
+  }
+
+  .box-container[data-size="small"] .box-content-clip {
+    margin: 1%;
+  }
+
+  @media (max-width: 640px) {
+    .content-area {
+      width: 90% !important;
+      height: 80% !important;
+    }
+
+    .box-content-clip {
+      margin: 1% !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .box-container {
+      min-height: 250px !important;
+    }
+
+    .content-area {
+      width: 95% !important;
+      height: 85% !important;
+    }
+
+    .box-content-clip {
+      margin: 0.5% !important;
+    }
+  }
+</style>
