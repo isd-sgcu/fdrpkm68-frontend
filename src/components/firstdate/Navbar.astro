@@ -9,7 +9,7 @@ import ButtonFd from "@common/ButtonFd.astro"
     <img src="/common/hamburger.svg" alt="menu" class="h-3 w-auto -translate-x-4" />
   </button>
 </nav>
-<nav id="nav-menu" class="hidden fixed inset-0 min-h-screen z-50 bg-white">
+<nav id="nav-menu" class="hidden fixed inset-0 overflow-hidden min-h-screen z-50 bg-white">
   <div class="relative flex items-center w-full justify-between bg-white p-1">
     <div></div>
     <img src="/common/logo_freshmenfest.svg" alt="logo" />
@@ -57,11 +57,12 @@ import ButtonFd from "@common/ButtonFd.astro"
 
     hamburgerButton.addEventListener("click", () => {
       navMenu.classList.toggle("hidden");
+      document.body.classList.add('no-scroll');
     });
 
     hamburgerButtonMenu.addEventListener("click", () => {
       navMenu.classList.toggle("hidden");
-
+      document.body.classList.remove('no-scroll');
     });
   });
 </script>
