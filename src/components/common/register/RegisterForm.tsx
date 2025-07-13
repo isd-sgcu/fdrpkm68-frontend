@@ -1,114 +1,136 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-import PDPAConsent from "../PDPAConsent";
-import CompleteStep from "./CompleteStep";
-import HealthInformationStep, { type HealthInfo } from "./HealthInformationStep";
-import ContactInformationStep, { type ContactInfo } from "./ContactInformationStep";
-import PersonalInformationStep, { type PersonalInfo } from "./PersonalInformationStep";
+
+import type { ReactNode } from "react";
+import { useCallback, useState } from "react";
+
+import PDPAConsent from "@/components/common/PDPAConsent";
+import CompleteStep from "@/components/common/register/CompleteStep";
+import ContactInformationStep, {
+  type ContactInfo,
+} from "@/components/common/register/ContactInformationStep";
+import HealthInformationStep, {
+  type HealthInfo,
+} from "@/components/common/register/HealthInformationStep";
+import PersonalInformationStep, {
+  type PersonalInfo,
+} from "@/components/common/register/PersonalInformationStep";
 
 interface RegisterFormData extends PersonalInfo, ContactInfo, HealthInfo {}
 
-export default function RegisterForm({ userType }: { userType: 'student' | 'staff' }) {
-    const bgUrl = userType === 'student' ? '/firstdate/register/student-form-bg.png' : '/firstdate/register/staff/form-bg.png';
-    const [step, setStep] = useState<number>(1);
-    const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
-    
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        watch,
-        setValue,
-        control,
-        clearErrors
-    } = useForm<RegisterFormData>({
-        defaultValues: {
-            // Personal Info
-            title: 'mr',
-            firstName: '',
-            lastName: '',
-            nickname: '',
-            faculty: 'engineering',
-            year: '1',
-            // Contact Info
-            phoneNumber: '',
-            guardianPhoneNumber: '',
-            guardianRelationship: '',
-            // Health Info
-            hasAllergies: null,
-            allergies: '',
-            hasMedications: null,
-            medications: '',
-            hasChronicDiseases: null,
-            chronicDiseases: ''
-        },
-        mode: 'onChange'
-    });
+export default function RegisterForm({
+  userType,
+}: {
+  userType: "student" | "staff";
+}): ReactNode {
+  const bgUrl =
+    userType === "student"
+      ? "/firstdate/register/student-form-bg.png"
+      : "/firstdate/register/staff/form-bg.png";
+  const [step, setStep] = useState<number>(1);
+  const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
 
-    const formValues = watch();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+    control,
+    clearErrors,
+  } = useForm<RegisterFormData>({
+    defaultValues: {
+      // Personal Info
+      title: "mr",
+      firstName: "",
+      lastName: "",
+      nickname: "",
+      faculty: "engineering",
+      year: "1",
+      // Contact Info
+      phoneNumber: "",
+      guardianPhoneNumber: "",
+      guardianRelationship: "",
+      // Health Info
+      hasAllergies: null,
+      allergies: "",
+      hasMedications: null,
+      medications: "",
+      hasChronicDiseases: null,
+      chronicDiseases: "",
+    },
+    mode: "onChange",
+  });
 
-    const onPersonalSubmit = (data: PersonalInfo) => {
-        setStep(2);
-    };
+  const formValues = watch();
 
-    const onContactSubmit = (data: ContactInfo) => {
-        setStep(3);
-    };
+  const onPersonalSubmit = useCallback((_data: PersonalInfo): void => {
+    setStep(2);
+  }, []);
 
-    const onHealthSubmit = (data: HealthInfo) => {
-        setStep(4);
-    };
+  const onContactSubmit = useCallback((_data: ContactInfo): void => {
+    setStep(3);
+  }, []);
 
-    const onFinalSubmit = (data: RegisterFormData) => {
-        console.log('Final form submitted:', data);
-        // Handle final form submission
-    };
+  const onHealthSubmit = useCallback((_data: HealthInfo): void => {
+    setStep(4);
+  }, []);
 
-    return <div className="flex flex-col items-center justify-center min-h-screen text-white">
-        {!isConsentGiven && <PDPAConsent onAccept={() => setIsConsentGiven(true)} />}
-        
-        <div 
-            className="min-h-screen bg-contain bg-center bg-no-repeat w-full flex items-center justify-center"
-            style={{ backgroundImage: `url(${step === 4 ? '' : bgUrl})` }}
-        >
-        <div className="max-w-[270px] w-full md:max-w-[330px]">
-            {step === 1 && (
-                <PersonalInformationStep 
-                    register={register}
-                    errors={errors}
-                    formValues={formValues}
-                    setValue={setValue}
-                    onSubmit={handleSubmit(onPersonalSubmit)}
-                    setStep={setStep} 
-                    userType={userType}
-                />
-            )}
-            {step === 2 && (
-                <ContactInformationStep 
-                    register={register}
-                    errors={errors}
-                    formValues={formValues}
-                    setValue={setValue}
-                    onSubmit={handleSubmit(onContactSubmit)}
-                    setStep={setStep} 
-                    userType={userType}
-                />
-            )}
-            {step === 3 && (
-                <HealthInformationStep 
-                    register={register}
-                    errors={errors}
-                    formValues={formValues}
-                    setValue={setValue}
-                    control={control}
-                    clearErrors={clearErrors}
-                    onSubmit={handleSubmit(onHealthSubmit)}
-                    setStep={setStep} 
-                    userType={userType}
-                />
-            )}
-            {step === 4 && <CompleteStep userType={userType} />}    
+  const onFinalSubmit = useCallback((_data: RegisterFormData): void => {
+    console.log("Final form submitted:", _data);
+    // Handle final form submission
+  }, []);
+
+  const handleConsentAccept = useCallback((): void => {
+    setIsConsentGiven(true);
+  }, []);
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center text-white">
+      {!isConsentGiven && <PDPAConsent onAccept={handleConsentAccept} />}
+
+      <div
+        className="flex min-h-screen w-full items-center justify-center bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${step === 4 ? "" : bgUrl})` }}
+      >
+        <div className="w-full max-w-[270px] md:max-w-[330px]">
+          {step === 1 && (
+            <PersonalInformationStep
+              register={register}
+              errors={errors}
+              formValues={formValues}
+              setValue={setValue}
+              onSubmit={handleSubmit(onPersonalSubmit)}
+              setStep={setStep}
+              userType={userType}
+            />
+          )}
+          {step === 2 && (
+            <ContactInformationStep
+              register={register}
+              errors={errors}
+              formValues={formValues}
+              setValue={setValue}
+              onSubmit={handleSubmit(onContactSubmit)}
+              setStep={setStep}
+              userType={userType}
+            />
+          )}
+          {step === 3 && (
+            <HealthInformationStep
+              register={register}
+              errors={errors}
+              formValues={formValues}
+              setValue={setValue}
+              control={control}
+              clearErrors={clearErrors}
+              onSubmit={handleSubmit(onHealthSubmit)}
+              setStep={setStep}
+              userType={userType}
+            />
+          )}
+          {step === 4 && <CompleteStep userType={userType} />}
         </div>
-        </div>
+      </div>
     </div>
+  );
 }
