@@ -1,17 +1,19 @@
 ---
-import "@rpkm/styles/styles.css"
-import HousePicker from "@rpkm/components/house-picker.astro"
+import "@rpkm/styles/styles.css";
 import GroupPicker from "@rpkm/components/group-picker.astro";
+import HousePicker from "@rpkm/components/house-picker.astro";
 import Profile from "@rpkm/components/profile.astro";
 ---
 
-<div class="w-full h-fit pt-5 pb-12 flex flex-col gap-5 items-center font-ibmplex">
-    <!-- Profile -->
-    <Profile />
-    
-    <!-- House -->
-    <HousePicker />
+<div
+  class="font-ibmplex flex h-fit w-full flex-col items-center gap-5 pt-5 pb-12"
+>
+  <!-- Profile -->
+  <Profile />
 
-    <!-- Group -->
-    <GroupPicker />
+  <!-- House -->
+  <HousePicker />
+
+  <!-- Group -->
+  <GroupPicker />
 </div>
