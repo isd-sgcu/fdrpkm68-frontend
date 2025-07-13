@@ -17,3 +17,89 @@ import Profile from "@rpkm/components/profile.astro";
   <!-- Group -->
   <GroupPicker />
 </div>
+
+<script>
+  import { api } from "@/lib/api";
+  interface LoginResponse {
+    token: string;
+    [key: string]: unknown;
+  }
+
+  interface UserData {
+    user: {
+      id: string;
+      studentId: string;
+      citizenId: string;
+      prefix: string;
+      firstName: string;
+      lastName: string;
+      nickname: string;
+      academicYear: number;
+      faculty: string;
+      phoneNumber: string;
+      parentName: string;
+      parentPhoneNumber: string;
+      parentRelationship: string;
+      foodAllergy: string;
+      drugAllergy: string;
+      illness: string;
+      avatarId: number;
+      groupId: string;
+      role: string;
+      bottleChoice: string;
+      [key: string]: unknown;
+    };
+  }
+
+  async function fetchUserData() {
+    try {
+      // Login to get token
+      const resLogin = await api.post("/auth/login", {
+        studentId: "6631321322",
+        password: "Qwerty123",
+      });
+
+      const data = resLogin.data as LoginResponse;
+      const token = data.token;
+
+      const resUser = await api.get("/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const userData = resUser.data as UserData;
+
+      if (!userData) {
+        throw new Error("User data not found");
+      }
+
+      const user = userData.user;
+      const avatarId = String(user.avatarId);
+
+      // Update profile image
+      const profileImg = document.querySelector(
+        ".profile-avatar"
+      ) as HTMLImageElement;
+      if (profileImg) {
+        profileImg.src = `/images/rpkm/profile/profile${avatarId}-head.png`;
+        profileImg.setAttribute("data-avatar-id", avatarId);
+      }
+
+      const fullnameEl = document.querySelector(".user-fullname");
+      if (fullnameEl) {
+        fullnameEl.textContent = `${user.firstName} ${user.lastName} (${user.nickname})`;
+      }
+
+      const studentIdEl = document.querySelector(".user-studentid");
+      if (studentIdEl) {
+        studentIdEl.textContent = user.studentId;
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }
+
+  // Run when the page loads
+  document.addEventListener("DOMContentLoaded", fetchUserData);
+</script>

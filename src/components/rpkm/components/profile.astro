@@ -1,1 +1,23 @@
-<div>This is Profile</div>
+<div class="flex flex-col items-center text-white">
+  <img
+    class="profile-avatar mb-3"
+    width="180"
+    height="180"
+    src="/images/rpkm/profile/profile-unknown.png"
+    alt="User Avatar"
+    onerror="this.src='/images/rpkm/profile/profile-unknown.png'; this.onerror=null;"
+  />
+  <p class="user-fullname text-2xl font-semibold">Loading...</p>
+  <p class="user-studentid mt-1 text-sm font-medium">Loading...</p>
+</div>
+
+<script>
+  document
+    .querySelector(".profile-avatar")
+    ?.addEventListener("error", function (e) {
+      const img = e.target as HTMLImageElement;
+      if (img) {
+        img.src = "/images/rpkm/profile/profile-unknown.png";
+      }
+    });
+</script>
