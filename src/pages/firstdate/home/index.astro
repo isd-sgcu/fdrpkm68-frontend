@@ -1,82 +1,74 @@
 ---
+import BlurText from "@common/BlurText.astro";
+
 import DummyButton from "@/components/firstdate/ui/DummyButton.astro";
 import Layout from "@/layouts/firstdate/WithNavbar.astro";
-
-import BlurText from "@common/BlurText.astro";
 ---
 
 <Layout>
   <div class="px-4">
-    <div class="flex flex-col items-center justify-center w-full mt-5">
-      <BlurText 
-        textSize="text-xl" 
-        className="text-white font-zen-dots" 
+    <div class="mt-5 flex w-full flex-col items-center justify-center">
+      <BlurText
+        textSize="text-xl"
+        className="font-zen-dots text-white"
         blurClassName="text-[#FFE4E1] blur-[1.75px] translate-x-[2px] translate-y-[2px] font-zen-dots"
       >
         Welcome
       </BlurText>
-      <BlurText 
-        textSize="text-3xl" 
-        className="text-[#CB438B] font-zen-dots" 
+      <BlurText
+        textSize="text-3xl"
+        className="font-zen-dots text-[#CB438B]"
         blurClassName="text-[#CB438B] blur-[3px] translate-y-[2px] font-zen-dots"
       >
         CU109
       </BlurText>
     </div>
     <div>
-      <BlurText 
-        textSize="text-lg" 
-        className="text-white font-zen-dots" 
+      <BlurText
+        textSize="text-lg"
+        className="font-zen-dots text-white"
         blurClassName="text-black blur-xs translate-y-[3px] font-zen-dots"
       >
         Activities
       </BlurText>
       <div class="flex w-full justify-center">
-        <div class="flex flex-col w-4/5 gap-y-2 my-3">
-          <DummyButton href="/firstdate/home/">
+        <div class="my-3 flex w-4/5 flex-col gap-y-2">
+          <DummyButton href="/firstdate/events/firstdate/">
             CU First Date
           </DummyButton>
-          <DummyButton href="/firstdate/home/">
-            CU Fest
-          </DummyButton>
-          <DummyButton href="/firstdate/home/">
+          <DummyButton href="/firstdate/events/cu-fest/"> CU Fest </DummyButton>
+          <DummyButton href="/firstdate/events/rpkm/">
             รับเพื่อนก้าวใหม่
           </DummyButton>
-          <DummyButton href="/firstdate/home/">
+          <DummyButton href="/firstdate/events/freshmen-night/">
             Freshmen Night
           </DummyButton>
         </div>
       </div>
     </div>
     <div class="pb-6">
-      <BlurText 
-        textSize="text-lg" 
-        className="text-white font-zen-dots" 
+      <BlurText
+        textSize="text-lg"
+        className="font-zen-dots text-white"
         blurClassName="text-black blur-xs translate-y-[3px] font-zen-dots"
       >
         More
       </BlurText>
       <div class="flex w-full justify-center">
-        <div class="flex flex-col w-4/5 gap-y-2 my-3">
+        <div class="my-3 flex w-4/5 flex-col gap-y-2">
           <DummyButton href="/firstdate/home/">
-            <img src="/firstdate/home/qrcode.svg"> QR CODE
+            <img src="/firstdate/home/qrcode.svg" /> QR CODE
           </DummyButton>
-          <div class="flex flex-col mt-2 gap-y-2">
+          <div class="mt-2 flex flex-col gap-y-2">
             <div class="flex flex-row gap-x-2">
-              <DummyButton href="/firstdate/home/">
-                แผนที่
-              </DummyButton>
-              <DummyButton href="/firstdate/home/">
+              <DummyButton href="/firstdate/home/"> แผนที่ </DummyButton>
+              <DummyButton href="/firstdate/events/personality-game/">
                 Personal Game
               </DummyButton>
             </div>
             <div class="flex flex-row gap-x-2">
-              <DummyButton href="/firstdate/home/">
-                ปฏิทิน
-              </DummyButton>
-              <DummyButton href="/firstdate/home/">
-                Emergency
-              </DummyButton>
+              <DummyButton href="/firstdate/home/"> ปฏิทิน </DummyButton>
+              <DummyButton href="/firstdate/home/"> Emergency </DummyButton>
             </div>
           </div>
         </div>

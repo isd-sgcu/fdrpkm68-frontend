@@ -1,0 +1,59 @@
+---
+import { Siren, Phone, Home } from "@lucide/astro";
+
+import ButtonFd from "@/components/common/ButtonFd.astro";
+import Popup from "@/components/common/Popup.astro";
+import Layout from "@/layouts/firstdate/WithNavbar.astro";
+---
+
+<Layout>
+  <div class="flex w-full flex-col">
+    <div class="mb-8 flex flex-col items-center justify-center">
+      <h1
+        class="font-zen-dots mt-[26px] fill-white text-center text-4xl text-white drop-shadow-lg drop-shadow-white/50"
+      >
+        Emergency Contacts
+      </h1>
+      <p class="mt-1.5">ติดต่อเหตุฉุกเฉิน</p>
+      <section class="w-full">
+        <Popup
+          size="medium"
+          color="light-pink"
+          class="flex flex-col items-center justify-center py-4 text-center"
+        >
+          <a
+            href="tel:022180000"
+            class="relative m-16 flex size-32 items-center justify-center"
+          >
+            <span
+              class="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-400 opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex size-48 rounded-full bg-[#CB438B]"
+            >
+              <div class="flex h-52 w-52 flex-col items-center justify-center">
+                <Siren size={84} color="white" />
+                <p class="mt-2">ศูนย์ รปภ. จุฬาฯ</p>
+                <p class="mb-4">02-218-0000</p>
+              </div>
+            </span>
+          </a>
+          <div class="mt-2 flex flex-col items-center justify-center gap-2">
+            <ButtonFd variant="fill" color="white" href="tel:191">
+              <Phone slot="icon" size={20} />
+              เหตุนอกมหาวิทยาลัย<br />191
+            </ButtonFd>
+            <ButtonFd variant="fill" color="white" href="tel:1669">
+              <Phone slot="icon" size={20} />
+              อุบัติเหตุร้ายแรง<br />1669
+            </ButtonFd>
+          </div>
+        </Popup>
+      </section>
+      <ButtonFd variant="fill" color="white" href="/firstdate/home/">
+        <Home slot="icon" size={20} />
+        กลับหน้าหลัก
+      </ButtonFd>
+    </div>
+  </div>
+</Layout>

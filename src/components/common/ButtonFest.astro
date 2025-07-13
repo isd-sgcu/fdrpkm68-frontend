@@ -1,0 +1,310 @@
+---
+/**
+ * ButtonFest
+ * @example basic
+ * ```astro
+ * <ButtonFest color="white" size="big">White Button Large</ButtonFest>
+ * <ButtonFest color="white" size="small">White Button Small</ButtonFest>
+ * <ButtonFest color="pink" size="big">Pink Button Large</ButtonFest>
+ * <ButtonFest color="blue" size="big">Blue Button Large</ButtonFest>
+ * ```
+ *
+ * @param color - Button color: 'white', 'pink', or 'blue'
+ * @param size - Button size: 'small' or 'big'
+ * @param disabled - Disables button interaction
+ * @param class - Additional CSS classes
+ */
+
+import { cn } from "@/lib/utils";
+
+export type ColorName = "white" | "pink" | "blue";
+
+export interface Props {
+  color?: ColorName;
+  size?: "small" | "big";
+  disabled?: boolean;
+  class?: string;
+  href?: string;
+  target?: "_blank" | "_self" | "_parent" | "_top";
+  rel?: string;
+}
+
+const {
+  color = "white",
+  size = "big",
+  disabled = false,
+  class: additionalClasses = "",
+  href = "",
+  target,
+  rel,
+  ...restProps
+} = Astro.props;
+
+const sizeConfig = {
+  small: {
+    container: "w-[100px] min-h-[40px]",
+    text: "text-base",
+    padding: "px-5 py-2",
+  },
+  big: {
+    container: "w-[260px] min-h-[48px]",
+    text: "text-xl",
+    padding: "px-6 py-2.5",
+  },
+};
+
+const currentSize = sizeConfig[size];
+---
+
+<div
+  class={cn(
+    "button-container relative inline-block transition-all duration-200 ease-in-out",
+    `button-container--${color}`,
+    currentSize.container,
+    disabled && "button-container--disabled",
+    additionalClasses
+  )}
+  data-color={color}
+  data-size={size}
+>
+  <!-- SVG Background/Border Pattern -->
+  <div class="pointer-events-none absolute inset-0">
+    <svg
+      class="h-full w-full"
+      viewBox="0 0 264 52"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="none"
+    >
+      <path d="M262 25L236 2H262V25Z" class="svg-triangle"></path>
+      <path
+        d="M2 40.6341V2H229.702L262 30.0976V50H13.3043L2 40.6341Z"
+        class="svg-fill"></path>
+      <path d="M262 25L236 2H262V25Z" class="svg-stroke" stroke-width="3"
+      ></path>
+      <path
+        d="M2 40.6341V2H229.702L262 30.0976V50H13.3043L2 40.6341Z"
+        class="svg-stroke"
+        stroke-width="3"></path>
+    </svg>
+  </div>
+
+  {
+    href != "" ? (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        class={cn(
+          "button-main font-ibm-plex-sans-thai text-decoration-none relative flex w-full cursor-pointer items-center justify-center overflow-hidden border-0 bg-transparent leading-tight font-normal transition-colors duration-200 ease-in-out outline-none focus:outline-none",
+          currentSize.text,
+          currentSize.padding,
+          disabled && "pointer-events-none opacity-50"
+        )}
+        aria-disabled={disabled}
+        {...restProps}
+      >
+        <div class="text-center leading-tight">
+          <slot />
+        </div>
+      </a>
+    ) : (
+      <div
+        class={cn(
+          "button-main font-ibm-plex-sans-thai text-decoration-none relative flex w-full cursor-pointer items-center justify-center overflow-hidden border-0 bg-transparent leading-tight font-normal transition-colors duration-200 ease-in-out outline-none focus:outline-none",
+          currentSize.text,
+          currentSize.padding,
+          disabled && "pointer-events-none opacity-50"
+        )}
+      >
+        <slot />
+      </div>
+    )
+  }
+</div>
+
+<style>
+  /* Essential SVG Color Theming */
+
+  /* White button */
+  .button-container--white {
+    --default-fill: #ffffff;
+    --default-stroke: #cb438b;
+    --default-text: #121212;
+    --default-shadow: #cb438b;
+    --hover-fill: #cb438b;
+    --hover-stroke: #ffffff;
+    --hover-text: #ffffff;
+    --hover-shadow: #cb438b;
+    --disabled-fill: rgba(255, 255, 255, 0.5);
+    --disabled-stroke: rgba(203, 67, 139, 0.5);
+    --disabled-text: rgba(18, 18, 18, 0.5);
+    --disabled-shadow: rgba(203, 67, 139, 0.5);
+  }
+
+  /* Pink button */
+  .button-container--pink {
+    --default-fill: #cb438b;
+    --default-stroke: #cb438b;
+    --default-text: #ffffff;
+    --default-shadow: #cb438b;
+    --hover-fill: #121212;
+    --hover-stroke: #cb438b;
+    --hover-text: #ffffff;
+    --hover-shadow: #ffffff;
+    --disabled-fill: rgba(203, 67, 139, 0.5);
+    --disabled-stroke: rgba(255, 255, 255, 0.5);
+    --disabled-text: rgba(255, 255, 255, 0.5);
+    --disabled-shadow: rgba(203, 67, 139, 0.5);
+  }
+
+  /* Blue button */
+  .button-container--blue {
+    --default-fill: #00ffff;
+    --default-stroke: #00ffff;
+    --default-text: #121212;
+    --default-shadow: #00ffff;
+    --hover-fill: #121212;
+    --hover-stroke: #00ffff;
+    --hover-text: #ffffff;
+    --hover-shadow: #00ffff;
+    --disabled-fill: rgba(0, 255, 255, 0.5);
+    --disabled-stroke: rgba(0, 255, 255, 0.5);
+    --disabled-text: rgba(18, 18, 18, 0.5);
+    --disabled-shadow: rgba(0, 255, 255, 0.5);
+  }
+
+  /* Essential container styling */
+  .button-container {
+    filter: drop-shadow(0px 0px 6px var(--default-shadow));
+  }
+
+  /* SVG styling for different states */
+  .svg-fill {
+    fill: var(--default-fill);
+    transition: fill 0.2s ease;
+  }
+
+  .svg-triangle {
+    fill: var(--default-fill);
+    transition: fill 0.2s ease;
+  }
+
+  .svg-stroke {
+    stroke: var(--default-stroke);
+    fill: none;
+    transition: stroke 0.2s ease;
+  }
+
+  /* Hover effects */
+  .button-container:hover {
+    filter: drop-shadow(0px 0px 12px var(--hover-shadow));
+  }
+
+  .button-container:hover .svg-fill {
+    fill: var(--hover-fill);
+  }
+
+  .button-container:hover .svg-stroke {
+    stroke: var(--hover-stroke);
+  }
+
+  .button-container:hover .svg-triangle {
+    fill: var(--hover-fill);
+  }
+
+  /* Active/press effects */
+  .button-container:active {
+    filter: drop-shadow(0px 0px 12px var(--hover-shadow));
+  }
+
+  .button-container:active .svg-fill {
+    fill: var(--hover-fill);
+  }
+
+  .button-container:active .svg-stroke {
+    stroke: var(--hover-stroke);
+  }
+
+  .button-container:active .svg-triangle {
+    fill: var(--hover-fill);
+  }
+
+  /* Text styling */
+  .button-main {
+    color: var(--default-text);
+    text-shadow: none !important;
+    transition: color 0.2s ease;
+  }
+
+  .button-main:hover {
+    color: var(--hover-text);
+    transition: color 0.15s ease;
+  }
+
+  .button-main:active,
+  .button-main:focus:active {
+    color: var(--hover-text);
+    transition: color 0.1s ease;
+  }
+
+  .button-main:disabled {
+    color: var(--disabled-text);
+  }
+
+  /* Disabled container effects */
+  .button-container:has(.button-main:disabled) {
+    filter: drop-shadow(0px 0px 5px var(--disabled-shadow));
+  }
+
+  .button-container:has(.button-main:disabled) .svg-fill {
+    fill: var(--disabled-fill);
+  }
+
+  .button-container:has(.button-main:disabled) .svg-stroke {
+    stroke: var(--disabled-stroke);
+  }
+
+  .button-container:has(.button-main:disabled) .svg-triangle {
+    fill: var(--disabled-fill);
+  }
+
+  /* Prevent hover effects on disabled buttons */
+  .button-container:has(.button-main:disabled):hover {
+    filter: drop-shadow(0px 0px 5px var(--disabled-shadow)) !important;
+  }
+
+  .button-container:has(.button-main:disabled):hover .svg-fill {
+    fill: var(--disabled-fill) !important;
+  }
+
+  .button-container:has(.button-main:disabled):hover .svg-stroke {
+    stroke: var(--disabled-stroke) !important;
+  }
+
+  .button-container:has(.button-main:disabled):hover .svg-triangle {
+    fill: var(--disabled-fill) !important;
+  }
+
+  /* Prevent active effects on disabled buttons */
+  .button-container:has(.button-main:disabled):active {
+    filter: drop-shadow(0px 0px 5px var(--disabled-shadow)) !important;
+  }
+
+  .button-container:has(.button-main:disabled):active .svg-fill {
+    fill: var(--disabled-fill) !important;
+  }
+
+  .button-container:has(.button-main:disabled):active .svg-stroke {
+    stroke: var(--disabled-stroke) !important;
+  }
+
+  .button-container:has(.button-main:disabled):active .svg-triangle {
+    fill: var(--disabled-fill) !important;
+  }
+
+  /* Essential focus styles */
+  .button-main:focus-visible {
+    outline: none;
+  }
+</style>
