@@ -88,7 +88,6 @@ export default [
             "external",
             "internal",
             ["parent", "sibling", "index"],
-            "type",
           ],
           pathGroups: [
             {
