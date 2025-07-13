@@ -16,4 +16,5 @@ export interface ThemeConfig {
   backgroundImage?: string;
   primaryColor?: string;
   secondaryColor?: string;
+  colorVariants?: string;
 }
