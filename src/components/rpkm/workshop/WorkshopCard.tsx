@@ -41,16 +41,13 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
     }
 
     setFormData(registerFormData);
+    dialogConfirm.close();
+    dialogSuccess.open();
   };
 
   useEffect(() => {
-    if (!formData || !isLoading) {
-      return;
-    }
-    dialogConfirm.close();
-    dialogSuccess.open();
     setIsLoading(false);
-  }, [formData, dialogConfirm, dialogSuccess]);
+  }, [formData]);
 
   return (
     <>
