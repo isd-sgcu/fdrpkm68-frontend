@@ -1,0 +1,175 @@
+---
+import Layout from "@/layouts/fest/FestWithNavbar.astro";
+import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
+import ButtonFest from "@/components/common/ButtonFest.astro";
+import fs from 'fs';
+import path from 'path';
+
+// Read CSV file with UTF-8 encoding
+const csvPath = path.join(process.cwd(), 'public', 'fest', 'fest_quest2_shop_list_4.csv');
+const csvContent = fs.readFileSync(csvPath, 'utf-8');
+
+// Parse CSV content with proper handling of quoted fields
+function parseCSV(content: string) {
+  // Handle different line endings (Windows \r\n, Unix \n, Mac \r)
+  const lines = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  
+  if (lines.length === 0) return [];
+  
+  // Parse headers
+  const headers = parseCSVLine(lines[0]);
+  const shops = [];
+  
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    const values = parseCSVLine(line);
+    
+    if (values.length >= 3) { // At least have number, name, zone
+      const shop: any = {};
+      headers.forEach((header, index) => {
+        const value = values[index] || '';
+        shop[header.trim()] = value.trim();
+      });
+      
+      // Only add shops that have a name and zone
+      if (shop.name && shop.zone) {
+        shops.push(shop);
+      }
+    }
+  }
+  return shops;
+}
+
+// Helper function to parse a single CSV line handling quoted fields
+function parseCSVLine(line: string): string[] {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  let i = 0;
+  
+  while (i < line.length) {
+    const char = line[i];
+    
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        // Handle escaped quotes inside quoted field
+        current += '"';
+        i += 2;
+        continue;
+      } else {
+        // Toggle quote state
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      // End of field
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+    i++;
+  }
+  
+  // Push the last field
+  result.push(current);
+  
+  return result;
+}
+
+const allShops = parseCSV(csvContent);
+// Filter shops for zone 'A'
+const zoneAShops = allShops.filter(shop => shop.zone === 'A');
+---
+
+<Layout>
+  <div class="flex flex-col space-y-2 px-4 py-6">
+   <div
+      class="sticky top-0 z-10 flex w-full justify-between px-3 py-2 backdrop-blur-md"
+    >
+      <a href="/fest/quest-2" class="mt-2.5 text-2xl font-bold">{"<"}</a>
+      <div class="flex flex-col gap-1 text-center">
+        <p class="font-family-orbitron text-5xl">Quest 2 - A</p>
+        <p class="text-2xl font-extralight">ร้านค้าโซน A</p>
+      </div>
+      <a href="/fest/quest-2-B" class="mt-2.5 text-2xl font-bold">{">"}</a>
+    </div>
+    
+    <div class="space-y-6 pt-4">
+      {zoneAShops.map((shop, index) => (
+        <div class="shop-item">
+          {index > 0 && <HorizonlineFest variant="blue" />}
+          
+          <div class="space-y-4">
+            {/* Shop Name */}
+            <h2 class="text-2xl font-bold text-center text-pink-500">
+              {shop.name}
+            </h2>
+            
+            {/* Shop Image */}
+            {shop.image && (
+              <div class="flex justify-center">
+                <img 
+                  src={shop.image} 
+                  alt={shop.name}
+                  class="max-w-full h-48 object-cover rounded-lg shadow-md"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            {shop.image} 
+         
+            
+            <div class="p-4">
+              <h3 class="font-semibold text-lg text-pink-400 mb-2">เมนูแนะนำ:</h3>
+              <p 
+                class="text-justify leading-relaxed hyphens-auto text-white" 
+                lang="th" 
+                style="text-align: justify; text-align-last: left; word-spacing: 0.1em;"
+              >
+               {shop.manu}
+              </p>
+            </div>
+            <div class="p-4">
+              <h3 class="font-semibold text-lg text-pink-400 mb-2">รายละเอียด:</h3>
+              <p 
+                class="text-justify leading-relaxed hyphens-auto text-white" 
+                lang="th" 
+                style="text-align: justify; text-align-last: left; word-spacing: 0.1em;"
+              >
+                {shop.description}
+              </p>
+            </div>
+            <div class="p-4">
+              <h3 class="font-semibold text-lg text-pink-400 mb-2">เวลาเปิด-ปิด:</h3>
+              <p 
+                class="text-justify leading-relaxed hyphens-auto text-white" 
+                lang="th" 
+                style="text-align: justify; text-align-last: left; word-spacing: 0.1em;"
+              >
+                {shop.time}
+              </p>
+            </div>
+            
+          
+            {/* Google Maps Button */}
+            {shop.maps && (
+              <div class="flex justify-center pt-2">
+                <ButtonFest 
+                  color="pink" 
+                  size="big" 
+                  href={shop.maps}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Google Maps
+                </ButtonFest>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
