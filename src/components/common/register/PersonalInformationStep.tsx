@@ -139,10 +139,10 @@ export default function PersonalInformationStep({
   setValue: UseFormSetValue<RegisterFormData>;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   setStep: (step: number) => void;
-  userType: "student" | "staff";
+  userType: "FRESHMAN" | "STAFF";
 }): ReactNode {
   const globUrl =
-    userType === "student"
+    userType === "FRESHMAN"
       ? "/firstdate/register/glob.svg"
       : "/firstdate/register/staff/glob.svg";
 

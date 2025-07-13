@@ -1,8 +1,10 @@
 ---
+import { rpkmThemeConfigs } from "@/config/rpkmTheme";
 import { cn } from "@/lib/utils";
+import type { RpkmVariant } from "@/types/common";
 
 interface Props {
-  variant?: "firstdate" | "rpkm_home" | "rpkm_summary";
+  variant?: "firstdate" | RpkmVariant;
 }
 
 const bgGradient = {
@@ -10,23 +12,7 @@ const bgGradient = {
     type: "linear",
     classes: "bg-gradient-to-b from-[#324B95] to-[#C6EBC5]",
   },
-  rpkm_home: {
-    type: "radial",
-    classes:
-      "bg-[radial-gradient(50%_50%_at_50%_50%,_#8A2BE4_0%,_#2B2D42_100%)]",
-  },
-  rpkm_workshops: {
-    type: "linear",
-    classes: "bg-gradient-to-b from-[#667eea] to-[#764ba2]",
-  },
-  rpkm_rubpuen: {
-    type: "linear",
-    classes: "bg-gradient-to-b from-[#667eea] to-[#764ba2]",
-  },
-  rpkm_summary: {
-    type: "linear",
-    classes: "bg-gradient-to-b from-[#D38DD8] to-[#FF1493]",
-  },
+  ...rpkmThemeConfigs,
 };
 
 const { variant = "firstdate" } = Astro.props;

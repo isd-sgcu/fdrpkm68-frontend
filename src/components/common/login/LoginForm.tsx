@@ -18,10 +18,10 @@ interface LoginFormData {
 export default function LoginForm({
   userType,
 }: {
-  userType: "student" | "staff";
+  userType: "FRESHMAN" | "STAFF";
 }): ReactNode {
   const bgUrl =
-    userType === "student"
+    userType === "FRESHMAN"
       ? "/firstdate/register/student-form-bg.png"
       : "/firstdate/register/staff/form-bg.png";
   const [step, setStep] = useState<number>(1);

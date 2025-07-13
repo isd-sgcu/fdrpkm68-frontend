@@ -3,7 +3,7 @@ import { type ReactNode, useCallback, useState } from "react";
 export default function CompleteStep({
   userType,
 }: {
-  userType: "student" | "staff";
+  userType: "FRESHMAN" | "STAFF";
 }): ReactNode {
   const [isZoomed, setIsZoomed] = useState(false);
 

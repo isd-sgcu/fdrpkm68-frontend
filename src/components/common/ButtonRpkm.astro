@@ -1,57 +1,59 @@
 ---
-import { cn } from '@/lib/utils';
+import type { HTMLAttributes } from "astro/types";
+
+import { cn } from "@/lib/utils";
 
 /**
  * ButtonRpkm
  * @example
  * // Basic usage
  * <ButtonRpkm>Click me</ButtonRpkm>
- * 
+ *
  * @example
  * // Different colors and sizes
  * <ButtonRpkm color="blue" size="lg">Large Blue Button</ButtonRpkm>
  * <ButtonRpkm variant="stroke" color="pink">Outlined Pink</ButtonRpkm>
- * 
+ *
  * @example
  * // With icon slot
  * <ButtonRpkm color="purple">
  *   <Icon slot="icon" name="play" />
  *   Start Game
  * </ButtonRpkm>
- * 
+ *
  * Features:
  * - Fill variant: Gradient backgrounds with different patterns based on size
  * - Stroke variant: SVG-generated borders with edge cuts
  * - 4 color themes: purple, blue, pink, black
  * - 4 sizes: xs (104px), sm (128px), md (176px), lg (256px)
  * - Large buttons get a special triple-point gradient effect
- * 
+ *
  * @param {('fill'|'stroke')} variant - Button style (default: 'fill')
- * @param {('purple'|'blue'|'pink'|'black')} color - Color theme (default: 'purple') 
+ * @param {('purple'|'blue'|'pink'|'black')} color - Color theme (default: 'purple')
  * @param {('xs'|'sm'|'md'|'lg')} size - Button size (default: 'md')
  * @param {boolean} disabled - Disabled state
  * @param {string} class - Additional CSS classes
  */
 
-export type RpkmColorName = 'purple' | 'blue' | 'pink' | 'black';
+export type RpkmColorName = "purple" | "blue" | "pink" | "black";
 
-export interface Props {
-  variant?: 'fill' | 'stroke';
+export interface Props extends HTMLAttributes<"a"> {
+  variant?: "fill" | "stroke";
   color?: RpkmColorName;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  size?: "xs" | "sm" | "md" | "lg";
   disabled?: boolean;
   class?: string;
   href: string;
-  target?: '_blank' | '_self' | '_parent' | '_top';
+  target?: "_blank" | "_self" | "_parent" | "_top";
   rel?: string;
 }
 
-const { 
-  variant = 'fill',
-  color = 'purple',
-  size = 'md',
+const {
+  variant = "fill",
+  color = "purple",
+  size = "md",
   disabled = false,
-  class: additionalClasses = '',
+  class: additionalClasses = "",
   href,
   target,
   rel,
@@ -62,72 +64,72 @@ const {
 const colorConfig = {
   purple: {
     fill: {
-      base: 'text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]',
-      disabled: 'disabled:opacity-50'
+      base: "text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]",
+      disabled: "disabled:opacity-50",
     },
     stroke: {
-      base: 'bg-transparent text-[#8a2be4] relative',
-      disabled: 'disabled:opacity-50'
-    }
+      base: "bg-transparent text-[#8a2be4] relative",
+      disabled: "disabled:opacity-50",
+    },
   },
   blue: {
     fill: {
-      base: 'text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]',
-      disabled: 'disabled:opacity-50'
+      base: "text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]",
+      disabled: "disabled:opacity-50",
     },
     stroke: {
-      base: 'bg-transparent text-[#00ffff] relative',
-      disabled: 'disabled:opacity-50'
-    }
+      base: "bg-transparent text-[#00ffff] relative",
+      disabled: "disabled:opacity-50",
+    },
   },
   pink: {
     fill: {
-      base: 'text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]',
-      disabled: 'disabled:opacity-50'
+      base: "text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]",
+      disabled: "disabled:opacity-50",
     },
     stroke: {
-      base: 'bg-transparent text-[#ff1493] relative',
-      disabled: 'disabled:opacity-50'
-    }
+      base: "bg-transparent text-[#ff1493] relative",
+      disabled: "disabled:opacity-50",
+    },
   },
   black: {
     fill: {
-      base: 'text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]',
-      disabled: 'disabled:opacity-50'
+      base: "text-white drop-shadow-[0px_2px_5px_rgba(255,255,255,0.3)]",
+      disabled: "disabled:opacity-50",
     },
     stroke: {
-      base: 'bg-transparent text-[#2b2d42] relative',
-      disabled: 'disabled:opacity-50'
-    }
-  }
+      base: "bg-transparent text-[#2b2d42] relative",
+      disabled: "disabled:opacity-50",
+    },
+  },
 };
 
 // Size configuration for different button sizes
 const sizeConfig = {
-  xs: { 
-    classes: 'px-3 py-2 text-sm',
-    width: 'w-26',
-    height: 'min-h-10',
-    iconSize: 16
+  xs: {
+    classes: "px-3 py-2 text-sm",
+    width: "w-26",
+    height: "min-h-10",
+    iconSize: 16,
   },
-  sm: { 
-    classes: 'px-4 py-3 text-base',
-    width: 'w-32',
-    height: 'min-h-12',
-    iconSize: 18
+  sm: {
+    classes: "px-4 py-3 text-base",
+    width: "w-32",
+    height: "min-h-12",
+    iconSize: 18,
   },
-  md: { 
-    classes: 'px-5 py-3 text-lg',
-    width: 'w-44',
-    height: 'min-h-12',
-    iconSize: 20
+  md: {
+    classes: "px-5 py-3 text-lg",
+    width: "w-44",
+    height: "min-h-12",
+    iconSize: 20,
   },
-  lg: { 
-    classes: 'px-6 py-3 text-xl',
-    width: 'w-64',
-    height: 'min-h-12',
-    iconSize: 24
-  }
+  lg: {
+    classes: "px-6 py-3 text-xl",
+    width: "w-64",
+    height: "min-h-12",
+    iconSize: 24,
+  },
 };
 
 // Get current configurations
@@ -137,51 +139,51 @@ const currentSizeConfig = sizeConfig[size];
 // Generate button classes using cn utility
 const buttonClasses = cn(
   // Base styles
-  'relative inline-flex items-center justify-center font-medium',
-  'transition-all duration-200 ease-in-out',
-  'focus:outline-none focus:ring-2 focus:ring-offset-2',
-  'disabled:cursor-not-allowed',
-  
+  "relative inline-flex items-center justify-center font-medium",
+  "transition-all duration-200 ease-in-out",
+  "focus:ring-2 focus:ring-offset-2 focus:outline-none",
+  "disabled:cursor-not-allowed",
+
   // Size and typography
   currentSizeConfig.classes,
   currentSizeConfig.width,
   currentSizeConfig.height,
-  'font-ibm-plex-sans-thai',
-  
+  "font-ibm-plex-sans-thai",
+
   // Color and state
   currentColorConfig.base,
   currentColorConfig.disabled,
-  
+
   // Edge cuts for RPKM style
-  'cut-edge-all',
-  
+  "cut-edge-all",
+
   // Custom classes
   additionalClasses
 );
 
 // Generate gradient background for fill variants
 const getGradientStyle = () => {
-  if (variant !== 'fill') return '';
-  
+  if (variant !== "fill") return "";
+
   // Figma color palette
   const colors = {
-    purple: '#8a2be4',
-    blue: '#00ffff',
-    pink: '#ff1493',
-    black: '#2b2d42',
-    navy: '#2b2d42',
-    subBlack: '#000000'
+    purple: "#8a2be4",
+    blue: "#00ffff",
+    pink: "#ff1493",
+    black: "#2b2d42",
+    navy: "#2b2d42",
+    subBlack: "#000000",
   };
-  
+
   const mainColor = colors[color];
   const navyColor = colors.navy;
-  
+
   // Special handling for black buttons
-  const primaryColor = color === 'black' ? navyColor : mainColor;
-  const secondaryColor = color === 'black' ? colors.subBlack : navyColor;
-  
+  const primaryColor = color === "black" ? navyColor : mainColor;
+  const secondaryColor = color === "black" ? colors.subBlack : navyColor;
+
   // Different gradient patterns based on size
-  if (size === 'lg') {
+  if (size === "lg") {
     return `background: linear-gradient(90deg, ${primaryColor} 0%, ${secondaryColor} 50%, ${primaryColor} 100%);`;
   } else {
     return `background: linear-gradient(90deg, ${primaryColor} 0%, ${secondaryColor} 100%);`;
@@ -190,51 +192,53 @@ const getGradientStyle = () => {
 
 // Generate SVG border for stroke variants
 const getSvgBorder = () => {
-  if (variant !== 'stroke') return '';
-  
+  if (variant !== "stroke") return "";
+
   const colors = {
-    purple: '#8a2be4',
-    blue: '#00ffff',
-    pink: '#ff1493',
-    black: '#2b2d42'
+    purple: "#8a2be4",
+    blue: "#00ffff",
+    pink: "#ff1493",
+    black: "#2b2d42",
   };
-  
+
   const strokeColor = colors[color];
   const widthClass = currentSizeConfig.width;
-  
+
   // Size to pixel mapping for SVG generation
   const dimensions = {
-    'w-26': { width: 104, height: 40 },
-    'w-32': { width: 128, height: 48 },
-    'w-44': { width: 176, height: 48 },
-    'w-64': { width: 256, height: 48 }
+    "w-26": { width: 104, height: 40 },
+    "w-32": { width: 128, height: 48 },
+    "w-44": { width: 176, height: 48 },
+    "w-64": { width: 256, height: 48 },
   };
-  
-  const { width, height } = dimensions[widthClass as keyof typeof dimensions] || { width: 176, height: 48 };
+
+  const { width, height } = dimensions[
+    widthClass as keyof typeof dimensions
+  ] || { width: 176, height: 48 };
   const cutSize = 20;
-  
+
   // Create SVG path with edge cuts
   const svgPath = `M${cutSize},0 L${width},0 L${width},${height - cutSize} L${width - cutSize},${height} L0,${height} L0,${cutSize} Z`;
-  
+
   const svgDataUrl = `data:image/svg+xml,${encodeURIComponent(`
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
       <path d="${svgPath}" stroke="${strokeColor}" stroke-width="2" fill="none"/>
     </svg>
   `)}`;
-  
+
   return `background-image: url("${svgDataUrl}");`;
 };
 ---
 
-<a 
+<a
   href={href}
   target={target}
   rel={rel}
   class={cn(
     buttonClasses,
-    'focus:outline-2 focus:outline-white/30 focus:outline-offset-2 text-decoration-none',
-    variant === 'stroke' && 'bg-no-repeat bg-center bg-contain',
-    disabled && 'pointer-events-none'
+    "text-decoration-none focus:outline-2 focus:outline-offset-2 focus:outline-white/30",
+    variant === "stroke" && "bg-contain bg-center bg-no-repeat",
+    disabled && "pointer-events-none"
   )}
   style={`${getGradientStyle()}${getSvgBorder()}`}
   data-variant={variant}
@@ -243,11 +247,11 @@ const getSvgBorder = () => {
   aria-disabled={disabled}
   {...restProps}
 >
-  <div class="flex items-center w-full relative z-10 overflow-hidden">
+  <div class="relative z-10 flex w-full items-center overflow-hidden">
     <div class="flex-shrink-0">
       <slot name="icon" />
     </div>
-    <div class="flex-1 flex justify-center overflow-hidden">
+    <div class="flex flex-1 justify-center overflow-hidden">
       <div class="text-center leading-tight">
         <slot />
       </div>

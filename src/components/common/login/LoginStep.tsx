@@ -30,10 +30,10 @@ export default function LoginStep({
   setValue: UseFormSetValue<LoginFormData>;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   onForgot: () => void;
-  userType: "student" | "staff";
+  userType: "FRESHMAN" | "STAFF";
 }): ReactNode {
   const globUrl =
-    userType === "student"
+    userType === "FRESHMAN"
       ? "/firstdate/register/glob.svg"
       : "/firstdate/register/staff/glob.svg";
 

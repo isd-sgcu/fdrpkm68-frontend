@@ -64,6 +64,9 @@ importers:
       tailwindcss:
         specifier: ^4.1.11
         version: 4.1.11
+      zod:
+        specifier: ^4.0.5
+        version: 4.0.5
     devDependencies:
       "@astrojs/check":
         specifier: ^0.9.4
@@ -6296,6 +6299,12 @@ packages:
         integrity: sha512-idA2YXwpCdqUSKRCACDE6ItZD9TZzy3OZMtpfLoh6oPR47lipysRrJfjzMqFxQ3uJuUPyUeWe1r9vLH33xO/Qw==,
       }
 
+  zod@4.0.5:
+    resolution:
+      {
+        integrity: sha512-/5UuuRPStvHXu7RS+gmvRf4NXrNxpSllGwDnCBcJZtQsKrviYXm54yDGV2KYNLT5kq0lHGcl7lqWJLgSaG+tgA==,
+      }
+
   zwitch@2.0.4:
     resolution:
       {
@@ -10453,5 +10462,7 @@ snapshots:
       zod: 3.25.67
 
   zod@3.25.67: {}
+
+  zod@4.0.5: {}
 
   zwitch@2.0.4: {}
