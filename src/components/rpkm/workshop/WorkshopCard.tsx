@@ -44,6 +44,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
   };
 
   useEffect(() => {
+    if (!formData || !isLoading) {return;}
     dialogConfirm.close();
     dialogSuccess.open();
     setIsLoading(false);
@@ -109,7 +110,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
             <RegisterSuccess
               {...workshop}
               workshopForm={formData}
-              onDismiss={dialogSuccess.close}
+              onDismiss={dialogSuccess.closeAll}
             />
           </DialogBody>
         </Dialog>
