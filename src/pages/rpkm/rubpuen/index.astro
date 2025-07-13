@@ -3,43 +3,39 @@ import Sample from "@/components/rpkm/sample.astro";
 import Layout from "@/layouts/rpkm/WithNavbar.astro";
 import { api } from "@/lib/api";
 
-const res = await api.get("/healthz");
-const health = await res.data;
-console.log("Health result:", health);
+interface LoginResponse {
+  token: string;
+  [key: string]: unknown;
+}
 
-const userData = {
-  studentId: "6631321322",
-  citizenId: "1849901713872",
-  password: "Qwerty123",
-  firstName: "Thanagorn",
-  lastName: "Chaiyut",
-  nickname: "Best",
-  faculty: "Engineering",
-  academicYear: 2,
-  phoneNumber: "0937255851",
-  parentName: "Krengsak",
-  parentPhoneNumber: "0898668485",
-  parentRelationship: "Father",
-  foodAllergy: "-",
-  drugAllergy: "-",
-  illness: "-",
-  prefix: "MR",
-};
+// const userData = {
+//   studentId: "6631321322",
+//   citizenId: "1234567890123",
+//   password: "Qwerty123",
+//   firstName: "Thanagorn",
+//   lastName: "Chaiyut",
+//   nickname: "Best",
+//   faculty: "Engineering",
+//   academicYear: 2,
+//   phoneNumber: "0937255851",
+//   parentName: "Test Parent",
+//   parentPhoneNumber: "0123456789",
+//   parentRelationship: "Father",
+//   foodAllergy: "-",
+//   drugAllergy: "-",
+//   illness: "-",
+//   prefix: "MR",
+// };
 
-const registerPayload = { ...userData };
-// const res2 = await api.post("/auth/register", registerPayload);
-// const user = res2.data;
+// const res2 = await api.post("/auth/register", {...userData });
 
 const res3 = await api.post("/auth/login", {
-  studentId: registerPayload.studentId,
-  password: registerPayload.password,
+  studentId: "6631321322",
+  password: "Qwerty123",
 });
 
-console.log("Login response:", res3);
-
-const token = await res3.data.token;
----
-
+const data = res3.data as LoginResponse;
+const token = data.token;
 ---
 
 <Layout variant="rpkm_home">
