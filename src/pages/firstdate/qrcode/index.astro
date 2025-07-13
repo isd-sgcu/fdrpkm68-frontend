@@ -8,10 +8,9 @@ import Layout from "@/layouts/firstdate/WithNavbar.astro";
 
 // TODO: GET data from Somewhere
 const studentId = "1234567890";
-const nationalId = "1234567890123";
+const citizenId = "1234567890123";
 
-const baseUrl = import.meta.env.PUBLIC_SITE_URL;
-const targetUrl = `${baseUrl}/firstdate/sample?studentId=${studentId}&nationalId=${nationalId}`;
+const targetUrl = `student=${studentId}&citizenId=${citizenId}`;
 const qrCodeData = await QRCode.toDataURL(targetUrl);
 ---
 
@@ -28,7 +27,7 @@ const qrCodeData = await QRCode.toDataURL(targetUrl);
   <Popup
     class="flex flex-col items-center justify-center"
     size="medium"
-    color="vivid-pink"
+    color="light-pink"
   >
     <div class="mb-4 text-center text-xs">
       <p>*สำหรับใช้ลงทะเบียนเข้างาน</p>
@@ -38,7 +37,7 @@ const qrCodeData = await QRCode.toDataURL(targetUrl);
     <p class="text-md mt-6">{studentId}</p>
   </Popup>
   <div class="mb-24 flex justify-center">
-    <ButtonFD href="/firstdate/home" color="light-pink" variant="fill">
+    <ButtonFD href="/firstdate/home" color="white" variant="fill">
       กลับสู่หน้าหลัก
     </ButtonFD>
   </div>
