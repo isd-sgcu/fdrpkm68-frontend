@@ -1,9 +1,14 @@
 ---
 import Sample from "@/components/rpkm/sample.astro";
 import Layout from "@/layouts/rpkm/WithNavbar.astro";
+import { api } from "@/lib/api";
 
+const res = await api.get("/healthz");
+const health = await res.data;
+
+console.log("Health result:", health);
 ---
 
 <Layout variant="rpkm_home">
-    <Sample />
-</Layout>   
+  <Sample />
+</Layout>
