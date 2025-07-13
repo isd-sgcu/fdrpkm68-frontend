@@ -1,47 +1,53 @@
 ---
-const { house = {} } = Astro.props;
-const { thName,
+const { houseData = {} } = Astro.props;
+const {
+  id,
+  thName,
   enName,
   image,
   thDescription,
   enDescription,
   instagramURL,
-  size, 
-  amount, 
-  capacity} = house;
+  size,
+  amount,
+  capacity,
+} = houseData;
 
 const colors = [
-  {size: "S", bgColor: "#0FF", textColor: "#000"},
-  {size: "M", bgColor: "#FF1493", textColor: "#fff"},
-  {size: "L", bgColor: "#FFB6C1", textColor: "#000"},
-  {size: "XL", bgColor: "#D38DD8", textColor: "#000"},
-  {size: "XXL", bgColor: "#2B2D42", textColor: "#fff"},
-]
+  { size: "S", bgColor: "#0FF", textColor: "#000" },
+  { size: "M", bgColor: "#FF1493", textColor: "#fff" },
+  { size: "L", bgColor: "#FFB6C1", textColor: "#000" },
+  { size: "XL", bgColor: "#D38DD8", textColor: "#000" },
+  { size: "XXL", bgColor: "#2B2D42", textColor: "#fff" },
+];
 
-let colorData = colors.find((color) => color.size == size)
+let colorData = colors.find((color) => color.size == size);
 if (!colorData) {
-    colorData = { size: "", bgColor: "#000", textColor: "#fff" }
+  colorData = { size: "", bgColor: "#000", textColor: "#fff" };
 }
 ---
 
 <div
-  class="relative w-[80px] h-[120px] bg-white p-1 cursor-pointer"
+  class="relative h-[120px] w-[80px] cursor-pointer bg-white p-1"
   data-name={thName}
   id={`house-card-${thName}`}
-  onclick={`alert(${JSON.stringify(thName)})`}
 >
-  <img 
-    src={image ? "/images/rpkm/houses/" + image : "/images/rpkm/house-blank.png"} 
-    class="object-cover pb-1 w-[73px] h-[73px]" 
+  <img
+    src={image
+      ? "/images/rpkm/houses/" + image
+      : "/images/rpkm/house-blank.png"}
+    class="h-[73px] w-[73px] object-cover pb-1"
   />
   <!-- Upper Content -->
-  <div class="flex justify-between items-center gap-[6px] pb-1">
-    <p class="w-auto text-xs text-[#2B2D42] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+  <div class="flex items-center justify-between gap-[6px] pb-1">
+    <p
+      class="w-auto overflow-hidden text-xs font-semibold text-ellipsis whitespace-nowrap text-[#2B2D42]"
+    >
       {thName}
     </p>
 
-    <p 
-      class="rounded-full text-[8px] w-[18px] px-[3px] py-[1px] aspect-square flex items-center justify-center font-semibold"
+    <p
+      class="flex aspect-square w-[18px] items-center justify-center rounded-full px-[3px] py-[1px] text-[8px] font-semibold"
       style={`background-color: ${colorData.bgColor}; color: ${colorData.textColor};`}
     >
       {size}
@@ -49,10 +55,12 @@ if (!colorData) {
   </div>
 
   <!-- Lower Content -->
-  <div class="flex justify-between items-center">
-    <div class="flex items-center text-[8px] gap-[1px]">
-      <p>
-        <span style={`color: ${amount == capacity ? "#FF1493" : "#68A987"};`}>{amount}</span>/{capacity}
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-[1px] text-[8px]">
+      <p class="text-[#313131E5]">
+        <span style={`color: ${amount == capacity ? "#FF1493" : "#68A987"};`}
+          >{amount}</span
+        >/{capacity}
       </p>
       <img src="/images/rpkm/person-icon.svg" width="12" height="12" />
     </div>

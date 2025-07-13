@@ -4,6 +4,7 @@ const API_BASE_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8080/ap
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
+  message?: string;
   error?: string;
 }
 
