@@ -1,0 +1,44 @@
+---
+const { house = {} } = Astro.props;
+const { name, imageURL, rank } = house;
+
+const rankWidth = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
+const rankHeight = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
+---
+
+{ name ?
+  <div class="relative w-[90px] h-[110px] flex flex-col gap-3">
+    <div class="relative w-full max-h-[90px] bg-white p-1">
+      <img 
+          src={`/images/rpkm/rank-${rank}.svg`} 
+          class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" 
+          width={rankWidth} 
+          height={rankHeight}
+      />
+      <img 
+          src={imageURL ? imageURL : "/images/rpkm/house-blank.png"} 
+          class="w-full h-auto object-cover pb-1" 
+      />
+      <p class="w-full h-fit max-h-[20px] text-xs text-[#2B2D42] font-semibold text-center text-ellipsis overflow-hidden whitespace-nowrap">{name}</p>
+    </div>
+    <button class="cursor-pointer flex justify-center items-center">
+      <img src="/images/rpkm/bin-icon.svg" width="14" height="18"/>
+    </button>    
+  </div>
+:
+  <button 
+    class="relative w-[90px] h-[110px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] hover:bg-[#D38DD8]/20 transition-colors cursor-pointer"
+    data-rank={rank}
+  >
+    <img 
+      src={`/images/rpkm/rank-${rank}.svg`} 
+      class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2" 
+      width={rankWidth} 
+      height={rankHeight}
+    />
+    <img 
+      src={"/images/rpkm/plus-icon.svg"}
+      class="w-6 h-6" 
+    />
+  </button>
+}
