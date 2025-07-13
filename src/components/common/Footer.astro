@@ -1,32 +1,33 @@
 ---
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 interface Props {
-  varient?: "firstdate" | "rpkm_home" | "rpkm_summary" | "rpkm_workshops";
+  variant?: "firstdate" | "rpkm_home" | "rpkm_summary" | "rpkm_workshops";
 }
 
 const bgGradient = {
-  "firstdate": {
+  firstdate: {
     type: "linear",
-    classes: "bg-gradient-to-b from-[#324B95] to-[#C6EBC5]"
+    classes: "bg-gradient-to-b from-[#324B95] to-[#C6EBC5]",
   },
-  "rpkm_home": {
-    type: "radial", 
-    classes: "bg-[radial-gradient(50%_50%_at_50%_50%,_#8A2BE4_0%,_#2B2D42_100%)]"
+  rpkm_home: {
+    type: "radial",
+    classes:
+      "bg-[radial-gradient(50%_50%_at_50%_50%,_#8A2BE4_0%,_#2B2D42_100%)]",
   },
-  "rpkm_workshops": {
+  rpkm_workshops: {
     type: "linear",
-    classes: "bg-gradient-to-b from-[#183F86] to-[#00FFFF]"
+    classes: "bg-gradient-to-b from-[#183F86] to-[#00FFFF]",
   },
-  "rpkm_rubpuen": {
+  rpkm_rubpuen: {
     type: "linear",
-    classes: "bg-gradient-to-b from-[#667eea] to-[#764ba2]"
+    classes: "bg-gradient-to-b from-[#667eea] to-[#764ba2]",
   },
-  "rpkm_summary": {
+  rpkm_summary: {
     type: "linear",
-    classes: "bg-gradient-to-b from-[#D38DD8] to-[#FF1493]"
-  }
-}
+    classes: "bg-gradient-to-b from-[#D38DD8] to-[#FF1493]",
+  },
+};
 
 const { variant = "firstdate" } = Astro.props;
 
@@ -34,49 +35,56 @@ const footerGradient = bgGradient[variant].classes;
 ---
 
 <footer class="text-xs">
-  <div class={cn("w-full flex flex-col items-center justify-center py-4 text-white", footerGradient)}>
-    <div class="flex flex-row justify-center w-full gap-x-1 mb-3">
-      <img
-        src="/common/isd-logo.svg"
-        alt="ISD Logo"
-        class="h-10 w-auto"
-      />
+  <div
+    class={cn(
+      "flex w-full flex-col items-center justify-center py-4 text-white",
+      footerGradient
+    )}
+  >
+    <div class="mb-3 flex w-full flex-row justify-center gap-x-1">
+      <img src="/common/isd-logo.svg" alt="ISD Logo" class="h-10 w-auto" />
       <img
         src="/common/sgcu-logo.svg"
         alt="ISD Text Logo"
         class="h-10 w-auto"
       />
     </div>
-    <div class="text-center flex flex-col">
+    <div class="flex flex-col text-center">
       <p>พัฒนาโดยฝ่ายพัฒนาระบบสารสนเทศ</p>
       <p>องค์การบริหารสโมสรนิสิตจุฬาลงกรณ์มหาวิทยาลัย</p>
     </div>
-    <hr class="h-1 w-[80px] m-2"/>
-    <div class="text-center flex flex-col">
+    <hr class="m-2 h-1 w-[80px]" />
+    <div class="flex flex-col text-center">
       <p>Developed by Information System Development &lt;ISD&gt;,</p>
       <p>Student Government Chulalongkorn University</p>
     </div>
   </div>
-  <div class="py-4 flex justify-center flex-col w-full items-center bg-white text-black">
+  <div
+    class="flex w-full flex-col items-center justify-center bg-white py-4 text-black"
+  >
     <p class="text-xl font-semibold">Contact Us</p>
     <div class="flex flex-row gap-x-2">
-      <div class="flex flex-col mt-3 gap-y-1">
-        <img
-          src="/common/isd-logo.svg"
-          alt="ISD Logo"
-          class="h-8 w-auto"
-        />
-        <a href="https://isd.sgcu.in.th" target="_blank" class="underline font-semibold">
+      <div class="mt-3 flex flex-col gap-y-1">
+        <img src="/common/isd-logo.svg" alt="ISD Logo" class="h-8 w-auto" />
+        <a
+          href="https://isd.sgcu.in.th"
+          target="_blank"
+          class="font-semibold underline"
+        >
           Website
         </a>
       </div>
-      <div class="flex flex-col mt-3 gap-y-1">
+      <div class="mt-3 flex flex-col gap-y-1">
         <img
           src="/common/instagram.svg"
           alt="Instagram Logo"
           class="h-8 w-auto"
         />
-        <a href="https://www.instagram.com/isd.sgcu/" target="_blank" class="underline font-semibold">
+        <a
+          href="https://www.instagram.com/isd.sgcu/"
+          target="_blank"
+          class="font-semibold underline"
+        >
           Instagram
         </a>
       </div>
