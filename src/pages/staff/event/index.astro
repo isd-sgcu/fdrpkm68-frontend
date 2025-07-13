@@ -1,0 +1,44 @@
+---
+import Popup from "@/components/common/Popup.astro";
+import Tabs from "@/components/common/Tabs.astro";
+import Layout from "@/layouts/staff/WithNavbar.astro";
+---
+
+<Layout>
+  <div class="flex w-full flex-col">
+    <div class="mb-8 flex flex-col items-center justify-center">
+      <p class="mt-[26px] text-xl">ลงทะเบียนงาน</p>
+      <h1
+        class="font-zen-dots mt-1.5 fill-white text-center text-4xl text-white drop-shadow-lg drop-shadow-pink-500"
+      >
+        CU First Date
+      </h1>
+
+      <section class="my-4 w-full">
+        <Tabs>
+          <!-- QR Code -->
+          <div slot="qr-content">
+            <div class="flex flex-col items-center justify-center text-center">
+              <Popup
+                size="small"
+                color="light-pink"
+                class="flex flex-col items-center justify-center text-center"
+              />
+            </div>
+          </div>
+
+          <!-- Student ID -->
+          <div slot="student-content">
+            <div class="flex flex-col items-center justify-center text-center">
+              <Popup
+                size="small"
+                color="light-green"
+                class="flex flex-col items-center justify-center text-center"
+              />
+            </div>
+          </div>
+        </Tabs>
+      </section>
+    </div>
+  </div>
+</Layout>
