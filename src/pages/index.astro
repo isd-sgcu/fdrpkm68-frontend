@@ -15,7 +15,7 @@ let apiLoadTime: number = 0;
 
 const startTime = performance.now();
 try {
-  const healthResponse = await api.get("/health");
+  const healthResponse = await api.get("/healthz");
   const endTime = performance.now();
   apiLoadTime = Math.round(endTime - startTime);
 

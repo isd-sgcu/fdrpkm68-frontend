@@ -1,0 +1,1058 @@
+---
+import { houseDisplayData } from "@rpkm/data/house.js";
+import HouseConfirmPopup from "@rpkm/elements/house-confirm-popup.astro";
+import HouseDetailCard from "@rpkm/elements/house-detail-card.astro";
+import HouseInfoPopup from "@rpkm/elements/house-info-popup.astro";
+import HousePickingCard from "@rpkm/elements/house-picking-card.astro";
+
+const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
+
+type houseDisplayType = {
+  id: number;
+  thName: string;
+  enName: string;
+  image: string;
+  thDescription: string;
+  enDescription: string;
+  instagramURL: string;
+  size: string;
+  amount: number;
+  capacity: number;
+};
+---
+
+<!-- Not Picking Wrapper -->
+<div class="relative block h-fit w-full px-5" id="view-not-picking">
+  <!-- Pink trapezoids -->
+  <div
+    class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
+  >
+  </div>
+  <div
+    class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
+  >
+  </div>
+
+  <!-- Border -->
+  <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
+    <!-- Content -->
+    <div
+      class="cut-houses-1 relative flex h-fit min-h-[248px] flex-col items-center bg-[#2B2D42BF] px-5 pt-8"
+    >
+      <!-- Title -->
+      <p class="z-20 text-2xl font-semibold text-white">
+        บ้านรับเพื่อนที่เลือกไว้
+      </p>
+
+      <!-- Empty Houses -->
+      <div class="z-20 pt-5">
+        <p class="text-3xl font-semibold text-white">คุณยังไม่ได้เลือกบ้าน</p>
+      </div>
+
+      <!-- Button -->
+      <div class={`absolute bottom-5 filter drop-shadow-[0_0_6px_white] z-20`}>
+        <button
+          id="btn-picking-house"
+          class="cut-edge-all cursor-pointer bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
+          type="button"
+          style={`width: 260px; height: 48px;`}
+        >
+          <p class="text-xl font-medium text-white">เลือกบ้าน</p>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Picking Wrapper -->
+<div class="relative hidden h-fit w-full px-5" id="view-picking">
+  <!-- Pink trapezoids -->
+  <div
+    class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
+  >
+  </div>
+  <div
+    class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
+  >
+  </div>
+
+  <!-- Border -->
+  <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
+    <!-- Content -->
+    <div
+      class="cut-houses-1 relative flex h-full flex-col items-center bg-[#2B2D42BF] px-5 pt-8"
+    >
+      <!-- Title -->
+      <p class="z-20 text-2xl font-semibold text-white">บ้านรับเพื่อนที่สนใจ</p>
+
+      <!-- Pref Houses -->
+      <div class="z-20 flex flex-wrap justify-center gap-3 pt-5">
+        {
+          [1, 2, 3, 4, 5].map((rank) => (
+            <div data-house-rank={rank}>
+              <HousePickingCard
+                house={{
+                  name: undefined,
+                  imageURL: undefined,
+                  rank: String(rank) as "1" | "2" | "3" | "4" | "5",
+                }}
+              />
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- White Bar -->
+      <div class="my-4 flex items-center">
+        <div class="h-2 w-2 rotate-45 bg-white"></div>
+        <div class="h-[2px] w-[236.008px] bg-white"></div>
+        <div class="h-2 w-2 rotate-45 bg-white"></div>
+      </div>
+
+      <p class="text-xs">
+        *บ้านที่ 6 (สำรอง) เลือกได้เฉพาะบ้านไซส์ XL, XXL เท่านั้น
+      </p>
+
+      <!-- Sub Pref House -->
+      <div class="z-20 flex flex-wrap justify-center gap-6 pt-7">
+        <div data-house-rank="sub">
+          <HousePickingCard
+            house={{
+              name: undefined,
+              imageURL: undefined,
+              rank: "sub",
+            }}
+          />
+        </div>
+      </div>
+
+      <!-- Button -->
+      <p class="pt-5 text-xs font-semibold">*กรุณาเลือกบ้านหลักให้ครบ 5 บ้าน</p>
+      <div class={`pb-7 pt-4 filter drop-shadow-[0_0_6px_white] z-20`}>
+        <button
+          id="btn-submit-house"
+          disabled
+          class="cut-edge-all flex cursor-pointer items-center justify-center gap-2 bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] disabled:cursor-not-allowed disabled:opacity-50"
+          type="button"
+          style={`width: 260px; height: 48px;`}
+        >
+          <p class="text-xl font-medium text-white">ยืนยันการเลือกบ้าน</p>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- House Selection Popup -->
+<div
+  class="fixed inset-0 z-50 mx-auto hidden w-[440px] translate-x-[9px] items-center justify-center bg-[rgba(0,0,0,0.7)]"
+  id="house-selection-popup"
+>
+  <div
+    class="relative flex h-fit min-h-[500px] w-full flex-col items-center bg-[#313131E5] p-6"
+  >
+    <!-- Search Bar -->
+    <div class="flex items-center justify-center gap-6">
+      <button id="popup-close-btn" class="h-8 w-8 cursor-pointer">
+        <img id="popup-close-btn" src="/images/rpkm/house-icon.svg" />
+      </button>
+      <input
+        id="house-search"
+        type="text"
+        class="h-[32px] w-full max-w-[260px] rounded-full bg-white px-3 py-1 font-medium text-[#2B2D42]"
+        placeholder="ค้นหาบ้าน"
+      />
+    </div>
+
+    <p class="py-2 font-semibold text-white">ขนาดบ้าน</p>
+
+    <!-- Filter -->
+    <div class="flex flex-wrap justify-center gap-3" id="house-size-filter">
+      {
+        houseSizes.map((size, index) => (
+          <label
+            class={`size-option cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+              index === 0
+                ? "bg-white text-[#8A2BE4]"
+                : "bg-[#8A2BE4] text-white"
+            }`}
+            data-size={size}
+          >
+            <input
+              type="checkbox"
+              name="size"
+              value={size}
+              class="hidden"
+              checked={index === 0}
+            />
+            <span class="size-label">{size} (0)</span>
+          </label>
+        ))
+      }
+    </div>
+
+    <!-- House Data -->
+    <div
+      class="custom-scrollbar mt-6 grid max-h-[250px] grid-cols-3 gap-4 overflow-y-auto"
+      id="house-card-container"
+    >
+      {
+        houseDisplayData.map((house: houseDisplayType) => (
+          <div
+            class="house-card-wrapper"
+            data-size={house.size}
+            data-thname={house.thName}
+            data-enname={house.enName}
+          >
+            <HouseDetailCard houseData={house} />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<HouseInfoPopup />
+
+<HouseConfirmPopup />
+
+<!-- Script -->
+<script define:vars={{ houseData: houseDisplayData }}>
+  document.addEventListener("DOMContentLoaded", () => {
+    // ===========================================
+    // DOM ELEMENTS
+    // ===========================================
+    const popup = document.getElementById("house-selection-popup");
+    const housePopup = document.getElementById("view-house-popup");
+    const houseSearchInput = document.getElementById("house-search");
+    const houseSizeFilter = document.getElementById("house-size-filter");
+    const houseSizeOptions = document.querySelectorAll(".size-option");
+    const houseCardContainer = document.getElementById("house-card-container");
+    const closeBtn = document.getElementById("popup-close-btn");
+    const pickBtn = document.getElementById("btn-picking-house");
+    const submitBtn = document.getElementById("btn-submit-house");
+    const notPickingView = document.getElementById("view-not-picking");
+    const pickingView = document.getElementById("view-picking");
+
+    // House popup elements
+    const houseInstagram = housePopup?.querySelector("#house-instagram");
+    const btnCancelHouse = housePopup?.querySelector("#btn-cancel-house");
+    const btnAddHouse = housePopup?.querySelector("#btn-add-house");
+
+    // ===========================================
+    // STATE VARIABLES
+    // ===========================================
+    const pickedHouses = {
+      "1": null,
+      "2": null,
+      "3": null,
+      "4": null,
+      "5": null,
+      sub: null,
+    };
+    let selectedHouses = new Set();
+    let currentRank = null;
+    let isSubmitted = false;
+    let selectedHouseData = null;
+
+    // ===========================================
+    // UTILITY FUNCTIONS
+    // ===========================================
+    function closePopup() {
+      popup?.classList.add("hidden");
+      popup?.classList.remove("flex");
+    }
+
+    function shuffleHouses(houses) {
+      const shuffled = [...houses];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function displayShuffledHouses(houses) {
+      if (!houseCardContainer) return;
+
+      // Clear existing cards
+      houseCardContainer.innerHTML = "";
+
+      // Add shuffled houses
+      houses.forEach((house) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "house-card-wrapper";
+        wrapper.setAttribute("data-size", house.size);
+        wrapper.setAttribute("data-thname", house.thName);
+        wrapper.setAttribute("data-enname", house.enName);
+
+        // Find color data for the house size
+        const colors = [
+          { size: "S", bgColor: "#0FF", textColor: "#000" },
+          { size: "M", bgColor: "#FF1493", textColor: "#fff" },
+          { size: "L", bgColor: "#FFB6C1", textColor: "#000" },
+          { size: "XL", bgColor: "#D38DD8", textColor: "#000" },
+          { size: "XXL", bgColor: "#2B2D42", textColor: "#fff" },
+        ];
+
+        let colorData = colors.find((color) => color.size == house.size);
+        if (!colorData) {
+          colorData = { size: "", bgColor: "#000", textColor: "#fff" };
+        }
+
+        wrapper.innerHTML = `
+          <div
+            class="relative w-[80px] h-[120px] bg-white p-1 cursor-pointer"
+            data-name="${house.thName}"
+            id="house-card-${house.thName}"
+          >
+            <img 
+              src="${house.image ? "/images/rpkm/houses/" + house.image : "/images/rpkm/house-blank.png"}" 
+              class="object-cover pb-1 w-[73px] h-[73px]" 
+            />
+            <!-- Upper Content -->
+            <div class="flex justify-between items-center gap-[6px] pb-1">
+              <p class="w-auto text-xs text-[#2B2D42] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+                ${house.thName}
+              </p>
+
+              <p 
+                class="rounded-full text-[8px] w-[18px] px-[3px] py-[1px] aspect-square flex items-center justify-center font-semibold"
+                style="background-color: ${colorData.bgColor}; color: ${colorData.textColor};"
+              >
+                ${house.size}
+              </p>
+            </div>
+
+            <!-- Lower Content -->
+            <div class="flex justify-between items-center">
+              <div class="flex items-center text-[8px] gap-[1px]">
+                <p class="text-[#313131E5]">
+                  <span style="color: ${house.amount == house.capacity ? "#FF1493" : "#68A987"};">${house.amount}</span>/${house.capacity}
+                </p>
+                <img src="/images/rpkm/person-icon.svg" width="12" height="12" />
+              </div>
+              <img src="/images/rpkm/vector-icon.svg" width="8" height="8" />
+            </div>
+          </div>
+        `;
+
+        houseCardContainer.appendChild(wrapper);
+      });
+    }
+
+    function updateHouseCounts() {
+      const sizeLabels = document.querySelectorAll(".size-label");
+      const cards = houseCardContainer?.querySelectorAll(".house-card-wrapper");
+      const searchValue = houseSearchInput?.value?.toLowerCase().trim() || "";
+
+      sizeLabels.forEach((label) => {
+        const sizeOption = label.closest(".size-option");
+        const size = sizeOption?.getAttribute("data-size") || "ทั้งหมด";
+        let count = 0;
+
+        if (size === "ทั้งหมด") {
+          // Count all houses that match search and rank restrictions, excluding selected houses
+          cards?.forEach((card) => {
+            const cardSize = card.getAttribute("data-size");
+            const thName = card.getAttribute("data-thname");
+            const thNameLower = thName?.toLowerCase() || "";
+            const enName =
+              card.getAttribute("data-enname")?.toLowerCase() || "";
+
+            // Skip if house is already selected
+            if (selectedHouses.has(thName)) return;
+
+            // Check name match and rank restrictions
+            const nameMatch =
+              !searchValue ||
+              thNameLower.includes(searchValue) ||
+              enName.includes(searchValue);
+            let rankMatch = true;
+
+            if (currentRank === "sub") {
+              rankMatch = cardSize === "XL" || cardSize === "XXL";
+            }
+
+            if (nameMatch && rankMatch) {
+              count++;
+            }
+          });
+        } else {
+          // Count houses of specific size, excluding selected houses
+          cards?.forEach((card) => {
+            const cardSize = card.getAttribute("data-size");
+            const thName = card.getAttribute("data-thname");
+            const thNameLower = thName?.toLowerCase() || "";
+            const enName =
+              card.getAttribute("data-enname")?.toLowerCase() || "";
+
+            // Skip if house is already selected
+            if (selectedHouses.has(thName)) return;
+
+            // Check matches
+            const sizeMatch = cardSize === size;
+            const nameMatch =
+              !searchValue ||
+              thNameLower.includes(searchValue) ||
+              enName.includes(searchValue);
+            let rankMatch = true;
+
+            if (currentRank === "sub") {
+              rankMatch = cardSize === "XL" || cardSize === "XXL";
+            }
+
+            if (sizeMatch && nameMatch && rankMatch) {
+              count++;
+            }
+          });
+        }
+
+        label.textContent = `${size} (${count})`;
+      });
+    }
+
+    // ===========================================
+    // LOCALSTORAGE FUNCTIONS
+    // ===========================================
+    function saveHouseSelection() {
+      const selectionData = {
+        pickedHouses: pickedHouses,
+        selectedHouses: Array.from(selectedHouses),
+        isSubmitted: isSubmitted,
+        timestamp: new Date().toISOString(),
+      };
+      localStorage.setItem(
+        "rpkm-house-selection",
+        JSON.stringify(selectionData)
+      );
+    }
+
+    function loadHouseSelection() {
+      try {
+        const saved = localStorage.getItem("rpkm-house-selection");
+        if (saved) {
+          const selectionData = JSON.parse(saved);
+
+          // Restore picked houses
+          Object.keys(selectionData.pickedHouses).forEach((rank) => {
+            pickedHouses[rank] = selectionData.pickedHouses[rank];
+          });
+
+          // Restore selected houses set
+          selectedHouses = new Set(selectionData.selectedHouses);
+
+          // Restore submission state
+          isSubmitted = selectionData.isSubmitted || false;
+
+          // Update UI
+          updatePickedHousesDisplay();
+          updateAvailableHouses();
+
+          // Update submit button state
+          const mainRanks = ["1", "2", "3", "4", "5"];
+          const allMainRanksFilled = mainRanks.every(
+            (rank) => pickedHouses[rank] !== null
+          );
+          submitBtn.disabled = !allMainRanksFilled;
+
+          // If submitted, update button and disable interactions
+          if (isSubmitted) {
+            submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ส่งการเลือกบ้านแล้ว</p>`;
+            submitBtn.disabled = true;
+            document.querySelectorAll("[data-rank]").forEach((card) => {
+              card.classList.add("pointer-events-none");
+            });
+          }
+
+          // If there are picked houses, show picking view
+          if (Object.values(pickedHouses).some((house) => house !== null)) {
+            notPickingView?.classList.add("hidden");
+            pickingView?.classList.remove("hidden");
+          }
+        }
+      } catch (error) {
+        console.error("Error loading house selection:", error);
+      }
+    }
+
+    function clearHouseSelection() {
+      localStorage.removeItem("rpkm-house-selection");
+    }
+
+    // ===========================================
+    // HOUSE MANAGEMENT FUNCTIONS
+    // ===========================================
+    function removeHouse(rank) {
+      const house = pickedHouses[rank];
+      if (!house) return;
+
+      // Remove from selected houses
+      selectedHouses.delete(house.name);
+
+      // Clear house from picked houses
+      pickedHouses[rank] = null;
+
+      // Update UI
+      updatePickedHousesDisplay();
+      updateAvailableHouses();
+
+      // Save to localStorage
+      saveHouseSelection();
+
+      // Disable submit button if main ranks are not filled
+      const mainRanks = ["1", "2", "3", "4", "5"];
+      const allMainRanksFilled = mainRanks.every(
+        (rank) => pickedHouses[rank] !== null
+      );
+      submitBtn.disabled = !allMainRanksFilled;
+    }
+
+    function updatePickedHousesDisplay() {
+      const pickedHouseElements =
+        document.querySelectorAll("[data-house-rank]");
+      pickedHouseElements.forEach((element) => {
+        const rank = element.getAttribute("data-house-rank");
+        const house = pickedHouses[rank];
+
+        // Clear existing content
+        while (element.firstChild) {
+          element.firstChild.remove();
+        }
+
+        // Create new house picking card
+        const card = document.createElement("div");
+        if (house) {
+          card.innerHTML = `
+            <div class="relative h-fit w-fit flex flex-col gap-3">
+              <div class="relative w-[80px] h-fit min-h-[100px] bg-white p-1">
+                <img 
+                  src="/images/rpkm/rank-${rank}.svg"
+                  class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
+                  width="${rank === "sub" ? 55 : rank <= 2 ? 30 : 24}"
+                  height="${rank === "sub" ? 55 : rank <= 2 ? 30 : 24}"
+                />
+                <img 
+                  src="/images/rpkm/houses/${house.imageURL}"
+                  class="w-full h-auto object-cover pb-1"
+                />
+                <p class="text-xs text-[#2B2D42] font-semibold text-center overflow-hidden whitespace-nowrap text-ellipsis">${house.name}</p>
+              </div>
+              ${
+                !isSubmitted
+                  ? `
+                <div class="flex justify-center">
+                  <button class="cursor-pointer flex justify-center items-center">
+                    <img src="/images/rpkm/bin-icon.svg" width="14" height="18"/>
+                  </button>
+                </div>
+              `
+                  : ""
+              }
+            </div>
+          `;
+        } else {
+          card.innerHTML = `
+            <button 
+              class="relative w-[80px] h-[100px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] hover:bg-[#D38DD8]/20 transition-colors cursor-pointer"
+              data-rank="${rank}"
+            >
+              <img 
+                src="/images/rpkm/rank-${rank}.svg"
+                class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
+                width="${rank === "sub" ? 55 : rank <= 2 ? 30 : 24}"
+                height="${rank === "sub" ? 55 : rank <= 2 ? 30 : 24}"
+              />
+              <img 
+                src="/images/rpkm/plus-icon.svg"
+                class="w-6 h-6" 
+              />
+            </button>
+          `;
+        }
+        element.appendChild(card.firstElementChild);
+      });
+    }
+
+    function updateAvailableHouses() {
+      const houseCards = houseCardContainer?.querySelectorAll(
+        ".house-card-wrapper"
+      );
+      houseCards?.forEach((card) => {
+        const thName = card.getAttribute("data-thname");
+
+        if (selectedHouses.has(thName)) {
+          // Hide selected houses completely
+          card.style.display = "none";
+        } else {
+          // Show available houses
+          const cardSize = card.getAttribute("data-size");
+          const cardThName =
+            card.getAttribute("data-thname")?.toLowerCase() || "";
+          const cardEnName =
+            card.getAttribute("data-enname")?.toLowerCase() || "";
+
+          // Check current filters
+          const searchValue =
+            houseSearchInput?.value?.toLowerCase().trim() || "";
+          const selectedOption = Array.from(houseSizeOptions).find((opt) =>
+            opt.classList.contains("bg-white")
+          );
+          const selectedSize =
+            selectedOption?.getAttribute("data-size") || "ทั้งหมด";
+
+          // Apply filters
+          const sizeMatch =
+            selectedSize === "ทั้งหมด" || cardSize === selectedSize;
+          const nameMatch =
+            !searchValue ||
+            cardThName.includes(searchValue) ||
+            cardEnName.includes(searchValue);
+
+          // Check rank restrictions
+          let rankMatch = true;
+          if (currentRank === "sub") {
+            rankMatch = cardSize === "XL" || cardSize === "XXL";
+          }
+
+          // Show/hide based on all filters
+          if (sizeMatch && nameMatch && rankMatch) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        }
+      });
+    }
+
+    // ===========================================
+    // FILTERING FUNCTIONS
+    // ===========================================
+    function filterHousesByRank(rank) {
+      const cards = houseCardContainer?.querySelectorAll(".house-card-wrapper");
+      if (!cards) return;
+
+      cards.forEach((card) => {
+        const cardSize = card.getAttribute("data-size");
+
+        if (rank === "sub") {
+          // สำหรับอันดับสำรอง เลือกได้เฉพาะ XL และ XXL
+          if (cardSize === "XL" || cardSize === "XXL") {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        } else {
+          // สำหรับอันดับหลัก เลือกได้ทุกขนาด
+          card.style.display = "block";
+        }
+      });
+
+      // Update visual state after rank filtering
+      updateAvailableHouses();
+    }
+
+    function filterHouseCards(size, nameSearch) {
+      const cards = houseCardContainer?.querySelectorAll(".house-card-wrapper");
+      if (!cards) return;
+
+      const searchLower = nameSearch.toLowerCase().trim();
+
+      cards.forEach((card) => {
+        const cardSize = card.getAttribute("data-size");
+        const thName = card.getAttribute("data-thname")?.toLowerCase() || "";
+        const enName = card.getAttribute("data-enname")?.toLowerCase() || "";
+
+        const sizeMatch = size === "ทั้งหมด" || cardSize === size;
+        const nameMatch =
+          !searchLower ||
+          thName.includes(searchLower) ||
+          enName.includes(searchLower);
+
+        // เพิ่มการตรวจสอบ rank สำหรับอันดับสำรอง
+        let rankMatch = true;
+        if (currentRank === "sub") {
+          rankMatch = cardSize === "XL" || cardSize === "XXL";
+        }
+
+        if (sizeMatch && nameMatch && rankMatch) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      // Update visual state after filtering
+      updateAvailableHouses();
+    }
+
+    // ===========================================
+    // POPUP FUNCTIONS
+    // ===========================================
+    function showHousePopup(house) {
+      if (!house) return;
+
+      // Update popup content
+      updateHousePopupContent(house);
+
+      // Show popup
+      housePopup?.classList.remove("hidden");
+      housePopup?.classList.add("flex");
+    }
+
+    function updateHousePopupContent(house) {
+      if (!house) return;
+
+      // Update Thai title
+      const houseThaiTitle = housePopup?.querySelector("#house-thai-title");
+      if (houseThaiTitle) {
+        houseThaiTitle.textContent = house.thName;
+      }
+
+      // Update Thai description
+      const houseThaiDescription = housePopup?.querySelector(
+        "#house-thai-description"
+      );
+      if (houseThaiDescription) {
+        houseThaiDescription.textContent = house.thDescription;
+      }
+
+      // Update English title
+      const houseEngTitle = housePopup?.querySelector("#house-eng-title");
+      if (houseEngTitle) {
+        houseEngTitle.textContent = house.enName;
+      }
+
+      // Update English description
+      const houseEngDescription = housePopup?.querySelector(
+        "#house-eng-description"
+      );
+      if (houseEngDescription) {
+        houseEngDescription.textContent = house.enDescription;
+      }
+
+      // Update instagram
+      if (houseInstagram) {
+        houseInstagram.textContent = house.enName;
+      }
+
+      // Update instagram link
+      const instagramLink = housePopup?.querySelector("#house-instagram-link");
+      if (instagramLink) {
+        instagramLink.href = house.instagramURL;
+      }
+
+      // Update button texts
+      const btnCancelText = housePopup?.querySelector("#btn-cancel-text");
+      const btnAddText = housePopup?.querySelector("#btn-add-text");
+
+      if (btnCancelText) {
+        btnCancelText.textContent = "ย้อนกลับ";
+      }
+
+      if (btnAddText) {
+        btnAddText.textContent = "เพิ่มบ้านนี้";
+      }
+
+      // Update house image
+      const houseImg = housePopup?.querySelector("#house-image");
+      if (houseImg) {
+        houseImg.src = `/images/rpkm/houses/${house.image}`;
+      }
+
+      // Update size badge
+      const sizeBadge = housePopup?.querySelector("#house-size-badge");
+      if (sizeBadge) {
+        sizeBadge.textContent = house.size;
+
+        // Update size badge colors
+        const colors = {
+          S: { bgColor: "#0FF", textColor: "#000" },
+          M: { bgColor: "#FF1493", textColor: "#fff" },
+          L: { bgColor: "#FFB6C1", textColor: "#000" },
+          XL: { bgColor: "#D38DD8", textColor: "#000" },
+          XXL: { bgColor: "#2B2D42", textColor: "#fff" },
+        };
+
+        const colorData = colors[house.size] || {
+          bgColor: "#000",
+          textColor: "#fff",
+        };
+        sizeBadge.style.backgroundColor = colorData.bgColor;
+        sizeBadge.style.color = colorData.textColor;
+      }
+
+      // Update capacity info
+      const houseAmount = housePopup?.querySelector("#house-amount");
+      const houseCapacity = housePopup?.querySelector("#house-capacity");
+      if (houseAmount && houseCapacity) {
+        houseAmount.textContent = house.amount;
+        houseCapacity.textContent = house.capacity;
+        houseAmount.style.color =
+          house.amount == house.capacity ? "#FF1493" : "#68A987";
+      }
+    }
+
+    // ===========================================
+    // INITIALIZATION
+    // ===========================================
+    // Load saved selection on page load
+    loadHouseSelection();
+
+    // Initialize house counts
+    setTimeout(() => {
+      updateHouseCounts();
+    }, 100);
+
+    // Add reset function for development/testing
+    window.resetHouseSelection = function () {
+      clearHouseSelection();
+      location.reload();
+    };
+
+    // Add confirmation function for popup
+    window.confirmHouseSubmission = function () {
+      isSubmitted = true;
+      submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ส่งการเลือกบ้านแล้ว</p>`;
+      submitBtn.disabled = true;
+
+      // Disable all house picking cards
+      document.querySelectorAll("[data-rank]").forEach((card) => {
+        card.classList.add("pointer-events-none");
+      });
+
+      // Update display to hide trash bins
+      updatePickedHousesDisplay();
+
+      // Save final state to localStorage
+      saveHouseSelection();
+    };
+
+    // ===========================================
+    // EVENT HANDLERS
+    // ===========================================
+
+    // House Size Filter
+    houseSizeFilter?.addEventListener("click", (e) => {
+      const target = e.target.closest(".size-option");
+      if (!target) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Remove active state from all options
+      houseSizeOptions.forEach((opt) => {
+        opt.classList.remove("bg-white", "text-[#8A2BE4]");
+        opt.classList.add("bg-[#8A2BE4]", "text-white");
+      });
+
+      // Set active state for clicked option
+      target.classList.remove("bg-[#8A2BE4]", "text-white");
+      target.classList.add("bg-white", "text-[#8A2BE4]");
+
+      const selectedSize = target.getAttribute("data-size") || "ทั้งหมด";
+      const searchValue = houseSearchInput?.value || "";
+
+      filterHouseCards(selectedSize, searchValue);
+      updateHouseCounts();
+    });
+
+    // House Search Filter
+    houseSearchInput?.addEventListener("input", (e) => {
+      const searchValue = e.target.value;
+      const selectedOption = Array.from(houseSizeOptions).find((opt) =>
+        opt.classList.contains("bg-white")
+      );
+      const selectedSize =
+        selectedOption?.getAttribute("data-size") || "ทั้งหมด";
+      filterHouseCards(selectedSize, searchValue);
+      updateHouseCounts();
+    });
+
+    // Handle house picking card click
+    document.addEventListener("click", (e) => {
+      if (isSubmitted) return;
+
+      const btn = e.target.closest("[data-rank]");
+      if (!btn) return;
+
+      currentRank = btn.getAttribute("data-rank");
+
+      // Shuffle houses before showing popup
+      const shuffledHouses = shuffleHouses(houseData);
+      displayShuffledHouses(shuffledHouses);
+
+      // Filter houses based on rank
+      filterHousesByRank(currentRank);
+
+      // Update counts after filtering
+      updateHouseCounts();
+
+      popup?.classList.remove("hidden");
+      popup?.classList.add("flex");
+    });
+
+    // Handle bin icon click
+    document.addEventListener("click", (e) => {
+      if (isSubmitted) return;
+
+      const binBtn = e.target.closest('img[src*="bin-icon.svg"]');
+      if (!binBtn) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const houseCard = binBtn.closest("[data-house-rank]");
+      if (!houseCard) return;
+
+      const rank = houseCard.getAttribute("data-house-rank");
+      removeHouse(rank);
+    });
+
+    // Close popup events
+    closeBtn?.addEventListener("click", closePopup);
+    popup?.addEventListener("click", (e) => {
+      if (e.target === popup) {
+        closePopup();
+      }
+    });
+
+    // เปิดหน้าเลือกบ้าน
+    pickBtn?.addEventListener("click", () => {
+      notPickingView?.classList.add("hidden");
+      pickingView?.classList.remove("hidden");
+      saveHouseSelection();
+    });
+
+    // Handle house selection in popup
+    if (popup) {
+      popup.addEventListener("click", (e) => {
+        const wrapper = e.target.closest(".house-card-wrapper");
+        if (
+          !wrapper ||
+          e.target === popup ||
+          !e.target.closest("#house-card-container")
+        )
+          return;
+
+        const thName = wrapper.getAttribute("data-thname");
+        const houseObj = houseData.find((h) => h.thName === thName);
+
+        // Prevent selection of already selected houses
+        if (!houseObj || selectedHouses.has(thName)) return;
+
+        // ถ้าอันดับนี้มีบ้านอยู่แล้ว ให้ลบบ้านเก่าออกจาก selectedHouses
+        if (pickedHouses[currentRank]) {
+          selectedHouses.delete(pickedHouses[currentRank].name);
+        }
+
+        // Update state - เลือกไปที่ rank ที่ user กดไว้
+        pickedHouses[currentRank] = {
+          name: houseObj.thName,
+          imageURL: houseObj.image,
+          rank: currentRank,
+        };
+        selectedHouses.add(thName);
+
+        // Update UI
+        updatePickedHousesDisplay();
+        updateAvailableHouses();
+        updateHouseCounts();
+
+        // Save to localStorage
+        saveHouseSelection();
+
+        // Close popup
+        closePopup();
+
+        // Enable submit button if all main ranks are filled
+        const mainRanks = ["1", "2", "3", "4", "5"];
+        const allMainRanksFilled = mainRanks.every(
+          (rank) => pickedHouses[rank] !== null
+        );
+        submitBtn.disabled = !allMainRanksFilled;
+      });
+    }
+
+    // Submit button handler
+    submitBtn?.addEventListener("click", () => {
+      if (isSubmitted) return;
+
+      // Show confirmation popup
+      if (window.showHouseConfirmPopup) {
+        window.showHouseConfirmPopup();
+      }
+    });
+
+    // Handle house card click in popup
+    houseCardContainer?.addEventListener("click", (e) => {
+      const wrapper = e.target.closest(".house-card-wrapper");
+      if (!wrapper) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const thName = wrapper.getAttribute("data-thname");
+      selectedHouseData = houseData.find((h) => h.thName === thName);
+
+      // Prevent showing popup for already selected houses
+      if (!selectedHouseData || selectedHouses.has(thName)) return;
+
+      // Show house popup with data
+      showHousePopup(selectedHouseData);
+    });
+
+    // Cancel button
+    btnCancelHouse?.addEventListener("click", () => {
+      housePopup?.classList.add("hidden");
+      housePopup?.classList.remove("flex");
+      selectedHouseData = null;
+    });
+
+    // Add house button
+    btnAddHouse?.addEventListener("click", () => {
+      if (!selectedHouseData || !currentRank) return;
+
+      const thName = selectedHouseData.thName;
+
+      // Prevent adding already selected houses
+      if (selectedHouses.has(thName)) return;
+
+      // ถ้าอันดับนี้มีบ้านอยู่แล้ว ให้ลบบ้านเก่าออกจาก selectedHouses
+      if (pickedHouses[currentRank]) {
+        selectedHouses.delete(pickedHouses[currentRank].name);
+      }
+
+      // Update state - เลือกไปที่ rank ที่ user กดไว้
+      pickedHouses[currentRank] = {
+        name: selectedHouseData.thName,
+        imageURL: selectedHouseData.image,
+        rank: currentRank,
+      };
+      selectedHouses.add(thName);
+
+      // Update UI
+      updatePickedHousesDisplay();
+      updateAvailableHouses();
+      updateHouseCounts();
+
+      // Save to localStorage
+      saveHouseSelection();
+
+      // Close both popups
+      housePopup?.classList.add("hidden");
+      housePopup?.classList.remove("flex");
+      closePopup();
+
+      // Enable submit button if all main ranks are filled
+      const mainRanks = ["1", "2", "3", "4", "5"];
+      const allMainRanksFilled = mainRanks.every(
+        (rank) => pickedHouses[rank] !== null
+      );
+      submitBtn.disabled = !allMainRanksFilled;
+
+      // Reset selected house data
+      selectedHouseData = null;
+    });
+  });
+</script>
