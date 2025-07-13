@@ -35,6 +35,12 @@ import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
             alt="Freshmen Fest Logo"
             class="w-4/5 max-w-sm"
           />
+
+          <p
+            class="bg-gradient-to-t from-[#CB438B] to-[#FFFFF2] bg-clip-text text-4xl font-bold text-transparent"
+          >
+            For Staff
+          </p>
         </div>
 
         <svg
@@ -53,14 +59,17 @@ import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
 
         <button
           class="mb-4 w-full max-w-sm rounded-md bg-white px-6 py-3 text-base font-medium text-black transition duration-200"
-          onclick="window.location.href='/register'"
+          onclick="window.location.href='/staff/register'"
         >
           ลงทะเบียน
         </button>
 
         <div class="mb-4 text-center">
           <p class="mb-2 text-sm">เคยลงทะเบียนมาแล้ว?</p>
-          <button class="underline" onclick="window.location.href='/login'">
+          <button
+            class="underline"
+            onclick="window.location.href='/staff/login'"
+          >
             เข้าสู่ระบบ
           </button>
         </div>
