@@ -6,14 +6,14 @@ import Navbar from "@common/Navbar.astro";
 interface Props {
   title?: string;
   description?: string;
-  variant?: "rpkm_home";
+  variant?: "rpkm_home" | "rpkm_summary";
 }
 
 const backgroundImages = {
   rpkm_home: "/images/rpkm/bg/home.png",
   workshops: "/images/rpkm/bg/workshops.png",
   rubpuen: "/images/rpkm/bg/rubpuen.png",
-  eventSummary: "/images/rpkm/bg/eventSummary.png",
+  rpkm_summary: "/images/rpkm/bg/rpkm_summary.png",
 };
 
 const { title, description, variant = "rpkm_home" } = Astro.props;
@@ -32,10 +32,15 @@ const backgroundImage = backgroundImages[variant];
   </head>
   <body class="min-h-screen min-w-screen bg-slate-500">
     <div
-      class="mx-auto flex min-h-screen max-w-[440px] flex-col bg-cover bg-center bg-no-repeat text-white"
+      class="mx-auto flex min-h-screen max-w-[440px] flex-col gap-8 bg-cover bg-center bg-no-repeat text-white"
       style={`background-image: url(${backgroundImage})`}
     >
-      <Navbar hideLogo bgTransparent />
+      <Navbar
+        variant="rpkm"
+        navigateBackHref="/rpkm/home"
+        hideLogo
+        bgTransparent={variant === "rpkm_home"}
+      />
 
       <!-- Logo -->
       <img
