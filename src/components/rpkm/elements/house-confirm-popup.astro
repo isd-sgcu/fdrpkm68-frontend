@@ -1,0 +1,176 @@
+---
+declare global {
+  interface Window {
+    showHouseConfirmPopup?: () => void;
+    confirmHouseSubmission?: () => void;
+  }
+}
+---
+
+<!-- House Confirm Popup Overlay -->
+<div
+  id="view-house-confirm-popup"
+  class="fixed inset-0 z-50 hidden min-h-[500px] w-full translate-x-[9px] items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
+>
+  <!-- House Confirm Popup Wrapper -->
+  <div class="relative w-full max-w-md px-5">
+    <!-- Pink trapezoids -->
+    <div
+      class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
+    >
+    </div>
+    <div
+      class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
+    >
+    </div>
+
+    <!-- Border -->
+    <div class="cut-houses-1 relative bg-[#8A2BE4] p-[1.5px]">
+      <!-- Content -->
+      <div
+        class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 py-8"
+        id="view-house-confirm-popup-content"
+      >
+        <!-- Header -->
+        <p class="text-3xl font-semibold text-white">ยืนยันการเลือกบ้าน</p>
+
+        <!-- Text -->
+        <div class="flex flex-col items-center justify-center gap-6 pt-5">
+          <img src="/images/rpkm/noti-icon.svg" width="72" height="72" />
+          <p class="text-center text-sm">
+            *เมื่อยืนยันแล้วจะไม่สามารถแก้ไขรายการของบ้าน<br
+            />และจะไม่สามารถจับคู่กับเพื่อนได้อีก
+          </p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-5 pt-7">
+          <button
+            id="btn-cancel-house-popup"
+            class="cut-edge-all flex cursor-pointer items-center justify-center gap-2 bg-[linear-gradient(90deg,_#FF1493_0%,_#2B2D42_100%)] disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+            style={`width: 130px; height: 48px;`}
+          >
+            <p class="text-xl font-medium text-white">ยกเลิก</p>
+          </button>
+          <button
+            id="btn-confirm-house-popup"
+            class="cut-edge-all flex cursor-pointer items-center justify-center gap-2 bg-[linear-gradient(90deg,_#00ffff_0%,_#2B2D42_100%)] disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+            style={`width: 130px; height: 48px;`}
+          >
+            <p class="text-xl font-medium text-white">ยืนยัน</p>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- House Success Popup Overlay -->
+<div
+  id="view-house-success-popup"
+  class="fixed inset-0 z-50 hidden w-full translate-x-[9px] items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
+>
+  <!-- Popup Success Wrapper -->
+  <div class="relative w-full max-w-md px-5">
+    <!-- Pink trapezoids -->
+    <div
+      class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
+    >
+    </div>
+    <div
+      class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
+    >
+    </div>
+
+    <!-- Border -->
+    <div class="cut-houses-1 relative bg-[#8A2BE4] p-[1.5px]">
+      <!-- Content -->
+      <div
+        class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 pt-8 pb-8"
+        id="view-house-success-popup-content"
+      >
+        <!-- Check -->
+        <img
+          src="/images/rpkm/check-icon.svg"
+          class="mt-10 rounded-full border-4 border-[#FF1493]"
+          width="80"
+          height="80"
+        />
+
+        <!-- Text -->
+        <p class="pt-4 text-2xl font-medium text-white">เลือกบ้านสำเร็จ</p>
+      </div>
+    </div>
+    <!-- X Button -->
+    <button
+      class="cut-edge-all-sm absolute left-1/2 z-30 h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer bg-[#8A2BE4] text-xl text-white shadow-lg"
+      id="btn-close-house-confirm-popup"
+    >
+      X
+    </button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const confirmPopup = document.getElementById("view-house-confirm-popup");
+      const successPopup = document.getElementById("view-house-success-popup");
+      const btnCancel = document.getElementById("btn-cancel-house-popup");
+      const btnConfirm = document.getElementById("btn-confirm-house-popup");
+      const btnClose = document.getElementById("btn-close-house-confirm-popup");
+
+      // Show confirm popup function
+      window.showHouseConfirmPopup = function () {
+        confirmPopup?.classList.remove("hidden");
+        confirmPopup?.classList.add("flex");
+      };
+
+      // Hide confirm popup function
+      function hideConfirmPopup() {
+        confirmPopup?.classList.add("hidden");
+        confirmPopup?.classList.remove("flex");
+      }
+
+      // Show success popup function
+      function showSuccessPopup() {
+        successPopup?.classList.remove("hidden");
+        successPopup?.classList.add("flex");
+      }
+
+      // Hide success popup function
+      function hideSuccessPopup() {
+        successPopup?.classList.add("hidden");
+        successPopup?.classList.remove("flex");
+      }
+
+      // Cancel button - hide confirm popup
+      btnCancel?.addEventListener("click", () => {
+        hideConfirmPopup();
+      });
+
+      // Confirm button - hide confirm popup and show success popup
+      btnConfirm?.addEventListener("click", () => {
+        hideConfirmPopup();
+        showSuccessPopup();
+
+        // Trigger the actual submission in the parent component
+        if (window.confirmHouseSubmission) {
+          window.confirmHouseSubmission();
+        }
+      });
+
+      // Close button - hide success popup
+      btnClose?.addEventListener("click", () => {
+        hideSuccessPopup();
+      });
+
+      // Click outside to close success popup
+      successPopup?.addEventListener("click", (e) => {
+        if (e.target === successPopup) {
+          hideSuccessPopup();
+        }
+      });
+    });
+  </script>
+</div>

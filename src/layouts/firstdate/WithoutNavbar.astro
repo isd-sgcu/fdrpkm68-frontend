@@ -1,4 +1,4 @@
---- 
+---
 import "@/styles/global.css";
 import Footer from "@firstdate/Footer.astro";
 import { ClientRouter } from "astro:transitions";
@@ -23,11 +23,13 @@ const { title, description } = Astro.props;
     <ClientRouter />
   </head>
   <body class="min-h-screen min-w-screen bg-slate-500">
-    <div class="min-h-screen max-w-[440px] mx-auto flex flex-col bg-[url(/firstdate/main-bg.png)] bg-cover bg-center bg-no-repeat text-white ">
-    <main class="flex-grow px-3">
-      <slot />
-    </main>
-    <Footer variant="firstdate"/>
-  </div>
+    <div
+      class="mx-auto flex min-h-screen max-w-[440px] flex-col bg-[url(/firstdate/main-bg.png)] bg-cover bg-center bg-no-repeat text-white"
+    >
+      <main class="flex-grow px-3">
+        <slot />
+      </main>
+      <Footer variant="firstdate" />
+    </div>
   </body>
 </html>
