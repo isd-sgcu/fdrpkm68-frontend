@@ -1,14 +1,30 @@
 ---
-import Layout from "@/layouts/rpkm/WithNavbar.astro";
 import ButtonRpkm from "@/components/common/ButtonRpkm.astro";
+import Layout from "@/layouts/rpkm/WithNavbar.astro";
 ---
 
 <Layout variant="rpkm_home">
-    <div class='min-h-full w-full flex flex-col gap gap-8'>
-        <h1 class="text-center text-4xl font-bold">รับเพื่อนก้าวใหม่ 2025</h1>
-        <div class=' bg-white h-[600px] w-full'>sdf]</div>
-        <ButtonRpkm href="/rpkm/workshops" class="mx-auto text-nowrap h-fit" size="lg" color="blue">ลงทะเบียนกิจกรรม</ButtonRpkm>
-        <ButtonRpkm href="/rpkm/rubpuen" class="mx-auto text-nowrap h-fit" size="lg" color="purple">ลงทะเบียนบ้านรับเพื่อน</ButtonRpkm>
-        <ButtonRpkm href="/rpkm/summary" class="mx-auto text-nowrap w-fit h-fit" size="lg" color='pink'>รวมกิจกรรมรับเพื่อนก้าวใหม่</ButtonRpkm>
-    </div>
-</Layout>   
+  <div class="gap flex min-h-full w-full flex-col gap-8">
+    <h1 class="text-center text-4xl font-bold">รับเพื่อนก้าวใหม่ 2025</h1>
+    <div class="h-[600px] w-full bg-white">sdf]</div>
+    <ButtonRpkm
+      href="/rpkm/workshops"
+      class="mx-auto h-fit text-nowrap"
+      size="lg"
+      color="blue">ลงทะเบียนกิจกรรม</ButtonRpkm
+    >
+    <ButtonRpkm
+      href="/rpkm/rubpuen"
+      class="mx-auto h-fit text-nowrap"
+      size="lg"
+      color="purple">ลงทะเบียนบ้านรับเพื่อน</ButtonRpkm
+    >
+    <ButtonRpkm
+      href="/rpkm/summary"
+      class="mx-auto h-fit w-fit text-nowrap"
+      size="lg"
+      color="pink">รวมกิจกรรมรับเพื่อนก้าวใหม่</ButtonRpkm
+    >
+  </div>
+</Layout>
+

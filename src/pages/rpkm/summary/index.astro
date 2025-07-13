@@ -1,52 +1,81 @@
 ---
 import Divider from "@/components/common/Divider.astro";
 import Layout from "@/layouts/rpkm/WithNavbar.astro";
-
 ---
 
 <Layout variant="rpkm_summary">
-    <div class='min-h-full w-full flex flex-col gap-3 -mt-5 mb-10'>
-        <h1 class="text-center text-4xl font-bold mb-3">กิจกรรมกลาง RPKM<br>for CU109</h1>
-        <p class='text-center'>เพื่อให้นิสิตใหม่ได้รู้เกี่ยวกับมหาลัยมากขึ้น<br>รวมถึงได้ทำกิจกรรมร่วมกัน<br>เพื่อให้ได้สานสัมพันธ์ระหว่างนิสิตต่างคณะ<br>รู้จักเพื่อนใหม่ และทำความรู้จัก<br>จุฬาลงกรณ์มหาวิทยาลัยไปพร้อม ๆ กัน</p>
-        <p class='text-center text-xl font-bold -mb-3'>เหมาะสำหรับ</p>
-        <p class='text-center font-normal'>นิสิต CU109 ทุกคน, คนที่อยากเจอเพื่อนต่างบ้าน<br><span class='font-bold'>คนที่ไม่มีบ้านก็สามารถเข้าร่วมได้นะ!</span></p>
-        <p class='text-center text-xl font-bold py-3'>เวลา : 13:00 - 17:00 น. (6 รอบ)</p>
-        <Divider size="md" />
-        <p class='text-center text-xl font-bold -mb-3'>กิจกรรมสานสัมพันธ์</p>
-        <p class='text-center'>(ลานพระบรมรูปสองรัชกาล และ อาคารจามจุรี 9)</p>
-        <div class='text-left bg-[#2B2D42BF] px-6 py-4'>
-            <p class="font-bold mb-2">Workshop:</p>
-            <ul class="list-disc pl-5 space-y-2">
-                <li><strong>Keychain Workshop:</strong> มาออกแบบพวกกุญแจห้อย กระเป๋าน่ารัก ๆ ประจำตัวเองกันเถอะ</li>
-                <li><strong>Diffuser Workshop:</strong> ใครอยากมีห้องหอม ๆ ที่กลิ่นถูกใจตัวเอง มาทำ Diffuser กับพวกเรากัน</li>
-            </ul>
-            <br>
-            <ul class="list-disc pl-5 space-y-2">
-                <li><strong>บอร์ดสานสัมพันธ์:</strong> แปะข้อความสร้างความสัมพันธ์ครั้งใหม่ และให้กำลังใจซึ่งกันและกัน หรือจะแลกคอนแทคก็ได้นะ</li>
-                <li><strong>Photobooth:</strong> มาร่วมบันทึกภาพถ่ายแห่งความทรงจำด้วยกันสิ</li>
-                <li><strong>กิจกรรมแลกโปสการ์ด:</strong> เตรียมโปสการ์ดไว้ให้แล้วเพื่อน ๆ สามารถเลือกโปสการ์ดที่ชอบ เขียนข้อความไว้ข้างหลัง นำมาห้อย แล้วเลือกหยิบ 1 ใบไปได้เลย</li>
-            </ul>
-        </div>
-        <Divider size="md" />
-        <p class='text-center text-xl font-bold'>Our CU</p>
-        <div class='text-left bg-[#2B2D42BF] px-6 py-4'>
-            <p class="mb-2">กิจกรรมที่จะได้รู้จักกับจุฬาลงกรณ์มหาวิทยาลัยมากยิ่งขึ้น</p>
-            <ul class="list-disc pl-5 space-y-2">
-                <li>ทัวร์หอประวัติจุฬาฯ</li>
-                <li>บูธสวัสดิการนิสิต</li>
-                <li>UniQuiz (เกมตอบคำถามเกี่ยวกับมหาลัย)</li>
-            </ul>
-        </div>
-        <Divider size="md" />
-        <p class='text-center text-xl font-bold'>กิจกรรมวิทยาศาสตร์์</p>
-        <div class='text-left bg-[#2B2D42BF] px-6 py-4'>
-            <p class="mb-2"><strong>ชมพิพิธภัณฑ์:</strong> เข้ารับชมพิพิธภัณฑ์เกี่ยวกับวิทยาศาสตร์ในรั้วมหาลัย</p>
-            <p class="mb-2"><strong>สถานที่:</strong></p>
-            <ul class="list-disc pl-5 space-y-1">
-                <li>พิพิธภัณฑสถานธรรมชาติวิทยา</li>
-                <li>พิพิธภัณฑ์ภาพถ่ายและการพิมพ์</li>
-                <li>พิพิธภัณฑ์พฤกษศาสตร์</li>
-            </ul>
-        </div>
+  <div class="-mt-5 mb-10 flex min-h-full w-full flex-col gap-3">
+    <h1 class="mb-3 text-center text-4xl font-bold">
+      กิจกรรมกลาง RPKM<br />for CU109
+    </h1>
+    <p class="text-center">
+      เพื่อให้นิสิตใหม่ได้รู้เกี่ยวกับมหาลัยมากขึ้น<br
+      />รวมถึงได้ทำกิจกรรมร่วมกัน<br
+      />เพื่อให้ได้สานสัมพันธ์ระหว่างนิสิตต่างคณะ<br />รู้จักเพื่อนใหม่
+      และทำความรู้จัก<br />จุฬาลงกรณ์มหาวิทยาลัยไปพร้อม ๆ กัน
+    </p>
+    <p class="-mb-3 text-center text-xl font-bold">เหมาะสำหรับ</p>
+    <p class="text-center font-normal">
+      นิสิต CU109 ทุกคน, คนที่อยากเจอเพื่อนต่างบ้าน<br /><span class="font-bold"
+        >คนที่ไม่มีบ้านก็สามารถเข้าร่วมได้นะ!</span>
+    </p>
+    <p class="py-3 text-center text-xl font-bold">
+      เวลา : 13:00 - 17:00 น. (6 รอบ)
+    </p>
+    <Divider size="md" />
+    <p class="-mb-3 text-center text-xl font-bold">กิจกรรมสานสัมพันธ์</p>
+    <p class="text-center">(ลานพระบรมรูปสองรัชกาล และ อาคารจามจุรี 9)</p>
+    <div class="bg-[#2B2D42BF] px-6 py-4 text-left">
+      <p class="mb-2 font-bold">Workshop:</p>
+      <ul class="list-disc space-y-2 pl-5">
+        <li>
+          <strong>Keychain Workshop:</strong> มาออกแบบพวกกุญแจห้อย กระเป๋าน่ารัก
+          ๆ ประจำตัวเองกันเถอะ
+        </li>
+        <li>
+          <strong>Diffuser Workshop:</strong> ใครอยากมีห้องหอม ๆ ที่กลิ่นถูกใจตัวเอง
+          มาทำ Diffuser กับพวกเรากัน
+        </li>
+      </ul>
+      <br />
+      <ul class="list-disc space-y-2 pl-5">
+        <li>
+          <strong>บอร์ดสานสัมพันธ์:</strong> แปะข้อความสร้างความสัมพันธ์ครั้งใหม่
+          และให้กำลังใจซึ่งกันและกัน หรือจะแลกคอนแทคก็ได้นะ
+        </li>
+        <li>
+          <strong>Photobooth:</strong> มาร่วมบันทึกภาพถ่ายแห่งความทรงจำด้วยกันสิ
+        </li>
+        <li>
+          <strong>กิจกรรมแลกโปสการ์ด:</strong> เตรียมโปสการ์ดไว้ให้แล้วเพื่อน ๆ สามารถเลือกโปสการ์ดที่ชอบ
+          เขียนข้อความไว้ข้างหลัง นำมาห้อย แล้วเลือกหยิบ 1 ใบไปได้เลย
+        </li>
+      </ul>
     </div>
+    <Divider size="md" />
+    <p class="text-center text-xl font-bold">Our CU</p>
+    <div class="bg-[#2B2D42BF] px-6 py-4 text-left">
+      <p class="mb-2">
+        กิจกรรมที่จะได้รู้จักกับจุฬาลงกรณ์มหาวิทยาลัยมากยิ่งขึ้น
+      </p>
+      <ul class="list-disc space-y-2 pl-5">
+        <li>ทัวร์หอประวัติจุฬาฯ</li>
+        <li>บูธสวัสดิการนิสิต</li>
+        <li>UniQuiz (เกมตอบคำถามเกี่ยวกับมหาลัย)</li>
+      </ul>
+    </div>
+    <Divider size="md" />
+    <p class="text-center text-xl font-bold">กิจกรรมวิทยาศาสตร์์</p>
+    <div class="bg-[#2B2D42BF] px-6 py-4 text-left">
+      <p class="mb-2">
+        <strong>ชมพิพิธภัณฑ์:</strong> เข้ารับชมพิพิธภัณฑ์เกี่ยวกับวิทยาศาสตร์ในรั้วมหาลัย
+      </p>
+      <p class="mb-2"><strong>สถานที่:</strong></p>
+      <ul class="list-disc space-y-1 pl-5">
+        <li>พิพิธภัณฑสถานธรรมชาติวิทยา</li>
+        <li>พิพิธภัณฑ์ภาพถ่ายและการพิมพ์</li>
+        <li>พิพิธภัณฑ์พฤกษศาสตร์</li>
+      </ul>
+    </div>
+  </div>
 </Layout>

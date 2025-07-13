@@ -28,3 +28,6 @@ pnpm-debug.log*
 CLEANUP_SUMMARY.md
 DEPLOYMENT.md
 IMPLEMENTATION_SUMMARY.md
+
+# vscode settings
+.vscode/
