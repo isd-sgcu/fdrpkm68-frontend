@@ -143,6 +143,16 @@ body {
     0 100%
   );
 }
+.cut-edge-t-l-b-r-sm {
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    0 100%,
+    0 10px
+  );
+}
 /* md (20px) default please see above na krub */
 
 /* lg (30px) */
