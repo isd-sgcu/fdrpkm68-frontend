@@ -1,11 +1,11 @@
+import type { ReactNode } from "react";
+
 import type {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
 } from "react-hook-form";
 
-// eslint-disable-next-line
-import type { ReactNode } from "react";
 
 interface Faculty {
   text: string;

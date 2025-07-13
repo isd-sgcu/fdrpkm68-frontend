@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { ChevronLeft } from "lucide-react";
 import type {
   FieldErrors,
@@ -5,8 +7,6 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-// eslint-disable-next-line
-import type { ReactNode } from "react";
 
 export interface ContactInfo {
   phoneNumber: string;

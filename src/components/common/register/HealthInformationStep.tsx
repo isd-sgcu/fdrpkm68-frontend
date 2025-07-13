@@ -1,3 +1,6 @@
+import { useCallback } from "react";
+import type { ReactNode } from "react";
+
 import type {
   Control,
   FieldErrors,
@@ -7,9 +10,6 @@ import type {
 } from "react-hook-form";
 import { Controller } from "react-hook-form";
 
-import { useCallback } from "react";
-// eslint-disable-next-line
-import type { ReactNode } from "react";
 
 export interface HealthInfo {
   hasAllergies: boolean | null;
