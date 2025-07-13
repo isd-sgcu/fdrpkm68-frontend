@@ -1,27 +1,46 @@
 ---
-import ButtonFd from "@common/ButtonFd.astro"
+import ButtonFd from "@common/ButtonFd.astro";
 ---
 
-<nav id="main-nav" class="relative flex items-center w-full justify-between bg-white p-1">
+<nav
+  id="main-nav"
+  class="relative flex w-full items-center justify-between bg-white p-1"
+>
   <div></div>
   <img src="/common/logo_freshmenfest.svg" alt="logo" />
-  <button id="hamburger-button-main" aria-label="Toggle menu" aria-controls="nav-menu" aria-expanded="false">
-    <img src="/common/hamburger.svg" alt="menu" class="h-3 w-auto -translate-x-4" />
+  <button
+    id="hamburger-button-main"
+    aria-label="Toggle menu"
+    aria-controls="nav-menu"
+    aria-expanded="false"
+  >
+    <img
+      src="/common/hamburger.svg"
+      alt="menu"
+      class="h-3 w-auto -translate-x-4"
+    />
   </button>
 </nav>
-<nav id="nav-menu" class="hidden fixed inset-0 overflow-hidden min-h-screen z-50 bg-white">
-  <div class="relative flex items-center w-full justify-between bg-white p-1">
+<nav
+  id="nav-menu"
+  class="fixed inset-0 z-50 hidden min-h-screen overflow-hidden bg-white"
+>
+  <div class="relative flex w-full items-center justify-between bg-white p-1">
     <div></div>
     <img src="/common/logo_freshmenfest.svg" alt="logo" />
     <button id="hamburger-button-menu">
-      <img src="/common/hamburger.svg" alt="menu" class="h-3 w-auto -translate-x-4" />
+      <img
+        src="/common/hamburger.svg"
+        alt="menu"
+        class="h-3 w-auto -translate-x-4"
+      />
     </button>
   </div>
   <div class="flex flex-col px-6">
     <div class="flex w-full justify-center">
-      <hr class="w-full h-[3px] bg-black"/>
+      <hr class="h-[3px] w-full bg-black" />
     </div>
-    <ul class="text-black flex flex-col gap-y-6 text-xl my-6">
+    <ul class="my-6 flex flex-col gap-y-6 text-xl text-black">
       <li>
         <a href="/firstdate/home">หน้าหลัก</a>
       </li>
@@ -38,8 +57,8 @@ import ButtonFd from "@common/ButtonFd.astro"
         <a href="/firstdate/qrcode">QR CODE</a>
       </li>
     </ul>
-    <div class="flex w-full justify-center mb-6">
-      <hr class="w-full h-[3px] bg-black"/>
+    <div class="mb-6 flex w-full justify-center">
+      <hr class="h-[3px] w-full bg-black" />
     </div>
     <div class="flex w-full justify-center text-black">
       <ButtonFd variant="stroke-no-shadow" color="black" href="/logout">
@@ -52,17 +71,19 @@ import ButtonFd from "@common/ButtonFd.astro"
 <script is:inline type="module">
   document.addEventListener("DOMContentLoaded", () => {
     const hamburgerButton = document.getElementById("hamburger-button-main");
-    const hamburgerButtonMenu = document.getElementById("hamburger-button-menu");
+    const hamburgerButtonMenu = document.getElementById(
+      "hamburger-button-menu"
+    );
     const navMenu = document.getElementById("nav-menu");
 
     hamburgerButton.addEventListener("click", () => {
       navMenu.classList.toggle("hidden");
-      document.body.classList.add('no-scroll');
+      document.body.classList.add("no-scroll");
     });
 
     hamburgerButtonMenu.addEventListener("click", () => {
       navMenu.classList.toggle("hidden");
-      document.body.classList.remove('no-scroll');
+      document.body.classList.remove("no-scroll");
     });
   });
 </script>
