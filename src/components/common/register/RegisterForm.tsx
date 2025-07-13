@@ -5,6 +5,8 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import PDPAConsent from "@/components/common/PDPAConsent";
+import type { AccountInfo } from "@/components/common/register/AccountStep";
+import AccountStep from "@/components/common/register/AccountStep";
 import CompleteStep from "@/components/common/register/CompleteStep";
 import ContactInformationStep, {
   type ContactInfo,
@@ -16,7 +18,11 @@ import PersonalInformationStep, {
   type PersonalInfo,
 } from "@/components/common/register/PersonalInformationStep";
 
-interface RegisterFormData extends PersonalInfo, ContactInfo, HealthInfo {}
+export interface RegisterFormData
+  extends PersonalInfo,
+    ContactInfo,
+    HealthInfo,
+    AccountInfo {}
 
 export default function RegisterForm({
   userType,
@@ -27,7 +33,7 @@ export default function RegisterForm({
     userType === "FRESHMAN"
       ? "/firstdate/register/student-form-bg.png"
       : "/firstdate/register/staff/form-bg.png";
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(0);
   const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
 
   const {
@@ -40,6 +46,10 @@ export default function RegisterForm({
     clearErrors,
   } = useForm<RegisterFormData>({
     defaultValues: {
+      studentID: "",
+      nationalID: "",
+      password: "",
+      passwordConfirm: "",
       // Personal Info
       title: "mr",
       firstName: "",
@@ -76,6 +86,10 @@ export default function RegisterForm({
     setStep(4);
   }, []);
 
+  const onAccountSubmit = useCallback((_data: AccountInfo): void => {
+    setStep(1);
+  }, []);
+
   const onFinalSubmit = useCallback((_data: RegisterFormData): void => {
     console.log("Final form submitted:", _data);
     // Handle final form submission
@@ -94,6 +108,20 @@ export default function RegisterForm({
         style={{ backgroundImage: `url(${step === 4 ? "" : bgUrl})` }}
       >
         <div className="w-full max-w-[270px] md:max-w-[330px]">
+          {step === 0 && (
+            <AccountStep
+              register={register}
+              errors={errors}
+              formValues={formValues}
+              setValue={setValue}
+              control={control}
+              clearErrors={clearErrors}
+              watch={watch}
+              onSubmit={handleSubmit(onAccountSubmit)}
+              setStep={setStep}
+              userType={userType}
+            />
+          )}
           {step === 1 && (
             <PersonalInformationStep
               register={register}

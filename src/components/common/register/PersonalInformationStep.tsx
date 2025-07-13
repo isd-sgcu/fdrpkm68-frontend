@@ -1,11 +1,14 @@
 import type { ReactNode } from "react";
 
+import { ChevronLeft } from "lucide-react";
 import type {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
 } from "react-hook-form";
 
+
+import type { RegisterFormData } from "@/components/common/register/RegisterForm";
 
 interface Faculty {
   text: string;
@@ -112,25 +115,13 @@ export interface PersonalInfo {
   year: string;
 }
 
-interface RegisterFormData extends PersonalInfo {
-  phoneNumber: string;
-  guardianPhoneNumber: string;
-  guardianRelationship: string;
-  hasAllergies: boolean | null;
-  allergies: string;
-  hasMedications: boolean | null;
-  medications: string;
-  hasChronicDiseases: boolean | null;
-  chronicDiseases: string;
-}
-
 export default function PersonalInformationStep({
   register,
   errors,
   formValues: _formValues,
   setValue: _setValue,
   onSubmit,
-  setStep: _setStep,
+  setStep,
   userType,
 }: {
   register: UseFormRegister<RegisterFormData>;
@@ -274,12 +265,20 @@ export default function PersonalInformationStep({
           </div>
         </div>
 
-        <div className="mt-2 flex w-full justify-center">
+        <div className="mt-2 flex w-full flex-col items-center justify-center gap-4">
           <button
             type="submit"
             className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
           >
             ถัดไป
+          </button>
+          <button
+            type="button"
+            className="flex w-36 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 py-2"
+            onClick={() => setStep(0)}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <p>ย้อนกลับ</p>
           </button>
         </div>
       </form>

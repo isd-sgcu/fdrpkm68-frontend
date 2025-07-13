@@ -8,28 +8,12 @@ import type {
 } from "react-hook-form";
 
 
+import type { RegisterFormData } from "@/components/common/register/RegisterForm";
+
 export interface ContactInfo {
   phoneNumber: string;
   guardianPhoneNumber: string;
   guardianRelationship: string;
-}
-
-interface RegisterFormData {
-  title: string;
-  firstName: string;
-  lastName: string;
-  nickname: string;
-  faculty: string;
-  year: string;
-  phoneNumber: string;
-  guardianPhoneNumber: string;
-  guardianRelationship: string;
-  hasAllergies: boolean | null;
-  allergies: string;
-  hasMedications: boolean | null;
-  medications: string;
-  hasChronicDiseases: boolean | null;
-  chronicDiseases: string;
 }
 
 export default function ContactInformationStep({

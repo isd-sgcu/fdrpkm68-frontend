@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
+import { ChevronLeft } from "lucide-react";
 import type {
   Control,
   FieldErrors,
@@ -11,25 +12,9 @@ import type {
 import { Controller } from "react-hook-form";
 
 
-export interface HealthInfo {
-  hasAllergies: boolean | null;
-  allergies: string;
-  hasMedications: boolean | null;
-  medications: string;
-  hasChronicDiseases: boolean | null;
-  chronicDiseases: string;
-}
+import type { RegisterFormData } from "@/components/common/register/RegisterForm";
 
-interface RegisterFormData {
-  title: string;
-  firstName: string;
-  lastName: string;
-  nickname: string;
-  faculty: string;
-  year: string;
-  phoneNumber: string;
-  guardianPhoneNumber: string;
-  guardianRelationship: string;
+export interface HealthInfo {
   hasAllergies: boolean | null;
   allergies: string;
   hasMedications: boolean | null;
@@ -46,7 +31,7 @@ export default function HealthInformationStep({
   control,
   clearErrors,
   onSubmit,
-  setStep: _setStep,
+  setStep,
   userType,
 }: {
   register: UseFormRegister<RegisterFormData>;
@@ -327,12 +312,22 @@ export default function HealthInformationStep({
           )}
         </div>
 
-        <button
-          type="submit"
-          className="flex items-center justify-center bg-white py-2 text-black transition-colors duration-200 hover:bg-gray-100"
-        >
-          ถัดไป
-        </button>
+        <div className="mt-2 flex w-full flex-col items-center justify-center gap-4">
+          <button
+            type="submit"
+            className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
+          >
+            ถัดไป
+          </button>
+          <button
+            type="button"
+            className="flex w-36 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 py-2"
+            onClick={() => setStep(2)}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <p>ย้อนกลับ</p>
+          </button>
+        </div>
       </form>
     </div>
   );
