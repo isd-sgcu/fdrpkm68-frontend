@@ -31,6 +31,9 @@ function parseCSV(content: string) {
       headers.forEach((header, index) => {
         const value = values[index] || '';
         shop[header.trim()] = value.trim();
+        if(header === 'image'){
+          shop[header] = convertGoogleDriveUrl(value.trim())
+        }
       });
       
       // Only add shops that have a name and zone
@@ -81,6 +84,31 @@ function parseCSVLine(line: string): string[] {
 const allShops = parseCSV(csvContent);
 // Filter shops for zone 'A'
 const zoneAShops = allShops.filter(shop => shop.zone === 'A');
+
+// Helper function to convert Google Drive share links to direct image URLs
+function convertGoogleDriveUrl(url: string): string {
+  console.log('Original URL:', url);
+  
+  if (!url) return '';
+  
+  // Match Google Drive URLs and extract file ID
+  const driveRegex = /(?:drive\.google\.com\/(?:file\/d\/|open\?id=))([a-zA-Z0-9_-]+)/;
+  const match = url.match(driveRegex);
+  
+  if (match && match[1]) {
+    // Try multiple formats for better compatibility
+    const fileId = match[1];
+    
+    // Format 1: Standard thumbnail (works best for public images)
+    const directUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
+    
+    console.log('Converted URL:', directUrl);
+    return directUrl;
+  }
+
+  console.log('Not a Google Drive URL, returning original:', url);
+  return url; // Return original URL if it's not a Google Drive URL
+}
 ---
 
 <Layout>
@@ -115,11 +143,11 @@ const zoneAShops = allShops.filter(shop => shop.zone === 'A');
                   alt={shop.name}
                   class="max-w-full h-48 object-cover rounded-lg shadow-md"
                   loading="lazy"
+                  onerror="console.log('Image failed to load:', this.src); this.style.display='none';"
+                  onload="console.log('Image loaded successfully:', this.src);"
                 />
               </div>
-            )}
-            {shop.image} 
-         
+            )} 
             
             <div class="p-4">
               <h3 class="font-semibold text-lg text-pink-400 mb-2">เมนูแนะนำ:</h3>
