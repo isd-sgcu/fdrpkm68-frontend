@@ -112,8 +112,8 @@ export default function AccountStep({
               {...register("password", {
                 required: "กรุณากรอกรหัสผ่าน",
                 minLength: {
-                  value: 6,
-                  message: "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+                  value: 8,
+                  message: "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร",
                 },
                 maxLength: {
                   value: 20,
