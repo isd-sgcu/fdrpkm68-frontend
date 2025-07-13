@@ -2,11 +2,12 @@
 import Layout from "@/layouts/fest/FestWithNavbar.astro";
 import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
 import QuestItems from './ButtonProp/index.astro';
+import ButtonFest from "@/components/common/ButtonFest.astro";
 ---
 
 <Layout>
   
-  <div class="px-4 py-6 flex flex-col space-y-2">
+  <div class="px-10 py-6 flex flex-col space-y-2">
     <div class="w-full sticky top-0 z-10 backdrop-blur-md px-2 justify-between flex py-2">
       <a href="/fest/quest-2" class="text-2xl font-bold">{'<'}</a>
       <div class="text-center ">
@@ -52,6 +53,9 @@ import QuestItems from './ButtonProp/index.astro';
         <HorizonlineFest variant="blue" class="my-[20px]"/>
 
         <QuestItems/>
+        <diV class="mt-[30px] text-center">
+          <ButtonFest color="pink" size="big">ลงทะเบียน Quest</ButtonFest>
+        </diV>
     </div>
     
 </Layout>

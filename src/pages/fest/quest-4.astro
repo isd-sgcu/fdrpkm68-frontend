@@ -1,11 +1,12 @@
 ---
 import Layout from "@/layouts/fest/FestWithNavbar.astro";
 import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
+import ButtonFest from "@/components/common/ButtonFest.astro";
 ---
 
 <Layout>
   
-  <div class="px-4 py-6 flex flex-col space-y-2">
+  <div class="px-10 py-6 flex flex-col space-y-2">
     <div class="w-full sticky top-0 z-10 backdrop-blur-md px-3 justify-between flex py-2">
       <a href="/fest/quest-3-5" class="text-2xl font-bold">{'<'}</a>
       <div class="text-center">
@@ -13,7 +14,7 @@ import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
           Quest 4
         </p>
         <p class="text-[48px font-bold font-Orbitron">
-          On the way to nowhere 109 Theatre
+          On the way to <br/>nowhere 109 Theatre
         </p>
 
       </div>
@@ -21,31 +22,144 @@ import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
     </div>
 
     <div class="pt-4 ">
-      <header class="max-w-[315px] text-shadow-md text-shadow-[#00FFFF]">
-        สถานที่ตั้งหลักพักใจของ “เหล่านักท่องเวลาผู้หลงทาง”หลากหลายมิติ หลากหลายดินแดน แต่ทุกคนล้วนมีเป้าหมายเดียวกัน…
-        <p class="mt-[20px]">หวังจะได้พบเพื่อนร่วมทางอีกครั้ง</p>
+      <header class="max-w-[315px] text-shadow-md text-shadow-[#00FFFF] text-center  mx-auto">
+        สถานที่ตั้งหลักพักใจของ<br/> 
+        “เหล่านักท่องเวลาผู้หลงทาง”<br/> 
+        หลากหลายมิติ หลากหลายดินแดน<br/>
+        แต่ทุกคนล้วนมีเป้าหมายเดียวกัน…
+        <p class="my-[20px]">หวังจะได้พบเพื่อนร่วมทางอีกครั้ง</p>
       </header>
 
       <div>
-        <p>หารู้ไม่ว่า นักท่องเวลาที่ผ่านเส้นทางหลบ พายุมาได้ ก็มีเป้าหมายอย่างเดียวกัน เมื่อมาเยือน ณ On the way to nowhere Theatre 
+        <p class="text-justify leading-relaxed [text-indent:4em]">หารู้ไม่ว่า นักท่องเวลาที่ผ่านเส้นทางหลบ 
+          พายุมาได้ ก็มีเป้าหมายอย่างเดียวกัน เมื่อมาเยือน ณ On the way to nowhere Theatre 
           แห่งนี้เหล่านักท่องเวลา จะได้พบ “เพื่อนร่วมทาง” ของตนเอง แต่ทว่าจะมีเพียงนักท่องเวลาที่ ลงทะเบียนเข้า Theatre ทันเวลาเท่านั้นที่จะได้ 
           รับชมภาพยนตร์กับเพื่อนร่วมทางที่หายตัวไป และ ยังได้รับของขวัญสุดพิเศษที่มิติแห่งห้วงเวลาได้ จัดเตรียมไว้ให้
         </p>
 
-        <p>
+        <p class="text-justify leading-relaxed [text-indent:2em] my-[20px]">
           On the way to nowhere Theatre สถานที่ตั้งหลัก พักใจของ “เหล่านักท่องเวลาผู้หลงทาง” นอกจากจะได้ 
           พักผ่อนหย่อนใจด้วยการดูหนังแล้ว ยังอาจได้พบ “เพื่อนร่วมทาง” ที่หายไปอีกด้วย และยังมี welcome gift สุด exclusive 
           ที่จะได้รับเฉพาะ ผู้ที่มาเยือน On the way to nowhere 109 Theatre เท่านั้น
         </p>
         <HorizonlineFest variant="blue" />
       </div>
-      <div class="text-center text-shadow-md text-shadow-[#00FFFF] mt-[25px] mb-[20px]">
-        <p>วิธีการทำกิจกรรม</p>
-        <p>ลงทะเบียนเพื่อเข้าร่วม ลงกี่กิจกรรมก็ได้</p>
-        <p>แต่ 1 กิจกรรมลงได้ 1 รอบเท่านั้น</p>
+      <div class="text-center mt-[25px] mb-[10px]">
+        <p class="text-[20px] font-bold text-center">วิธีการทำกิจกรรม</p>
+        <p class="text-[16px]">ลงทะเบียนเพื่อเข้าร่วม</p>
+      </div>
+
+      <div class="font-ibm-plex-sans-thai text-white"> 
+        <p class="text-[20px] font-bold text-center">ระยะเวลากิจกรรม</p> 
+        <ul class="list-none mb-6"> 
+          <li class="mb-2"> 
+            <span class="inline-block w-4">•</span> ลงทะเบียน 18 - 21 กรกฎาคม 2568
+          </li>
+          <li>
+            <span class="inline-block w-4">•</span> กิจกรรมจริง วันที่ 29 กรกฎาคม 2568
+            <ul class="list-none ml-8 mt-2"> 
+              <li class="mb-1"> 
+                <span class="inline-block w-4">•</span> รอบที่ 1 13:00 - 16:00 น.
+              </li>
+              <li>
+                <span class="inline-block w-4">•</span> รอบที่ 2 16:30 - 19:30 น.
+              </li>
+            </ul>
+          </li>
+        </ul>
+    
+        <div class="text-center">
+          <p class="text-[20px] font-bold">สถานที่</p> 
+          <p class="text-[16px] leading-relaxed"> 
+            ห้องประชุม ดร.เทียม อาคารมงกุฎสมมุติวงศ์<br>คณะนิติศาสตร์
+          </p>
+        </div>
+    
+        <div class="mt-8 text-center text-[16px] mb-[25px]"> 
+          <p>
+            <span class="font-semibold">จำนวนคนที่สามารถสมัครได้:</span> รอบละ 150 คน
+          </p>
+          <p>
+            <span class="font-semibold">เงื่อนไขกิจกรรม :</span> สมัครได้เพียง 1 รอบ/คน เท่านั้น
+          </p>
+        </div>
+      
+      </div>
+
+    <HorizonlineFest variant="blue" />
+
+    <div class="text-center mt-[25px]">
+      <p class="text-[20px] font-bold text-center">โปรแกรมฉายหนัง</p>
+      <p class="text-lg text-center leading-relaxed mb-[20px]"> วันอังคารที่ 29 กรกฎาคม 2568</p>
+      <img src="/fest/MoviePoster.png" alt="PosterTable" width="250px" height="352px"
+      class="inline-block mx-auto my-[20px]"/>
+      <p class="text-[10px] text-center mt-[20px] mb-[30px]">
+        ***แนะนำให้มาตั้งเเต่เวลาประตูเปิด เนื่องจาก ผู้ที่มาก่อนสามารถ<br/>
+        เลือกที่นั่งได้ก่อน (Free Seating : First Come, First Served) <br/>
+        และจะได้มีเวลาเล่น Mission พร้อมทั้งรับ welcome gift
+      </p>
+    </div>
+    <HorizonlineFest variant="blue" />
+
+      <div class="text-center mt-[30px]">{/*Poster Section */}
+        <p class="text-[16px] font-bold mb-[2px]">รอบ 1 หนังเริ่มฉาย 13:50 น.</p>
+        <p class="text-[16px] leading-relaxed mb-[2px]">(ประตูเข้างานเปิด 13:00 น.)</p>
+        <p class="text-[20px] font-bold leading-relaxed mb-[2px]"> : About Time</p>
+        <img src="/fest/AboutTimePoster.jpg" alt="AboutTimePoster" width="130px" height="207px" 
+        class="inline-block mx-auto my-[10px]"/>
+
+        <div class="text-[16px] mt-[10px] mb-[20px] text-shadow-md text-shadow-[#00FFFF]">
+          <p>
+            “We're all travelling through time together every day of our lives. 
+            All we can do is do our best to relish this remarkable ride.”
+          </p>
+          <p>- About Time</p>
+        </div>
+      </div>
+      <HorizonlineFest variant="blue" />
+      <div class="text-center mt-[30px]">{/*Poster Section */}
+        <p class="text-[16px] font-bold mb-[2px]">รอบ 2 หนังเริ่มฉาย 17:00 น.</p>
+        <p class="text-[16px] leading-relaxed mb-[2px]">(ประตูเข้างานเปิด 16:10 น.)</p>
+        <p class="text-[20px] font-bold leading-relaxed mb-[2px]">รับชม : Interstellar</p>
+        <img src="/fest/InterstellarPoster.jpg" alt="InterstellarPoster" width="130px" height="193px" 
+        class="inline-block mx-auto my-[10px]"/>
+
+        <div class="text-[16px] mt-[10px] mb-[20px] text-shadow-md text-shadow-[#00FFFF]">
+          <p>“I’m not afraid of death.<br/>I’m an old physicist. I’m afraid of time.”</p>
+          <p>- Interstellar</p>
+        </div>
+      </div>
+      <HorizonlineFest variant="blue" />
+      
+    </div>
+    
+      <div> {/*Annotation*/}
+        <p  class="text-[16px] font-bold mb-[2px]">
+          หมายเหตุในการรับชมภาพยนตร์<br/>
+          On the way to Nowhere 109 Theatre
+        </p>
+        <ul class="list-none mb-6"> 
+          <li class="mb-2"> 
+            <span class="inline-block w-4">•</span> ทาง On the way to Nowhere 109 Theatre 
+            ไม่มีระบบรับจอง ที่นั่งก่อนรับชมภาพยนตร์ โดยให้สิทธิผู้ที่มาก่อนสามารถเลือกที่ นั่งได้ก่อน 
+            (Free Seating : First Come, First Served)
+          </li>
+          <li class="mb-2"> 
+            <span class="inline-block w-4">•</span> ไม่อนุญาตให้นำอาหารและเครื่องดื่มภายนอก มารับประทาน 
+            (หากเป็นภาชนะที่มีฝาปิด เช่น ขวดหรือกระติกน้ำที่มีฝาปิด สามารถนำเข้า Theatre ได้)
+          </li>
+        </ul>
+      </div>
+
+    <div class="text-center">
+      <p class="text-[20px] font-bold leading-relaxed mb-[2px]">ตารางสรุปกิจกรรม</p>
+      <img src="/fest/PosterTable.png" alt="PosterTable" width="343px" height="288px" 
+      class="inline-block mx-auto my-[20px]"/>
     </div>
 
-    </div>
+    <diV class="my-[20px] text-center">
+      <ButtonFest color="pink" size="big">ลงทะเบียน Quest</ButtonFest>
+    </diV>
 
   </div>
 </Layout>
