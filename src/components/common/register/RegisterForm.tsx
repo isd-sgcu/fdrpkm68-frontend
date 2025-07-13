@@ -1,38 +1,68 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import PDPAConsent from "../PDPAConsent";
 import CompleteStep from "./CompleteStep";
 import HealthInformationStep, { type HealthInfo } from "./HealthInformationStep";
 import ContactInformationStep, { type ContactInfo } from "./ContactInformationStep";
 import PersonalInformationStep, { type PersonalInfo } from "./PersonalInformationStep";
 
+interface RegisterFormData extends PersonalInfo, ContactInfo, HealthInfo {}
+
 export default function RegisterForm({ userType }: { userType: 'student' | 'staff' }) {
     const bgUrl = userType === 'student' ? '/firstdate/register/student-form-bg.png' : '/firstdate/register/staff/form-bg.png';
-    const [step, setStep] = useState<number>(4);
+    const [step, setStep] = useState<number>(1);
     const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
     
-    const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-        title: 'mr',
-        firstName: '',
-        lastName: '',
-        nickname: '',
-        faculty: 'engineering',
-        year: '1'
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+        setValue,
+        control,
+        clearErrors
+    } = useForm<RegisterFormData>({
+        defaultValues: {
+            // Personal Info
+            title: 'mr',
+            firstName: '',
+            lastName: '',
+            nickname: '',
+            faculty: 'engineering',
+            year: '1',
+            // Contact Info
+            phoneNumber: '',
+            guardianPhoneNumber: '',
+            guardianRelationship: '',
+            // Health Info
+            hasAllergies: null,
+            allergies: '',
+            hasMedications: null,
+            medications: '',
+            hasChronicDiseases: null,
+            chronicDiseases: ''
+        },
+        mode: 'onChange'
     });
 
-    const [contactInfo, setContactInfo] = useState<ContactInfo>({
-        phoneNumber: '',
-        guardianPhoneNumber: '',
-        guardianRelationship: ''
-    });
+    const formValues = watch();
 
-    const [healthInfo, setHealthInfo] = useState<HealthInfo>({
-        hasAllergies: null,
-        allergies: '',
-        hasMedications: null,
-        medications: '',
-        hasChronicDiseases: null,
-        chronicDiseases: ''
-    });
+    const onPersonalSubmit = (data: PersonalInfo) => {
+        setStep(2);
+    };
+
+    const onContactSubmit = (data: ContactInfo) => {
+        setStep(3);
+    };
+
+    const onHealthSubmit = (data: HealthInfo) => {
+        setStep(4);
+    };
+
+    const onFinalSubmit = (data: RegisterFormData) => {
+        console.log('Final form submitted:', data);
+        // Handle final form submission
+    };
 
     return <div className="flex flex-col items-center justify-center min-h-screen text-white">
         {!isConsentGiven && <PDPAConsent onAccept={() => setIsConsentGiven(true)} />}
@@ -44,25 +74,36 @@ export default function RegisterForm({ userType }: { userType: 'student' | 'staf
         <div className="max-w-[270px] w-full md:max-w-[330px]">
             {step === 1 && (
                 <PersonalInformationStep 
+                    register={register}
+                    errors={errors}
+                    formValues={formValues}
+                    setValue={setValue}
+                    onSubmit={handleSubmit(onPersonalSubmit)}
                     setStep={setStep} 
-                    personalInfo={personalInfo} 
-                    setPersonalInfo={setPersonalInfo} 
                     userType={userType}
                 />
             )}
             {step === 2 && (
                 <ContactInformationStep 
+                    register={register}
+                    errors={errors}
+                    formValues={formValues}
+                    setValue={setValue}
+                    onSubmit={handleSubmit(onContactSubmit)}
                     setStep={setStep} 
-                    contactInfo={contactInfo} 
-                    setContactInfo={setContactInfo} 
                     userType={userType}
                 />
             )}
             {step === 3 && (
                 <HealthInformationStep 
+                    register={register}
+                    errors={errors}
+                    formValues={formValues}
+                    setValue={setValue}
+                    control={control}
+                    clearErrors={clearErrors}
+                    onSubmit={handleSubmit(onHealthSubmit)}
                     setStep={setStep} 
-                    healthInfo={healthInfo} 
-                    setHealthInfo={setHealthInfo} 
                     userType={userType}
                 />
             )}

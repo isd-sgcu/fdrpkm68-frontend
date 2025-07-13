@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import React from "react";
 import PDPAConsent from "../../../common/PDPAConsent";
 
 interface PersonalInfo {
@@ -47,28 +49,27 @@ function HealthInformationStep({
     healthInfo: HealthInfo;
     setHealthInfo: (info: HealthInfo) => void;
 }) {
-    const handleAllergiesChange = (hasAllergies: boolean) => {
-        setHealthInfo({
-            ...healthInfo,
-            hasAllergies,
-            allergies: hasAllergies ? healthInfo.allergies : ''
-        });
-    };
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: { errors },
+        watch,
+        setValue
+    } = useForm<HealthInfo>({
+        defaultValues: healthInfo
+    });
 
-    const handleMedicationsChange = (hasMedications: boolean) => {
-        setHealthInfo({
-            ...healthInfo,
-            hasMedications,
-            medications: hasMedications ? healthInfo.medications : ''
-        });
-    };
+    // Watch form values to sync with parent component
+    const watchedValues = watch();
+    
+    // Update parent form when values change
+    React.useEffect(() => {
+        setHealthInfo(watchedValues);
+    }, [watchedValues, setHealthInfo]);
 
-    const handleChronicDiseasesChange = (hasChronicDiseases: boolean) => {
-        setHealthInfo({
-            ...healthInfo,
-            hasChronicDiseases,
-            chronicDiseases: hasChronicDiseases ? healthInfo.chronicDiseases : ''
-        });
+    const onSubmit = (data: HealthInfo) => {
+        setStep(4);
     };
 
     return <div className="flex flex-col gap-4 p-2 w-full">
@@ -77,127 +78,175 @@ function HealthInformationStep({
             <h1 className="text-lg font-semibold">ข้อมูลด้านสุขภาพ</h1>
         </div>
 
-        <div className="flex flex-col gap-2 text-sm">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 text-sm">
             <div className="flex flex-col items-start py-2 gap-2">
                 <label htmlFor="allergies">อาหารที่แพ้</label>
                 <div className="flex gap-2 justify-between w-full px-12">
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasAllergies-yes"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasAllergies === true}
-                            onChange={() => handleAllergiesChange(true)} 
-                        />
-                        <label htmlFor="hasAllergies-yes">มี</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasAllergies-no"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasAllergies === false}
-                            onChange={() => handleAllergiesChange(false)} 
-                        />
-                        <label htmlFor="hasAllergies-no">ไม่มี</label>
-                    </div>
+                    <Controller
+                        name="hasAllergies"
+                        control={control}
+                        render={({ field }) => (
+                            <>
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        id="hasAllergies-yes"
+                                        type="checkbox" 
+                                        className="w-4 h-4" 
+                                        checked={field.value === true}
+                                        onChange={() => {
+                                            field.onChange(true);
+                                            if (field.value !== true) {
+                                                setValue("allergies", "");
+                                            }
+                                        }}
+                                    />
+                                    <label htmlFor="hasAllergies-yes">มี</label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        id="hasAllergies-no"
+                                        type="checkbox" 
+                                        className="w-4 h-4" 
+                                        checked={field.value === false}
+                                        onChange={() => {
+                                            field.onChange(false);
+                                            setValue("allergies", "");
+                                        }}
+                                    />
+                                    <label htmlFor="hasAllergies-no">ไม่มี</label>
+                                </div>
+                            </>
+                        )}
+                    />
                 </div>
-                {healthInfo.hasAllergies && (
+                {watchedValues.hasAllergies && (
                     <input 
                         id="allergies"
                         type="text" 
                         placeholder="อาหารที่แพ้" 
                         className="text-sm mt-2"
-                        value={healthInfo.allergies}
-                        onChange={(e) => setHealthInfo({...healthInfo, allergies: e.target.value})}
+                        {...register("allergies")}
                     />
                 )}
             </div>
+            
             <div className="flex flex-col items-start py-2 gap-2">
                 <label htmlFor="medications">ยาที่แพ้</label>
                 <div className="flex gap-2 justify-between w-full px-12">
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasMedications-yes"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasMedications === true}
-                            onChange={() => handleMedicationsChange(true)} 
-                        />
-                        <label htmlFor="hasMedications-yes">มี</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasMedications-no"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasMedications === false}
-                            onChange={() => handleMedicationsChange(false)} 
-                        />
-                        <label htmlFor="hasMedications-no">ไม่มี</label>
-                    </div>
+                    <Controller
+                        name="hasMedications"
+                        control={control}
+                        render={({ field }) => (
+                            <>
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        id="hasMedications-yes"
+                                        type="checkbox" 
+                                        className="w-4 h-4" 
+                                        checked={field.value === true}
+                                        onChange={() => {
+                                            field.onChange(true);
+                                            if (field.value !== true) {
+                                                setValue("medications", "");
+                                            }
+                                        }}
+                                    />
+                                    <label htmlFor="hasMedications-yes">มี</label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        id="hasMedications-no"
+                                        type="checkbox" 
+                                        className="w-4 h-4" 
+                                        checked={field.value === false}
+                                        onChange={() => {
+                                            field.onChange(false);
+                                            setValue("medications", "");
+                                        }}
+                                    />
+                                    <label htmlFor="hasMedications-no">ไม่มี</label>
+                                </div>
+                            </>
+                        )}
+                    />
                 </div>
-                {healthInfo.hasMedications && (
+                {watchedValues.hasMedications && (
                     <input 
                         id="medications"
                         type="text" 
                         placeholder="ยาที่แพ้" 
                         className="text-sm mt-2"
-                        value={healthInfo.medications}
-                        onChange={(e) => setHealthInfo({...healthInfo, medications: e.target.value})}
+                        {...register("medications")}
                     />
                 )}
             </div>
+            
             <div className="flex flex-col items-start py-2 gap-2">
                 <label htmlFor="chronicDiseases">โรคประจำตัว</label>
                 <div className="flex gap-2 justify-between w-full px-12">
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasChronicDiseases-yes"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasChronicDiseases === true}
-                            onChange={() => handleChronicDiseasesChange(true)} 
-                        />
-                        <label htmlFor="hasChronicDiseases-yes">มี</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <input 
-                            id="hasChronicDiseases-no"
-                            type="checkbox" 
-                            className="w-4 h-4" 
-                            checked={healthInfo.hasChronicDiseases === false}
-                            onChange={() => handleChronicDiseasesChange(false)} 
-                        />
-                        <label htmlFor="hasChronicDiseases-no">ไม่มี</label>
-                    </div>
+                    <Controller
+                        name="hasChronicDiseases"
+                        control={control}
+                        render={({ field }) => (
+                            <>
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        id="hasChronicDiseases-yes"
+                                        type="checkbox" 
+                                        className="w-4 h-4" 
+                                        checked={field.value === true}
+                                        onChange={() => {
+                                            field.onChange(true);
+                                            if (field.value !== true) {
+                                                setValue("chronicDiseases", "");
+                                            }
+                                        }}
+                                    />
+                                    <label htmlFor="hasChronicDiseases-yes">มี</label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        id="hasChronicDiseases-no"
+                                        type="checkbox" 
+                                        className="w-4 h-4" 
+                                        checked={field.value === false}
+                                        onChange={() => {
+                                            field.onChange(false);
+                                            setValue("chronicDiseases", "");
+                                        }}
+                                    />
+                                    <label htmlFor="hasChronicDiseases-no">ไม่มี</label>
+                                </div>
+                            </>
+                        )}
+                    />
                 </div>
-                {healthInfo.hasChronicDiseases && (
+                {watchedValues.hasChronicDiseases && (
                     <input 
                         id="chronicDiseases"
                         type="text" 
                         placeholder="โรคประจำตัว" 
                         className="text-sm mt-2"
-                        value={healthInfo.chronicDiseases}
-                        onChange={(e) => setHealthInfo({...healthInfo, chronicDiseases: e.target.value})}
+                        {...register("chronicDiseases")}
                     />
                 )}
             </div>
-        </div>
-        <img src="/firstdate/register/divider.png" alt="Divider" className="w-full mb-4" />
-        <div className="flex flex-col w-full justify-center items-center gap-4">
-            <button 
-                className={`bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full ${
-                    healthInfo.hasAllergies === null || healthInfo.hasMedications === null || healthInfo.hasChronicDiseases === null 
-                        ? "opacity-50 cursor-not-allowed" : ""
-                }`}  
-                onClick={() => setStep(4)} 
-                disabled={healthInfo.hasAllergies === null || healthInfo.hasMedications === null || healthInfo.hasChronicDiseases === null}
-            >
-                ถัดไป
-            </button>
-            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full" onClick={() => setStep(2)}>ย้อนกลับ</button>
-        </div>
+            
+            <img src="/firstdate/register/divider.png" alt="Divider" className="w-full mb-4" />
+            <div className="flex flex-col w-full justify-center items-center gap-4">
+                <button 
+                    type="submit"
+                    className={`bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full ${
+                        watchedValues.hasAllergies === null || watchedValues.hasMedications === null || watchedValues.hasChronicDiseases === null 
+                            ? "opacity-50 cursor-not-allowed" : ""
+                    }`}  
+                    disabled={watchedValues.hasAllergies === null || watchedValues.hasMedications === null || watchedValues.hasChronicDiseases === null}
+                >
+                    ถัดไป
+                </button>
+                <button type="button" className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full" onClick={() => setStep(2)}>ย้อนกลับ</button>
+            </div>
+        </form>
     </div>
 }
 
@@ -210,48 +259,41 @@ function ContactInformationStep({
     contactInfo: ContactInfo;
     setContactInfo: (info: ContactInfo) => void;
 }) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch
+    } = useForm<ContactInfo>({
+        defaultValues: contactInfo
+    });
+
+    // Watch form values to sync with parent component
+    const watchedValues = watch();
+    
+    // Update parent form when values change
+    React.useEffect(() => {
+        setContactInfo(watchedValues);
+    }, [watchedValues, setContactInfo]);
+
+    const onSubmit = (data: ContactInfo) => {
+        setStep(3);
+    };
+
     return <div className="flex flex-col gap-4 p-2 w-full">
         <div className="flex flex-col w-full justify-center items-center gap-2">
             <img src="/firstdate/register/staff/glob.svg" alt="Background" />
             <h1 className="text-lg font-semibold">ข้อมูลการติดต่อ</h1>
         </div>
-        <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="phoneNumber">เบอร์โทรศัพท์</label>
-            <div className="flex items-center gap-2">
-                <select 
-                    id="phoneCountryCode"
-                    className="text-sm"
-                    value={contactInfo.phoneCountryCode}
-                    onChange={(e) => setContactInfo({...contactInfo, phoneCountryCode: e.target.value})}
-                >
-                    <option value="th">+66</option>
-                    <option value="us">+1</option>
-                    <option value="uk">+44</option>
-                    <option value="jp">+81</option>
-                    <option value="cn">+86</option>
-                    <option value="fr">+33</option>
-                </select>
-                <input 
-                    id="phoneNumber"
-                    type="text" 
-                    placeholder="เบอร์โทรศัพท์" 
-                    className="text-sm"
-                    value={contactInfo.phoneNumber}
-                    onChange={(e) => setContactInfo({...contactInfo, phoneNumber: e.target.value})}
-                />
-            </div>
-        </div>
-        <img src="/firstdate/register/divider.png" alt="Divider" className="w-full" />
-        <div className="flex flex-col gap-4">
-            <h1 className="text-lg font-semibold text-center py-4">ข้อมูลผู้ปกครอง</h1>
+        
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
             <div className="flex flex-col gap-2">
-                <label htmlFor="guardianPhoneNumber">เบอร์โทรศัพท์ของผู้ปกครอง</label>
+                <label className="text-sm" htmlFor="phoneNumber">เบอร์โทรศัพท์</label>
                 <div className="flex items-center gap-2">
                     <select 
-                        id="guardianPhoneCountryCode"
+                        id="phoneCountryCode"
                         className="text-sm"
-                        value={contactInfo.guardianPhoneCountryCode}
-                        onChange={(e) => setContactInfo({...contactInfo, guardianPhoneCountryCode: e.target.value})}
+                        {...register("phoneCountryCode")}
                     >
                         <option value="th">+66</option>
                         <option value="us">+1</option>
@@ -261,33 +303,62 @@ function ContactInformationStep({
                         <option value="fr">+33</option>
                     </select>
                     <input 
-                        id="guardianPhoneNumber"
+                        id="phoneNumber"
                         type="text" 
                         placeholder="เบอร์โทรศัพท์" 
                         className="text-sm"
-                        value={contactInfo.guardianPhoneNumber}
-                        onChange={(e) => setContactInfo({...contactInfo, guardianPhoneNumber: e.target.value})}
+                        {...register("phoneNumber")}
                     />
-                </div>  
+                </div>
             </div>
-            <div className="flex flex-col gap-2">
-                <label htmlFor="guardianRelationship">ความสัมพันธ์</label>
-                <select 
-                    id="guardianRelationship"
-                    className="text-sm"
-                    value={contactInfo.guardianRelationship}
-                    onChange={(e) => setContactInfo({...contactInfo, guardianRelationship: e.target.value})}
-                >
-                    <option value="father">พ่อ</option>
-                    <option value="mother">แม่</option>
-                    <option value="guardian">ผู้ปกครอง</option>
-                </select>
+            
+            <img src="/firstdate/register/divider.png" alt="Divider" className="w-full" />
+            
+            <div className="flex flex-col gap-4">
+                <h1 className="text-lg font-semibold text-center py-4">ข้อมูลผู้ปกครอง</h1>
+                <div className="flex flex-col gap-2">
+                    <label htmlFor="guardianPhoneNumber">เบอร์โทรศัพท์ของผู้ปกครอง</label>
+                    <div className="flex items-center gap-2">
+                        <select 
+                            id="guardianPhoneCountryCode"
+                            className="text-sm"
+                            {...register("guardianPhoneCountryCode")}
+                        >
+                            <option value="th">+66</option>
+                            <option value="us">+1</option>
+                            <option value="uk">+44</option>
+                            <option value="jp">+81</option>
+                            <option value="cn">+86</option>
+                            <option value="fr">+33</option>
+                        </select>
+                        <input 
+                            id="guardianPhoneNumber"
+                            type="text" 
+                            placeholder="เบอร์โทรศัพท์" 
+                            className="text-sm"
+                            {...register("guardianPhoneNumber")}
+                        />
+                    </div>  
+                </div>
+                <div className="flex flex-col gap-2">
+                    <label htmlFor="guardianRelationship">ความสัมพันธ์</label>
+                    <select 
+                        id="guardianRelationship"
+                        className="text-sm"
+                        {...register("guardianRelationship")}
+                    >
+                        <option value="father">พ่อ</option>
+                        <option value="mother">แม่</option>
+                        <option value="guardian">ผู้ปกครอง</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div className="flex flex-col w-full justify-center items-center gap-4">
-            <button className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full"  onClick={() => setStep(3)}>ถัดไป</button>
-            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full" onClick={() => setStep(1)}>ย้อนกลับ</button>
-        </div>
+            
+            <div className="flex flex-col w-full justify-center items-center gap-4">
+                <button type="submit" className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full">ถัดไป</button>
+                <button type="button" className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full" onClick={() => setStep(1)}>ย้อนกลับ</button>
+            </div>
+        </form>
     </div>
 }
 
@@ -300,99 +371,117 @@ function PersonalInformationStep({
     personalInfo: PersonalInfo;
     setPersonalInfo: (info: PersonalInfo) => void;
 }) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch
+    } = useForm<PersonalInfo>({
+        defaultValues: personalInfo
+    });
+
+    // Watch form values to sync with parent component
+    const watchedValues = watch();
+    
+    // Update parent form when values change
+    React.useEffect(() => {
+        setPersonalInfo(watchedValues);
+    }, [watchedValues, setPersonalInfo]);
+
+    const onSubmit = (data: PersonalInfo) => {
+        setStep(2);
+    };
+
     return <div className="flex flex-col gap-4 p-2 w-full">
         <div className="flex flex-col w-full justify-center items-center gap-2">
             <img src="/firstdate/register/staff/glob.svg" alt="Background" />
             <h1 className="text-lg font-semibold">ข้อมูลส่วนตัว</h1>
         </div>
-        <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="title">คำนำหน้าชื่อ</label>
-            <select 
-                id="title"
-                className="text-sm"
-                value={personalInfo.title}
-                onChange={(e) => setPersonalInfo({...personalInfo, title: e.target.value})}
-            >
-                <option value="mr">นาย</option>
-                <option value="ms">นางสาว</option>
-                <option value="mrs">นาง</option>
-            </select>
-        </div>
-        <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="firstName">ชื่อจริง</label>
-            <input 
-                id="firstName"
-                className="text-sm" 
-                type="text" 
-                placeholder="ชื่อจริง"
-                value={personalInfo.firstName}
-                onChange={(e) => setPersonalInfo({...personalInfo, firstName: e.target.value})}
-            />
-        </div>
-        <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="lastName">นามสกุล</label>
-            <input 
-                id="lastName"
-                className="text-sm" 
-                type="text" 
-                placeholder="นามสกุล"
-                value={personalInfo.lastName}
-                onChange={(e) => setPersonalInfo({...personalInfo, lastName: e.target.value})}
-            />
-        </div>
-        <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="nickname">ชื่อเล่น</label>
-            <input 
-                id="nickname"
-                className="text-sm" 
-                type="text" 
-                placeholder="ชื่อเล่น"
-                value={personalInfo.nickname}
-                onChange={(e) => setPersonalInfo({...personalInfo, nickname: e.target.value})}
-            />
-        </div>
-        <div className="flex justify-between gap-3">
+        
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
             <div className="flex flex-col gap-2">
-                <label className="text-sm" htmlFor="faculty">คณะ</label>
+                <label className="text-sm" htmlFor="title">คำนำหน้าชื่อ</label>
                 <select 
-                    id="faculty"
+                    id="title"
                     className="text-sm"
-                    value={personalInfo.faculty}
-                    onChange={(e) => setPersonalInfo({...personalInfo, faculty: e.target.value})}
+                    {...register("title")}
                 >
-                    <option value="engineering">วิศวกรรมศาสตร์</option>
-                    <option value="science">วิทยาศาสตร์</option>
-                    <option value="arts">ศิลปศาสตร์</option>
-                    <option value="business">บริหารธุรกิจ</option>
-                    <option value="law">นิติศาสตร์</option>
-                    <option value="education">ศึกษาศาสตร์</option>
-                    <option value="medicine">แพทยศาสตร์</option>
-                    <option value="dentistry">ทันตแพทยศาสตร์</option>
-                    <option value="pharmacy">เภสัชศาสตร์</option>
-                    <option value="nursing">พยาบาลศาสตร์</option>
+                    <option value="mr">นาย</option>
+                    <option value="ms">นางสาว</option>
+                    <option value="mrs">นาง</option>
                 </select>
             </div>
             <div className="flex flex-col gap-2">
-                <label className="text-sm" htmlFor="year">ชั้นปี</label>
-                <select 
-                    id="year"
-                    className="text-sm"
-                    value={personalInfo.year}
-                    onChange={(e) => setPersonalInfo({...personalInfo, year: e.target.value})}
-                >
-                    <option value="1">ปี 1</option>
-                    <option value="2">ปี 2</option>
-                    <option value="3">ปี 3</option>
-                    <option value="4">ปี 4</option>
-                    <option value="5">ปี 5</option>
-                    <option value="6">ปี 6</option>
-                </select>
+                <label className="text-sm" htmlFor="firstName">ชื่อจริง</label>
+                <input 
+                    id="firstName"
+                    className="text-sm" 
+                    type="text" 
+                    placeholder="ชื่อจริง"
+                    {...register("firstName")}
+                />
             </div>
-        </div>
-        <div className="flex flex-col w-full justify-center items-center gap-4">
-            <button className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full"  onClick={() => setStep(2)}>ถัดไป</button>
-            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full" onClick={() => window.location.href = "/"}>ย้อนกลับ</button>
-        </div>
+            <div className="flex flex-col gap-2">
+                <label className="text-sm" htmlFor="lastName">นามสกุล</label>
+                <input 
+                    id="lastName"
+                    className="text-sm" 
+                    type="text" 
+                    placeholder="นามสกุล"
+                    {...register("lastName")}
+                />
+            </div>
+            <div className="flex flex-col gap-2">
+                <label className="text-sm" htmlFor="nickname">ชื่อเล่น</label>
+                <input 
+                    id="nickname"
+                    className="text-sm" 
+                    type="text" 
+                    placeholder="ชื่อเล่น"
+                    {...register("nickname")}
+                />
+            </div>
+            <div className="flex justify-between gap-3">
+                <div className="flex flex-col gap-2">
+                    <label className="text-sm" htmlFor="faculty">คณะ</label>
+                    <select 
+                        id="faculty"
+                        className="text-sm"
+                        {...register("faculty")}
+                    >
+                        <option value="engineering">วิศวกรรมศาสตร์</option>
+                        <option value="science">วิทยาศาสตร์</option>
+                        <option value="arts">ศิลปศาสตร์</option>
+                        <option value="business">บริหารธุรกิจ</option>
+                        <option value="law">นิติศาสตร์</option>
+                        <option value="education">ศึกษาศาสตร์</option>
+                        <option value="medicine">แพทยศาสตร์</option>
+                        <option value="dentistry">ทันตแพทยศาสตร์</option>
+                        <option value="pharmacy">เภสัชศาสตร์</option>
+                        <option value="nursing">พยาบาลศาสตร์</option>
+                    </select>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <label className="text-sm" htmlFor="year">ชั้นปี</label>
+                    <select 
+                        id="year"
+                        className="text-sm"
+                        {...register("year")}
+                    >
+                        <option value="1">ปี 1</option>
+                        <option value="2">ปี 2</option>
+                        <option value="3">ปี 3</option>
+                        <option value="4">ปี 4</option>
+                        <option value="5">ปี 5</option>
+                        <option value="6">ปี 6</option>
+                    </select>
+                </div>
+            </div>
+            <div className="flex flex-col w-full justify-center items-center gap-4">
+                <button type="submit" className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full">ถัดไป</button>
+                <button type="button" className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full" onClick={() => window.location.href = "/"}>ย้อนกลับ</button>
+            </div>
+        </form>
     </div>
 }
 

@@ -1,13 +1,28 @@
 import { useState } from "react";
+import type { UseFormRegister, FieldErrors, UseFormSetValue } from "react-hook-form";
+
+interface LoginFormData {
+  studentId: string;
+  citizenId: string;
+  password: string;
+  newPassword: string;
+  confirmPassword: string;
+}
 
 export default function LoginStep({
-  form,
-  setForm,
+  register,
+  errors,
+  formValues,
+  setValue,
+  onSubmit,
   onForgot,
   userType,
 }: {
-  form: any;
-  setForm: any;
+  register: UseFormRegister<LoginFormData>;
+  errors: FieldErrors<LoginFormData>;
+  formValues: LoginFormData;
+  setValue: UseFormSetValue<LoginFormData>;
+  onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   onForgot: () => void;
   userType: "student" | "staff";
 }) {
@@ -15,36 +30,6 @@ export default function LoginStep({
     userType === "student"
       ? "/firstdate/register/glob.svg"
       : "/firstdate/register/staff/glob.svg";
-  
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-
-  const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
-    
-    if (!form.studentId.trim()) {
-      newErrors.studentId = 'กรุณากรอกรหัสนิสิต';
-    }
-    
-    if (!form.citizenId.trim()) {
-      newErrors.citizenId = 'กรุณากรอกรหัสบัตรประชาชน';
-    } else if (!/^[0-9]{13}$/.test(form.citizenId.replace(/\s/g, ''))) {
-      newErrors.citizenId = 'กรุณากรอกรหัสบัตรประชาชนให้ถูกต้อง (13 หลัก)';
-    }
-    
-    if (!form.password.trim()) {
-      newErrors.password = 'กรุณากรอกรหัสผ่าน';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleLogin = () => {
-    if (validateForm()) {
-      // Handle login logic here
-      console.log('Login form submitted:', form);
-    }
-  };
 
   return (
     <div className="flex w-full flex-col gap-4 p-2">
@@ -53,85 +38,80 @@ export default function LoginStep({
         <h1 className="text-lg font-semibold">เข้าสู่ระบบ</h1>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm" htmlFor="studentId">
-          รหัสนิสิต <span className="text-red-400">*</span>
-        </label>
-        <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-          <input
-            id="studentId"
-            type="text"
-            placeholder="รหัสนิสิต"
-            className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.studentId ? 'border-red-500' : ''}`}
-            value={form.studentId}
-            onChange={(e) => {
-              setForm({ ...form, studentId: e.target.value });
-              if (errors.studentId) {
-                setErrors({...errors, studentId: ''});
-              }
-            }}
-          />
+      <form onSubmit={onSubmit} className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
+          <label className="text-sm" htmlFor="studentId">
+            รหัสนิสิต <span className="text-red-400">*</span>
+          </label>
+          <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+            <input
+              id="studentId"
+              type="text"
+              placeholder="รหัสนิสิต"
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.studentId ? 'border-red-500' : ''}`}
+              {...register("studentId", {
+                required: "กรุณากรอกรหัสนิสิต"
+              })}
+            />
+          </div>
+          {errors.studentId && <span className="text-red-400 text-xs">{errors.studentId.message}</span>}
         </div>
-        {errors.studentId && <span className="text-red-400 text-xs">{errors.studentId}</span>}
-      </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm" htmlFor="citizenId">
-          รหัสบัตรประชาชน <span className="text-red-400">*</span>
-        </label>
-        <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-          <input
-            id="citizenId"
-            type="text"
-            placeholder="รหัสบัตรประชาชน"
-            className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.citizenId ? 'border-red-500' : ''}`}
-            value={form.citizenId}
-            onChange={(e) => {
-              setForm({ ...form, citizenId: e.target.value });
-              if (errors.citizenId) {
-                setErrors({...errors, citizenId: ''});
-              }
-            }}
-          />
+        <div className="flex flex-col gap-2">
+          <label className="text-sm" htmlFor="citizenId">
+            รหัสบัตรประชาชน <span className="text-red-400">*</span>
+          </label>
+          <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+            <input
+              id="citizenId"
+              type="text"
+              placeholder="รหัสบัตรประชาชน"
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.citizenId ? 'border-red-500' : ''}`}
+              {...register("citizenId", {
+                required: "กรุณากรอกรหัสบัตรประชาชน",
+                pattern: {
+                  value: /^[0-9]{13}$/,
+                  message: "กรุณากรอกรหัสบัตรประชาชนให้ถูกต้อง (13 หลัก)"
+                }
+              })}
+            />
+          </div>
+          {errors.citizenId && <span className="text-red-400 text-xs">{errors.citizenId.message}</span>}
         </div>
-        {errors.citizenId && <span className="text-red-400 text-xs">{errors.citizenId}</span>}
-      </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm" htmlFor="password">
-          รหัสผ่าน <span className="text-red-400">*</span>
-        </label>
-        <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-          <input
-            id="password"
-            type="password"
-            placeholder="รหัสผ่าน"
-            className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.password ? 'border-red-500' : ''}`}
-            value={form.password}
-            onChange={(e) => {
-              setForm({ ...form, password: e.target.value });
-              if (errors.password) {
-                setErrors({...errors, password: ''});
-              }
-            }}
-          />
+        <div className="flex flex-col gap-2">
+          <label className="text-sm" htmlFor="password">
+            รหัสผ่าน <span className="text-red-400">*</span>
+          </label>
+          <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+            <input
+              id="password"
+              type="password"
+              placeholder="รหัสผ่าน"
+              className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.password ? 'border-red-500' : ''}`}
+              {...register("password", {
+                required: "กรุณากรอกรหัสผ่าน"
+              })}
+            />
+          </div>
+          {errors.password && <span className="text-red-400 text-xs">{errors.password.message}</span>}
         </div>
-        {errors.password && <span className="text-red-400 text-xs">{errors.password}</span>}
-      </div>
 
-      <button
-        onClick={onForgot}
-        className="text-right text-sm text-gray-500 underline"
-      >
-        ลืมรหัสผ่าน?
-      </button>
+        <button
+          type="button"
+          onClick={onForgot}
+          className="text-right text-sm text-gray-500 underline"
+        >
+          ลืมรหัสผ่าน?
+        </button>
 
-      <button 
-        className="flex items-center justify-center bg-white py-2 text-black transition-colors duration-200 hover:bg-gray-100"
-        onClick={handleLogin}
-      >
-        เข้าสู่ระบบ
-      </button>
+        <button 
+          type="submit"
+          className="flex items-center justify-center bg-white py-2 text-black transition-colors duration-200 hover:bg-gray-100"
+        >
+          เข้าสู่ระบบ
+        </button>
+      </form>
     </div>
   );
 }

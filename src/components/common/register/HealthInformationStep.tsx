@@ -1,249 +1,351 @@
 import { ChevronLeft } from "lucide-react";
-import { useState } from "react";
+import { useEffect } from "react";
+import {
+  Controller,
+  useWatch,
+  type UseFormRegister,
+  type FieldErrors,
+  type UseFormSetValue,
+  type Control,
+  type UseFormClearErrors,
+} from "react-hook-form";
 
 export interface HealthInfo {
-    hasAllergies: boolean | null;
-    allergies: string;
-    hasMedications: boolean | null;
-    medications: string;
-    hasChronicDiseases: boolean | null;
-    chronicDiseases: string;
+  hasAllergies: boolean | null;
+  allergies: string;
+  hasMedications: boolean | null;
+  medications: string;
+  hasChronicDiseases: boolean | null;
+  chronicDiseases: string;
 }
 
-export default function HealthInformationStep({ 
-    setStep, 
-    healthInfo, 
-    setHealthInfo,
-    userType
-}: { 
-    setStep: (step: number) => void;
-    healthInfo: HealthInfo;
-    setHealthInfo: (info: HealthInfo) => void;
-    userType: 'student' | 'staff';
+interface RegisterFormData {
+  title: string;
+  firstName: string;
+  lastName: string;
+  nickname: string;
+  faculty: string;
+  year: string;
+  phoneNumber: string;
+  guardianPhoneNumber: string;
+  guardianRelationship: string;
+  hasAllergies: boolean | null;
+  allergies: string;
+  hasMedications: boolean | null;
+  medications: string;
+  hasChronicDiseases: boolean | null;
+  chronicDiseases: string;
+}
+
+export default function HealthInformationStep({
+  register,
+  errors,
+  formValues,
+  setValue,
+  control,
+  clearErrors,
+  onSubmit,
+  setStep,
+  userType,
+}: {
+  register: UseFormRegister<RegisterFormData>;
+  errors: FieldErrors<RegisterFormData>;
+  formValues: RegisterFormData;
+  setValue: UseFormSetValue<RegisterFormData>;
+  control: Control<RegisterFormData>;
+  clearErrors: UseFormClearErrors<RegisterFormData>;
+  onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
+  setStep: (step: number) => void;
+  userType: 'student' | 'staff';
 }) {
-    const globUrl = userType === 'student' ? '/firstdate/register/glob.svg' : '/firstdate/register/staff/glob.svg';
-    const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const globUrl =
+    userType === 'student'
+      ? '/firstdate/register/glob.svg'
+      : '/firstdate/register/staff/glob.svg';
 
-    const validateForm = () => {
-        const newErrors: {[key: string]: string} = {};
-        
-        if (healthInfo.hasAllergies === null) {
-            newErrors.hasAllergies = 'กรุณาตอบคำถามเกี่ยวกับอาหารที่แพ้';
-        } else if (healthInfo.hasAllergies && !healthInfo.allergies.trim()) {
-            newErrors.allergies = 'กรุณาระบุอาหารที่แพ้';
-        }
-        
-        if (healthInfo.hasMedications === null) {
-            newErrors.hasMedications = 'กรุณาตอบคำถามเกี่ยวกับยาที่แพ้';
-        } else if (healthInfo.hasMedications && !healthInfo.medications.trim()) {
-            newErrors.medications = 'กรุณาระบุยาที่แพ้';
-        }
-        
-        if (healthInfo.hasChronicDiseases === null) {
-            newErrors.hasChronicDiseases = 'กรุณาตอบคำถามเกี่ยวกับโรคประจำตัว';
-        } else if (healthInfo.hasChronicDiseases && !healthInfo.chronicDiseases.trim()) {
-            newErrors.chronicDiseases = 'กรุณาระบุโรคประจำตัว';
-        }
-        
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+  const watchHasAllergies = useWatch({ control, name: 'hasAllergies' });
+  const watchHasMedications = useWatch({ control, name: 'hasMedications' });
+  const watchHasChronicDiseases = useWatch({
+    control,
+    name: 'hasChronicDiseases',
+  });
 
-    const handleNext = () => {
-        if (validateForm()) {
-            setStep(4);
-        }
-    };
+  useEffect(() => {
+    if (formValues.hasAllergies === false) {
+      clearErrors('allergies');
+      setValue('allergies', '');
+    }
+    if (formValues.hasMedications === false) {
+      clearErrors('medications');
+      setValue('medications', '');
+    }
+    if (formValues.hasChronicDiseases === false) {
+      clearErrors('chronicDiseases');
+      setValue('chronicDiseases', '');
+    }
+  }, [
+    formValues.hasAllergies,
+    formValues.hasMedications,
+    formValues.hasChronicDiseases,
+    clearErrors,
+    setValue,
+  ]);
 
-    const handleAllergiesChange = (hasAllergies: boolean) => {
-        setHealthInfo({
-            ...healthInfo,
-            hasAllergies,
-            allergies: hasAllergies ? healthInfo.allergies : ''
-        });
-        if (errors.hasAllergies) {
-            setErrors({...errors, hasAllergies: ''});
-        }
-        if (errors.allergies && !hasAllergies) {
-            setErrors({...errors, allergies: ''});
-        }
-    };
+  const CustomCheckbox = ({
+    checked,
+    onClick,
+    type,
+  }: {
+    checked: boolean;
+    onClick: () => void;
+    type: 'yes' | 'no';
+  }) => (
+    <img
+      src={`/firstdate/register/${checked ? 'checked' : 'unchecked'}-${type}.png`}
+      alt={checked ? 'Checked' : 'Unchecked'}
+      className="h-10 cursor-pointer"
+      onClick={onClick}
+    />
+  );
 
-    const handleMedicationsChange = (hasMedications: boolean) => {
-        setHealthInfo({
-            ...healthInfo,
-            hasMedications,
-            medications: hasMedications ? healthInfo.medications : ''
-        });
-        if (errors.hasMedications) {
-            setErrors({...errors, hasMedications: ''});
-        }
-        if (errors.medications && !hasMedications) {
-            setErrors({...errors, medications: ''});
-        }
-    };
+  return (
+    <div className="flex flex-col gap-4 p-2 w-full">
+      <div className="flex flex-col w-full justify-center items-center gap-2">
+        <img src={globUrl} alt="Background" />
+        <h1 className="text-lg font-semibold">ข้อมูลด้านสุขภาพ</h1>
+      </div>
 
-    const handleChronicDiseasesChange = (hasChronicDiseases: boolean) => {
-        setHealthInfo({
-            ...healthInfo,
-            hasChronicDiseases,
-            chronicDiseases: hasChronicDiseases ? healthInfo.chronicDiseases : ''
-        });
-        if (errors.hasChronicDiseases) {
-            setErrors({...errors, hasChronicDiseases: ''});
-        }
-        if (errors.chronicDiseases && !hasChronicDiseases) {
-            setErrors({...errors, chronicDiseases: ''});
-        }
-    };
-
-    const CustomCheckbox = ({ 
-        id, 
-        checked, 
-        onChange, 
-        type, 
-    }: { 
-        id: string; 
-        checked: boolean; 
-        onChange: () => void; 
-        type: 'yes' | 'no';
-    }) => (
-        <img 
-            src={checked ? `/firstdate/register/checked-${type}.png` : `/firstdate/register/unchecked-${type}.png`}
-            alt={checked ? 'Checked' : 'Unchecked'}
-            className="h-10 cursor-pointer"
-            onClick={onChange}
-        />
-    );
-
-    return <div className="flex flex-col gap-4 p-2 w-full">
-        <div className="flex flex-col w-full justify-center items-center gap-2">
-            <img src={globUrl} alt="Background" />
-            <h1 className="text-lg font-semibold">ข้อมูลด้านสุขภาพ</h1>
+      <form onSubmit={onSubmit} className="flex flex-col gap-2 text-sm">
+        {/* Section: Allergies */}
+        <div className="flex flex-col items-start py-2 gap-2">
+          <label htmlFor="allergies">
+            อาหารที่แพ้ <span className="text-red-400">*</span>
+          </label>
+          <div className="flex gap-2 justify-between w-full px-2">
+            <Controller
+              name="hasAllergies"
+              control={control}
+              rules={{
+                validate: (v) =>
+                  v === true || v === false || 'กรุณาเลือกมีหรือไม่มี',
+              }}
+              render={({ field }) => (
+                <>
+                  <CustomCheckbox
+                    checked={field.value === true}
+                    onClick={() => {
+                      field.onChange(true);
+                      setValue('allergies', '');
+                      clearErrors('allergies');
+                    }}
+                    type="yes"
+                  />
+                  <CustomCheckbox
+                    checked={field.value === false}
+                    onClick={() => {
+                      field.onChange(false);
+                      setValue('allergies', '');
+                      clearErrors('allergies');
+                    }}
+                    type="no"
+                  />
+                </>
+              )}
+            />
+          </div>
+          {errors.hasAllergies && (
+            <span className="text-red-400 text-xs">
+              {errors.hasAllergies.message}
+            </span>
+          )}
+          {watchHasAllergies && (
+            <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px] mt-2">
+              <Controller
+                name="allergies"
+                control={control}
+                rules={{
+                  required: 'กรุณาระบุอาหารที่แพ้',
+                }}
+                render={({ field }) => (
+                  <input
+                    id="allergies"
+                    type="text"
+                    placeholder="อาหารที่แพ้"
+                    className={`text-sm bg-black w-full h-full p-1 rounded-sm ${
+                      errors.allergies ? 'border-red-500' : ''
+                    }`}
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+          )}
+          {errors.allergies && (
+            <span className="text-red-400 text-xs">
+              {errors.allergies.message}
+            </span>
+          )}
         </div>
 
-        <div className="flex flex-col gap-2 text-sm">
-            <div className="flex flex-col items-start py-2 gap-2">
-                <label htmlFor="allergies">อาหารที่แพ้ <span className="text-red-400">*</span></label>
-                <div className="flex gap-2 justify-between w-full px-2">
-                    <CustomCheckbox
-                        id="hasAllergies-yes"
-                        checked={healthInfo.hasAllergies === true}
-                        onChange={() => handleAllergiesChange(true)}
-                        type="yes"
-                    />
-                    <CustomCheckbox
-                        id="hasAllergies-no"
-                        checked={healthInfo.hasAllergies === false}
-                        onChange={() => handleAllergiesChange(false)}
-                        type="no"
-                    />
-                </div>
-                {errors.hasAllergies && <span className="text-red-400 text-xs">{errors.hasAllergies}</span>}
-                {healthInfo.hasAllergies && (
-                    <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px] mt-2">
-                        <input 
-                            id="allergies"
-                            type="text" 
-                            placeholder="อาหารที่แพ้" 
-                            className={`text-sm bg-black w-full h-full p-1 rounded-sm ${errors.allergies ? 'border-red-500' : ''}`}
-                            value={healthInfo.allergies}
-                            onChange={(e) => {
-                                setHealthInfo({...healthInfo, allergies: e.target.value});
-                                if (errors.allergies) {
-                                    setErrors({...errors, allergies: ''});
-                                }
-                            }}
-                        />
-                    </div>
+        {/* Section: Medications */}
+        <div className="flex flex-col items-start py-2 gap-2">
+          <label htmlFor="medications">
+            ยาที่แพ้ <span className="text-red-400">*</span>
+          </label>
+          <div className="flex gap-2 justify-between w-full px-2">
+            <Controller
+              name="hasMedications"
+              control={control}
+              rules={{
+                validate: (v) =>
+                  v === true || v === false || 'กรุณาเลือกมีหรือไม่มี',
+              }}
+              render={({ field }) => (
+                <>
+                  <CustomCheckbox
+                    checked={field.value === true}
+                    onClick={() => {
+                      field.onChange(true);
+                      setValue('medications', '');
+                      clearErrors('medications');
+                    }}
+                    type="yes"
+                  />
+                  <CustomCheckbox
+                    checked={field.value === false}
+                    onClick={() => {
+                      field.onChange(false);
+                      setValue('medications', '');
+                      clearErrors('medications');
+                    }}
+                    type="no"
+                  />
+                </>
+              )}
+            />
+          </div>
+          {errors.hasMedications && (
+            <span className="text-red-400 text-xs">
+              {errors.hasMedications.message}
+            </span>
+          )}
+          {watchHasMedications && (
+            <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px] mt-2">
+              <Controller
+                name="medications"
+                control={control}
+                rules={{
+                  required: 'กรุณาระบุยาที่แพ้',
+                }}
+                render={({ field }) => (
+                  <input
+                    id="medications"
+                    type="text"
+                    placeholder="ยาที่แพ้"
+                    className={`text-sm bg-black w-full h-full p-1 rounded-sm ${
+                      errors.medications ? 'border-red-500' : ''
+                    }`}
+                    {...field}
+                  />
                 )}
-                {errors.allergies && <span className="text-red-400 text-xs">{errors.allergies}</span>}
+              />
             </div>
-            <div className="flex flex-col items-start py-2 gap-2">
-                <label htmlFor="medications">ยาที่แพ้ <span className="text-red-400">*</span></label>
-                <div className="flex gap-2 justify-between w-full px-2">
-                    <CustomCheckbox
-                        id="hasMedications-yes"
-                        checked={healthInfo.hasMedications === true}
-                        onChange={() => handleMedicationsChange(true)}
-                        type="yes"
-                    />
-                    <CustomCheckbox
-                        id="hasMedications-no"
-                        checked={healthInfo.hasMedications === false}
-                        onChange={() => handleMedicationsChange(false)}
-                        type="no"
-                    />
-                </div>
-                {errors.hasMedications && <span className="text-red-400 text-xs">{errors.hasMedications}</span>}
-                {healthInfo.hasMedications && (
-                    <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px] mt-2">
-                        <input 
-                            id="medications"
-                            type="text" 
-                            placeholder="ยาที่แพ้" 
-                            className={`text-sm bg-black w-full h-full p-1 rounded-sm ${errors.medications ? 'border-red-500' : ''}`}
-                            value={healthInfo.medications}
-                            onChange={(e) => {
-                                setHealthInfo({...healthInfo, medications: e.target.value});
-                                if (errors.medications) {
-                                    setErrors({...errors, medications: ''});
-                                }
-                            }}
-                        />
-                    </div>
-                )}
-                {errors.medications && <span className="text-red-400 text-xs">{errors.medications}</span>}
-            </div>
-            <div className="flex flex-col items-start py-2 gap-2">
-                <label htmlFor="chronicDiseases">โรคประจำตัว <span className="text-red-400">*</span></label>
-                <div className="flex gap-2 justify-between w-full px-2">
-                    <CustomCheckbox
-                        id="hasChronicDiseases-yes"
-                        checked={healthInfo.hasChronicDiseases === true}
-                        onChange={() => handleChronicDiseasesChange(true)}
-                        type="yes"
-                    />
-                    <CustomCheckbox
-                        id="hasChronicDiseases-no"
-                        checked={healthInfo.hasChronicDiseases === false}
-                        onChange={() => handleChronicDiseasesChange(false)}
-                        type="no"
-                    />
-                </div>
-                {errors.hasChronicDiseases && <span className="text-red-400 text-xs">{errors.hasChronicDiseases}</span>}
-                {healthInfo.hasChronicDiseases && (
-                    <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px] mt-2">
-                        <input 
-                            id="chronicDiseases"
-                            type="text" 
-                            placeholder="โรคประจำตัว" 
-                            className={`text-sm bg-black w-full h-full p-1 rounded-sm ${errors.chronicDiseases ? 'border-red-500' : ''}`}
-                            value={healthInfo.chronicDiseases}
-                            onChange={(e) => {
-                                setHealthInfo({...healthInfo, chronicDiseases: e.target.value});
-                                if (errors.chronicDiseases) {
-                                    setErrors({...errors, chronicDiseases: ''});
-                                }
-                            }}
-                        />
-                    </div>
-                )}
-                {errors.chronicDiseases && <span className="text-red-400 text-xs">{errors.chronicDiseases}</span>}
-            </div>
+          )}
+          {errors.medications && (
+            <span className="text-red-400 text-xs">
+              {errors.medications.message}
+            </span>
+          )}
         </div>
-        <img src="/firstdate/register/divider.png" alt="Divider" className="w-full mb-4" />
+
+        {/* Section: Chronic Diseases */}
+        <div className="flex flex-col items-start py-2 gap-2">
+          <label htmlFor="chronicDiseases">
+            โรคประจำตัว <span className="text-red-400">*</span>
+          </label>
+          <div className="flex gap-2 justify-between w-full px-2">
+            <Controller
+              name="hasChronicDiseases"
+              control={control}
+              rules={{
+                validate: (v) =>
+                  v === true || v === false || 'กรุณาเลือกมีหรือไม่มี',
+              }}
+              render={({ field }) => (
+                <>
+                  <CustomCheckbox
+                    checked={field.value === true}
+                    onClick={() => {
+                      field.onChange(true);
+                      setValue('chronicDiseases', '');
+                      clearErrors('chronicDiseases');
+                    }}
+                    type="yes"
+                  />
+                  <CustomCheckbox
+                    checked={field.value === false}
+                    onClick={() => {
+                      field.onChange(false);
+                      setValue('chronicDiseases', '');
+                      clearErrors('chronicDiseases');
+                    }}
+                    type="no"
+                  />
+                </>
+              )}
+            />
+          </div>
+          {errors.hasChronicDiseases && (
+            <span className="text-red-400 text-xs">
+              {errors.hasChronicDiseases.message}
+            </span>
+          )}
+          {watchHasChronicDiseases && (
+            <div className="w-full cut-edge-all-sm bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px] mt-2">
+              <Controller
+                name="chronicDiseases"
+                control={control}
+                rules={{
+                  required: 'กรุณาระบุโรคประจำตัว',
+                }}
+                render={({ field }) => (
+                  <input
+                    id="chronicDiseases"
+                    type="text"
+                    placeholder="โรคประจำตัว"
+                    className={`text-sm bg-black w-full h-full p-1 rounded-sm ${
+                      errors.chronicDiseases ? 'border-red-500' : ''
+                    }`}
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+          )}
+          {errors.chronicDiseases && (
+            <span className="text-red-400 text-xs">
+              {errors.chronicDiseases.message}
+            </span>
+          )}
+        </div>
+
         <div className="flex flex-col w-full justify-center items-center gap-4">
-            <button 
-                className="bg-gradient-to-t from-[#FFB6C1] to-[#CB438B] py-2 w-36 text-white rounded-full"  
-                onClick={handleNext}
-            >
-                ยืนยันข้อมูล
-            </button>
-            <button className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full flex items-center justify-center gap-2" onClick={() => setStep(2)}>
-                <ChevronLeft className="w-4 h-4" />
-                <p>ย้อนกลับ</p>
-            </button>
+          <button
+            type="submit"
+            className="bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 w-36 text-black rounded-full"
+          >
+            ถัดไป
+          </button>
+          <button
+            type="button"
+            className="bg-gradient-to-b from-gray-500 to-gray-700 py-2 w-36 rounded-full flex items-center justify-center gap-2"
+            onClick={() => setStep(2)}
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <p>ย้อนกลับ</p>
+          </button>
         </div>
+      </form>
     </div>
+  );
 }
