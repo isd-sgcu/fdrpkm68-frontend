@@ -4,22 +4,17 @@ import Footer from "@common/Footer.astro";
 import Navbar from "@common/Navbar.astro";
 
 import Snackbar from "@/components/common/Snackbar.astro";
+import { rpkmThemeConfigs } from "@/config/rpkmTheme";
+import type { RpkmVariant } from "@/types/common";
 
 interface Props {
   title?: string;
   description?: string;
-  variant?: "rpkm_home" | "rpkm_summary" | "rpkm_workshops";
+  variant?: RpkmVariant;
 }
 
-const backgroundImages = {
-  rpkm_home: "/images/rpkm/bg/home.png",
-  rpkm_workshops: "/images/rpkm/bg/rpkm_workshops.png",
-  rubpuen: "/images/rpkm/bg/rubpuen.png",
-  rpkm_summary: "/images/rpkm/bg/rpkm_summary.png",
-};
-
 const { title, description, variant = "rpkm_home" } = Astro.props;
-const backgroundImage = backgroundImages[variant];
+const backgroundImage = rpkmThemeConfigs[variant]?.backgroundImage;
 ---
 
 <!doctype html>
@@ -38,12 +33,6 @@ const backgroundImage = backgroundImages[variant];
       class="mx-auto flex min-h-screen max-w-[440px] flex-col gap-8 bg-cover bg-center bg-no-repeat text-white"
       style={`background-image: url(${backgroundImage})`}
     >
-      <Navbar
-        variant="rpkm"
-        navigateBackHref="/rpkm/home"
-        hideLogo
-        bgTransparent={variant === "rpkm_home"}
-      />
       <Navbar
         variant="rpkm"
         navigateBackHref="/rpkm/home"
