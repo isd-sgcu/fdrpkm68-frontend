@@ -88,6 +88,7 @@ export default [
             "external",
             "internal",
             ["parent", "sibling", "index"],
+            "type",
           ],
           pathGroups: [
             {
@@ -143,11 +144,11 @@ export default [
       ],
       "import/no-relative-packages": "error",
       // "import/no-relative-parent-imports": "error",
-      'no-restricted-imports': [
-        'error',
+      "no-restricted-imports": [
+        "error",
         {
-          patterns: ['../*', './*']
-        }
+          patterns: ["../*", "./*"],
+        },
       ],
       "import/no-useless-path-segments": ["error", { noUselessIndex: true }],
 
