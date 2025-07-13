@@ -1,0 +1,135 @@
+---
+/**
+ * HorizonlineFest
+ * @example basic
+ * ```astro
+ * <HorizonlineFest variant="blue" />
+ * <HorizonlineFest variant="yellow" />
+ * ```
+ *
+ * @param variant - Line color variant: 'blue' or 'yellow'
+ * @param class - Additional CSS classes
+ */
+
+import { cn } from "@/lib/utils";
+
+export type VariantType = "blue" | "yellow";
+
+export interface Props {
+  variant?: VariantType;
+  class?: string;
+}
+
+const {
+  variant = "blue",
+  class: additionalClasses = "",
+  ...restProps
+} = Astro.props;
+---
+
+<div
+  class={cn(
+    "horizonline-fest flex w-full items-center justify-center",
+    additionalClasses
+  )}
+  data-variant={variant}
+  {...restProps}
+>
+  {
+    variant === "blue" && (
+      <svg
+        width="312"
+        height="12"
+        viewBox="0 0 312 12"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-full max-w-sm"
+      >
+        <path
+          d="M0.226497 6L6 11.7735L11.7735 6L6 0.226497L0.226497 6ZM311.773 6L306 0.226497L300.227 6L306 11.7735L311.773 6ZM6 6V7H306V6V5H6V6Z"
+          fill="#72CED7"
+        />
+      </svg>
+    )
+  }
+
+  {
+    variant === "yellow" && (
+      <svg
+        width="322"
+        height="22"
+        viewBox="0 0 322 22"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-full max-w-sm"
+      >
+        <g filter="url(#filter0_d_1251_3416)">
+          <path
+            d="M5.2265 11L11 16.7735L16.7735 11L11 5.2265L5.2265 11ZM316.773 11L311 5.2265L305.227 11L311 16.7735L316.773 11ZM11 11V12H311V11V10H11V11Z"
+            fill="#F09810"
+          />
+        </g>
+        <defs>
+          <filter
+            id="filter0_d_1251_3416"
+            x="0.22644"
+            y="0.22644"
+            width="321.547"
+            height="21.5471"
+            filterUnits="userSpaceOnUse"
+            color-interpolation-filters="sRGB"
+          >
+            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+            <feColorMatrix
+              in="SourceAlpha"
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+              result="hardAlpha"
+            />
+            <feOffset />
+            <feGaussianBlur stdDeviation="2.5" />
+            <feComposite in2="hardAlpha" operator="out" />
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"
+            />
+            <feBlend
+              mode="normal"
+              in2="BackgroundImageFix"
+              result="effect1_dropShadow_1251_3416"
+            />
+            <feBlend
+              mode="normal"
+              in="SourceGraphic"
+              in2="effect1_dropShadow_1251_3416"
+              result="shape"
+            />
+          </filter>
+        </defs>
+      </svg>
+    )
+  }
+</div>
+
+<style>
+  .horizonline-fest {
+    /* Ensure proper spacing and alignment */
+    margin: 0.5rem 0;
+  }
+
+  .horizonline-fest svg {
+    /* Ensure SVGs scale properly */
+    height: auto;
+    display: block;
+  }
+
+  /* Blue variant specific styling */
+  .horizonline-fest[data-variant="blue"] svg {
+    min-height: 12px;
+  }
+
+  /* Yellow variant specific styling */
+  .horizonline-fest[data-variant="yellow"] svg {
+    min-height: 22px;
+  }
+</style>
