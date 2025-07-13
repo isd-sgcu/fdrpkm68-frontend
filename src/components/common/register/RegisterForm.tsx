@@ -1,7 +1,8 @@
-import { useForm } from "react-hook-form";
 
 import type { ReactNode } from "react";
 import { useCallback, useState } from "react";
+
+import { useForm } from "react-hook-form";
 
 import PDPAConsent from "@/components/common/PDPAConsent";
 import CompleteStep from "@/components/common/register/CompleteStep";

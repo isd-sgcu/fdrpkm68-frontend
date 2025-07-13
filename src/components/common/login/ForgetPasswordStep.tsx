@@ -1,10 +1,11 @@
+import type { ReactNode } from "react";
+
 import type {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
 } from "react-hook-form";
 
-import type { ReactNode } from "react";
 
 interface LoginFormData {
   studentId: string;
