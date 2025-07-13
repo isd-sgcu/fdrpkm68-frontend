@@ -214,3 +214,8 @@ body {
     0 100%
   );
 }
+
+body.no-scroll {
+  overflow: hidden;
+  height: 100%;
+}

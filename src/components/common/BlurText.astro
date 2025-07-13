@@ -16,7 +16,7 @@ const {textSize, className, blurClassName} = Astro.props;
   <p class={cn("z-10", className, textSize)}>
     <slot />
   </p>
-  <p class={cn("z-[-10] absolute top-0 left-0", blurClassName, textSize)}>
+  <p class={cn("z-[1] absolute top-0 left-0", blurClassName, textSize)}>
     <slot />
   </p>
 </div>
