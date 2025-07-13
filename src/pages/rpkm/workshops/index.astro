@@ -1,7 +1,70 @@
 ---
+import WorkshopList from "@/components/rpkm/workshop/WorkshopList";
 import Layout from "@/layouts/rpkm/WithNavbar.astro";
+import type { WorkshopData } from "@/types/rpkm-workshop/workshop";
+
+export const keychainWorkshop: WorkshopData = {
+  title: "Keychain Workshop",
+  description:
+    "ออกแบบพวงกุญแจหรือที่ห้อยกระเป๋าเฉพาะตัว สำหรับนิสิตรุ่น CU 109",
+  metaDate: "1 สิงหาคม 2568",
+  metaLocation: "อาคารจามจุรี 9 / ลานพระบรมรูปสองรัชกาล",
+  metaTime: "6 รอบ รอบละ 50 คน",
+  details: {
+    date: "1 สิงหาคม 2568",
+    locations: [
+      "ลานพระบรมรูปสองรัชกาล (บ้านรับเพื่อนฝั่งใหญ่)",
+      "อาคารจามจุรี 9",
+    ],
+    times: [
+      "รอบที่ 1 : 13.00-13.30",
+      "รอบที่ 2 : 13.40-14.10",
+      "รอบที่ 3 : 14.20-14.50",
+      "รอบที่ 4 : 15.10-15.40",
+      "รอบที่ 5 : 15.50-16.20",
+      "รอบที่ 6 : 16.30-17.00",
+    ],
+  },
+  current: 300,
+  total: 600,
+  workshopId: "1",
+};
+export const diffuserWorkshop: WorkshopData = {
+  title: "Diffuser Workshop",
+  description:
+    "ออกแบบ Diffuser โดยสามารถเลือกกลิ่นประจำตัวได้ สำหรับนิสิตรุ่น CU 109",
+  metaDate: "1 สิงหาคม 2568",
+  metaLocation: "อาคารจามจุรี 9 / ลานพระบรมรูปสองรัชกาล",
+  metaTime: "6 รอบ รอบละ 50 คน",
+  details: {
+    date: "1 สิงหาคม 2568",
+    locations: [
+      "ลานพระบรมรูปสองรัชกาล (บ้านรับเพื่อนฝั่งใหญ่)",
+      "อาคารจามจุรี 9",
+    ],
+    times: [
+      "รอบที่ 1 : 13.00-13.30",
+      "รอบที่ 2 : 13.40-14.10",
+      "รอบที่ 3 : 14.20-14.50",
+      "รอบที่ 4 : 15.10-15.40",
+      "รอบที่ 5 : 15.50-16.20",
+      "รอบที่ 6 : 16.30-17.00",
+    ],
+  },
+  current: 120,
+  total: 600,
+  workshopId: "2",
+};
+
+export const workshops: WorkshopData[] = [keychainWorkshop, diffuserWorkshop];
 ---
 
-<Layout>
-  <h1>workshops</h1>
+<Layout variant="rpkm_workshops">
+  <div class="pb-10">
+    <WorkshopList
+      client:load
+      initialVariant="rpkm_workshops"
+      workshops={workshops}
+    />
+  </div>
 </Layout>

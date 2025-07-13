@@ -5,6 +5,7 @@ const API_BASE_URL =
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
+  message?: string;
   error?: string;
 }
 
