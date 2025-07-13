@@ -7,39 +7,58 @@ interface Props {
   title?: string;
 }
 
-const { navigateBackHref, hideLogo = false, bgTransparent = false, variant = "default", title } = Astro.props;
+const {
+  navigateBackHref,
+  hideLogo = false,
+  bgTransparent = false,
+  variant = "default",
+  title,
+} = Astro.props;
 ---
 
-{variant === "rpkm" ? (
-  <nav class="w-full h-[63px] flex items-center bg-black px-3 py-1">
-    {navigateBackHref ? (
-      <a href={navigateBackHref} class="text-white text-2xl font-bold cursor-pointer">{"<"}</a>
-    ) : (
-      <div class="w-6"></div>
-    )}
-    <p class="flex-grow text-center text-[#D38DD8] font-semibold text-xl">
-      {title || "รับเพื่อนก้าวใหม่ 68"}
-    </p>
-    <div class="w-6"></div>
-  </nav>
-) : (
-  <nav class={`flex items-center h-16 w-full justify-between p-1 ${bgTransparent ? 'bg-transparent' : 'bg-white'}`}>
-    <div>
-      {navigateBackHref && (
-        <a href={navigateBackHref} class="p-2">
-          <img src="/common/arrow-left.svg" alt="back" class="h-4 w-auto" />
+{
+  variant === "rpkm" ? (
+    <nav class="flex h-[63px] w-full items-center bg-black px-3 py-1">
+      {navigateBackHref ? (
+        <a
+          href={navigateBackHref}
+          class="cursor-pointer text-2xl font-bold text-white"
+        >
+          {"<"}
+        </a>
+      ) : (
+        <div class="w-6" />
+      )}
+      <p class="flex-grow text-center text-xl font-semibold text-[#D38DD8]">
+        {title || "รับเพื่อนก้าวใหม่ 68"}
+      </p>
+      <div class="w-6" />
+    </nav>
+  ) : (
+    <nav
+      class={`flex h-16 w-full items-center justify-between p-1 ${bgTransparent ? "bg-transparent" : "bg-white"}`}
+    >
+      <div>
+        {navigateBackHref && (
+          <a href={navigateBackHref} class="p-2">
+            <img src="/common/arrow-left.svg" alt="back" class="h-4 w-auto" />
+          </a>
+        )}
+      </div>
+
+      {!hideLogo && (
+        <a href="/firstdate/home/">
+          <img src="/common/logo_freshmenfest.svg" alt="logo" />
         </a>
       )}
-    </div>
-    
-    {!hideLogo && (
-      <a href="/firstdate/home/">
-        <img src="/common/logo_freshmenfest.svg" alt="logo" />
-      </a>
-    )}
-    
-    <button>
-      <img src="/common/hamburger.svg" alt="menu" class="h-3 w-auto -translate-x-4" />
-    </button>
-  </nav>
-)}
+
+      <button>
+        <img
+          src="/common/hamburger.svg"
+          alt="menu"
+          class="h-3 w-auto -translate-x-4"
+        />
+      </button>
+    </nav>
+  )
+}

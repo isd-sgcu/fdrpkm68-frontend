@@ -34,6 +34,7 @@
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.60.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
     "zod": "^4.0.5"
@@ -66,7 +67,8 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx,astro}": [
       "eslint --fix",
-      "prettier --write"
+      "prettier --write",
+      "pnpm lint --fix"
     ],
     "*.{json,md,yml,yaml}": [
       "prettier --write"

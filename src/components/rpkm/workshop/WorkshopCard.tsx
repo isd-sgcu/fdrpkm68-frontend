@@ -44,7 +44,9 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
   };
 
   useEffect(() => {
-    if (!formData || !isLoading) {return;}
+    if (!formData || !isLoading) {
+      return;
+    }
     dialogConfirm.close();
     dialogSuccess.open();
     setIsLoading(false);
