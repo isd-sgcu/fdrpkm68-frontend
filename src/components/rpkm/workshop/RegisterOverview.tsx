@@ -2,15 +2,18 @@ import type { JSX } from "astro/jsx-runtime";
 
 import ButtonRpkm from "@/components/common/react/ButtonRpkm";
 import Frame from "@/components/common/react/Frame";
-import type { WorkshopCardProps } from "@/components/rpkm/workshop/WorkshopCard";
+import type { WorkshopData } from "@/types/rpkm-workshop/workshop";
 
-interface RegisterOverviewProps extends WorkshopCardProps {
+/*
+Unused component for workshop registration overview.
+*/
+interface RegisterOverviewProps extends WorkshopData {
   onConfirm?: () => void;
 }
 
 export default function RegisterOverview({
   onConfirm,
-  ...props
+  // ...workshop
 }: RegisterOverviewProps): JSX.Element {
   return (
     <Frame size="sm" noWrapper>

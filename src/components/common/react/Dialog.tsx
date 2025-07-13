@@ -6,7 +6,7 @@ import "@/lib/dialogManager";
 // Ensure DialogManager is initialized
 
 interface DialogProps {
-  id: string;
+  id?: string;
   children: ReactNode;
   className?: string;
   onOpen?: () => void;
@@ -14,10 +14,12 @@ interface DialogProps {
   onConfirm?: () => void;
   backdrop?: boolean;
   closeOnBackdrop?: boolean;
+  forceOpen?: boolean;
+  forceLevel?: number;
 }
 
 export function Dialog({
-  id,
+  id = "",
   children,
   className = "",
   onOpen,
@@ -25,6 +27,8 @@ export function Dialog({
   onConfirm,
   backdrop = true,
   closeOnBackdrop = true,
+  forceOpen = false,
+  forceLevel,
 }: DialogProps): ReactNode {
   const dialogRef = useRef<HTMLDivElement>(null);
   const {
@@ -70,7 +74,7 @@ export function Dialog({
     }
   }, [isOpen, closeOnBackdrop, close]);
 
-  if (!isOpen) {
+  if (!isOpen && !forceOpen) {
     return null;
   }
 
@@ -78,7 +82,7 @@ export function Dialog({
     <div
       ref={dialogRef}
       className={`animate-fade-in fixed top-0 left-1/2 z-50 flex h-screen w-full max-w-[440px] -translate-x-1/2 transform items-center justify-center ${className}`}
-      style={{ zIndex: 1000 + level }}
+      style={{ zIndex: 1000 + (forceLevel ? forceLevel : level) }}
       role="dialog"
       aria-modal="true"
     >
@@ -91,7 +95,7 @@ export function Dialog({
         />
       )}
       <div
-        className="animate-scale-in relative mx-4 max-h-[80vh] w-full max-w-sm overflow-auto rounded-lg shadow-lg"
+        className="animate-scale-in relative mx-4 max-h-[80vh] w-full max-w-sm rounded-lg shadow-lg"
         role="document"
         tabIndex={-1}
       >

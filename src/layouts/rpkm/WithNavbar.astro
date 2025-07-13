@@ -3,6 +3,8 @@ import "@/styles/global.css";
 import Footer from "@common/Footer.astro";
 import Navbar from "@common/Navbar.astro";
 
+import Snackbar from "@/components/common/Snackbar.astro";
+
 interface Props {
   title?: string;
   description?: string;
@@ -31,6 +33,7 @@ const backgroundImage = backgroundImages[variant];
     <meta name="description" content={description} />
   </head>
   <body class="min-h-screen min-w-screen bg-slate-500">
+    <Snackbar />
     <div
       class="mx-auto flex min-h-screen max-w-[440px] flex-col gap-8 bg-cover bg-center bg-no-repeat text-white"
       style={`background-image: url(${backgroundImage})`}

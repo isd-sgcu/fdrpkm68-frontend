@@ -1,81 +1,119 @@
+
+import { useEffect, useState } from "react";
+
 import type { JSX } from "astro/jsx-runtime";
+
+import { Calendar, Clock4, MapPin } from "lucide-react";
 
 import ButtonRpkm from "@/components/common/react/ButtonRpkm";
 import { Dialog, DialogBody } from "@/components/common/react/Dialog";
 import Frame from "@/components/common/react/Frame";
+import Loading from "@/components/common/react/Loading";
+import CapacityBar from "@/components/rpkm/workshop/CapacityBar";
 import RegisterConfirm from "@/components/rpkm/workshop/RegisterConfirm";
-import RegisterOverview from "@/components/rpkm/workshop/RegisterOverview";
 import RegisterSuccess from "@/components/rpkm/workshop/RegisterSuccess";
 import { useDialog } from "@/hooks/useDialog";
+import { showSnackbar } from "@/lib/utils";
+import { submitWorkshopRegistration } from "@/lib/workshopAPI";
+import type { RegisterFormData } from "@/types/rpkm-workshop/schema";
+import type { WorkshopData } from "@/types/rpkm-workshop/workshop";
 
-// import ProgressBar from "@/components/common/ProgressBar.astro";
+export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
+  // const dialogOverview = useDialog(`workshop-overview-${workshopId}`);
+  const dialogConfirm = useDialog(`workshop-confirm-${workshop.workshopId}`);
+  const dialogSuccess = useDialog(`workshop-success-${workshop.workshopId}`);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<RegisterFormData | null>(null);
 
-export interface WorkshopCardProps {
-  title: string;
-  description: string;
-  dates: string[];
-  current: number;
-  total: number;
-  workshopId: string;
-}
+  const handleConfirm = async (
+    registerFormData: RegisterFormData
+  ): Promise<void> => {
+    setIsLoading(true);
+    const response = await submitWorkshopRegistration(
+      workshop.workshopId,
+      registerFormData
+    );
 
-export default function WorkshopCard(props: WorkshopCardProps): JSX.Element {
-  const { title, description, dates, current, total, workshopId } = props;
+    if (!response.success) {
+      showSnackbar("เกิดข้อผิดพลาดในการลงทะเบียน", "error");
+      setIsLoading(false);
+      return;
+    }
 
-  const dialogOverview = useDialog(`workshop-overview-${workshopId}`);
-  const dialogConfirm = useDialog(`workshop-confirm-${workshopId}`);
-  const dialogSuccess = useDialog(`workshop-success-${workshopId}`);
+    setFormData(registerFormData);
+  };
+
+  useEffect(() => {
+    dialogConfirm.close();
+    dialogSuccess.open();
+    setIsLoading(false);
+  }, [formData, dialogConfirm, dialogSuccess]);
 
   return (
     <>
-      <Frame size="sm">
-        <div className="flex h-full w-full flex-col px-3 py-8">
+      {isLoading && <Loading />}
+      <Frame size="sm" noWrapper>
+        <div className="flex h-full w-full flex-col justify-between px-8 pt-8 pb-5">
           <h1 className="text-center text-4xl font-bold text-nowrap">
-            {title}
+            {workshop.title}
           </h1>
-          <p className="py-4">{description}</p>
-          <div className="pb-4">
-            {dates.map((date, index) => (
-              <p key={index} className="py-1">
-                {date}
-              </p>
-            ))}
+          <p className="py-4">{workshop.description}</p>
+          <div className="flex flex-col gap-2 pb-4 text-sm">
+            <span className="flex gap-2">
+              <Calendar size={20} />
+              {workshop.metaDate}
+            </span>
+            <span className="flex gap-2">
+              <MapPin size={20} />
+              {workshop.metaLocation}
+            </span>
+            <span className="flex gap-2">
+              <Clock4 size={20} />
+              {workshop.metaTime}
+            </span>
           </div>
-          <ButtonRpkm
-            className="mx-auto text-nowrap"
-            size="lg"
-            color="blue"
-            onClick={dialogOverview.open}
-          >
-            ดูรายละอียด
-          </ButtonRpkm>
-          {/* <ProgressBar current={current} total={total} /> */}
+          <div className="flex flex-col items-center gap-4">
+            <ButtonRpkm
+              className="mx-autotext-nowrap"
+              size="lg"
+              color="blue"
+              onClick={dialogConfirm.open}
+            >
+              ดูรายละอียด
+            </ButtonRpkm>
+            <CapacityBar current={workshop.current} total={workshop.total} />
+          </div>
         </div>
       </Frame>
-      <Dialog id={`workshop-overview-${workshopId}`}>
+
+      {/* น่าจะ skip อันนี้ไปเลยเพราะต้องทำ carousel ซึ่ง ไม่มีภาพ + ขก */}
+      {/* <Dialog id={`workshop-overview-${workshop.workshopId}`}>
         <DialogBody>
           <RegisterOverview {...props} onConfirm={dialogConfirm.open} />
         </DialogBody>
-      </Dialog>
+      </Dialog> */}
 
-      <Dialog id={`workshop-confirm-${workshopId}`}>
+      <Dialog id={`workshop-confirm-${workshop.workshopId}`}>
         <DialogBody>
           <RegisterConfirm
-            {...props}
-            onConfirm={() => {
-              dialogConfirm.closeAll();
-              dialogSuccess.open();
-            }}
+            onConfirm={handleConfirm}
             onDismiss={dialogConfirm.close}
+            {...workshop}
           />
         </DialogBody>
       </Dialog>
 
-      <Dialog id={`workshop-success-${workshopId}`}>
-        <DialogBody>
-          <RegisterSuccess {...props} />
-        </DialogBody>
-      </Dialog>
+      {formData && (
+        <Dialog id={`workshop-success-${workshop.workshopId}`}>
+          <DialogBody>
+            <RegisterSuccess
+              {...workshop}
+              workshopForm={formData}
+              onDismiss={dialogSuccess.close}
+            />
+          </DialogBody>
+        </Dialog>
+      )}
     </>
   );
 }

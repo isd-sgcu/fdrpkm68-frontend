@@ -1,9 +1,14 @@
-import React, { useMemo } from 'react';
-import type { ReactNode } from 'react';
+
+import React from "react";
+import type { ReactNode } from "react";
+
+import { X } from "lucide-react";
+
+import { useTheme } from "@/config/ThemeContext";
 
 /**
  * Frame Component
- * 
+ *
  * @component
  * @example
  * ```tsx
@@ -14,7 +19,7 @@ import type { ReactNode } from 'react';
  *   </div>
  * </Frame>
  * ```
- * 
+ *
  * @example
  * ```tsx
  * // Large purple frame for hero sections
@@ -22,7 +27,7 @@ import type { ReactNode } from 'react';
  *   <div>Your content</div>
  * </Frame>
  * ```
- * 
+ *
  * @param {('xs'|'sm'|'md'|'lg')} [size='lg'] - Frame size
  * @param {('blue'|'purple')} [color='blue'] - Frame color theme
  * @param {string} [className] - Additional CSS classes
@@ -31,59 +36,66 @@ import type { ReactNode } from 'react';
  */
 
 export interface FrameProps {
-  size?: 'lg' | 'md' | 'sm' | 'xs';
-  color?: 'blue' | 'purple';
+  size?: "lg" | "md" | "sm" | "xs";
+  color?: "blue" | "purple";
   className?: string;
   noWrapper?: boolean;
   children: ReactNode;
+  frameId?: string;
+  onClickX?: () => void;
 }
 
-const Frame: React.FC<FrameProps> = ({ 
-  size = 'lg', 
-  color = 'blue',
-  className = '',
+const Frame: React.FC<FrameProps> = ({
+  size = "lg",
+  color = "blue",
+  className = "",
   noWrapper = false,
-  children
+  children,
+  frameId: propFrameId,
+  onClickX,
 }) => {
+  const { theme } = useTheme();
+
+  const frameId = propFrameId ?? "frame"; // fallback to a static id or use index if in a list
   const frameSvg = `/images/frame/frame-${color}-${size}.svg`;
 
   // Size configuration with aspect ratios and minimum heights
   const sizeConfig = {
     lg: {
-      aspectRatio: '346/550',
-      minHeight: '550px',
+      aspectRatio: "346/550",
+      minHeight: "550px",
     },
     md: {
-      aspectRatio: '346/430',
-      minHeight: '430px',
+      aspectRatio: "346/430",
+      minHeight: "430px",
     },
     sm: {
-      aspectRatio: '346/340',
-      minHeight: '340px',
+      aspectRatio: "346/340",
+      minHeight: "340px",
     },
     xs: {
-      aspectRatio: '346/248',
-      minHeight: '248px',
-    }
+      aspectRatio: "346/248",
+      minHeight: "248px",
+    },
   };
 
   const config = sizeConfig[size];
 
   // Generate stable unique ID that doesn't change on re-renders
-  const frameId = useMemo(() => 
-    `frame-${Math.random().toString(36).substr(2, 9)}`, 
-    []
-  );
-  
+  // const frameId = useMemo(() =>
+  //   `frame-${Math.random().toString(36).substr(2, 9)}`,
+  //   []
+  // );
+
   const contentClipClass = `frame-content-clip-${frameId}`;
   const containerClass = `frame-container-${frameId}`;
 
   // Size-specific content margins
   const contentMargins = {
-    lg: '8% 10%',
-    md: '6% 9%',
-    sm: '5% 8%',
-    xs: '4% 7%'
+    lg: "8% 10%",
+    md: "6% 9%",
+    sm: "5% 8%",
+    xs: "4% 7%",
   };
 
   // CSS styles as a string
@@ -125,9 +137,9 @@ const Frame: React.FC<FrameProps> = ({
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: styles }} />
-      
-      <div 
-        className={`${containerClass} relative w-full max-h-screen overflow-visible ${className}`}
+
+      <div
+        className={`${containerClass} relative max-h-screen w-full overflow-visible ${className}`}
         data-size={size}
         style={{
           aspectRatio: config.aspectRatio,
@@ -135,23 +147,41 @@ const Frame: React.FC<FrameProps> = ({
         }}
       >
         {/* Frame SVG background */}
-        <div 
+        <div
           className="absolute inset-0 bg-center bg-no-repeat"
           style={{
             backgroundImage: `url('${frameSvg}')`,
-            backgroundSize: '100% 100%',
+            backgroundSize: "100% 100%",
           }}
         />
-        
+
         {/* Content area with proper clipping */}
-        <div className={`absolute inset-0 flex content-area ${contentClipClass} overflow-y-auto overflow-x-hidden`}>
-          {noWrapper ? children : (
-            <div className="text-center w-full max-w-full px-8 py-6">
+        <div
+          className={`content-area absolute inset-0 flex ${contentClipClass} overflow-visible`}
+        >
+          {noWrapper ? (
+            children
+          ) : (
+            <div className="w-full max-w-full px-8 py-6 text-center">
               {children}
             </div>
           )}
         </div>
       </div>
+
+      {/* Close frame button */}
+      {onClickX && (
+        <button
+          className="cut-edge-t-l-b-r-sm absolute right-[50%] bottom-0 z-10 translate-x-1/2 translate-y-1/2 p-1 text-gray-700 hover:bg-gray-700 focus:outline-none"
+          style={{
+            backgroundColor: theme.primaryColor,
+          }}
+          onClick={onClickX}
+          aria-label="Close Frame"
+        >
+          <X size={24} />
+        </button>
+      )}
     </>
   );
 };

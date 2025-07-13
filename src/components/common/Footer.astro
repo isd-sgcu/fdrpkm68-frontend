@@ -1,8 +1,9 @@
 ---
 import { cn } from "@/lib/utils";
+import type { RpkmVariant } from "@/types/common";
 
 interface Props {
-  variant?: "firstdate" | "rpkm_home" | "rpkm_summary" | "rpkm_workshops";
+  variant?: "firstdate" | RpkmVariant;
 }
 
 const bgGradient = {
