@@ -1,0 +1,101 @@
+<!-- Add this too your root layout then utilize it by dispatching a custom event -->
+<div id="snackbar-container" style="display: none;"></div>
+
+<script>
+  let timeoutId: NodeJS.Timeout;
+
+  function showSnackbar(event: CustomEvent) {
+    const detail = event.detail || {};
+    const message = detail.message || "";
+    const type = detail.type || "info";
+
+    const container = document.getElementById("snackbar-container");
+    if (!container) return;
+
+    // Clear existing timeout
+    clearTimeout(timeoutId);
+
+    // Remove any existing snackbar
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+
+    // Create snackbar element
+    const snackbar = document.createElement("div");
+    snackbar.style.cssText = `
+      position: fixed;
+      left: 50%;
+      bottom: 32px;
+      transform: translateX(-50%);
+      background: ${type === "error" ? "#fee2e2" : type === "success" ? "#dcfce7" : "#dbeafe"};
+      color: ${type === "error" ? "#b91c1c" : type === "success" ? "#166534" : "#1e40af"};
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 9000;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 200px;
+      transition: opacity 0.2s;
+      opacity: 0;
+    `;
+
+    // Create icon element
+    const icon = document.createElement("span");
+    icon.innerHTML = type === "error" ? "✕" : type === "success" ? "✓" : "ℹ";
+    icon.style.cssText = `
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      color: ${type === "error" ? "#ef4444" : type === "success" ? "#22c55e" : "#3b82f6"};
+      font-weight: bold;
+    `;
+
+    // Create message element
+    const messageSpan = document.createElement("span");
+    messageSpan.textContent = message;
+
+    // Append elements
+    snackbar.appendChild(icon);
+    snackbar.appendChild(messageSpan);
+    container.appendChild(snackbar);
+    container.style.display = "block";
+
+    // Animate in
+    requestAnimationFrame(() => {
+      snackbar.style.opacity = "1";
+    });
+
+    // Set timeout to hide
+    timeoutId = setTimeout(() => {
+      snackbar.style.opacity = "0";
+      setTimeout(() => {
+        if (snackbar.parentNode) {
+          snackbar.parentNode.removeChild(snackbar);
+        }
+        if (container.children.length === 0) {
+          container.style.display = "none";
+        }
+      }, 200);
+    }, 3000);
+  }
+
+  // Add event listener
+  window.addEventListener("snackbar", showSnackbar as EventListener);
+
+  // Clean up on page unload
+  window.addEventListener("beforeunload", () => {
+    window.removeEventListener("snackbar", showSnackbar as EventListener);
+    clearTimeout(timeoutId);
+  });
+</script>
+
+<style>
+  #snackbar-container {
+    pointer-events: none;
+  }
+</style>
