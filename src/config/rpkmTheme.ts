@@ -14,12 +14,16 @@ export const rpkmThemeConfigs: Record<RpkmVariant, ThemeConfig> = {
     backgroundImage: "/images/rpkm/bg/rpkm_workshops.png",
     primaryColor: "#00FFFF",
     secondaryColor: "#8A2BE4",
+    colorVariants: "blue",
   },
   rpkm_rubpuen: {
     gradientType: "linear",
-    classes: "bg-gradient-to-b from-[#667eea] to-[#764ba2]",
+    classes:
+      "bg-[radial-gradient(50%_50%_at_50%_50%,_#8A2BE4_0%,_#2B2D42_100%)]",
     backgroundImage: "/images/rpkm/bg/rubpuen.png",
-    primaryColor: "#667eea",
+    primaryColor: "#8A2BE4",
+    secondaryColor: "#FF1493",
+    colorVariants: "purple",
   },
   rpkm_summary: {
     gradientType: "linear",
