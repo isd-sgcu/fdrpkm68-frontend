@@ -100,6 +100,19 @@ body {
     0 100%
   );
 }
+.cut-edge-r {
+  clip-path: polygon(
+    calc(20%) 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(90%) 100%,
+    0 100%,
+    0 100%
+  );
+}
+.cut-edge-l {
+  clip-path: polygon(10px 0, 100% 0, 100% 0, calc(80%) 100%, 0 100%, 0 10px);
+}
 
 /* sm (10px) */
 .cut-edge-all-sm {

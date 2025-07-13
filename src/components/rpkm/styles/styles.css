@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap");
 
 .font-ibmplex {
-  font-family: 'IBM Plex Sans Thai', sans-serif;
+  font-family: "IBM Plex Sans Thai", sans-serif;
 }
 
 /* x - 7.5, y - 10 */
@@ -27,25 +27,17 @@
 }
 
 /* x - 6, y - 8 */
-.trapezoid-l-1{
-  clip-path: polygon(
-    0% 22.5%, 
-    6% 30.5%, 
-    6% 49.5%, 
-    0% 57.5%);
+.trapezoid-l-1 {
+  clip-path: polygon(0% 22.5%, 6% 30.5%, 6% 49.5%, 0% 57.5%);
 }
 
 /* x - 6, y - 8 */
-.trapezoid-r-1{
-  clip-path: polygon(
-    100% 22.5%, 
-    94% 30.5%, 
-    94% 49.5%, 
-    100% 57.5%);
+.trapezoid-r-1 {
+  clip-path: polygon(100% 22.5%, 94% 30.5%, 94% 49.5%, 100% 57.5%);
 }
 
 /* Room's ID Input */
-.cut-input-1{
+.cut-input-1 {
   clip-path: polygon(
     0% 10%,
     5% 0%,
@@ -62,13 +54,12 @@
   width: 10px;
 }
 
-
 .custom-scrollbar::-webkit-scrollbar-track {
   background: white;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #D38DD8;
+  background-color: #d38dd8;
   height: 90px;
   border-radius: 9999px;
 }
