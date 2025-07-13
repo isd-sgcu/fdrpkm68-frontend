@@ -1,0 +1,55 @@
+---
+import ButtonFest from "@/components/common/ButtonFest.astro";
+
+const questItems = [
+  {
+    description: "เดินเดินจุ๊บๆ",
+    questLabel: "Quest 3.1",
+    href: "/fest/quest-3-1"
+  },
+  {
+    description: "เดินสามย่าน สายกินสายมู",
+    questLabel: "Quest 3.2",
+    href: "/fest/quest-3-2"
+  },
+  {
+    description: "Birdwalk",
+    questLabel: "Quest 3.3",
+    href: "/fest/quest-3-3"
+  },
+  {
+    description: "Trashvenger",
+    questLabel: "Quest 3.4",
+    href: "/fest/quest-3-4"
+  },
+  {
+    description: "Plantwalk",
+    questLabel: "Quest 3.5",
+    href: "/fest/quest-3-5"
+  },
+];
+---
+<div class="mb-[20px] w-[315px] mx-auto"> {/* Added mx-auto and p-4 for centering within the overall page layout */}
+  <p class="text-[24px] font-bold my-[20px] text-white font-ibm-plex-sans-thai">รายละเอียด Quest ย่อย</p>
+
+  <div class="flex flex-col gap-4 mx-[10px] ">
+    {questItems.map(item => (
+      <div class="flex items-center justify-between">
+        <p class="text-white text-lg mr-4 max-w-[100px] overflow-hidden flex-none">
+          {item.description}
+        </p>
+
+        {/* Explicitly set size="small" to use the predefined width */}
+        <ButtonFest href={item.href} size="small" >
+          <p class="whitespace-nowrap">
+            {item.questLabel}
+          </p>
+        </ButtonFest>
+      </div>
+    ))}
+  </div>
+  
+  <diV class="mt-[30px] text-center">
+    <ButtonFest color="pink" size="big">ลงทะเบียน Quest</ButtonFest>
+  </diV>
+</div>
