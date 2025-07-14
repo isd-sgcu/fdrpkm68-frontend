@@ -9,14 +9,14 @@ interface Props {
   translateY?: string;
 }
 
-const {textSize, className, blurClassName} = Astro.props;
+const { textSize, className, blurClassName } = Astro.props;
 ---
 
 <div class="relative">
   <p class={cn("z-10", className, textSize)}>
     <slot />
   </p>
-  <p class={cn("z-[1] absolute top-0 left-0", blurClassName, textSize)}>
+  <p class={cn("absolute top-0 left-0 z-[1]", blurClassName, textSize)}>
     <slot />
   </p>
 </div>
