@@ -100,6 +100,7 @@ export default function RegisterForm({
       } else {
         console.error("Registration failed:", response.message);
       }
+      setStep(4);
     },
     []
   );
@@ -161,7 +162,7 @@ export default function RegisterForm({
               setValue={setValue}
               control={control}
               clearErrors={clearErrors}
-              onSubmit={handleSubmit(onHealthSubmit)}
+              onSubmit={handleSubmit(onFinalSubmit)}
               setStep={setStep}
               userType={userType}
             />
