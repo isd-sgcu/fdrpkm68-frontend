@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
+import { ChevronLeft } from "lucide-react";
 import type {
   Control,
   FieldErrors,
@@ -11,31 +12,15 @@ import type {
 import { Controller } from "react-hook-form";
 
 
+import type { RegisterFormData } from "@/components/common/register/RegisterForm";
+
 export interface HealthInfo {
   hasAllergies: boolean | null;
-  allergies: string;
+  foodAllergy: string;
   hasMedications: boolean | null;
-  medications: string;
+  drugAllergy: string;
   hasChronicDiseases: boolean | null;
-  chronicDiseases: string;
-}
-
-interface RegisterFormData {
-  title: string;
-  firstName: string;
-  lastName: string;
-  nickname: string;
-  faculty: string;
-  year: string;
-  phoneNumber: string;
-  guardianPhoneNumber: string;
-  guardianRelationship: string;
-  hasAllergies: boolean | null;
-  allergies: string;
-  hasMedications: boolean | null;
-  medications: string;
-  hasChronicDiseases: boolean | null;
-  chronicDiseases: string;
+  illness: string;
 }
 
 export default function HealthInformationStep({
@@ -46,7 +31,7 @@ export default function HealthInformationStep({
   control,
   clearErrors,
   onSubmit,
-  setStep: _setStep,
+  setStep,
   userType,
 }: {
   register: UseFormRegister<RegisterFormData>;
@@ -96,38 +81,38 @@ export default function HealthInformationStep({
 
   const handleAllergiesYes = useCallback(() => {
     setValue("hasAllergies", true);
-    setValue("allergies", "");
-    clearErrors("allergies");
+    setValue("foodAllergy", "");
+    clearErrors("foodAllergy");
   }, [setValue, clearErrors]);
 
   const handleAllergiesNo = useCallback(() => {
     setValue("hasAllergies", false);
-    setValue("allergies", "");
-    clearErrors("allergies");
+    setValue("foodAllergy", "");
+    clearErrors("foodAllergy");
   }, [setValue, clearErrors]);
 
   const handleMedicationsYes = useCallback(() => {
     setValue("hasMedications", true);
-    setValue("medications", "");
-    clearErrors("medications");
+    setValue("drugAllergy", "");
+    clearErrors("drugAllergy");
   }, [setValue, clearErrors]);
 
   const handleMedicationsNo = useCallback(() => {
     setValue("hasMedications", false);
-    setValue("medications", "");
-    clearErrors("medications");
+    setValue("drugAllergy", "");
+    clearErrors("drugAllergy");
   }, [setValue, clearErrors]);
 
   const handleChronicDiseasesYes = useCallback(() => {
     setValue("hasChronicDiseases", true);
-    setValue("chronicDiseases", "");
-    clearErrors("chronicDiseases");
+    setValue("illness", "");
+    clearErrors("illness");
   }, [setValue, clearErrors]);
 
   const handleChronicDiseasesNo = useCallback(() => {
     setValue("hasChronicDiseases", false);
-    setValue("chronicDiseases", "");
-    clearErrors("chronicDiseases");
+    setValue("illness", "");
+    clearErrors("illness");
   }, [setValue, clearErrors]);
 
   return (
@@ -175,18 +160,18 @@ export default function HealthInformationStep({
           {watchHasAllergies && (
             <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
               <Controller
-                name="allergies"
+                name="foodAllergy"
                 control={control}
                 rules={{
                   required: "กรุณาระบุอาหารที่แพ้",
                 }}
                 render={({ field }) => (
                   <input
-                    id="allergies"
+                    id="foodAllergy"
                     type="text"
                     placeholder="อาหารที่แพ้"
                     className={`h-full w-full rounded-sm bg-black p-1 text-sm ${
-                      errors.allergies ? "border-red-500" : ""
+                      errors.foodAllergy ? "border-red-500" : ""
                     }`}
                     {...field}
                   />
@@ -194,9 +179,9 @@ export default function HealthInformationStep({
               />
             </div>
           )}
-          {errors.allergies && (
+          {errors.foodAllergy && (
             <span className="text-xs text-red-400">
-              {errors.allergies.message}
+              {errors.foodAllergy.message}
             </span>
           )}
         </div>
@@ -238,18 +223,18 @@ export default function HealthInformationStep({
           {watchHasMedications && (
             <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
               <Controller
-                name="medications"
+                name="drugAllergy"
                 control={control}
                 rules={{
                   required: "กรุณาระบุยาที่แพ้",
                 }}
                 render={({ field }) => (
                   <input
-                    id="medications"
+                    id="drugAllergy"
                     type="text"
                     placeholder="ยาที่แพ้"
                     className={`h-full w-full rounded-sm bg-black p-1 text-sm ${
-                      errors.medications ? "border-red-500" : ""
+                      errors.drugAllergy ? "border-red-500" : ""
                     }`}
                     {...field}
                   />
@@ -257,9 +242,9 @@ export default function HealthInformationStep({
               />
             </div>
           )}
-          {errors.medications && (
+          {errors.drugAllergy && (
             <span className="text-xs text-red-400">
-              {errors.medications.message}
+              {errors.drugAllergy.message}
             </span>
           )}
         </div>
@@ -301,18 +286,18 @@ export default function HealthInformationStep({
           {watchHasChronicDiseases && (
             <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
               <Controller
-                name="chronicDiseases"
+                name="illness"
                 control={control}
                 rules={{
                   required: "กรุณาระบุโรคประจำตัว",
                 }}
                 render={({ field }) => (
                   <input
-                    id="chronicDiseases"
+                    id="illness"
                     type="text"
                     placeholder="โรคประจำตัว"
                     className={`h-full w-full rounded-sm bg-black p-1 text-sm ${
-                      errors.chronicDiseases ? "border-red-500" : ""
+                      errors.illness ? "border-red-500" : ""
                     }`}
                     {...field}
                   />
@@ -320,19 +305,29 @@ export default function HealthInformationStep({
               />
             </div>
           )}
-          {errors.chronicDiseases && (
+          {errors.illness && (
             <span className="text-xs text-red-400">
-              {errors.chronicDiseases.message}
+              {errors.illness.message}
             </span>
           )}
         </div>
 
-        <button
-          type="submit"
-          className="flex items-center justify-center bg-white py-2 text-black transition-colors duration-200 hover:bg-gray-100"
-        >
-          ถัดไป
-        </button>
+        <div className="mt-2 flex w-full flex-col items-center justify-center gap-4">
+          <button
+            type="submit"
+            className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
+          >
+            ถัดไป
+          </button>
+          <button
+            type="button"
+            className="flex w-36 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 py-2"
+            onClick={() => setStep(2)}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <p>ย้อนกลับ</p>
+          </button>
+        </div>
       </form>
     </div>
   );
