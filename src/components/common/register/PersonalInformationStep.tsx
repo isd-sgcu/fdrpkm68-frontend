@@ -1,11 +1,14 @@
 import type { ReactNode } from "react";
 
+import { ChevronLeft } from "lucide-react";
 import type {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
 } from "react-hook-form";
 
+
+import type { RegisterFormData } from "@/components/common/register/RegisterForm";
 
 interface Faculty {
   text: string;
@@ -104,24 +107,12 @@ const faculties: Faculty[] = [
 ];
 
 export interface PersonalInfo {
-  title: string;
+  prefix: string;
   firstName: string;
   lastName: string;
   nickname: string;
   faculty: string;
-  year: string;
-}
-
-interface RegisterFormData extends PersonalInfo {
-  phoneNumber: string;
-  guardianPhoneNumber: string;
-  guardianRelationship: string;
-  hasAllergies: boolean | null;
-  allergies: string;
-  hasMedications: boolean | null;
-  medications: string;
-  hasChronicDiseases: boolean | null;
-  chronicDiseases: string;
+  academicYear: string;
 }
 
 export default function PersonalInformationStep({
@@ -130,7 +121,7 @@ export default function PersonalInformationStep({
   formValues: _formValues,
   setValue: _setValue,
   onSubmit,
-  setStep: _setStep,
+  setStep,
   userType,
 }: {
   register: UseFormRegister<RegisterFormData>;
@@ -155,14 +146,14 @@ export default function PersonalInformationStep({
 
       <form onSubmit={onSubmit} className="flex flex-col gap-2">
         <div className="flex flex-col gap-2">
-          <label className="text-sm" htmlFor="title">
+          <label className="text-sm" htmlFor="prefix">
             คำนำหน้าชื่อ
           </label>
           <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
             <select
-              id="title"
+              id="prefix"
               className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-              {...register("title")}
+              {...register("prefix")}
             >
               <option value="mr">นาย</option>
               <option value="ms">นางสาว</option>
@@ -257,14 +248,14 @@ export default function PersonalInformationStep({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm" htmlFor="year">
+          <label className="text-sm" htmlFor="academicYear">
             ชั้นปี
           </label>
           <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
             <select
-              id="year"
+              id="academicYear"
               className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-              {...register("year")}
+              {...register("academicYear")}
             >
               <option value="1">ชั้นปีที่ 1</option>
               <option value="2">ชั้นปีที่ 2</option>
@@ -274,12 +265,20 @@ export default function PersonalInformationStep({
           </div>
         </div>
 
-        <div className="mt-2 flex w-full justify-center">
+        <div className="mt-2 flex w-full flex-col items-center justify-center gap-4">
           <button
             type="submit"
             className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
           >
             ถัดไป
+          </button>
+          <button
+            type="button"
+            className="flex w-36 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 py-2"
+            onClick={() => setStep(0)}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <p>ย้อนกลับ</p>
           </button>
         </div>
       </form>
