@@ -26,7 +26,7 @@ export default function CompleteStep({
   }, []);
 
   const handleHomeClick = useCallback((): void => {
-    window.location.href = "/firstdate/home";
+    window.location.href = userType === "FRESHMAN" ? "/login" : "/staff/login";
   }, []);
 
   return (
