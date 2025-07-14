@@ -27,6 +27,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@yudiel/react-qr-scanner": "^2.3.1",
     "astro": "^5.10.1",
     "canvas-confetti": "^1.9.3",
     "clsx": "^2.1.1",
@@ -43,9 +44,9 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/ts-plugin": "^1.10.4",
-    "@types/qrcode": "^1.5.5",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/canvas-confetti": "^1.9.0",
+    "@types/qrcode": "^1.5.5",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "@typescript-eslint/parser": "^8.36.0",
     "astro-eslint-parser": "^1.2.2",
