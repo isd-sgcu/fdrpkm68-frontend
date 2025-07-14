@@ -1,7 +1,7 @@
 ---
 /**
  * Frame Component
- * 
+ *
  * @component
  * @example
  * ```astro
@@ -12,7 +12,7 @@
  *   </div>
  * </Frame>
  * ```
- * 
+ *
  * @example
  * ```astro
  * <!-- Large purple frame for hero sections -->
@@ -20,22 +20,24 @@
  *   <slot />
  * </Frame>
  * ```
- * 
+ *
  * @param {('xs'|'sm'|'md'|'lg')} [size='lg'] - Frame size
  * @param {('blue'|'purple')} [color='blue'] - Frame color theme
  * @param {string} [class] - Additional CSS classes
-  */
+ */
 
 export interface Props {
-  size?: 'lg' | 'md' | 'sm' | 'xs';
-  color?: 'blue' | 'purple';
+  size?: "lg" | "md" | "sm" | "xs";
+  color?: "blue" | "purple";
   class?: string;
+  contentContainerClass?: string;
 }
 
-const { 
-  size = 'lg', 
-  color = 'blue',
-  class: className = ''
+const {
+  size = "lg",
+  color = "blue",
+  class: className = "",
+  contentContainerClass = "",
 } = Astro.props;
 
 const frameSvg = `/images/frame/frame-${color}-${size}.svg`;
@@ -43,27 +45,27 @@ const frameSvg = `/images/frame/frame-${color}-${size}.svg`;
 // Size configuration with aspect ratios and minimum heights
 const sizeConfig = {
   lg: {
-    aspectRatio: '346/550',
-    minHeight: '550px',
+    aspectRatio: "346/550",
+    minHeight: "550px",
   },
   md: {
-    aspectRatio: '346/430',
-    minHeight: '430px',
+    aspectRatio: "346/430",
+    minHeight: "430px",
   },
   sm: {
-    aspectRatio: '346/340',
-    minHeight: '340px',
+    aspectRatio: "346/340",
+    minHeight: "340px",
   },
   xs: {
-    aspectRatio: '346/248',
-    minHeight: '248px',
-  }
+    aspectRatio: "346/248",
+    minHeight: "248px",
+  },
 };
 
 const config = sizeConfig[size];
 ---
 
-<div 
+<div
   class={`frame-container relative w-full max-h-screen overflow-visible ${className}`}
   data-size={size}
   style={`
@@ -72,16 +74,19 @@ const config = sizeConfig[size];
   `}
 >
   <!-- Frame SVG background -->
-  <div 
+  <div
     class="absolute inset-0 bg-center bg-no-repeat"
     style={`background-image: url('${frameSvg}'); background-size: 100% 100%;`}
-  ></div>
-  
-  <!-- Content area with proper clipping -->
-  <div 
-    class="absolute inset-0 flex items-center justify-center content-area frame-content-clip overflow-y-auto overflow-x-hidden"
   >
-    <div class="text-center w-full max-w-full px-8 py-6">
+  </div>
+
+  <!-- Content area with proper clipping -->
+  <div
+    class="content-area frame-content-clip absolute inset-0 flex items-center justify-center overflow-x-hidden overflow-y-auto"
+  >
+    <div
+      class={`w-full max-w-full px-8 py-6 text-center ${contentContainerClass}`}
+    >
       <slot />
     </div>
   </div>
@@ -92,47 +97,47 @@ const config = sizeConfig[size];
   .frame-container[data-size="lg"] .frame-content-clip {
     margin: 8% 10%;
   }
-  
+
   .frame-container[data-size="md"] .frame-content-clip {
     margin: 6% 9%;
   }
-  
+
   .frame-container[data-size="sm"] .frame-content-clip {
     margin: 5% 8%;
   }
-  
+
   .frame-container[data-size="xs"] .frame-content-clip {
     margin: 4% 7%;
   }
-  
+
   /* Custom scrollbar styling */
   .frame-content-clip {
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
   }
-  
+
   .frame-content-clip::-webkit-scrollbar {
     width: 4px;
   }
-  
+
   .frame-content-clip::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   .frame-content-clip::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 2px;
   }
-  
+
   .frame-content-clip::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.5);
   }
-  
+
   @media (max-width: 480px) {
     .frame-container {
       min-height: 200px !important;
     }
-    
+
     .frame-content-clip {
       margin: 3% 5% !important;
     }
