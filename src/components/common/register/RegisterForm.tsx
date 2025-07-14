@@ -41,11 +41,11 @@ export default function RegisterForm({
   } = useForm<RegisterFormData>({
     defaultValues: {
       // Personal Info
-      title: "mr",
+      title: "MR",
       firstName: "",
       lastName: "",
       nickname: "",
-      faculty: "engineering",
+      faculty: "FACULTY_OF_ENGINEERING",
       year: "1",
       // Contact Info
       phoneNumber: "",
