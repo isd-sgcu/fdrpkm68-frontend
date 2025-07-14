@@ -1,4 +1,6 @@
 ---
+import Frame from "@/components/common/Frame.astro";
+
 const colors = [
   { size: "S", bgColor: "#0FF", textColor: "#000" },
   { size: "M", bgColor: "#FF1493", textColor: "#fff" },
@@ -14,31 +16,20 @@ const defaultColor = colors[0];
 <!-- House Popup Overlay -->
 <div
   id="view-house-popup"
-  class="fixed inset-0 z-50 flex hidden min-h-[500px] w-full translate-x-[9px] items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
+  class="fixed inset-0 z-50 hidden min-h-[500px] w-full translate-x-[9px] items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
 >
   <!-- House Popup Wrapper -->
   <div class="relative w-full max-w-md px-5">
-    <!-- Pink trapezoids -->
-    <div
-      class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-    <div
-      class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-
-    <!-- Border -->
-    <div class="cut-houses-1 relative bg-[#8A2BE4] p-[1.5px]">
-      <!-- Content -->
+    <!-- Frame Component -->
+    <Frame size="md" color="purple">
       <div
-        class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 py-8"
+        class="relative flex h-fit flex-col items-center"
         id="view-house-popup-content"
       >
         <!-- House Size -->
         <div
           id="house-size-badge"
-          class="absolute left-10 flex aspect-square w-[40px] -translate-y-1 items-center justify-center rounded-full px-3 py-1 text-xl font-bold"
+          class="absolute top-0 left-2 flex aspect-square w-[40px] -translate-y-1 items-center justify-center rounded-full px-3 py-1 text-xl font-bold"
           style={`background-color: ${defaultColor.bgColor}; color: ${defaultColor.textColor};`}
         >
           S
@@ -54,7 +45,7 @@ const defaultColor = colors[0];
         />
 
         <!-- House People -->
-        <div class="absolute right-10 flex items-center gap-[1px] text-sm">
+        <div class="absolute top-0 right-2 flex items-center gap-[1px] text-sm">
           <p class="text-white">
             <span id="house-amount" style="color: #68A987;">0</span>/<span
               id="house-capacity">0</span
@@ -135,6 +126,6 @@ const defaultColor = colors[0];
           </div>
         </div>
       </div>
-    </div>
+    </Frame>
   </div>
 </div>
