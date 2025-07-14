@@ -46,28 +46,29 @@ export default function RegisterForm({
     clearErrors,
   } = useForm<RegisterFormData>({
     defaultValues: {
-      studentID: "",
-      nationalID: "",
+      studentId: "",
+      citizenId: "",
       password: "",
       passwordConfirm: "",
       // Personal Info
-      title: "mr",
+      prefix: "mr",
       firstName: "",
       lastName: "",
       nickname: "",
       faculty: "engineering",
-      year: "1",
+      academicYear: "1",
       // Contact Info
       phoneNumber: "",
-      guardianPhoneNumber: "",
-      guardianRelationship: "",
+      parentName: "",
+      parentPhoneNumber: "",
+      parentRelationship: "",
       // Health Info
       hasAllergies: null,
-      allergies: "",
+      foodAllergy: "",
       hasMedications: null,
-      medications: "",
+      drugAllergy: "",
       hasChronicDiseases: null,
-      chronicDiseases: "",
+      illness: "",
     },
     mode: "onChange",
   });

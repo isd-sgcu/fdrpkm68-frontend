@@ -107,12 +107,12 @@ const faculties: Faculty[] = [
 ];
 
 export interface PersonalInfo {
-  title: string;
+  prefix: string;
   firstName: string;
   lastName: string;
   nickname: string;
   faculty: string;
-  year: string;
+  academicYear: string;
 }
 
 export default function PersonalInformationStep({
@@ -146,14 +146,14 @@ export default function PersonalInformationStep({
 
       <form onSubmit={onSubmit} className="flex flex-col gap-2">
         <div className="flex flex-col gap-2">
-          <label className="text-sm" htmlFor="title">
+          <label className="text-sm" htmlFor="prefix">
             คำนำหน้าชื่อ
           </label>
           <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
             <select
-              id="title"
+              id="prefix"
               className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-              {...register("title")}
+              {...register("prefix")}
             >
               <option value="mr">นาย</option>
               <option value="ms">นางสาว</option>
@@ -248,14 +248,14 @@ export default function PersonalInformationStep({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-sm" htmlFor="year">
+          <label className="text-sm" htmlFor="academicYear">
             ชั้นปี
           </label>
           <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
             <select
-              id="year"
+              id="academicYear"
               className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-              {...register("year")}
+              {...register("academicYear")}
             >
               <option value="1">ชั้นปีที่ 1</option>
               <option value="2">ชั้นปีที่ 2</option>

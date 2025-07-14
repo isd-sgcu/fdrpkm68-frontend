@@ -13,8 +13,8 @@ import type {
 import type { RegisterFormData } from "@/components/common/register/RegisterForm";
 
 export interface AccountInfo {
-  studentID: string;
-  nationalID: string;
+  studentId: string;
+  citizenId: string;
   password: string;
   passwordConfirm: string;
 }
@@ -65,7 +65,7 @@ export default function AccountStep({
               className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.firstName ? "border-red-500" : ""}`}
               type="text"
               placeholder="รหัสนิสิต"
-              {...register("studentID", {
+              {...register("studentId", {
                 required: "กรุณากรอกรหัสนิสิต",
               })}
             />
@@ -87,14 +87,14 @@ export default function AccountStep({
               className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.firstName ? "border-red-500" : ""}`}
               type="text"
               placeholder="รหัสประจำตัวประชาชน"
-              {...register("nationalID", {
+              {...register("citizenId", {
                 required: "กรุณากรอกรหัสประจำตัวประชาชน",
               })}
             />
           </div>
-          {errors.nationalID && (
+          {errors.citizenId && (
             <span className="text-xs text-red-400">
-              {errors.nationalID.message}
+              {errors.citizenId.message}
             </span>
           )}
         </div>
