@@ -55,7 +55,7 @@ export default function RegisterForm({
       firstName: "",
       lastName: "",
       nickname: "",
-      faculty: "engineering",
+      faculty: "FACULTY_OF_ENGINEERING",
       academicYear: "1",
       // Contact Info
       phoneNumber: "",
