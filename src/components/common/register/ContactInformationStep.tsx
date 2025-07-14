@@ -20,8 +20,8 @@ export interface ContactInfo {
 export default function ContactInformationStep({
   register,
   errors,
-  formValues: _formValues,
-  setValue: _setValue,
+  formValues,
+  setValue,
   onSubmit,
   setStep,
   userType,
