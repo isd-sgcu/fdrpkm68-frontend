@@ -1,44 +1,659 @@
 ---
+import ButtonFd from "@/components/common/ButtonFd.astro";
 import Popup from "@/components/common/Popup.astro";
 import Tabs from "@/components/common/Tabs.astro";
+import Box from "@/components/firstdate/Box.astro";
+import QRScanner from "@/components/staff/QRScanner.tsx";
 import Layout from "@/layouts/staff/WithNavbar.astro";
 ---
 
 <Layout>
   <div class="flex w-full flex-col">
     <div class="mb-8 flex flex-col items-center justify-center">
-      <p class="mt-[26px] text-xl">ลงทะเบียนงาน</p>
+      <p class="mt-[26px] text-xl">สแกน QR เข้างาน</p>
       <h1
+        id="event-title"
         class="font-zen-dots mt-1.5 fill-white text-center text-4xl text-white drop-shadow-lg drop-shadow-pink-500"
       >
-        CU First Date
+        กำลังโหลด...
       </h1>
+
+      <div id="event-status" class="mt-4 text-center">
+        <p id="event-period" class="text-lg text-gray-200"></p>
+        <p id="event-schedule" class="text-sm text-gray-300"></p>
+      </div>
 
       <section class="my-4 w-full">
         <Tabs>
-          <!-- QR Code -->
           <div slot="qr-content">
             <div class="flex flex-col items-center justify-center text-center">
               <Popup
                 size="small"
                 color="light-pink"
                 class="flex flex-col items-center justify-center text-center"
-              />
+              >
+                <div id="scanner-container">
+                  <QRScanner
+                    client:load
+                    onScan={(qrData) => {
+                      if (window.handleQRScan) {
+                        return window.handleQRScan(qrData);
+                      } else {
+                        setTimeout(() => {
+                          if (window.handleQRScan) {
+                            window.handleQRScan(qrData);
+                          }
+                        }, 100);
+                      }
+                    }}
+                    onError={(error) => {
+                      if (window.showErrorModal) {
+                        window.showErrorModal(
+                          error.message || "เกิดข้อผิดพลาดในการสแกน QR Code"
+                        );
+                      }
+                    }}
+                  />
+                </div>
+                <div id="no-active-event" class="hidden p-8 text-center">
+                  <p class="text-lg text-gray-600">
+                    ไม่มีงานที่เปิดให้ลงทะเบียนในขณะนี้
+                  </p>
+                  <p class="mt-2 text-sm text-gray-500">
+                    กรุณาลองใหม่ในช่วงเวลาที่เปิดลงทะเบียน
+                  </p>
+                </div>
+              </Popup>
             </div>
           </div>
 
-          <!-- Student ID -->
           <div slot="student-content">
-            <div class="flex flex-col items-center justify-center text-center">
-              <Popup
-                size="small"
-                color="light-green"
-                class="flex flex-col items-center justify-center text-center"
-              />
-            </div>
+            <Box
+              size="small"
+              color="light-pink"
+              class="flex flex-col items-center justify-center text-start"
+            >
+              <form
+                id="manual-entry-form"
+                class="flex w-full flex-col gap-[30px]"
+              >
+                <div
+                  class="flex w-full flex-col items-end justify-start gap-2.5"
+                >
+                  <div class="w-full">
+                    <div class="flex w-full flex-row items-center">
+                      <div
+                        class="flex w-full flex-row items-center justify-start gap-2.5 px-2.5 py-0"
+                      >
+                        <label class="text-lg text-white"> รหัสนิสิต </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]"
+                  >
+                    <input
+                      type="text"
+                      id="student-id-input"
+                      name="studentId"
+                      class="h-9 w-full bg-black p-[10px] text-[16px] leading-[1.4] text-[rgba(255,255,255,0.8)] placeholder:text-[rgba(255,255,255,0.8)]"
+                      placeholder="กรุณากรอกเลขนิสิต 10 หลัก"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  class="flex w-full flex-col items-end justify-start gap-2.5"
+                >
+                  <div class="w-full">
+                    <div class="flex w-full flex-row items-center">
+                      <div
+                        class="flex w-full flex-row items-center justify-start gap-2.5 px-2.5 py-0"
+                      >
+                        <label class="text-lg text-white"> รหัสประชาชน </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]"
+                  >
+                    <input
+                      type="text"
+                      id="citizen-id-input"
+                      name="citizenId"
+                      class="h-9 w-full bg-black p-[10px] text-[16px] leading-[1.4] text-[rgba(255,255,255,0.8)] placeholder:text-[rgba(255,255,255,0.8)]"
+                      placeholder="กรุณากรอกเลขบัตรประชาชน"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  class="mt-16 flex w-full flex-row items-center justify-center"
+                >
+                  <ButtonFd
+                    variant="fill"
+                    color="light-beige"
+                    id="manual-submit-btn"
+                  >
+                    ลงทะเบียน
+                  </ButtonFd>
+                </div>
+              </form>
+              <div id="manual-no-active-event" class="hidden p-4 text-center">
+                <p class="text-lg text-gray-600">
+                  ไม่มีงานที่เปิดให้ลงทะเบียนในขณะนี้
+                </p>
+              </div>
+            </Box>
           </div>
         </Tabs>
       </section>
     </div>
   </div>
+
+  <div
+    id="success-modal"
+    class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-800/50 opacity-0 transition-opacity duration-300 ease-in-out"
+  >
+    <div
+      class="relative mx-4 w-full max-w-sm scale-95 transform transition-all duration-300 ease-in-out"
+    >
+      <Popup
+        size="medium"
+        color="light-green"
+        class="relative flex flex-col items-center justify-center overflow-hidden p-8 text-center"
+      >
+        <div class="flex w-[260px] flex-col items-center justify-start gap-5">
+          <div class="flex flex-col items-center justify-start gap-2.5">
+            <div class="flex flex-col items-center justify-start gap-[15px]">
+              <div class="flex flex-col items-center justify-start gap-2.5">
+                <div
+                  class="relative flex h-[35px] w-[35px] items-center justify-center overflow-hidden rounded-[38px] bg-[#fffff2]"
+                  style="box-shadow: 0px 0px 10px 0px #cb438b;"
+                >
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M13.5 4.5L6 12L2.5 8.5"
+                      stroke="#cb438b"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"></path>
+                  </svg>
+                </div>
+
+                <h2
+                  class="w-[194px] text-center text-[28px] leading-[1.4] font-semibold text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.5) 0px 2px 4px, #cb438b 0px 0px 10px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  ลงทะเบียนสำเร็จ
+                </h2>
+              </div>
+
+              <div
+                class="flex flex-col items-center justify-start gap-[3px] text-center"
+              >
+                <div
+                  class="text-[20px] leading-[1.4] text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.6) 0px 1px 4px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  ยินดีต้อนรับ
+                </div>
+                <div
+                  class="text-[24px] leading-[1.4] font-medium text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.5) 0px 2px 4px, #cb438b 0px 0px 6px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  น้องใหม่ จุฬา
+                </div>
+                <div
+                  class="text-[24px] leading-[1.4] font-semibold text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.6) 0px 1px 4px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  <span id="user-id-display">681234567</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <ButtonFd
+              id="close-modal-btn"
+              variant="fill"
+              color="light-beige"
+              class="h-[43px] w-full text-[20px] leading-[1.4]"
+            >
+              ลงทะเบียนคนต่อไป
+            </ButtonFd>
+          </div>
+        </div>
+
+        <div class="hidden">
+          <span id="user-id"></span>
+          <span id="event-name"></span>
+          <span id="checkin-status"></span>
+          <span id="checkin-time"></span>
+        </div>
+      </Popup>
+    </div>
+  </div>
+
+  <div
+    id="error-modal"
+    class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-800/50 opacity-0 transition-opacity duration-300 ease-in-out"
+  >
+    <div
+      class="relative mx-4 w-full max-w-sm scale-95 transform transition-all duration-300 ease-in-out"
+    >
+      <Popup
+        size="small"
+        color="light-pink"
+        class="relative flex flex-col items-center justify-center overflow-hidden p-8 text-center"
+      >
+        <div class="flex w-[260px] flex-col items-center justify-start gap-5">
+          <div class="flex flex-col items-center justify-start gap-2.5">
+            <div class="flex flex-col items-center justify-start gap-[15px]">
+              <div class="flex flex-col items-center justify-start gap-2.5">
+                <div
+                  class="relative flex h-[35px] w-[35px] items-center justify-center overflow-hidden rounded-[35px] bg-[#fffff2]"
+                  style="box-shadow: 0px 0px 10px 0px #cb438b;"
+                >
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M12 4L4 12M4 4l8 8"
+                      stroke="#cb438b"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"></path>
+                  </svg>
+                </div>
+
+                <h2
+                  class="w-[194px] text-center text-[28px] leading-[1.4] font-semibold text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.5) 0px 2px 4px, #cb438b 0px 0px 10px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  ลงทะเบียนไม่สำเร็จ
+                </h2>
+              </div>
+
+              <div
+                class="flex flex-col items-center justify-start gap-[3px] text-center"
+              >
+                <div
+                  class="w-[231px] text-center text-[24px] leading-[1.4] font-medium text-[#ffffff]"
+                  style="text-shadow: rgba(0,0,0,0.6) 0px 1px 4px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  <p class="mb-0 block">
+                    เลขนิสิต หรือ เลขบัตรประชาชน ไม่ถูกต้อง
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <ButtonFd
+              id="close-error-modal-btn"
+              variant="fill"
+              color="light-beige"
+              class="h-[43px] w-full text-[20px] leading-[1.4]"
+            >
+              ลงทะเบียนคนต่อไป
+            </ButtonFd>
+          </div>
+        </div>
+      </Popup>
+    </div>
+  </div>
 </Layout>
+
+<script>
+  import { getEventStatus, EVENT_CONFIGS } from "@/lib/eventAPI";
+  import type { EventType } from "@/lib/eventAPI";
+
+  let currentActiveEvent: any = null;
+  (window as any).handleQRScan = null;
+
+  function extractUserId(qrData: string): { userId: string | null } {
+    const cleanData = qrData.trim();
+    let userId: string | null = null;
+
+    if (cleanData.includes("?")) {
+      const urlParams = new URLSearchParams(cleanData.split("?")[1]);
+      userId =
+        urlParams.get("userId") ||
+        urlParams.get("user_id") ||
+        urlParams.get("id");
+    }
+
+    if (!userId) {
+      const params = new URLSearchParams(cleanData);
+      userId =
+        params.get("userId") || params.get("user_id") || params.get("id");
+    }
+
+    if (
+      !userId &&
+      (cleanData.includes("userId=") ||
+        cleanData.includes("user_id=") ||
+        cleanData.includes("id="))
+    ) {
+      const userIdMatch = cleanData.match(/(?:userId|user_id|id)=([^&\s]+)/);
+      userId = userIdMatch ? userIdMatch[1] : null;
+    }
+
+    if (
+      !userId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        cleanData
+      )
+    ) {
+      userId = cleanData;
+    }
+
+    return { userId };
+  }
+
+  async function determineActiveEvent(): Promise<any> {
+    const events: EventType[] = ["firstdate", "rpkm", "freshmen-night"];
+
+    for (const eventId of events) {
+      try {
+        const eventStatus = await getEventStatus(eventId);
+        if (!eventStatus.isComingSoon && !eventStatus.isLate) {
+          return {
+            eventId,
+            eventConfig: EVENT_CONFIGS[eventId],
+            eventStatus,
+          };
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+
+    return null;
+  }
+
+  function updateEventUI(activeEventData: any): void {
+    const eventTitle = document.getElementById("event-title");
+    const eventPeriod = document.getElementById("event-period");
+    const eventSchedule = document.getElementById("event-schedule");
+    const scannerContainer = document.getElementById("scanner-container");
+    const noActiveEventScanner = document.getElementById("no-active-event");
+    const manualForm = document.getElementById("manual-entry-form");
+    const manualNoActiveEvent = document.getElementById(
+      "manual-no-active-event"
+    );
+
+    if (activeEventData) {
+      const { eventConfig, eventStatus } = activeEventData;
+
+      if (eventTitle) eventTitle.textContent = eventConfig.title;
+      if (eventPeriod)
+        eventPeriod.textContent = eventStatus.isRegistered
+          ? "ลงทะเบียนแล้ว"
+          : "เปิดให้ลงทะเบียน";
+      if (eventSchedule) eventSchedule.textContent = eventConfig.schedule;
+
+      if (scannerContainer) scannerContainer.classList.remove("hidden");
+      if (noActiveEventScanner) noActiveEventScanner.classList.add("hidden");
+      if (manualForm) manualForm.classList.remove("hidden");
+      if (manualNoActiveEvent) manualNoActiveEvent.classList.add("hidden");
+    } else {
+      if (eventTitle) eventTitle.textContent = "ไม่มีงานที่เปิดลงทะเบียน";
+      if (eventPeriod)
+        eventPeriod.textContent = "กรุณาลองใหม่ในช่วงเวลาที่เปิดลงทะเบียน";
+      if (eventSchedule) eventSchedule.textContent = "";
+
+      if (scannerContainer) scannerContainer.classList.add("hidden");
+      if (noActiveEventScanner) noActiveEventScanner.classList.remove("hidden");
+      if (manualForm) manualForm.classList.add("hidden");
+      if (manualNoActiveEvent) manualNoActiveEvent.classList.remove("hidden");
+    }
+  }
+
+  function showSuccessModal(checkinRecord: any): void {
+    const modal = document.getElementById("success-modal");
+    const userIdSpan = document.getElementById("user-id");
+    const eventNameSpan = document.getElementById("event-name");
+    const checkinStatusSpan = document.getElementById("checkin-status");
+    const checkinTimeSpan = document.getElementById("checkin-time");
+    const userIdDisplaySpan = document.getElementById("user-id-display");
+    const popupContainer = modal?.querySelector(".transform");
+
+    if (
+      modal &&
+      userIdSpan &&
+      eventNameSpan &&
+      checkinStatusSpan &&
+      checkinTimeSpan &&
+      userIdDisplaySpan
+    ) {
+      userIdSpan.textContent = checkinRecord.userId;
+      eventNameSpan.textContent = checkinRecord.event;
+      checkinStatusSpan.textContent =
+        checkinRecord.status === "PRE_REGISTER"
+          ? "ลงทะเบียนล่วงหน้า"
+          : "ลงทะเบียนเข้างาน";
+      checkinTimeSpan.textContent = new Date().toLocaleTimeString("th-TH");
+
+      const shortUserId = checkinRecord.userId.slice(-8);
+      userIdDisplaySpan.textContent = shortUserId;
+
+      modal.classList.remove("hidden");
+
+      setTimeout(() => {
+        modal.classList.remove("opacity-0");
+        modal.classList.add("opacity-100");
+        if (popupContainer) {
+          popupContainer.classList.remove("scale-95");
+          popupContainer.classList.add("scale-100");
+        }
+      }, 10);
+    }
+  }
+
+  function hideSuccessModal(): void {
+    const modal = document.getElementById("success-modal");
+    const popupContainer = modal?.querySelector(".transform");
+
+    if (modal) {
+      modal.classList.remove("opacity-100");
+      modal.classList.add("opacity-0");
+
+      if (popupContainer) {
+        popupContainer.classList.remove("scale-100");
+        popupContainer.classList.add("scale-95");
+      }
+
+      setTimeout(() => {
+        modal.classList.add("hidden");
+      }, 300);
+    }
+  }
+
+  function showErrorModal(): void {
+    const modal = document.getElementById("error-modal");
+    const popupContainer = modal?.querySelector(".transform");
+
+    if (modal) {
+      modal.classList.remove("hidden");
+
+      setTimeout(() => {
+        modal.classList.remove("opacity-0");
+        modal.classList.add("opacity-100");
+        if (popupContainer) {
+          popupContainer.classList.remove("scale-95");
+          popupContainer.classList.add("scale-100");
+        }
+      }, 10);
+    }
+  }
+
+  function hideErrorModal(): void {
+    const modal = document.getElementById("error-modal");
+    const popupContainer = modal?.querySelector(".transform");
+
+    if (modal) {
+      modal.classList.remove("opacity-100");
+      modal.classList.add("opacity-0");
+
+      if (popupContainer) {
+        popupContainer.classList.remove("scale-100");
+        popupContainer.classList.add("scale-95");
+      }
+
+      setTimeout(() => {
+        modal.classList.add("hidden");
+      }, 300);
+    }
+  }
+
+  const handleQRScanFunction = async (qrData: string): Promise<void> => {
+    try {
+      const { userId } = extractUserId(qrData);
+
+      if (!userId) {
+        throw new Error("QR Code ไม่ถูกต้อง: ไม่พบ User ID");
+      }
+
+      if (userId !== "a8e7e644-ed12-4748-89fc-4599f868ab5d") {
+        throw new Error("QR Code ไม่ถูกต้อง: User ID ไม่ถูกต้อง");
+      }
+
+      const mockCheckinRecord = {
+        id: "mock-checkin-123",
+        userId: userId,
+        event: "FIRSTDATE",
+        status: "PRE_REGISTER",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      showSuccessModal(mockCheckinRecord);
+      return Promise.resolve();
+    } catch (error) {
+      showErrorModal();
+      return Promise.reject(error);
+    }
+  };
+
+  (window as any).handleQRScan = handleQRScanFunction;
+  (window as any).showErrorModal = showErrorModal;
+
+  const manualForm = document.getElementById("manual-entry-form");
+  if (manualForm) {
+    manualForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const studentIdInput = document.getElementById(
+        "student-id-input"
+      ) as HTMLInputElement;
+      const citizenIdInput = document.getElementById(
+        "citizen-id-input"
+      ) as HTMLInputElement;
+      const studentId = studentIdInput.value.trim();
+      const citizenId = citizenIdInput.value.trim();
+
+      if (!studentId) {
+        alert("กรุณากรอกรหัสนิสิต");
+        return;
+      }
+
+      if (!citizenId) {
+        alert("กรุณากรอกรหัสประชาชน");
+        return;
+      }
+
+      if (!/^[0-9]{10}$/.test(studentId)) {
+        alert("รหัสนิสิตต้องเป็นตัวเลข 10 หลัก");
+        return;
+      }
+
+      if (!/^[0-9]{13}$/.test(citizenId)) {
+        alert("รหัสประชาชนต้องเป็นตัวเลข 13 หลัก");
+        return;
+      }
+
+      const submitButton = document.getElementById(
+        "manual-submit-btn"
+      ) as HTMLButtonElement;
+      const originalText = submitButton.textContent;
+
+      try {
+        submitButton.textContent = "กำลังลงทะเบียน...";
+        submitButton.disabled = true;
+
+        if (studentId !== "6812345678" || citizenId !== "1234567890123") {
+          throw new Error("ข้อมูลไม่ถูกต้อง");
+        }
+
+        const mockCheckinRecord = {
+          id: "mock-manual-456",
+          userId: "a8e7e644-ed12-4748-89fc-4599f868ab5d",
+          event: "FIRSTDATE",
+          status: "EVENT_REGISTER",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        showSuccessModal(mockCheckinRecord);
+        studentIdInput.value = "";
+        citizenIdInput.value = "";
+      } catch (error) {
+        showErrorModal();
+      } finally {
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+      }
+    });
+  }
+
+  document
+    .getElementById("close-modal-btn")
+    ?.addEventListener("click", hideSuccessModal);
+  document.getElementById("success-modal")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) hideSuccessModal();
+  });
+  document
+    .getElementById("close-error-modal-btn")
+    ?.addEventListener("click", hideErrorModal);
+  document.getElementById("error-modal")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) hideErrorModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hideSuccessModal();
+      hideErrorModal();
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const activeEventData = await determineActiveEvent();
+      currentActiveEvent = activeEventData;
+      updateEventUI(activeEventData);
+    } catch (error) {
+      updateEventUI(null);
+    }
+  });
+
+  setInterval(async () => {
+    try {
+      const activeEventData = await determineActiveEvent();
+
+      if (
+        (!currentActiveEvent && activeEventData) ||
+        (currentActiveEvent && !activeEventData) ||
+        (currentActiveEvent &&
+          activeEventData &&
+          currentActiveEvent.eventId !== activeEventData.eventId)
+      ) {
+        currentActiveEvent = activeEventData;
+        updateEventUI(activeEventData);
+      }
+    } catch (error) {
+      // Silent error handling
+    }
+  }, 30000);
+</script>
