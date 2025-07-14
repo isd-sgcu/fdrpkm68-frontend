@@ -1,0 +1,188 @@
+---
+import ButtonFd from "@/components/common/ButtonFd.astro";
+import Layout from "@/layouts/firstdate/WithNavbar.astro";
+---
+
+<Layout>
+  <div
+    class="flex w-full flex-col items-center justify-center space-y-3 px-2.5 py-3"
+  >
+    <h1
+      class="font-zen-dots my-8 fill-white text-center text-4xl text-white drop-shadow-lg drop-shadow-white/50"
+    >
+      ปฏิทิน
+    </h1>
+
+    <section class="relative flex flex-1 items-center justify-center">
+      <div
+        class="relative mx-auto w-full max-w-[90vw] sm:max-w-[356px]"
+        style="aspect-ratio: 356/497;"
+      >
+        <img
+          src="/images/frame/frame-blue-lg.svg"
+          alt="Calendar Frame"
+          class="h-full w-full object-contain"
+        />
+      </div>
+    </section>
+    <ButtonFd variant="fill" color="white" href="/firstdate/home/">
+      กลับหน้าหลัก
+    </ButtonFd>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const mapContainer = document.getElementById("map-container");
+    const mapContent = document.getElementById("map-content");
+    const currentMap = document.getElementById("current-map");
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
+    const resetZoomBtn = document.getElementById("reset-zoom");
+
+    if (!mapContainer || !mapContent || !currentMap) return;
+
+    let scale = 1;
+    let translateX = 0;
+    let translateY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let startTranslateX = 0;
+    let startTranslateY = 0;
+
+    const minScale = 1; // Changed from 0.5 to 1 to prevent zoom out
+    const maxScale = 4;
+    const zoomStep = 0.3;
+
+    function updateTransform() {
+      if (!mapContent || !mapContainer) return;
+      mapContent.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
+      // Update cursor - always allow grab since we can pan at any zoom level
+      mapContainer.style.cursor = "grab";
+    }
+
+    function resetTransform() {
+      scale = 1;
+      translateX = 0;
+      translateY = 0;
+      updateTransform();
+    }
+
+    function constrainTranslation() {
+      if (!mapContainer || !mapContent) return;
+      const containerRect = mapContainer.getBoundingClientRect();
+      const contentRect = mapContent.getBoundingClientRect();
+
+      const maxTranslateX = Math.max(
+        0,
+        (contentRect.width - containerRect.width) / 2 / scale
+      );
+      const maxTranslateY = Math.max(
+        0,
+        (contentRect.height - containerRect.height) / 2 / scale
+      );
+
+      translateX = Math.max(
+        -maxTranslateX,
+        Math.min(maxTranslateX, translateX)
+      );
+      translateY = Math.max(
+        -maxTranslateY,
+        Math.min(maxTranslateY, translateY)
+      );
+    }
+
+    // Zoom functionality
+    zoomInBtn?.addEventListener("click", () => {
+      scale = Math.min(maxScale, scale + zoomStep);
+      constrainTranslation();
+      updateTransform();
+    });
+
+    zoomOutBtn?.addEventListener("click", () => {
+      scale = Math.max(minScale, scale - zoomStep);
+      constrainTranslation();
+      updateTransform();
+    });
+
+    resetZoomBtn?.addEventListener("click", resetTransform);
+
+    mapContainer.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -zoomStep : zoomStep;
+      scale = Math.max(minScale, Math.min(maxScale, scale + delta));
+      constrainTranslation();
+      updateTransform();
+    });
+
+    // Mouse drag functionality
+    mapContainer.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startTranslateX = translateX;
+      startTranslateY = translateY;
+      mapContainer.style.cursor = "grabbing";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const deltaX = (e.clientX - startX) / scale;
+      const deltaY = (e.clientY - startY) / scale;
+      translateX = startTranslateX + deltaX;
+      translateY = startTranslateY + deltaY;
+      constrainTranslation();
+      updateTransform();
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+      mapContainer.style.cursor = "grab";
+    });
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTranslateX = 0;
+    let touchStartTranslateY = 0;
+
+    mapContainer.addEventListener("touchstart", (e) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchStartTranslateX = translateX;
+        touchStartTranslateY = translateY;
+      }
+    });
+
+    mapContainer.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        const deltaX = (touch.clientX - touchStartX) / scale;
+        const deltaY = (touch.clientY - touchStartY) / scale;
+        translateX = touchStartTranslateX + deltaX;
+        translateY = touchStartTranslateY + deltaY;
+        constrainTranslation();
+        updateTransform();
+      }
+    });
+
+    // Map switching functionality
+    document.addEventListener("mapChanged", (e) => {
+      const { value, label } = (e as CustomEvent).detail;
+      (currentMap as HTMLImageElement).src = `/images/maps/${value}.svg`;
+      (currentMap as HTMLImageElement).alt = label;
+      mapContainer.setAttribute("data-current-map", value);
+
+      // Update the map title
+      const mapTitle = document.getElementById("map-title");
+      if (mapTitle) {
+        mapTitle.textContent = label;
+      }
+
+      resetTransform();
+    });
+  });
+</script>
