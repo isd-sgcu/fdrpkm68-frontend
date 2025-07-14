@@ -155,9 +155,10 @@ export default function PersonalInformationStep({
               className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
               {...register("prefix")}
             >
-              <option value="mr">นาย</option>
-              <option value="ms">นางสาว</option>
-              <option value="mrs">นาง</option>
+              <option value="MR">นาย</option>
+              <option value="MS">นางสาว</option>
+              <option value="MRS">นาง</option>
+              <option value="OTHER">ไม่ระบุ</option>
             </select>
           </div>
         </div>

@@ -1,44 +1,44 @@
 ---
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 /**
  * Popup Component
- * 
+ *
  * @example
  * ```astro
  * <Popup>
  *  <slot />
  * </Popup>
  * ```
- * 
+ *
  * @example lg
  * ```astro
  * <Popup size="large" color="light-blue">
  *   <slot />
  * </Popup>
  * ```
- * 
+ *
  * @example sm
  * ```astro
  * <Popup size="small" color="vivid-pink">
  *   <slot />
  * </Popup>
  * ```
- * 
+ *
  * @example
  * ```astro
  * <Popup size="large" color="light-green">
  *   <slot />
  * </Popup>
  * ```
- * 
+ *
  * @example
  * ```astro
  * <Popup size="large" color="light-blue">
  *   <slot />
  * </Popup>
  * ```
- * 
+ *
  * @example Email signup that doesn't suck
  * ```astro
  * <Popup size="large" color="light-green">
@@ -52,44 +52,50 @@ import { cn } from '@/lib/utils';
  */
 
 export interface Props {
-  size?: 'large' | 'medium' | 'small';
-  color?: 'black' | 'vivid-pink' | 'light-green' | 'light-blue' | 'light-pink' | 'light-beige';
+  size?: "large" | "medium" | "small";
+  color?:
+    | "black"
+    | "vivid-pink"
+    | "light-green"
+    | "light-blue"
+    | "light-pink"
+    | "light-beige";
   class?: string;
 }
 
-const { 
-  size = 'large', 
-  color = 'black',
-  class: additionalClasses = ''
+const {
+  size = "large",
+  color = "black",
+  class: additionalClasses = "",
 } = Astro.props;
 
 // Configuration based on size
 const sizeConfig = {
   large: {
-    aspectRatio: '365/783',
-    minHeight: '400px',
-    contentWidth: '80%',
-    contentHeight: '70%'
+    aspectRatio: "365/783",
+    minHeight: "400px",
+    contentWidth: "80%",
+    contentHeight: "70%",
   },
   medium: {
-    aspectRatio: '365/575',
-    minHeight: '300px',
-    contentWidth: '78%',
-    contentHeight: '68%'
+    aspectRatio: "365/575",
+    minHeight: "300px",
+    contentWidth: "78%",
+    contentHeight: "68%",
   },
   small: {
-    aspectRatio: '342/366',
-    minHeight: '200px',
-    contentWidth: '75%',
-    contentHeight: '65%'
-  }
+    aspectRatio: "342/366",
+    minHeight: "200px",
+    contentWidth: "75%",
+    contentHeight: "65%",
+  },
 };
 
 const config = sizeConfig[size];
 const borderSvg = `/images/popup-borders/popup-border-${size}-${color}.svg`;
 ---
 
-<div 
+<div
   class="popup-container w-screen"
   data-size={size}
   style={`
@@ -98,21 +104,20 @@ const borderSvg = `/images/popup-borders/popup-border-${size}-${color}.svg`;
     min-height: ${config.minHeight};
   `}
 >
-  
-  <img 
+  <img
     src={borderSvg}
     alt=""
-    class="absolute inset-0 w-full h-full object-contain"
+    class="absolute inset-0 h-full w-full object-contain"
   />
-  
+
   <!-- Content Area -->
-  <div 
+  <div
     class="absolute inset-0 z-10"
     style={`
-      padding: ${size === 'large' ? '15%' : size === 'medium' ? '13%' : '12%'};
+      padding: ${size === "large" ? "15%" : size === "medium" ? "13%" : "12%"};
     `}
   >
-    <div class={cn("w-full h-full overflow-hidden", additionalClasses)}>
+    <div class={cn("h-full w-full overflow-hidden", additionalClasses)}>
       <slot />
     </div>
   </div>
@@ -127,77 +132,77 @@ const borderSvg = `/images/popup-borders/popup-border-${size}-${color}.svg`;
     /* Ensure SVG borders are not clipped */
     overflow: visible;
   }
-  
+
   /* Content clipping to prevent overflow outside decorative borders */
   .popup-content-clip {
     /* Ensure content stays within the decorative SVG border bounds */
     overflow: hidden;
     border-radius: 8px; /* Slight rounding to match popup aesthetic */
   }
-  
+
   .popup-content-clip > div {
     /* Inner content scrolling */
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
   }
-  
+
   /* Custom webkit scrollbar for popup content */
   .popup-content-clip > div::-webkit-scrollbar {
     width: 4px;
   }
-  
+
   .popup-content-clip > div::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   .popup-content-clip > div::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 2px;
   }
-  
+
   .popup-content-clip > div::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.5);
   }
-  
+
   /* Size-specific adjustments for better content fitting */
   .popup-container[data-size="large"] .popup-content-clip {
     /* Large popups have more decorative border space */
     margin: 2%;
   }
-  
+
   .popup-container[data-size="medium"] .popup-content-clip {
     /* Medium popups have moderate decorative border space */
     margin: 1.5%;
   }
-  
+
   .popup-container[data-size="small"] .popup-content-clip {
     /* Small popups need tighter content area */
     margin: 1%;
   }
-  
+
   @media (max-width: 640px) {
     .content-area {
       /* Adjust content area for smaller mobile */
       width: 90% !important;
       height: 80% !important;
     }
-    
+
     .popup-content-clip {
       margin: 1% !important;
     }
   }
-  
+
   @media (max-width: 480px) {
     .popup-container {
       min-height: 250px !important;
     }
-    
+
     .content-area {
       /* Adjust content area for very small mobile */
       width: 95% !important;
       height: 85% !important;
     }
-    
+
     .popup-content-clip {
       margin: 0.5% !important;
     }
