@@ -13,7 +13,7 @@ const Loading: React.FC = () => {
       <Dialog forceOpen forceLevel={1000}>
         <DialogBody>
           <Frame size="sm" noWrapper>
-            <div className="z-10 flex h-full w-full flex-col items-center justify-center">
+            <div className="z-10 flex h-full w-full flex-col items-center justify-center overflow-hidden">
               <div className="loader m-auto h-10" />
               <div className="mt-4 text-center text-gray-500">
                 กำลังโหลดข้อมูล...

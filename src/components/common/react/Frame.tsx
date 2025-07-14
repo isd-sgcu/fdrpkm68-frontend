@@ -56,6 +56,10 @@ const Frame: React.FC<FrameProps> = ({
 }) => {
   const { theme } = useTheme();
 
+  if (theme.colorVariants && theme.colorVariants !== color) {
+    color = theme.colorVariants as "blue" | "purple";
+  }
+
   const frameId = propFrameId ?? "frame"; // fallback to a static id or use index if in a list
   const frameSvg = `/images/frame/frame-${color}-${size}.svg`;
 
@@ -103,7 +107,8 @@ const Frame: React.FC<FrameProps> = ({
     .${contentClipClass} {
       scrollbar-width: thin;
       scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
-      margin: ${contentMargins[size]};
+      // margin: ${contentMargins[size]};
+      margin: 3% 5% !important;
     }
 
     .${contentClipClass}::-webkit-scrollbar {
@@ -126,10 +131,6 @@ const Frame: React.FC<FrameProps> = ({
     @media (max-width: 480px) {
       .${containerClass} {
         min-height: 200px !important;
-      }
-      
-      .${contentClipClass} {
-        margin: 3% 5% !important;
       }
     }
   `;
@@ -157,7 +158,7 @@ const Frame: React.FC<FrameProps> = ({
 
         {/* Content area with proper clipping */}
         <div
-          className={`content-area absolute inset-0 flex ${contentClipClass} overflow-visible`}
+          className={`content-area absolute inset-0 flex ${contentClipClass} overflow-auto`}
         >
           {noWrapper ? (
             children

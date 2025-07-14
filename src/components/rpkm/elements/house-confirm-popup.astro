@@ -1,4 +1,6 @@
 ---
+import Frame from "@/components/common/Frame.astro";
+
 declare global {
   interface Window {
     showHouseConfirmPopup?: () => void;
@@ -14,21 +16,10 @@ declare global {
 >
   <!-- House Confirm Popup Wrapper -->
   <div class="relative w-full max-w-md px-5">
-    <!-- Pink trapezoids -->
-    <div
-      class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-    <div
-      class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-
-    <!-- Border -->
-    <div class="cut-houses-1 relative bg-[#8A2BE4] p-[1.5px]">
-      <!-- Content -->
+    <!-- Frame Component -->
+    <Frame size="sm" color="purple" contentContainerClass="!px-5 !py-8">
       <div
-        class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 py-8"
+        class="relative flex flex-col items-center"
         id="view-house-confirm-popup-content"
       >
         <!-- Header -->
@@ -37,7 +28,7 @@ declare global {
         <!-- Text -->
         <div class="flex flex-col items-center justify-center gap-6 pt-5">
           <img src="/images/rpkm/noti-icon.svg" width="72" height="72" />
-          <p class="text-center text-sm">
+          <p class="text-center text-sm text-white">
             *เมื่อยืนยันแล้วจะไม่สามารถแก้ไขรายการของบ้าน<br
             />และจะไม่สามารถจับคู่กับเพื่อนได้อีก
           </p>
@@ -63,7 +54,7 @@ declare global {
           </button>
         </div>
       </div>
-    </div>
+    </Frame>
   </div>
 </div>
 
@@ -74,27 +65,16 @@ declare global {
 >
   <!-- Popup Success Wrapper -->
   <div class="relative w-full max-w-md px-5">
-    <!-- Pink trapezoids -->
-    <div
-      class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-    <div
-      class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-
-    <!-- Border -->
-    <div class="cut-houses-1 relative bg-[#8A2BE4] p-[1.5px]">
-      <!-- Content -->
+    <!-- Frame Component -->
+    <Frame size="xs" color="purple">
       <div
-        class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 pt-8 pb-8"
+        class="relative flex flex-col items-center justify-center"
         id="view-house-success-popup-content"
       >
         <!-- Check -->
         <img
           src="/images/rpkm/check-icon.svg"
-          class="mt-10 rounded-full border-4 border-[#FF1493]"
+          class="rounded-full border-4 border-[#FF1493]"
           width="80"
           height="80"
         />
@@ -102,10 +82,10 @@ declare global {
         <!-- Text -->
         <p class="pt-4 text-2xl font-medium text-white">เลือกบ้านสำเร็จ</p>
       </div>
-    </div>
+    </Frame>
     <!-- X Button -->
     <button
-      class="cut-edge-all-sm absolute left-1/2 z-30 h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer bg-[#8A2BE4] text-xl text-white shadow-lg"
+      class="cut-edge-all-sm absolute bottom-0 left-1/2 z-30 h-10 w-10 -translate-x-1/2 translate-y-1/2 cursor-pointer bg-[#8A2BE4] text-xl text-white shadow-lg"
       id="btn-close-house-confirm-popup"
     >
       X
