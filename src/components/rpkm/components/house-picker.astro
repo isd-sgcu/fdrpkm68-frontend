@@ -17,6 +17,7 @@ type houseDisplayType = {
   image: string;
   thDescription: string;
   enDescription: string;
+  instagram: string;
   instagramURL: string;
   size: string;
   amount: number;
@@ -25,20 +26,20 @@ type houseDisplayType = {
 ---
 
 <!-- Not Picking Wrapper -->
-<div class="block" id="view-not-picking">
-  <Frame size="xs" color="purple" contentContainerClass="!px-4">
+<div class="block h-full w-full" id="view-not-picking">
+  <Frame size="xs" color="purple" contentContainerClass="!h-fit">
     <!-- Title -->
-    <p class="z-20 text-2xl font-semibold text-white">
-      บ้านรับเพื่อนที่เลือกไว้
-    </p>
+    <p class="text-2xl font-semibold text-white">บ้านรับเพื่อนที่เลือกไว้</p>
 
     <!-- Empty Houses -->
-    <div class="z-20 pt-5">
+    <div class="pt-5">
       <p class="text-[28px] font-semibold text-white">คุณยังไม่ได้เลือกบ้าน</p>
     </div>
 
     <!-- Button -->
-    <div class="pt-7 drop-shadow-[0_0_6px_white] filter">
+    <div
+      class="flex w-full justify-center pt-9 pb-5 drop-shadow-[0_0_6px_white] filter"
+    >
       <button
         id="btn-picking-house"
         class="cut-edge-all cursor-pointer bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
@@ -52,12 +53,12 @@ type houseDisplayType = {
 </div>
 
 <!-- Picking Wrapper -->
-<div class="hidden" id="view-picking">
-  <Frame size="lg" color="purple" contentContainerClass="!px-2 !py-0">
+<div class="hidden h-full w-full" id="view-picking">
+  <Frame size="lg" color="purple" contentContainerClass="!h-full">
     <!-- Title -->
     <p class="text-2xl font-semibold text-white">บ้านรับเพื่อนที่สนใจ</p>
     <!-- Pref Houses -->
-    <div class="flex flex-wrap justify-center gap-2 pt-4">
+    <div class="flex flex-wrap justify-center gap-3 pt-5">
       {
         [1, 2, 3, 4, 5].map((rank) => (
           <div data-house-rank={rank} class="h-fit w-fit">
@@ -74,14 +75,14 @@ type houseDisplayType = {
     </div>
 
     <!-- White Bar -->
-    <Divider color="white" />
+    <Divider color="white" width={236} class="my-3" />
 
     <p class="text-[10px]">
       *บ้านที่ 6 (สำรอง) เลือกได้เฉพาะบ้านไซส์ XL, XXL เท่านั้น
     </p>
 
     <!-- Sub Pref House -->
-    <div class="z-20 flex flex-wrap justify-center gap-6 pt-3">
+    <div class="flex w-full justify-center pt-7">
       <div data-house-rank="sub">
         <HousePickingCard
           house={{
@@ -95,7 +96,9 @@ type houseDisplayType = {
 
     <!-- Button -->
     <p class="pt-4 text-[10px] font-medium">*กรุณาเลือกบ้านหลักให้ครบ 5 บ้าน</p>
-    <div class={`pt-1 filter drop-shadow-[0_0_6px_white] z-20`}>
+    <div
+      class="flex w-full justify-center pt-4 pb-5 drop-shadow-[0_0_6px_white] filter"
+    >
       <button
         id="btn-submit-house"
         disabled
@@ -111,7 +114,7 @@ type houseDisplayType = {
 
 <!-- House Selection Popup -->
 <div
-  class="fixed inset-0 z-50 mx-auto hidden w-[440px] translate-x-[9px] items-center justify-center bg-[rgba(0,0,0,0.7)]"
+  class="fixed inset-0 z-50 mx-auto hidden w-full items-center justify-center bg-[rgba(0,0,0,0.7)]"
   id="house-selection-popup"
 >
   <div
@@ -491,16 +494,16 @@ type houseDisplayType = {
         if (house) {
           card.innerHTML = `
             <div class="relative h-fit w-fit flex flex-col gap-2">
-              <div class="relative h-[84px] w-[68px] bg-white p-1">
+              <div class="relative h-[100px] w-[80px] bg-white p-1">
                 <img 
                   src="/images/rpkm/rank-${rank}.svg"
-                  class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
+                  class="absolute z-20 left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
                   width="${rank === "sub" ? 55 : rank <= 2 ? 30 : 24}"
                   height="${rank === "sub" ? 55 : rank <= 2 ? 30 : 24}"
                 />
                 <img 
                   src="/images/rpkm/houses/${house.imageURL}"
-                  class="w-full h-auto object-cover pb-1"
+                  class="relative h-[73.442px] w-[73.442px] object-cover pb-1"
                 />
                 <p class="text-xs text-[#2B2D42] font-semibold text-center overflow-hidden whitespace-nowrap text-ellipsis">${house.name}</p>
               </div>
@@ -520,12 +523,12 @@ type houseDisplayType = {
         } else {
           card.innerHTML = `
             <button 
-              class="relative h-[84px] w-[68px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] hover:bg-[#D38DD8]/20 transition-colors cursor-pointer"
+              class="relative h-[100px] w-[80px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] hover:bg-[#D38DD8]/20 transition-colors cursor-pointer"
               data-rank="${rank}"
             >
               <img 
                 src="/images/rpkm/rank-${rank}.svg"
-                class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
+                class="absolute z-20 left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
                 width="${rank === "sub" ? 55 : rank <= 2 ? 30 : 24}"
                 height="${rank === "sub" ? 55 : rank <= 2 ? 30 : 24}"
               />
@@ -699,7 +702,7 @@ type houseDisplayType = {
 
       // Update instagram
       if (houseInstagram) {
-        houseInstagram.textContent = house.enName;
+        houseInstagram.textContent = house.instagram;
       }
 
       // Update instagram link

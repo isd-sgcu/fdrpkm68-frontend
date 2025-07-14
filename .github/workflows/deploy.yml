@@ -21,356 +21,356 @@ jobs:
       SERVICE_NAME: freshmenfest2025-dev-frontend
       API_URL: https://dev.freshmenfest2025.com/api
       SITE_URL: https://dev.freshmenfest2025.com
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: 8
-        run_install: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
 
-    - name: Get pnpm store directory
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-    - name: Setup pnpm cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
-    - name: Install dependencies
-      run: pnpm install --no-frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
 
-    - name: Build Astro application (Development)
-      run: |
-        echo "🏗️ Building Astro application..."
-        pnpm run build
-        
-        # Create checksum of build artifacts for verification
-        find ./dist -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | xargs sha256sum > build-manifest.txt
-        echo "📄 Build manifest created:"
-        cat build-manifest.txt
-        
-        # Verify critical files exist
-        if [ ! -f "./dist/server/entry.mjs" ]; then
-          echo "❌ Server entry point missing"
-          exit 1
-        fi
-        
-        if [ ! -d "./dist/client/_astro" ]; then
-          echo "❌ Client assets missing"
-          exit 1
-        fi
-        
-        echo "✅ Build verification complete"
-      env:
-        PUBLIC_API_URL: ${{ env.API_URL }}
-        PUBLIC_SITE_URL: ${{ env.SITE_URL }}
+      - name: Build Astro application (Development)
+        run: |
+          echo "🏗️ Building Astro application..."
+          pnpm run build
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
-        project_id: fdrpkm
+          # Create checksum of build artifacts for verification
+          find ./dist -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | xargs sha256sum > build-manifest.txt
+          echo "📄 Build manifest created:"
+          cat build-manifest.txt
 
-    - name: Configure Docker for GCP
-      run: |
-        gcloud auth configure-docker ${{ env.REGISTRY_HOSTNAME }} --quiet
+          # Verify critical files exist
+          if [ ! -f "./dist/server/entry.mjs" ]; then
+            echo "❌ Server entry point missing"
+            exit 1
+          fi
 
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v2
+          if [ ! -d "./dist/client/_astro" ]; then
+            echo "❌ Client assets missing"
+            exit 1
+          fi
 
-    - name: Build and push Docker image (Dev)
-      run: |
-        echo "🐳 Building Docker image..."
-        
-        # Store the GitHub Actions build for comparison
-        cp -r ./dist ./dist-github
-        
-        # Build Docker image (will rebuild inside container)
-        docker build --build-arg PUBLIC_API_URL=${{ env.API_URL }} --build-arg PUBLIC_SITE_URL=${{ env.SITE_URL }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest-dev .
-        
-        # Extract build from Docker image to verify consistency
-        docker create --name temp-container ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
-        docker cp temp-container:/app/dist ./dist-docker
-        docker rm temp-container
-        
-        # Compare the builds
-        echo "🔍 Comparing GitHub Actions build vs Docker build..."
-        find ./dist-github -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | sed 's|./dist-github|./dist|' | xargs -I {} sh -c 'sha256sum ./dist-github/$(echo {} | sed "s|./dist/||")' > github-manifest.txt
-        find ./dist-docker -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | sed 's|./dist-docker|./dist|' | xargs -I {} sh -c 'sha256sum ./dist-docker/$(echo {} | sed "s|./dist/||")' > docker-manifest.txt
-        
-        if ! diff github-manifest.txt docker-manifest.txt; then
-          echo "⚠️ WARNING: Docker build produced different artifacts!"
-          echo "GitHub build files:"
-          ls -la ./dist-github/client/_astro/
-          echo "Docker build files:"
-          ls -la ./dist-docker/client/_astro/
-          echo "Using Docker build (this is what runs in production)"
-        else
-          echo "✅ Docker build matches GitHub Actions build perfectly"
-        fi
-        
-        # Use Docker build artifacts for bucket upload
-        rm -rf ./dist
-        mv ./dist-docker ./dist
-        
-        # Push both tags
-        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
-        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest-dev
+          echo "✅ Build verification complete"
+        env:
+          PUBLIC_API_URL: ${{ env.API_URL }}
+          PUBLIC_SITE_URL: ${{ env.SITE_URL }}
 
-    - name: Deploy to Cloud Run (Dev)
-      run: |
-        gcloud run deploy ${{ env.SERVICE_NAME }} \
-          --image=${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} \
-          --region=${{ env.REGION }} \
-          --platform=managed \
-          --allow-unauthenticated \
-          --port=4321 \
-          --memory=512Mi \
-          --cpu=1 \
-          --min-instances=0 \
-          --max-instances=10 \
-          --concurrency=80 \
-          --timeout=300 \
-          --set-env-vars="NODE_ENV=development,PUBLIC_API_URL=${{ env.API_URL }},PUBLIC_SITE_URL=${{ env.SITE_URL }}" \
-          --execution-environment=gen2
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          project_id: fdrpkm
 
-    - name: Get Cloud Run URL (Dev)
-      run: |
-        SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{ env.REGION }} --format="value(status.url)")
-        echo "Development service deployed to: $SERVICE_URL"
+      - name: Configure Docker for GCP
+        run: |
+          gcloud auth configure-docker ${{ env.REGISTRY_HOSTNAME }} --quiet
 
-    - name: Upload static assets to Cloud Storage (Dev)
-      run: |
-        echo "📦 Uploading static assets (EXACT same files from deployed Docker image)..."
-        
-        # Verify we're using Docker build artifacts
-        if [ ! -f "./dist/server/entry.mjs" ]; then
-          echo "❌ Docker build artifacts not found!"
-          exit 1
-        fi
-        echo "✅ Using Docker build artifacts (matches deployed container)"
-        
-        # Upload Astro static assets
-        if [ -d "./dist/client/_astro" ]; then
-          echo "📄 Files being uploaded:"
-          ls -la ./dist/client/_astro/
-          
-          gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
-          echo "✅ Uploaded _astro assets"
-          
-          # Verify upload
-          echo "📄 Files in bucket after upload:"
-          gsutil ls gs://${{ env.BUCKET_NAME }}/_astro/
-        else
-          echo "❌ No _astro directory found"
-          exit 1
-        fi
-        
-        # Upload public images
-        if [ -d "./public/images" ]; then
-          gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
-          echo "✅ Uploaded images"
-        fi
-        
-        # Set cache control headers for static assets
-        gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
-          "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
-        gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
-          "gs://${{ env.BUCKET_NAME }}/images/**" || true
-        
-        echo "🎉 Static assets uploaded successfully and verified!"
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
 
-  # Production deployment  
+      - name: Build and push Docker image (Dev)
+        run: |
+          echo "🐳 Building Docker image..."
+
+          # Store the GitHub Actions build for comparison
+          cp -r ./dist ./dist-github
+
+          # Build Docker image (will rebuild inside container)
+          docker build --build-arg PUBLIC_API_URL=${{ env.API_URL }} --build-arg PUBLIC_SITE_URL=${{ env.SITE_URL }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest-dev .
+
+          # Extract build from Docker image to verify consistency
+          docker create --name temp-container ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          docker cp temp-container:/app/dist ./dist-docker
+          docker rm temp-container
+
+          # Compare the builds
+          echo "🔍 Comparing GitHub Actions build vs Docker build..."
+          find ./dist-github -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | sed 's|./dist-github|./dist|' | xargs -I {} sh -c 'sha256sum ./dist-github/$(echo {} | sed "s|./dist/||")' > github-manifest.txt
+          find ./dist-docker -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | sed 's|./dist-docker|./dist|' | xargs -I {} sh -c 'sha256sum ./dist-docker/$(echo {} | sed "s|./dist/||")' > docker-manifest.txt
+
+          if ! diff github-manifest.txt docker-manifest.txt; then
+            echo "⚠️ WARNING: Docker build produced different artifacts!"
+            echo "GitHub build files:"
+            ls -la ./dist-github/client/_astro/
+            echo "Docker build files:"
+            ls -la ./dist-docker/client/_astro/
+            echo "Using Docker build (this is what runs in production)"
+          else
+            echo "✅ Docker build matches GitHub Actions build perfectly"
+          fi
+
+          # Use Docker build artifacts for bucket upload
+          rm -rf ./dist
+          mv ./dist-docker ./dist
+
+          # Push both tags
+          docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest-dev
+
+      - name: Deploy to Cloud Run (Dev)
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image=${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+            --region=${{ env.REGION }} \
+            --platform=managed \
+            --allow-unauthenticated \
+            --port=4321 \
+            --memory=512Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=10 \
+            --concurrency=80 \
+            --timeout=300 \
+            --set-env-vars="NODE_ENV=development,PUBLIC_API_URL=${{ env.API_URL }},PUBLIC_SITE_URL=${{ env.SITE_URL }}" \
+            --execution-environment=gen2
+
+      - name: Get Cloud Run URL (Dev)
+        run: |
+          SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{ env.REGION }} --format="value(status.url)")
+          echo "Development service deployed to: $SERVICE_URL"
+
+      - name: Upload static assets to Cloud Storage (Dev)
+        run: |
+          echo "📦 Uploading static assets (EXACT same files from deployed Docker image)..."
+
+          # Verify we're using Docker build artifacts
+          if [ ! -f "./dist/server/entry.mjs" ]; then
+            echo "❌ Docker build artifacts not found!"
+            exit 1
+          fi
+          echo "✅ Using Docker build artifacts (matches deployed container)"
+
+          # Upload Astro static assets
+          if [ -d "./dist/client/_astro" ]; then
+            echo "📄 Files being uploaded:"
+            ls -la ./dist/client/_astro/
+            
+            gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
+            echo "✅ Uploaded _astro assets"
+            
+            # Verify upload
+            echo "📄 Files in bucket after upload:"
+            gsutil ls gs://${{ env.BUCKET_NAME }}/_astro/
+          else
+            echo "❌ No _astro directory found"
+            exit 1
+          fi
+
+          # Upload public images
+          if [ -d "./public/images" ]; then
+            gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
+            echo "✅ Uploaded images"
+          fi
+
+          # Set cache control headers for static assets
+          gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
+            "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
+          gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
+            "gs://${{ env.BUCKET_NAME }}/images/**" || true
+
+          echo "🎉 Static assets uploaded successfully and verified!"
+
+  # Production deployment
   deploy-prod:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     env:
       BUCKET_NAME: freshmenfest2025-static
       SERVICE_NAME: freshmenfest2025-frontend
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: 8
-        run_install: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
 
-    - name: Get pnpm store directory
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-    - name: Setup pnpm cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
-    - name: Install dependencies
-      run: pnpm install --no-frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
 
-    - name: Build Astro application (Production)
-      run: pnpm run build
-      env:
-        PUBLIC_API_URL: ${{ secrets.PROD_API_URL }}
-        PUBLIC_SITE_URL: ${{ secrets.PROD_SITE_URL }}
+      - name: Build Astro application (Production)
+        run: pnpm run build
+        env:
+          PUBLIC_API_URL: ${{ secrets.PROD_API_URL }}
+          PUBLIC_SITE_URL: ${{ secrets.PROD_SITE_URL }}
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
-        project_id: fdrpkm
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          project_id: fdrpkm
 
-    - name: Configure Docker for GCP
-      run: |
-        gcloud auth configure-docker ${{ env.REGISTRY_HOSTNAME }} --quiet
+      - name: Configure Docker for GCP
+        run: |
+          gcloud auth configure-docker ${{ env.REGISTRY_HOSTNAME }} --quiet
 
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v2
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
 
-    - name: Build and push Docker image (Prod)
-      run: |
-        # Build image with build args
-        docker build --build-arg PUBLIC_API_URL=${{ secrets.PROD_API_URL }} --build-arg PUBLIC_SITE_URL=${{ secrets.PROD_SITE_URL }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest .
-        
-        # Push both tags
-        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
-        docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest
+      - name: Build and push Docker image (Prod)
+        run: |
+          # Build image with build args
+          docker build --build-arg PUBLIC_API_URL=${{ secrets.PROD_API_URL }} --build-arg PUBLIC_SITE_URL=${{ secrets.PROD_SITE_URL }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest .
 
-    - name: Deploy to Cloud Run (Prod)
-      run: |
-        gcloud run deploy ${{ env.SERVICE_NAME }} \
-          --image=${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} \
-          --region=${{ env.REGION }} \
-          --platform=managed \
-          --allow-unauthenticated \
-          --port=4321 \
-          --memory=512Mi \
-          --cpu=1 \
-          --min-instances=0 \
-          --max-instances=20 \
-          --concurrency=100 \
-          --timeout=300 \
-          --set-env-vars="NODE_ENV=production,PUBLIC_API_URL=${{ secrets.PROD_API_URL }},PUBLIC_SITE_URL=${{ secrets.PROD_SITE_URL }}" \
-          --execution-environment=gen2
+          # Push both tags
+          docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest
 
-    - name: Get Cloud Run URL (Prod)
-      run: |
-        SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{ env.REGION }} --format="value(status.url)")
-        echo "Production service deployed to: $SERVICE_URL"
+      - name: Deploy to Cloud Run (Prod)
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image=${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} \
+            --region=${{ env.REGION }} \
+            --platform=managed \
+            --allow-unauthenticated \
+            --port=4321 \
+            --memory=512Mi \
+            --cpu=1 \
+            --min-instances=0 \
+            --max-instances=20 \
+            --concurrency=100 \
+            --timeout=300 \
+            --set-env-vars="NODE_ENV=production,PUBLIC_API_URL=${{ secrets.PROD_API_URL }},PUBLIC_SITE_URL=${{ secrets.PROD_SITE_URL }}" \
+            --execution-environment=gen2
 
-    - name: Upload static assets to Cloud Storage (Prod)
-      run: |
-        # Only upload if Cloud Run deployment succeeded
-        echo "Uploading static assets after successful deployment..."
-        
-        # Upload Astro static assets
-        if [ -d "./dist/client/_astro" ]; then
-          gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
-          echo "✅ Uploaded _astro assets"
-        else
-          echo "❌ No _astro directory found"
-          exit 1
-        fi
-        
-        # Upload public images
-        if [ -d "./public/images" ]; then
-          gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
-          echo "✅ Uploaded images"
-        fi
-        
-        # Set cache control headers for static assets
-        gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
-          "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
-        gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
-          "gs://${{ env.BUCKET_NAME }}/images/**" || true
-        
-        echo "✅ Static assets uploaded successfully"
+      - name: Get Cloud Run URL (Prod)
+        run: |
+          SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{ env.REGION }} --format="value(status.url)")
+          echo "Production service deployed to: $SERVICE_URL"
+
+      - name: Upload static assets to Cloud Storage (Prod)
+        run: |
+          # Only upload if Cloud Run deployment succeeded
+          echo "Uploading static assets after successful deployment..."
+
+          # Upload Astro static assets
+          if [ -d "./dist/client/_astro" ]; then
+            gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
+            echo "✅ Uploaded _astro assets"
+          else
+            echo "❌ No _astro directory found"
+            exit 1
+          fi
+
+          # Upload public images
+          if [ -d "./public/images" ]; then
+            gsutil -m cp -r ./public/images/* gs://${{ env.BUCKET_NAME }}/images/ || true
+            echo "✅ Uploaded images"
+          fi
+
+          # Set cache control headers for static assets
+          gsutil -m setmeta -h "Cache-Control:public, max-age=31536000, immutable" \
+            "gs://${{ env.BUCKET_NAME }}/_astro/**" || true
+          gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
+            "gs://${{ env.BUCKET_NAME }}/images/**" || true
+
+          echo "✅ Static assets uploaded successfully"
 
   # Test job for PRs
   test:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: 8
-        run_install: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
 
-    - name: Get pnpm store directory
-      shell: bash
-      run: |
-        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-    - name: Setup pnpm cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.STORE_PATH }}
-        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-store-
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
-    - name: Install dependencies
-      run: pnpm install --no-frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
 
-    - name: Build application (Test)
-      run: pnpm run build
-      env:
-        PUBLIC_API_URL: http://localhost:8080/api
-        PUBLIC_SITE_URL: http://localhost:4321
+      - name: Build application (Test)
+        run: pnpm run build
+        env:
+          PUBLIC_API_URL: http://localhost:8080/api
+          PUBLIC_SITE_URL: http://localhost:4321
 
-    - name: Test build output
-      run: |
-        if [ ! -f "./dist/server/entry.mjs" ]; then
-          echo "Build failed: entry.mjs not found"
-          exit 1
-        fi
-        echo "Build successful!"
+      - name: Test build output
+        run: |
+          if [ ! -f "./dist/server/entry.mjs" ]; then
+            echo "Build failed: entry.mjs not found"
+            exit 1
+          fi
+          echo "Build successful!"
 
-    - name: Test Docker build
-      run: |
-        docker build --build-arg PUBLIC_API_URL=http://localhost:8080/api --build-arg PUBLIC_SITE_URL=http://localhost:4321 -t test-build:pr-${{ github.event.pull_request.number }} .
-        echo "Docker build successful!"
+      - name: Test Docker build
+        run: |
+          docker build --build-arg PUBLIC_API_URL=http://localhost:8080/api --build-arg PUBLIC_SITE_URL=http://localhost:4321 -t test-build:pr-${{ github.event.pull_request.number }} .
+          echo "Docker build successful!"
 
-    - name: Run Docker container test
-      run: |
-        docker run -d --name test-container -p 4321:4321 test-build:pr-${{ github.event.pull_request.number }}
-        sleep 10
-        curl -f http://localhost:4321/ || (docker logs test-container && exit 1)
-        docker stop test-container
-        docker rm test-container
-        echo "Container test successful!"
+      - name: Run Docker container test
+        run: |
+          docker run -d --name test-container -p 4321:4321 test-build:pr-${{ github.event.pull_request.number }}
+          sleep 10
+          curl -f http://localhost:4321/ || (docker logs test-container && exit 1)
+          docker stop test-container
+          docker rm test-container
+          echo "Container test successful!"
