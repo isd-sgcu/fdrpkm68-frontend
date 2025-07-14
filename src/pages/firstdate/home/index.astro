@@ -1,7 +1,7 @@
 ---
 import BlurText from "@common/BlurText.astro";
 
-import DummyButton from "@/components/firstdate/ui/DummyButton.astro";
+import ButtonFd from "@/components/common/ButtonFd.astro";
 import Layout from "@/layouts/firstdate/WithNavbar.astro";
 ---
 
@@ -18,7 +18,7 @@ import Layout from "@/layouts/firstdate/WithNavbar.astro";
       <BlurText
         textSize="text-3xl"
         className="font-zen-dots text-[#CB438B]"
-        blurClassName="text-[#CB438B] blur-[3px] translate-y-[2px] font-zen-dots"
+        blurClassName="text-[#CB438B] blur-[3px] text-6xl translate-y-[2px] font-zen-dots"
       >
         CU109
       </BlurText>
@@ -31,18 +31,32 @@ import Layout from "@/layouts/firstdate/WithNavbar.astro";
       >
         Activities
       </BlurText>
-      <div class="flex w-full justify-center">
+      <div class="flex w-full items-center justify-center">
         <div class="my-3 flex w-4/5 flex-col gap-y-2">
-          <DummyButton href="/firstdate/events/firstdate/">
+          <ButtonFd
+            variant="fill"
+            color="white"
+            href="/firstdate/events/firstdate/"
+            class="w-full"
+          >
             CU First Date
-          </DummyButton>
-          <DummyButton href="/firstdate/events/cu-fest/"> CU Fest </DummyButton>
-          <DummyButton href="/firstdate/events/rpkm/">
+          </ButtonFd>
+          <ButtonFd
+            variant="fill"
+            color="white"
+            href="/firstdate/events/cufest/"
+            class="w-full"
+          >
+            Festival
+          </ButtonFd>
+          <ButtonFd
+            variant="fill"
+            color="white"
+            href="/firstdate/events/rpkm/"
+            class="w-full"
+          >
             รับเพื่อนก้าวใหม่
-          </DummyButton>
-          <DummyButton href="/firstdate/events/freshmen-night/">
-            Freshmen Night
-          </DummyButton>
+          </ButtonFd>
         </div>
       </div>
     </div>
@@ -56,19 +70,42 @@ import Layout from "@/layouts/firstdate/WithNavbar.astro";
       </BlurText>
       <div class="flex w-full justify-center">
         <div class="my-3 flex w-4/5 flex-col gap-y-2">
-          <DummyButton href="/firstdate/home/">
-            <img src="/firstdate/home/qrcode.svg" /> QR CODE
-          </DummyButton>
+          <ButtonFd
+            variant="fill"
+            color="white"
+            href="/firstdate/qrcode/"
+            class="flex w-full items-center"
+          >
+            <div
+              class="flex w-full flex-row items-center justify-center space-x-3"
+            >
+              <img src="/firstdate/home/qrcode.svg" />
+              <p>QR CODE</p>
+            </div>
+          </ButtonFd>
+          <ButtonFd variant="fill" color="white" href="/" class="w-full">
+            ประเมินผล
+          </ButtonFd>
           <div class="mt-2 flex flex-col gap-y-2">
             <div class="flex flex-row gap-x-2">
-              <DummyButton href="/firstdate/home/"> แผนที่ </DummyButton>
-              <DummyButton href="/firstdate/events/personality-game/">
-                Personal Game
-              </DummyButton>
+              <ButtonFd variant="fill" color="white" href="/firstdate/maps/">
+                แผนที่
+              </ButtonFd>
+              <ButtonFd variant="fill" color="white" href="/">
+                E-book
+              </ButtonFd>
             </div>
             <div class="flex flex-row gap-x-2">
-              <DummyButton href="/firstdate/home/"> ปฏิทิน </DummyButton>
-              <DummyButton href="/firstdate/home/"> Emergency </DummyButton>
+              <ButtonFd
+                variant="fill"
+                color="white"
+                href="/firstdate/calendar/"
+              >
+                ปฏิทิน
+              </ButtonFd>
+              <ButtonFd variant="fill" color="white" href="/emergency/">
+                Emergency
+              </ButtonFd>
             </div>
           </div>
         </div>

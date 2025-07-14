@@ -1,4 +1,7 @@
 ---
+import Divider from "@/components/common/Divider.astro";
+import Frame from "@/components/common/Frame.astro";
+
 const sampleRoomCode = "UIA321";
 const sampleURL = "rpkm.sgcu.in.th/";
 const sampleHeadName = "มหาเทพ อสูรเพลิง (Lnw)";
@@ -6,283 +9,229 @@ const sampleHeadID = "6812345678";
 ---
 
 <!-- Default Wrapper -->
-<div class="relative h-fit w-full px-5" id="view-group-default">
-  <!-- Pink trapezoids -->
-  <div
-    class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
-  <div
-    class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
+<div class="block" id="view-group-default">
+  <Frame color="purple" size="sm" contentContainerClass="!px-2 !py-0">
+    <!-- Title -->
+    <p class="pt-2 text-2xl font-semibold text-white">จับกลุ่มเพื่อน (1/3)</p>
 
-  <!-- Border -->
-  <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
-    <!-- Content -->
-    <div
-      class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 pt-8"
-    >
-      <!-- Title -->
-      <p class="z-20 text-2xl font-semibold text-white">จับกลุ่มเพื่อน (1/3)</p>
-
-      <!-- Room Code Input -->
-      <div class="z-20 flex w-full flex-col items-center gap-3 px-5 pt-9">
-        <!-- Input -->
-        <div class="w-full drop-shadow-[0_0_2px_white] filter">
-          <div
-            class="cut-input-1 bg-gradient-to-r from-[#FF1493] via-[#D38DD8] to-[#FF1493] px-[6px] py-[3px]"
-          >
-            <div class="cut-input-1 bg-[#2B2D42]">
-              <input
-                id="room-id-insert"
-                type="text"
-                placeholder="โปรดกรอกรหัสห้อง"
-                class="h-[36px] w-full bg-transparent px-3 py-1 text-lg text-[#0FF] placeholder-[#FFFFFF80] outline-none"
-                maxlength="6"
-              />
-            </div>
+    <!-- Room Code Input -->
+    <div class="flex w-full flex-col items-center gap-3 px-5 pt-9">
+      <!-- Input -->
+      <div class="w-full drop-shadow-[0_0_2px_white] filter">
+        <div
+          class="cut-input-1 bg-gradient-to-r from-[#FF1493] via-[#D38DD8] to-[#FF1493] px-[6px] py-[3px]"
+        >
+          <div class="cut-input-1 bg-[#2B2D42]">
+            <input
+              id="room-id-insert"
+              type="text"
+              placeholder="โปรดกรอกรหัสห้อง"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-lg text-[#0FF] placeholder-[#FFFFFF80] outline-none"
+              maxlength="6"
+            />
           </div>
         </div>
-
-        <!-- Submit Button -->
-        <div class="z-20 drop-shadow-[0_0_4px_white] filter">
-          <button
-            id="btn-join-group"
-            disabled
-            class="cut-edge-all cursor-not-allowed bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
-            type="button"
-            style="width: 200px; height: 40px;"
-          >
-            <p class="text-lg font-medium text-white">ยืนยัน</p>
-          </button>
-        </div>
       </div>
 
-      <!-- White Bar -->
-      <div class="my-7 flex items-center">
-        <div class="h-2 w-2 rotate-45 bg-white"></div>
-        <div class="h-[2px] w-[236.008px] bg-white"></div>
-        <div class="h-2 w-2 rotate-45 bg-white"></div>
-      </div>
-
-      <!-- Head Group Button -->
-      <div class="z-20 drop-shadow-[0_0_6px_white] filter">
+      <!-- Submit Button -->
+      <div class="drop-shadow-[0_0_4px_white] filter">
         <button
-          id="btn-head-group"
-          class="cut-edge-all cursor-pointer bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
+          id="btn-join-group"
+          disabled
+          class="cut-edge-all cursor-not-allowed bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
           type="button"
-          style="width: 260px; height: 48px;"
+          style="width: 200px; height: 40px;"
         >
-          <p class="text-xl font-medium text-white">เป็นหัวแคลน</p>
+          <p class="text-lg font-medium text-white">ยืนยัน</p>
         </button>
       </div>
-
-      <!-- Note -->
-      <p class="py-3 text-xs text-white">*สามารถเลือกบ้านคนเดียวได้</p>
     </div>
-  </div>
+
+    <!-- White Bar -->
+    <Divider color="white" class="my-4" />
+
+    <!-- Head Group Button -->
+    <div class="drop-shadow-[0_0_6px_white] filter">
+      <button
+        id="btn-head-group"
+        class="cut-edge-all cursor-pointer bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
+        type="button"
+        style="width: 260px; height: 48px;"
+      >
+        <p class="text-xl font-medium text-white">เป็นหัวแคลน</p>
+      </button>
+    </div>
+
+    <!-- Note -->
+    <p class="py-3 text-xs text-white">*สามารถเลือกบ้านคนเดียวได้</p>
+  </Frame>
 </div>
 
 <!-- Head Wrapper -->
-<div class="relative hidden h-fit w-full px-5" id="view-group-head">
-  <!-- Pink trapezoids -->
-  <div
-    class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
-  <div
-    class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
+<div class="hidden" id="view-group-head">
+  <Frame color="purple" size="sm" contentContainerClass="!px-2 !py-0">
+    <!-- Title -->
+    <div class="relative w-full pt-2 text-center">
+      <p
+        class="absolute left-0 cursor-pointer text-2xl font-semibold text-white"
+        id="btn-back"
+      >
+        {"<"}
+      </p>
+      <p class="text-2xl font-semibold text-white">จับกลุ่มเพื่อน (1/3)</p>
+    </div>
 
-  <!-- Border -->
-  <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
-    <!-- Content -->
-    <div
-      class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 pt-8"
-    >
-      <!-- Title -->
-      <div class="relative flex w-full justify-center gap-1">
-        <p
-          class="absolute left-2 cursor-pointer text-2xl font-semibold text-white"
-          id="btn-back"
-        >
-          {"<"}
-        </p>
-        <p class="z-20 text-center text-2xl font-semibold text-white">
-          จับกลุ่มเพื่อน (1/3)
-        </p>
-      </div>
+    <!-- Profile -->
+    <div class="flex w-full justify-center gap-3 pt-3">
+      <img src="/images/rpkm/sample-profile.png" width="80" height="80" />
+      <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
+      <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
+    </div>
 
-      <!-- Profile -->
-      <div class="z-20 flex w-full justify-center gap-3 px-5 pt-4">
-        <img src="/images/rpkm/sample-profile.png" width="80" height="80" />
-        <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
-        <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
-      </div>
-
-      <!-- Invite URL -->
-      <div class="flex w-full flex-col items-center gap-1 pt-6">
-        <!-- Header -->
-        <p class="text-xs font-semibold text-white">Invite Link</p>
-        <!-- URL -->
+    <!-- Invite URL -->
+    <div class="flex w-full flex-col items-center gap-1 pt-4">
+      <!-- Header -->
+      <p class="text-xs font-semibold text-white">Invite Link</p>
+      <!-- URL -->
+      <div
+        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
+        id="room-invite-url-head-container"
+      >
         <div
-          class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
-          id="room-invite-url-head-container"
+          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
         >
-          <div
-            class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
-          >
-            <div class="cut-input-1 relative flex bg-[#2B2D42]">
-              <span
-                id="room-invite-url-head"
-                class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
-              >
-                {sampleURL + sampleRoomCode}
-              </span>
-              <img
-                src="/images/rpkm/link-icon.svg"
-                width="18"
-                height="18"
-                class="absolute top-1/2 right-2 -translate-y-1/2"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Room Code -->
-      <div class="flex w-full flex-col items-center gap-1 py-3">
-        <!-- Header -->
-        <p class="text-xs font-semibold text-white">Room Code</p>
-        <!-- Code -->
-        <div
-          class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
-          id="room-code-head-container"
-        >
-          <div
-            class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
-          >
-            <div class="cut-input-1 relative flex bg-[#2B2D42]">
-              <span
-                id="room-code-head"
-                class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
-              >
-                {sampleRoomCode}
-              </span>
-              <img
-                src="/images/rpkm/link-icon.svg"
-                width="18"
-                height="18"
-                class="absolute top-1/2 right-2 -translate-y-1/2"
-              />
-            </div>
+          <div class="cut-input-1 relative flex bg-[#2B2D42]">
+            <span
+              id="room-invite-url-head"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
+            >
+              {sampleURL + sampleRoomCode}
+            </span>
+            <img
+              src="/images/rpkm/link-icon.svg"
+              width="18"
+              height="18"
+              class="absolute top-1/2 right-2 -translate-y-1/2"
+            />
           </div>
         </div>
       </div>
     </div>
-  </div>
+
+    <!-- Room Code -->
+    <div class="flex w-full flex-col items-center gap-1 py-4">
+      <!-- Header -->
+      <p class="text-xs font-semibold text-white">Room Code</p>
+      <!-- Code -->
+      <div
+        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
+        id="room-code-head-container"
+      >
+        <div
+          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
+        >
+          <div class="cut-input-1 relative flex bg-[#2B2D42]">
+            <span
+              id="room-code-head"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
+            >
+              {sampleRoomCode}
+            </span>
+            <img
+              src="/images/rpkm/link-icon.svg"
+              width="18"
+              height="18"
+              class="absolute top-1/2 right-2 -translate-y-1/2"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </Frame>
 </div>
 
 <!-- Member Wrapper -->
-<div class="relative hidden h-fit w-full px-5" id="view-group-member">
-  <!-- Pink trapezoids -->
-  <div
-    class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
-  <div
-    class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
+<div class="hidden" id="view-group-member">
+  <Frame color="purple" size="sm" contentContainerClass="!px-2 !py-0">
+    <!-- Title -->
+    <div class="relative w-full pt-2 text-center">
+      <p class="z-20 text-center text-2xl font-semibold text-white">
+        จับกลุ่มเพื่อน (2/3)
+      </p>
+      <img
+        src="/images/rpkm/exit-icon.svg"
+        width="24px"
+        height="24px"
+        class="absolute top-3 right-0 cursor-pointer"
+        id="btn-exit"
+      />
+    </div>
 
-  <!-- Border -->
-  <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
-    <!-- Content -->
-    <div
-      class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 pt-8"
-    >
-      <!-- Title -->
-      <div class="relative flex w-full justify-center gap-1">
-        <p class="z-20 text-center text-2xl font-semibold text-white">
-          จับกลุ่มเพื่อน (2/3)
-        </p>
-        <img
-          src="/images/rpkm/exit-icon.svg"
-          width="24px"
-          height="24px"
-          class="absolute top-1 right-2 cursor-pointer"
-          id="btn-exit"
-        />
-      </div>
+    <!-- Profile -->
+    <div class="z-20 flex w-full justify-center gap-3 pt-3">
+      <img src="/images/rpkm/sample-profile2.png" width="80" height="80" />
+      <img src="/images/rpkm/sample-profile.png" width="80" height="80" />
+      <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
+    </div>
 
-      <!-- Profile -->
-      <div class="z-20 flex w-full justify-center gap-3 px-5 pt-4">
-        <img src="/images/rpkm/sample-profile2.png" width="80" height="80" />
-        <img src="/images/rpkm/sample-profile.png" width="80" height="80" />
-        <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
-      </div>
-
-      <!-- Invite URL -->
-      <div class="flex w-full flex-col items-center gap-1 pt-6">
-        <!-- Header -->
-        <p class="text-xs font-semibold text-white">Invite Link</p>
-        <!-- URL -->
+    <!-- Invite URL -->
+    <div class="flex w-full flex-col items-center gap-1 pt-4">
+      <!-- Header -->
+      <p class="text-xs font-semibold text-white">Invite Link</p>
+      <!-- URL -->
+      <div
+        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
+        id="room-invite-url-member-container"
+      >
         <div
-          class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
-          id="room-invite-url-member-container"
+          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
         >
-          <div
-            class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
-          >
-            <div class="cut-input-1 relative flex bg-[#2B2D42]">
-              <span
-                id="room-invite-url-member"
-                class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
-              >
-              </span>
-              <img
-                src="/images/rpkm/link-icon.svg"
-                width="18"
-                height="18"
-                class="absolute top-1/2 right-2 -translate-y-1/2"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Room Code -->
-      <div class="flex w-full flex-col items-center gap-1 py-3">
-        <!-- Header -->
-        <p class="text-xs font-semibold text-white">Room Code</p>
-        <!-- Code -->
-        <div
-          class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
-          id="room-code-member-container"
-        >
-          <div
-            class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
-          >
-            <div class="cut-input-1 relative flex bg-[#2B2D42]">
-              <span
-                id="room-code-member"
-                class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
-              >
-              </span>
-              <img
-                src="/images/rpkm/link-icon.svg"
-                width="18"
-                height="18"
-                class="absolute top-1/2 right-2 -translate-y-1/2"
-              />
-            </div>
+          <div class="cut-input-1 relative flex bg-[#2B2D42]">
+            <span
+              id="room-invite-url-member"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
+            >
+            </span>
+            <img
+              src="/images/rpkm/link-icon.svg"
+              width="18"
+              height="18"
+              class="absolute top-1/2 right-2 -translate-y-1/2"
+            />
           </div>
         </div>
       </div>
     </div>
-  </div>
+
+    <!-- Room Code -->
+    <div class="flex w-full flex-col items-center gap-1 py-4">
+      <!-- Header -->
+      <p class="text-xs font-semibold text-white">Room Code</p>
+      <!-- Code -->
+      <div
+        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
+        id="room-code-member-container"
+      >
+        <div
+          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
+        >
+          <div class="cut-input-1 relative flex bg-[#2B2D42]">
+            <span
+              id="room-code-member"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
+            >
+            </span>
+            <img
+              src="/images/rpkm/link-icon.svg"
+              width="18"
+              height="18"
+              class="absolute top-1/2 right-2 -translate-y-1/2"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </Frame>
 </div>
 
 <!-- Popup Overlay -->
@@ -292,21 +241,10 @@ const sampleHeadID = "6812345678";
 >
   <!-- Popup Wrapper -->
   <div class="relative w-full max-w-md px-5">
-    <!-- Pink trapezoids -->
-    <div
-      class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-    <div
-      class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-
-    <!-- Border -->
-    <div class="cut-houses-1 relative bg-[#8A2BE4] p-[1.5px]">
-      <!-- Content -->
+    <!-- Frame Component -->
+    <Frame color="purple" size="sm">
       <div
-        class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 pt-8"
+        class="relative flex flex-col items-center justify-center"
         id="view-group-popup-content"
       >
         <!-- Title -->
@@ -337,8 +275,7 @@ const sampleHeadID = "6812345678";
           </button>
         </div>
       </div>
-    </div>
-
+    </Frame>
     <!-- Cancel Button -->
     <button
       class="cut-edge-all-sm absolute left-1/2 z-30 h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer bg-[#8A2BE4] text-xl text-white shadow-lg"
@@ -356,27 +293,16 @@ const sampleHeadID = "6812345678";
 >
   <!-- Popup Success Wrapper -->
   <div class="relative w-full max-w-md px-5">
-    <!-- Pink trapezoids -->
-    <div
-      class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-    <div
-      class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full -translate-y-1/2 bg-[#FF1493]"
-    >
-    </div>
-
-    <!-- Border -->
-    <div class="cut-houses-1 relative bg-[#8A2BE4] p-[1.5px]">
-      <!-- Content -->
+    <!-- Frame Component -->
+    <Frame color="purple" size="sm">
       <div
-        class="cut-houses-1 relative flex h-fit min-h-[340px] flex-col items-center bg-[#2B2D42BF] px-5 pt-8"
+        class="relative flex flex-col items-center justify-center"
         id="view-group-popup-content"
       >
         <!-- Check -->
         <img
           src="/images/rpkm/check-icon.svg"
-          class="mt-10 rounded-full border-4 border-[#FF1493]"
+          class="rounded-full border-4 border-[#FF1493]"
           width="80"
           height="80"
         />
@@ -388,7 +314,7 @@ const sampleHeadID = "6812345678";
           <p class="text-2xl font-medium">สำเร็จแล้ว</p>
         </div>
       </div>
-    </div>
+    </Frame>
 
     <!-- Cancel Button -->
     <button
