@@ -8,28 +8,13 @@ import type {
 } from "react-hook-form";
 
 
+import type { RegisterFormData } from "@/components/common/register/RegisterForm";
+
 export interface ContactInfo {
   phoneNumber: string;
-  guardianPhoneNumber: string;
-  guardianRelationship: string;
-}
-
-interface RegisterFormData {
-  title: string;
-  firstName: string;
-  lastName: string;
-  nickname: string;
-  faculty: string;
-  year: string;
-  phoneNumber: string;
-  guardianPhoneNumber: string;
-  guardianRelationship: string;
-  hasAllergies: boolean | null;
-  allergies: string;
-  hasMedications: boolean | null;
-  medications: string;
-  hasChronicDiseases: boolean | null;
-  chronicDiseases: string;
+  parentPhoneNumber: string;
+  parentRelationship: string;
+  parentName: string;
 }
 
 export default function ContactInformationStep({
@@ -99,16 +84,37 @@ export default function ContactInformationStep({
             ข้อมูลผู้ปกครอง
           </h1>
           <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="guardianPhoneNumber">
+            <label className="text-sm" htmlFor="parentName">
+              ชื่อผู้ปกครอง <span className="text-red-400">*</span>
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <input
+                id="parentName"
+                type="text"
+                placeholder="ชื่อผู้ปกครอง"
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.parentName ? "border-red-500" : ""}`}
+                {...register("parentName", {
+                  required: "กรุณากรอกชื่อผู้ปกครอง",
+                })}
+              />
+            </div>
+            {errors.parentName && (
+              <span className="text-xs text-red-400">
+                {errors.parentName.message}
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm" htmlFor="parentPhoneNumber">
               เบอร์โทรศัพท์ของผู้ปกครอง <span className="text-red-400">*</span>
             </label>
             <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
               <input
-                id="guardianPhoneNumber"
+                id="parentPhoneNumber"
                 type="text"
                 placeholder="เบอร์โทรศัพท์"
-                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.guardianPhoneNumber ? "border-red-500" : ""}`}
-                {...register("guardianPhoneNumber", {
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.parentPhoneNumber ? "border-red-500" : ""}`}
+                {...register("parentPhoneNumber", {
                   required: "กรุณากรอกเบอร์โทรศัพท์ของผู้ปกครอง",
                   pattern: {
                     value: /^[0-9]{10}$/,
@@ -117,23 +123,23 @@ export default function ContactInformationStep({
                 })}
               />
             </div>
-            {errors.guardianPhoneNumber && (
+            {errors.parentPhoneNumber && (
               <span className="text-xs text-red-400">
-                {errors.guardianPhoneNumber.message}
+                {errors.parentPhoneNumber.message}
               </span>
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-sm" htmlFor="guardianRelationship">
+            <label className="text-sm" htmlFor="parentRelationship">
               ความสัมพันธ์ <span className="text-red-400">*</span>
             </label>
             <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
               <input
-                id="guardianRelationship"
+                id="parentRelationship"
                 type="text"
                 placeholder="ความสัมพันธ์"
-                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.guardianRelationship ? "border-red-500" : ""}`}
-                {...register("guardianRelationship", {
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.parentRelationship ? "border-red-500" : ""}`}
+                {...register("parentRelationship", {
                   required: "กรุณากรอกความสัมพันธ์",
                   minLength: {
                     value: 2,
@@ -142,15 +148,15 @@ export default function ContactInformationStep({
                 })}
               />
             </div>
-            {errors.guardianRelationship && (
+            {errors.parentRelationship && (
               <span className="text-xs text-red-400">
-                {errors.guardianRelationship.message}
+                {errors.parentRelationship.message}
               </span>
             )}
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center justify-center gap-4">
+        <div className="mt-2 flex w-full flex-col items-center justify-center gap-4">
           <button
             type="submit"
             className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
