@@ -51,11 +51,11 @@ export default function RegisterForm({
       password: "",
       passwordConfirm: "",
       // Personal Info
-      prefix: "mr",
+      prefix: "MR",
       firstName: "",
       lastName: "",
       nickname: "",
-      faculty: "engineering",
+      faculty: "FACULTY_OF_ENGINEERING",
       academicYear: "1",
       // Contact Info
       phoneNumber: "",
