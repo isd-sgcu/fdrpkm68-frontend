@@ -7,28 +7,29 @@ import SuccessConfetti from "@/components/common/SuccessConfetti.astro";
 import Layout from "@/layouts/firstdate/WithNavbar.astro";
 import { getEventStatus, EVENT_CONFIGS, type EventType } from "@/lib/eventAPI";
 
-// Get the eventId from the URL parameters
 const { eventId } = Astro.params;
 
-// Validate eventId
 if (!eventId || !(eventId in EVENT_CONFIGS)) {
   return Astro.redirect("/firstdate/home/");
 }
 
 const eventType = eventId as EventType;
 const eventConfig = EVENT_CONFIGS[eventType];
-const eventStatus = await getEventStatus(eventType);
 
-// Check for just registered state from URL params
-const url = new URL(Astro.request.url);
-const justRegistered = url.searchParams.get("registered") === "true";
-
-// If just registered, simulate adding to registration
-if (justRegistered) {
-  // This would normally be done by the API, but we'll simulate it
-  const { registerForEvent } = await import("@/lib/eventAPI");
-  await registerForEvent(eventType);
+function parseCookie(cookie: string): Record<string, string> {
+  return Object.fromEntries(
+    cookie
+      .split("; ")
+      .map((c) => c.split("="))
+      .map(([k, v]) => [k, decodeURIComponent(v)])
+  );
 }
+
+const cookie = Astro.request.headers.get("cookie") ?? "";
+const authToken = parseCookie(cookie).token;
+const eventStatus = await getEventStatus(eventType, authToken);
+const justRegistered =
+  new URL(Astro.request.url).searchParams.get("registered") === "true";
 ---
 
 <Layout>
@@ -36,7 +37,7 @@ if (justRegistered) {
     <!-- Event Header -->
     <div class="text-center">
       <h1
-        class="mt-[26px] fill-white text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50"
+        class="mt-[26px] text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50"
       >
         {eventConfig.title}
       </h1>
@@ -48,7 +49,6 @@ if (justRegistered) {
         !eventStatus.isLate &&
         !justRegistered &&
         !eventStatus.isComingSoon && (
-          // <!-- State 1: Not Registered -->
           <section class="flex flex-col items-center justify-center">
             <Popup
               size="medium"
@@ -87,7 +87,6 @@ if (justRegistered) {
 
     {
       justRegistered && (
-        // <!-- State 2: Registration Success (with confetti) -->
         <SuccessConfetti
           eventName={eventConfig.title}
           eventId={eventId}
@@ -98,7 +97,6 @@ if (justRegistered) {
 
     {
       eventStatus.isRegistered && !justRegistered && (
-        // <!-- State 3: Already Registered -->
         <section class="flex flex-col items-center justify-center">
           <Popup
             size="medium"
@@ -117,7 +115,6 @@ if (justRegistered) {
           </Popup>
 
           {eventType === "firstdate" || eventType === "freshmen-night" ? (
-            // <!-- Special buttons for firstdate and freshmen-night events -->
             <div class="flex w-full flex-col items-center justify-center gap-2">
               <ButtonFd class="mb-1" color="white" href="/firstdate/qr-code/">
                 แสดง QR CODE เข้างาน
@@ -127,7 +124,6 @@ if (justRegistered) {
               </ButtonFd>
             </div>
           ) : eventType === "rpkm" ? (
-            // <!-- Special button for RPKM event -->
             <div class="flex w-full flex-col items-center justify-center gap-2">
               <ButtonFd
                 class="mb-1"
@@ -138,7 +134,6 @@ if (justRegistered) {
               </ButtonFd>
             </div>
           ) : (
-            // <!-- Default button for other events -->
             <ButtonFd class="mb-2" color="white" href="/firstdate/home/">
               กลับหน้าหลัก
             </ButtonFd>
@@ -149,7 +144,6 @@ if (justRegistered) {
 
     {
       eventStatus.isLate && (
-        // <!-- State 4: Registration Closed -->
         <section class="flex flex-col items-center justify-center">
           <Popup
             size="medium"
@@ -161,7 +155,7 @@ if (justRegistered) {
             <p>{eventConfig.registrationInfo}</p>
             <p>{eventConfig.additionalInfo}</p>
           </Popup>
-          <h1 class="mb-4 fill-white text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50">
+          <h1 class="mb-4 text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50">
             ไม่สามารถลงทะเบียนได้
           </h1>
           <ButtonFd
@@ -179,7 +173,6 @@ if (justRegistered) {
 
     {
       eventStatus.isComingSoon && (
-        // <!-- State 5: Coming Soon -->
         <section class="flex flex-col items-center justify-center">
           <Popup
             size="medium"
@@ -208,22 +201,34 @@ if (justRegistered) {
 </Layout>
 
 <script>
-  // Handle registration button click
   const registerBtn = document.getElementById(
     "register-btn"
   ) as HTMLButtonElement;
+
   if (registerBtn) {
     registerBtn.addEventListener("click", async () => {
       const eventId = registerBtn.getAttribute("data-event-id");
+
       registerBtn.textContent = "กำลังลงทะเบียน...";
       registerBtn.disabled = true;
 
       try {
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const { registerForEvent } = await import("@/lib/eventAPI");
+        const result = await registerForEvent(eventId as any);
 
-        // Show confetti and redirect
-        window.location.href = `/firstdate/events/${eventId}/?registered=true`;
+        if (result.success) {
+          window.location.href = `/firstdate/events/${eventId}/?registered=true`;
+        } else {
+          if (result.needsLogin || result.error?.includes("เข้าสู่ระบบ")) {
+            alert("กรุณาเข้าสู่ระบบก่อนลงทะเบียน");
+            window.location.href = "/login/";
+            return;
+          }
+
+          alert(result.error || "เกิดข้อผิดพลาดในการลงทะเบียน");
+          registerBtn.textContent = "ลงทะเบียนเข้าร่วมงาน";
+          registerBtn.disabled = false;
+        }
       } catch (error) {
         registerBtn.textContent = "ลงทะเบียนเข้าร่วมงาน";
         registerBtn.disabled = false;
