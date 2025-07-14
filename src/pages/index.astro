@@ -68,3 +68,53 @@ import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
     </div>
   </div>
 </Layout>
+
+<script>
+  // Track 8K image load time using Performance API
+  const bgImage = document.getElementById("bg-image") as HTMLImageElement;
+  const imageLoadTimeElement = document.getElementById("image-load-time");
+  const apiLoadTimeElement = document.createElement("span");
+  apiLoadTimeElement.className = "text-green-400";
+
+  function checkResourceTimings() {
+    // Get image network timing
+    const imageUrl = bgImage?.src;
+    if (imageUrl) {
+      const imagePerfEntries = performance.getEntriesByName(imageUrl);
+      if (imagePerfEntries.length > 0) {
+        const imageEntry = imagePerfEntries[0] as PerformanceResourceTiming;
+        const imageNetworkTime = Math.round(imageEntry.duration);
+        if (imageLoadTimeElement) {
+          imageLoadTimeElement.textContent = `${imageNetworkTime}ms`;
+        }
+      }
+    }
+
+    // Get API network timing - make a client-side call to measure
+    fetch("https://dev.freshmenfest2025.com/api/health").then(() => {
+      const apiPerfEntries = performance.getEntriesByName(
+        "https://dev.freshmenfest2025.com/api/health"
+      );
+      if (apiPerfEntries.length > 0) {
+        const apiEntry = apiPerfEntries[
+          apiPerfEntries.length - 1
+        ] as PerformanceResourceTiming;
+        const apiNetworkTime = Math.round(apiEntry.duration);
+        // Update API load time display
+        const apiLoadTimeSpan = document.querySelector("span.text-green-400");
+        if (apiLoadTimeSpan && apiLoadTimeSpan.textContent?.includes("ms")) {
+          apiLoadTimeSpan.textContent = `${apiNetworkTime}ms (network)`;
+        }
+      }
+    });
+  }
+
+  // Check timings after page load
+  if (document.readyState === "complete") {
+    setTimeout(checkResourceTimings, 100);
+  } else {
+    window.addEventListener("load", () => {
+      setTimeout(checkResourceTimings, 100);
+    });
+  }
+</script>

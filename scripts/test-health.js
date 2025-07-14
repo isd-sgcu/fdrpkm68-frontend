@@ -1,9 +1,11 @@
 #!/usr/bin/env node
+
 /**
  * Simple health check script for local testing
  */
-import { spawn } from "child_process";
-import http from "http";
+
+const { spawn } = require("child_process");
+const http = require("http");
 
 // Start the server
 console.log("Starting server...");
@@ -30,7 +32,7 @@ setTimeout(() => {
           const health = JSON.parse(data);
           console.log("Health check response:", health);
           console.log("✅ Server is healthy!");
-        } catch {
+        } catch (error) {
           console.log("❌ Invalid health response:", data);
         }
         server.kill();

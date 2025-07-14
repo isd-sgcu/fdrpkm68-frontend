@@ -1,49 +1,8 @@
 ---
 import Sample from "@/components/rpkm/sample.astro";
 import Layout from "@/layouts/rpkm/WithNavbar.astro";
-import { api } from "@/lib/api";
-
-interface LoginResponse {
-  token: string;
-  [key: string]: unknown;
-}
-
-// const userData = {
-//   studentId: "6631321322",
-//   citizenId: "1234567890123",
-//   password: "Qwerty123",
-//   firstName: "Thanagorn",
-//   lastName: "Chaiyut",
-//   nickname: "Best",
-//   faculty: "Engineering",
-//   academicYear: 2,
-//   phoneNumber: "0937255851",
-//   parentName: "Test Parent",
-//   parentPhoneNumber: "0123456789",
-//   parentRelationship: "Father",
-//   foodAllergy: "-",
-//   drugAllergy: "-",
-//   illness: "-",
-//   prefix: "MR",
-// };
-
-// const res2 = await api.post("/auth/register", {...userData });
-
-const res3 = await api.post("/auth/login", {
-  studentId: "6631321322",
-  password: "Qwerty123",
-});
-
-const data = res3.data as LoginResponse;
-const token = data.token;
 ---
 
 <Layout variant="rpkm_home">
   <Sample />
 </Layout>
-
-<script define:vars={{ token: token }}>
-  document.addEventListener("DOMContentLoaded", () => {
-    localStorage.setItem("token", token);
-  });
-</script>
