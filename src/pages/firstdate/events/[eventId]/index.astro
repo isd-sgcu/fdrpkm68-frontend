@@ -1,5 +1,6 @@
 ---
 import { Home } from "@lucide/astro";
+import QRCode from "qrcode";
 
 import ButtonFd from "@/components/common/ButtonFd.astro";
 import Popup from "@/components/common/Popup.astro";
@@ -30,6 +31,14 @@ const authToken = parseCookie(cookie).token;
 const eventStatus = await getEventStatus(eventType, authToken);
 const justRegistered =
   new URL(Astro.request.url).searchParams.get("registered") === "true";
+
+// Generate QR code if user is registered and has checkin data
+let qrCodeData = null;
+if (eventStatus.isRegistered && eventStatus.checkinData) {
+  const { id, userId } = eventStatus.checkinData;
+  const targetUrl = `id=${id}&userId=${userId}`;
+  qrCodeData = await QRCode.toDataURL(targetUrl);
+}
 ---
 
 <Layout>
@@ -98,26 +107,50 @@ const justRegistered =
     {
       eventStatus.isRegistered && !justRegistered && (
         <section class="flex flex-col items-center justify-center">
-          <Popup
-            size="medium"
-            color={eventConfig.popupColors.registered}
-            class="flex flex-col items-center justify-center text-center"
-          >
-            <p>{eventConfig.description}</p>
-            <p class="mt-4">{eventConfig.schedule}</p>
-            <p>{eventConfig.registrationInfo}</p>
-            <p>{eventConfig.additionalInfo}</p>
-            <p class="mt-4 font-bold text-[#C6EBC5]">
-              {eventType === "rpkm"
-                ? 'สถานะ: ลงทะเบียนเข้างานแล้ว อย่าลืมไปลงทะเบียน "เลือกบ้าน" กันด้วยนะ'
-                : "สถานะ: ลงทะเบียนเข้างานแล้ว"}
-            </p>
-          </Popup>
+          <div id="main-popup">
+            <Popup
+              size="medium"
+              color={eventConfig.popupColors.registered}
+              class="flex flex-col items-center justify-center text-center"
+            >
+              <div id="event-info-content">
+                <p>{eventConfig.description}</p>
+                <p class="mt-4">{eventConfig.schedule}</p>
+                <p>{eventConfig.registrationInfo}</p>
+                <p>{eventConfig.additionalInfo}</p>
+                <p class="mt-4 font-bold text-[#C6EBC5]">
+                  {eventType === "rpkm"
+                    ? 'สถานะ: ลงทะเบียนเข้างานแล้ว อย่าลืมไปลงทะเบียน "เลือกบ้าน" กันด้วยนะ'
+                    : "สถานะ: ลงทะเบียนเข้างานแล้ว"}
+                </p>
+              </div>
+
+              {qrCodeData && (
+                <div
+                  id="qr-content"
+                  class="flex hidden flex-col items-center justify-center"
+                >
+                  <div class="mb-4 text-center text-xs">
+                    <p>*สำหรับใช้ลงทะเบียนเข้างาน</p>
+                    <p>โปรดแสดงแก่เจ้าหน้าที่ในวันงาน</p>
+                  </div>
+                  <img
+                    src={qrCodeData}
+                    alt="QR Code"
+                    class="h-auto w-full max-w-sm"
+                  />
+                  <p class="text-md mt-6">
+                    {eventStatus.checkinData?.id.slice(0, 8)}...
+                  </p>
+                </div>
+              )}
+            </Popup>
+          </div>
 
           {eventType === "firstdate" || eventType === "freshmen-night" ? (
             <div class="flex w-full flex-col items-center justify-center gap-2">
-              <ButtonFd class="mb-1" color="white" href="/firstdate/qr-code/">
-                แสดง QR CODE เข้างาน
+              <ButtonFd class="mb-1" color="white" id="show-qr-btn">
+                แสดง QR Code เข้างาน
               </ButtonFd>
               <ButtonFd class="mb-1" color="white" href="/firstdate/maps/">
                 แผนที่งาน
@@ -233,6 +266,29 @@ const justRegistered =
         registerBtn.textContent = "ลงทะเบียนเข้าร่วมงาน";
         registerBtn.disabled = false;
         alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+      }
+    });
+  }
+
+  // Handle QR code display toggle
+  const showQrBtn = document.getElementById("show-qr-btn") as HTMLButtonElement;
+  const eventInfoContent = document.getElementById(
+    "event-info-content"
+  ) as HTMLDivElement;
+  const qrContent = document.getElementById("qr-content") as HTMLDivElement;
+
+  if (showQrBtn && eventInfoContent && qrContent) {
+    showQrBtn.addEventListener("click", () => {
+      if (qrContent.classList.contains("hidden")) {
+        // Show QR code content, hide event info content
+        eventInfoContent.classList.add("hidden");
+        qrContent.classList.remove("hidden");
+        showQrBtn.textContent = "ซ่อน QR Code";
+      } else {
+        // Hide QR code content, show event info content
+        qrContent.classList.add("hidden");
+        eventInfoContent.classList.remove("hidden");
+        showQrBtn.textContent = "แสดง QR Code เข้างาน";
       }
     });
   }
