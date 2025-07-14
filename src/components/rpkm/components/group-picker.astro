@@ -9,13 +9,13 @@ const sampleHeadID = "6812345678";
 ---
 
 <!-- Default Wrapper -->
-<div class="block" id="view-group-default">
-  <Frame color="purple" size="sm" contentContainerClass="!px-2 !py-0">
+<div class="block h-full w-full" id="view-group-default">
+  <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
     <p class="pt-2 text-2xl font-semibold text-white">จับกลุ่มเพื่อน (1/3)</p>
 
     <!-- Room Code Input -->
-    <div class="flex w-full flex-col items-center gap-3 px-5 pt-9">
+    <div class="flex w-full flex-col items-center gap-[14px] pt-9">
       <!-- Input -->
       <div class="w-full drop-shadow-[0_0_2px_white] filter">
         <div
@@ -40,7 +40,7 @@ const sampleHeadID = "6812345678";
           disabled
           class="cut-edge-all cursor-not-allowed bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
           type="button"
-          style="width: 200px; height: 40px;"
+          style="width: 140px; height: 40px;"
         >
           <p class="text-lg font-medium text-white">ยืนยัน</p>
         </button>
@@ -48,7 +48,7 @@ const sampleHeadID = "6812345678";
     </div>
 
     <!-- White Bar -->
-    <Divider color="white" class="my-4" />
+    <Divider color="white" class="my-7" width={236} />
 
     <!-- Head Group Button -->
     <div class="drop-shadow-[0_0_6px_white] filter">
@@ -68,8 +68,8 @@ const sampleHeadID = "6812345678";
 </div>
 
 <!-- Head Wrapper -->
-<div class="hidden" id="view-group-head">
-  <Frame color="purple" size="sm" contentContainerClass="!px-2 !py-0">
+<div class="hidden h-full w-full" id="view-group-head">
+  <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
     <div class="relative w-full pt-2 text-center">
       <p
@@ -82,14 +82,14 @@ const sampleHeadID = "6812345678";
     </div>
 
     <!-- Profile -->
-    <div class="flex w-full justify-center gap-3 pt-3">
+    <div class="flex w-full justify-center gap-[10px] pt-6">
       <img src="/images/rpkm/sample-profile.png" width="80" height="80" />
       <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
       <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
     </div>
 
     <!-- Invite URL -->
-    <div class="flex w-full flex-col items-center gap-1 pt-4">
+    <div class="flex w-full flex-col items-center gap-1 pt-6">
       <!-- Header -->
       <p class="text-xs font-semibold text-white">Invite Link</p>
       <!-- URL -->
@@ -119,7 +119,7 @@ const sampleHeadID = "6812345678";
     </div>
 
     <!-- Room Code -->
-    <div class="flex w-full flex-col items-center gap-1 py-4">
+    <div class="flex w-full flex-col items-center gap-1 pt-3 pb-5">
       <!-- Header -->
       <p class="text-xs font-semibold text-white">Room Code</p>
       <!-- Code -->
@@ -151,8 +151,8 @@ const sampleHeadID = "6812345678";
 </div>
 
 <!-- Member Wrapper -->
-<div class="hidden" id="view-group-member">
-  <Frame color="purple" size="sm" contentContainerClass="!px-2 !py-0">
+<div class="hidden h-full w-full" id="view-group-member">
+  <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
     <div class="relative w-full pt-2 text-center">
       <p class="z-20 text-center text-2xl font-semibold text-white">
@@ -168,14 +168,14 @@ const sampleHeadID = "6812345678";
     </div>
 
     <!-- Profile -->
-    <div class="z-20 flex w-full justify-center gap-3 pt-3">
+    <div class="z-20 flex w-full justify-center gap-[10px] pt-6">
       <img src="/images/rpkm/sample-profile2.png" width="80" height="80" />
       <img src="/images/rpkm/sample-profile.png" width="80" height="80" />
       <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
     </div>
 
     <!-- Invite URL -->
-    <div class="flex w-full flex-col items-center gap-1 pt-4">
+    <div class="flex w-full flex-col items-center gap-1 pt-6">
       <!-- Header -->
       <p class="text-xs font-semibold text-white">Invite Link</p>
       <!-- URL -->
@@ -204,7 +204,7 @@ const sampleHeadID = "6812345678";
     </div>
 
     <!-- Room Code -->
-    <div class="flex w-full flex-col items-center gap-1 py-4">
+    <div class="flex w-full flex-col items-center gap-1 pt-3 pb-5">
       <!-- Header -->
       <p class="text-xs font-semibold text-white">Room Code</p>
       <!-- Code -->
@@ -242,9 +242,9 @@ const sampleHeadID = "6812345678";
   <!-- Popup Wrapper -->
   <div class="relative w-full max-w-md px-5">
     <!-- Frame Component -->
-    <Frame color="purple" size="sm">
+    <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
       <div
-        class="relative flex flex-col items-center justify-center"
+        class="relative flex h-full w-full flex-col items-center justify-center"
         id="view-group-popup-content"
       >
         <!-- Title -->
@@ -418,11 +418,13 @@ const sampleHeadID = "6812345678";
     groupDefaultView?.classList.add("hidden");
     groupHeadView?.classList.remove("hidden");
     input.value = "";
+    toggleSubmitButton();
   });
 
   joinGroupButton?.addEventListener("click", () => {
     groupPopupView?.classList.remove("hidden");
     input.value = "";
+    toggleSubmitButton();
   });
 
   submitGroupButton?.addEventListener("click", () => {
@@ -434,6 +436,8 @@ const sampleHeadID = "6812345678";
 
   cancelGroupButton?.addEventListener("click", () => {
     groupPopupView?.classList.add("hidden");
+    input.value = "";
+    toggleSubmitButton();
   });
 
   closeGroupPopupButton?.addEventListener("click", () => {

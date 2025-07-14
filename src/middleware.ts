@@ -19,6 +19,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const token = parseCookie(cookie).token;
 
   if (token && isValidToken(token)) {
+    context.locals.user = jwt.decode(token) as App.Locals["user"];
     return next();
   }
 
