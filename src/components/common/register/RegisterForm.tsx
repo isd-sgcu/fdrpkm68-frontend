@@ -93,12 +93,31 @@ export default function RegisterForm({
   }, []);
 
   const onFinalSubmit = useCallback(
-    async (_data: RegisterFormData): Promise<void> => {
-      const response = await api.post("/register", _data);
+    async (data: RegisterFormData): Promise<void> => {
+      console.log("DATA FRFR", data);
+      const response = await api.post("/auth/register", {
+        studentId: data.studentId,
+        citizenId: data.citizenId,
+        password: data.password,
+        prefix: data.prefix,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        nickname: data.nickname,
+        faculty: data.faculty,
+        academicYear: parseInt(data.academicYear),
+        phoneNumber: data.phoneNumber,
+        parentName: data.parentName,
+        parentPhoneNumber: data.parentPhoneNumber,
+        parentRelationship: data.parentRelationship,
+        foodAllergy: data.hasAllergies ? data.foodAllergy : null,
+        drugAllergy: data.hasMedications ? data.drugAllergy : null,
+        illness: data.hasChronicDiseases ? data.illness : null,
+      });
       if (response.success) {
         window.location.href = "/login";
       } else {
         console.error("Registration failed:", response.message);
+        setStep(3);
       }
     },
     []
@@ -161,7 +180,7 @@ export default function RegisterForm({
               setValue={setValue}
               control={control}
               clearErrors={clearErrors}
-              onSubmit={handleSubmit(onHealthSubmit)}
+              onSubmit={handleSubmit(onFinalSubmit)}
               setStep={setStep}
               userType={userType}
             />
