@@ -5,6 +5,9 @@ import HouseDetailCard from "@rpkm/elements/house-detail-card.astro";
 import HouseInfoPopup from "@rpkm/elements/house-info-popup.astro";
 import HousePickingCard from "@rpkm/elements/house-picking-card.astro";
 
+import Divider from "@/components/common/Divider.astro";
+import Frame from "@/components/common/Frame.astro";
+
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 
 type houseDisplayType = {
@@ -22,125 +25,88 @@ type houseDisplayType = {
 ---
 
 <!-- Not Picking Wrapper -->
-<div class="relative block h-fit w-full px-5" id="view-not-picking">
-  <!-- Pink trapezoids -->
-  <div
-    class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
-  <div
-    class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
+<div class="block" id="view-not-picking">
+  <Frame size="xs" color="purple" contentContainerClass="!px-4">
+    <!-- Title -->
+    <p class="z-20 text-2xl font-semibold text-white">
+      บ้านรับเพื่อนที่เลือกไว้
+    </p>
 
-  <!-- Border -->
-  <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
-    <!-- Content -->
-    <div
-      class="cut-houses-1 relative flex h-fit min-h-[248px] flex-col items-center bg-[#2B2D42BF] px-5 pt-8"
-    >
-      <!-- Title -->
-      <p class="z-20 text-2xl font-semibold text-white">
-        บ้านรับเพื่อนที่เลือกไว้
-      </p>
-
-      <!-- Empty Houses -->
-      <div class="z-20 pt-5">
-        <p class="text-3xl font-semibold text-white">คุณยังไม่ได้เลือกบ้าน</p>
-      </div>
-
-      <!-- Button -->
-      <div class={`absolute bottom-5 filter drop-shadow-[0_0_6px_white] z-20`}>
-        <button
-          id="btn-picking-house"
-          class="cut-edge-all cursor-pointer bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
-          type="button"
-          style={`width: 260px; height: 48px;`}
-        >
-          <p class="text-xl font-medium text-white">เลือกบ้าน</p>
-        </button>
-      </div>
+    <!-- Empty Houses -->
+    <div class="z-20 pt-5">
+      <p class="text-[28px] font-semibold text-white">คุณยังไม่ได้เลือกบ้าน</p>
     </div>
-  </div>
+
+    <!-- Button -->
+    <div class="pt-7 drop-shadow-[0_0_6px_white] filter">
+      <button
+        id="btn-picking-house"
+        class="cut-edge-all cursor-pointer bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
+        type="button"
+        style={`width: 260px; height: 48px;`}
+      >
+        <p class="text-xl font-medium text-white">เลือกบ้าน</p>
+      </button>
+    </div>
+  </Frame>
 </div>
 
 <!-- Picking Wrapper -->
-<div class="relative hidden h-fit w-full px-5" id="view-picking">
-  <!-- Pink trapezoids -->
-  <div
-    class="trapezoid-l-1 absolute top-1/2 left-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
-  <div
-    class="trapezoid-r-1 absolute top-1/2 right-5 z-10 h-full w-full translate-y-[-50%] bg-[#FF1493]"
-  >
-  </div>
+<div class="hidden" id="view-picking">
+  <Frame size="lg" color="purple" contentContainerClass="!px-2 !py-0">
+    <!-- Title -->
+    <p class="text-2xl font-semibold text-white">บ้านรับเพื่อนที่สนใจ</p>
+    <!-- Pref Houses -->
+    <div class="flex flex-wrap justify-center gap-2 pt-4">
+      {
+        [1, 2, 3, 4, 5].map((rank) => (
+          <div data-house-rank={rank} class="h-fit w-fit">
+            <HousePickingCard
+              house={{
+                name: undefined,
+                imageURL: undefined,
+                rank: String(rank) as "1" | "2" | "3" | "4" | "5",
+              }}
+            />
+          </div>
+        ))
+      }
+    </div>
 
-  <!-- Border -->
-  <div class="cut-houses-1 bg-[#8A2BE4] p-[1.5px]">
-    <!-- Content -->
-    <div
-      class="cut-houses-1 relative flex h-full flex-col items-center bg-[#2B2D42BF] px-5 pt-8"
-    >
-      <!-- Title -->
-      <p class="z-20 text-2xl font-semibold text-white">บ้านรับเพื่อนที่สนใจ</p>
+    <!-- White Bar -->
+    <Divider color="white" />
 
-      <!-- Pref Houses -->
-      <div class="z-20 flex flex-wrap justify-center gap-3 pt-5">
-        {
-          [1, 2, 3, 4, 5].map((rank) => (
-            <div data-house-rank={rank}>
-              <HousePickingCard
-                house={{
-                  name: undefined,
-                  imageURL: undefined,
-                  rank: String(rank) as "1" | "2" | "3" | "4" | "5",
-                }}
-              />
-            </div>
-          ))
-        }
-      </div>
+    <p class="text-[10px]">
+      *บ้านที่ 6 (สำรอง) เลือกได้เฉพาะบ้านไซส์ XL, XXL เท่านั้น
+    </p>
 
-      <!-- White Bar -->
-      <div class="my-4 flex items-center">
-        <div class="h-2 w-2 rotate-45 bg-white"></div>
-        <div class="h-[2px] w-[236.008px] bg-white"></div>
-        <div class="h-2 w-2 rotate-45 bg-white"></div>
-      </div>
-
-      <p class="text-xs">
-        *บ้านที่ 6 (สำรอง) เลือกได้เฉพาะบ้านไซส์ XL, XXL เท่านั้น
-      </p>
-
-      <!-- Sub Pref House -->
-      <div class="z-20 flex flex-wrap justify-center gap-6 pt-7">
-        <div data-house-rank="sub">
-          <HousePickingCard
-            house={{
-              name: undefined,
-              imageURL: undefined,
-              rank: "sub",
-            }}
-          />
-        </div>
-      </div>
-
-      <!-- Button -->
-      <p class="pt-5 text-xs font-semibold">*กรุณาเลือกบ้านหลักให้ครบ 5 บ้าน</p>
-      <div class={`pb-7 pt-4 filter drop-shadow-[0_0_6px_white] z-20`}>
-        <button
-          id="btn-submit-house"
-          disabled
-          class="cut-edge-all flex cursor-pointer items-center justify-center gap-2 bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] disabled:cursor-not-allowed disabled:opacity-50"
-          type="button"
-          style={`width: 260px; height: 48px;`}
-        >
-          <p class="text-xl font-medium text-white">ยืนยันการเลือกบ้าน</p>
-        </button>
+    <!-- Sub Pref House -->
+    <div class="z-20 flex flex-wrap justify-center gap-6 pt-3">
+      <div data-house-rank="sub">
+        <HousePickingCard
+          house={{
+            name: undefined,
+            imageURL: undefined,
+            rank: "sub",
+          }}
+        />
       </div>
     </div>
-  </div>
+
+    <!-- Button -->
+    <p class="pt-4 text-[10px] font-medium">*กรุณาเลือกบ้านหลักให้ครบ 5 บ้าน</p>
+    <div class={`pt-1 filter drop-shadow-[0_0_6px_white] z-20`}>
+      <button
+        id="btn-submit-house"
+        disabled
+        class="cut-edge-all flex cursor-pointer items-center justify-center gap-2 bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] disabled:cursor-not-allowed disabled:opacity-50"
+        type="button"
+        style={`width: 260px; height: 48px;`}
+      >
+        <p class="text-xl font-medium text-white">ยืนยันการเลือกบ้าน</p>
+      </button>
+    </div>
+  </Frame>
 </div>
 
 <!-- House Selection Popup -->
@@ -193,7 +159,7 @@ type houseDisplayType = {
 
     <!-- House Data -->
     <div
-      class="custom-scrollbar mt-6 grid max-h-[250px] grid-cols-3 gap-4 overflow-y-auto"
+      class="custom-scrollbar mt-6 grid max-h-[300px] grid-cols-3 gap-4 overflow-y-auto"
       id="house-card-container"
     >
       {
@@ -524,8 +490,8 @@ type houseDisplayType = {
         const card = document.createElement("div");
         if (house) {
           card.innerHTML = `
-            <div class="relative h-fit w-fit flex flex-col gap-3">
-              <div class="relative w-[80px] h-fit min-h-[100px] bg-white p-1">
+            <div class="relative h-fit w-fit flex flex-col gap-2">
+              <div class="relative h-[84px] w-[68px] bg-white p-1">
                 <img 
                   src="/images/rpkm/rank-${rank}.svg"
                   class="absolute left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
@@ -554,7 +520,7 @@ type houseDisplayType = {
         } else {
           card.innerHTML = `
             <button 
-              class="relative w-[80px] h-[100px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] hover:bg-[#D38DD8]/20 transition-colors cursor-pointer"
+              class="relative h-[84px] w-[68px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] hover:bg-[#D38DD8]/20 transition-colors cursor-pointer"
               data-rank="${rank}"
             >
               <img 
@@ -565,7 +531,7 @@ type houseDisplayType = {
               />
               <img 
                 src="/images/rpkm/plus-icon.svg"
-                class="w-6 h-6" 
+                class="w-5 h-5" 
               />
             </button>
           `;
