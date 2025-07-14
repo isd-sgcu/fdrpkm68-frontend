@@ -17,6 +17,7 @@ import HealthInformationStep, {
 import PersonalInformationStep, {
   type PersonalInfo,
 } from "@/components/common/register/PersonalInformationStep";
+import { api } from "@/lib/api";
 
 export interface RegisterFormData
   extends PersonalInfo,
@@ -91,10 +92,17 @@ export default function RegisterForm({
     setStep(1);
   }, []);
 
-  const onFinalSubmit = useCallback((_data: RegisterFormData): void => {
-    console.log("Final form submitted:", _data);
-    // Handle final form submission
-  }, []);
+  const onFinalSubmit = useCallback(
+    async (_data: RegisterFormData): Promise<void> => {
+      const response = await api.post("/register", _data);
+      if (response.success) {
+        window.location.href = "/login";
+      } else {
+        console.error("Registration failed:", response.message);
+      }
+    },
+    []
+  );
 
   const handleConsentAccept = useCallback((): void => {
     setIsConsentGiven(true);
