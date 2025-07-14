@@ -51,7 +51,7 @@ export default function RegisterForm({
       password: "",
       passwordConfirm: "",
       // Personal Info
-      prefix: "mr",
+      prefix: "MR",
       firstName: "",
       lastName: "",
       nickname: "",
