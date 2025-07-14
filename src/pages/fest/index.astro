@@ -2,9 +2,11 @@
 import ButtonFest from "@/components/common/ButtonFest.astro";
 import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
 import Layout from "@/layouts/fest/FestWithNavbar.astro";
+import PopupFest from "@/components/fest/PopupFest.astro"
 ---
 
 <Layout>
+  <PopupFest/>
   <div class="flex flex-col px-4 py-2 gap-2 text-center mb-5">
     <div class="relative w-full">
       <!-- Shadow layer -->
@@ -62,11 +64,13 @@ import Layout from "@/layouts/fest/FestWithNavbar.astro";
       </div>
     </div>
     <HorizonlineFest variant="yellow" />
-    <div class="grid grid-cols-2 px-20 gap-y-2">
+    <div class="grid grid-cols-2 w-fit mx-auto gap-x-2 gap-y-2">
       <ButtonFest color="white" size="small" class="whitespace-nowrap" href={import.meta.env.PUBLIC_LINE_OA_URL ?? 'LINE_OA_PLACEHOLDER'}>สะสมแต้ม</ButtonFest>
       <ButtonFest color="white" size="small" class="whitespace-nowrap" href="/fest/reward">รับรางวัล</ButtonFest>
       <ButtonFest color="white" size="small" href="firstdate/maps">แผนที่</ButtonFest>
-      <ButtonFest color="white" size="small">เนื้อเรื่อง</ButtonFest>
+      <div id="openPopup" class="w-fit">
+        <ButtonFest color="white" size="small">เนื้อเรื่อง</ButtonFest>
+      </div>
     </div>
   </div>
 </Layout>
