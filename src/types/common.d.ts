@@ -16,4 +16,33 @@ export interface ThemeConfig {
   backgroundImage?: string;
   primaryColor?: string;
   secondaryColor?: string;
+  colorVariants?: string;
+}
+
+export type PrefixType = "MR" | "MRS" | "MS" | "OTHER";
+export type RoleType = "FRESHMAN" | "STAFF" | "ADMIN";
+export type BottleChoice = "NONE" | "A" | "B" | "C";
+
+export interface User {
+  id: string;
+  studentId: string;
+  citizenId: string;
+  prefix: PrefixType;
+  firstName: string;
+  lastName: string;
+  nickname: string;
+  academicYear: number;
+  faculty: string;
+  password: string;
+  phoneNumber: string;
+  parentName: string;
+  parentPhoneNumber: string;
+  parentRelationship: string;
+  foodAllergy?: string;
+  drugAllergy?: string;
+  illness?: string;
+  avatarId: number;
+  groupId?: string;
+  role: RoleType;
+  bottleChoice: BottleChoice;
 }
