@@ -8,8 +8,8 @@ const rankHeight = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
 
 {
   name ? (
-    <div class="relative flex h-[110px] w-[90px] flex-col gap-3">
-      <div class="relative max-h-[90px] w-full bg-white p-1">
+    <div class="relative flex h-[84px] w-[68px] flex-col gap-2">
+      <div class="relative h-[60px] w-[60px] bg-white p-1">
         <img
           src={`/images/rpkm/rank-${rank}.svg`}
           class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform"
@@ -20,7 +20,7 @@ const rankHeight = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
           src={imageURL ? imageURL : "/images/rpkm/house-blank.png"}
           class="h-auto w-full object-cover pb-1"
         />
-        <p class="h-fit max-h-[20px] w-full overflow-hidden text-center text-xs font-semibold text-ellipsis whitespace-nowrap text-[#2B2D42]">
+        <p class="h-full w-full overflow-hidden text-center text-xs font-semibold text-ellipsis whitespace-nowrap text-[#2B2D42]">
           {name}
         </p>
       </div>
@@ -30,7 +30,7 @@ const rankHeight = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
     </div>
   ) : (
     <button
-      class="relative flex h-[110px] w-[90px] cursor-pointer items-center justify-center border-2 border-dashed border-[#D38DD8] transition-colors hover:bg-[#D38DD8]/20"
+      class="relative flex h-[84px] w-[68px] cursor-pointer items-center justify-center border-2 border-dashed border-[#D38DD8] transition-colors hover:bg-[#D38DD8]/20"
       data-rank={rank}
     >
       <img
@@ -39,7 +39,7 @@ const rankHeight = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
         width={rankWidth}
         height={rankHeight}
       />
-      <img src={"/images/rpkm/plus-icon.svg"} class="h-6 w-6" />
+      <img src={"/images/rpkm/plus-icon.svg"} class="h-5 w-5" />
     </button>
   )
 }
