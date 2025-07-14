@@ -84,7 +84,7 @@ export default function RegisterForm({
     setStep(3);
   }, []);
 
-  const onHealthSubmit = useCallback((_data: HealthInfo): void => {
+  const _onHealthSubmit = useCallback((_data: HealthInfo): void => {
     setStep(4);
   }, []);
 

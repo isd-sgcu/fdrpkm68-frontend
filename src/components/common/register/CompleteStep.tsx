@@ -11,7 +11,7 @@ export default function CompleteStep({
     setIsZoomed(!isZoomed);
   }, [isZoomed]);
 
-  const handleKeyDown = useCallback(
+  const _handleKeyDown = useCallback(
     (event: React.KeyboardEvent): void => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -27,7 +27,7 @@ export default function CompleteStep({
 
   const handleHomeClick = useCallback((): void => {
     window.location.href = userType === "FRESHMAN" ? "/login" : "/staff/login";
-  }, []);
+  }, [userType]);
 
   return (
     <div className="flex flex-col items-center justify-center py-4 text-white">
