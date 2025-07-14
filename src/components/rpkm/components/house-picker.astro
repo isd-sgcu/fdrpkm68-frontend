@@ -17,6 +17,7 @@ type houseDisplayType = {
   image: string;
   thDescription: string;
   enDescription: string;
+  instagram: string;
   instagramURL: string;
   size: string;
   amount: number;
@@ -699,7 +700,7 @@ type houseDisplayType = {
 
       // Update instagram
       if (houseInstagram) {
-        houseInstagram.textContent = house.enName;
+        houseInstagram.textContent = house.instagram;
       }
 
       // Update instagram link
