@@ -1,14 +1,20 @@
 ---
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 interface Props {
   href: string;
   className?: string;
 }
 
-const { href, className="w-full" } = Astro.props;
+const { href, className = "w-full" } = Astro.props;
 ---
 
-<a href={href} class={cn("flex justify-center items-center py-2 bg-white text-black hover:bg-gray-100 transition-colors duration-200", className)}>
+<a
+  href={href}
+  class={cn(
+    "flex items-center justify-center bg-white py-2 text-black transition-colors duration-200 hover:bg-gray-100",
+    className
+  )}
+>
   <slot />
 </a>

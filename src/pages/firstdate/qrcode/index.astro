@@ -6,11 +6,9 @@ import QRCode from "qrcode";
 
 import Layout from "@/layouts/firstdate/WithNavbar.astro";
 
-// TODO: GET data from Somewhere
-const studentId = "1234567890";
-const citizenId = "1234567890123";
+const user = Astro.locals.user;
 
-const targetUrl = `student=${studentId}&citizenId=${citizenId}`;
+const targetUrl = `studentId=${user.studentId}&citizenId=${user.citizenId}`;
 const qrCodeData = await QRCode.toDataURL(targetUrl);
 ---
 
@@ -34,7 +32,7 @@ const qrCodeData = await QRCode.toDataURL(targetUrl);
       <p>โปรดแสดงแก่เจ้าหน้าที่ในวันงาน</p>
     </div>
     <img src={qrCodeData} alt="QR Code" class="h-auto w-4/5" />
-    <p class="text-md mt-6">{studentId}</p>
+    <p class="text-md mt-6">{user.studentId}</p>
   </Popup>
   <div class="mb-24 flex justify-center">
     <ButtonFD href="/firstdate/home" color="white" variant="fill">
