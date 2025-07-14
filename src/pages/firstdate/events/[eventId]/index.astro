@@ -1,5 +1,6 @@
 ---
 import { Home } from "@lucide/astro";
+import QRCode from "qrcode";
 
 import ButtonFd from "@/components/common/ButtonFd.astro";
 import Popup from "@/components/common/Popup.astro";
@@ -7,27 +8,36 @@ import SuccessConfetti from "@/components/common/SuccessConfetti.astro";
 import Layout from "@/layouts/firstdate/WithNavbar.astro";
 import { getEventStatus, EVENT_CONFIGS, type EventType } from "@/lib/eventAPI";
 
-// Get the eventId from the URL parameters
 const { eventId } = Astro.params;
 
-// Validate eventId
 if (!eventId || !(eventId in EVENT_CONFIGS)) {
   return Astro.redirect("/firstdate/home/");
 }
 
 const eventType = eventId as EventType;
 const eventConfig = EVENT_CONFIGS[eventType];
-const eventStatus = await getEventStatus(eventType);
 
-// Check for just registered state from URL params
-const url = new URL(Astro.request.url);
-const justRegistered = url.searchParams.get("registered") === "true";
+function parseCookie(cookie: string): Record<string, string> {
+  return Object.fromEntries(
+    cookie
+      .split("; ")
+      .map((c) => c.split("="))
+      .map(([k, v]) => [k, decodeURIComponent(v)])
+  );
+}
 
-// If just registered, simulate adding to registration
-if (justRegistered) {
-  // This would normally be done by the API, but we'll simulate it
-  const { registerForEvent } = await import("@/lib/eventAPI");
-  await registerForEvent(eventType);
+const cookie = Astro.request.headers.get("cookie") ?? "";
+const authToken = parseCookie(cookie).token;
+const eventStatus = await getEventStatus(eventType, authToken);
+const justRegistered =
+  new URL(Astro.request.url).searchParams.get("registered") === "true";
+
+// Generate QR code if user is registered and has checkin data
+let qrCodeData = null;
+if (eventStatus.isRegistered && eventStatus.checkinData) {
+  const { id, userId } = eventStatus.checkinData;
+  const targetUrl = `id=${id}&userId=${userId}`;
+  qrCodeData = await QRCode.toDataURL(targetUrl);
 }
 ---
 
@@ -36,7 +46,7 @@ if (justRegistered) {
     <!-- Event Header -->
     <div class="text-center">
       <h1
-        class="mt-[26px] fill-white text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50"
+        class="mt-[26px] text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50"
       >
         {eventConfig.title}
       </h1>
@@ -48,7 +58,6 @@ if (justRegistered) {
         !eventStatus.isLate &&
         !justRegistered &&
         !eventStatus.isComingSoon && (
-          // <!-- State 1: Not Registered -->
           <section class="flex flex-col items-center justify-center">
             <Popup
               size="medium"
@@ -87,7 +96,6 @@ if (justRegistered) {
 
     {
       justRegistered && (
-        // <!-- State 2: Registration Success (with confetti) -->
         <SuccessConfetti
           eventName={eventConfig.title}
           eventId={eventId}
@@ -98,36 +106,55 @@ if (justRegistered) {
 
     {
       eventStatus.isRegistered && !justRegistered && (
-        // <!-- State 3: Already Registered -->
         <section class="flex flex-col items-center justify-center">
           <Popup
             size="medium"
             color={eventConfig.popupColors.registered}
             class="flex flex-col items-center justify-center text-center"
           >
-            <p>{eventConfig.description}</p>
-            <p class="mt-4">{eventConfig.schedule}</p>
-            <p>{eventConfig.registrationInfo}</p>
-            <p>{eventConfig.additionalInfo}</p>
-            <p class="mt-4 font-bold text-[#C6EBC5]">
-              {eventType === "rpkm"
-                ? 'สถานะ: ลงทะเบียนเข้างานแล้ว อย่าลืมไปลงทะเบียน "เลือกบ้าน" กันด้วยนะ'
-                : "สถานะ: ลงทะเบียนเข้างานแล้ว"}
-            </p>
+            <div id="event-info-content">
+              <p>{eventConfig.description}</p>
+              <p class="mt-4">{eventConfig.schedule}</p>
+              <p>{eventConfig.registrationInfo}</p>
+              <p>{eventConfig.additionalInfo}</p>
+              <p class="mt-4 font-bold text-[#C6EBC5]">
+                {eventType === "rpkm"
+                  ? 'สถานะ: ลงทะเบียนเข้างานแล้ว อย่าลืมไปลงทะเบียน "เลือกบ้าน" กันด้วยนะ'
+                  : "สถานะ: ลงทะเบียนเข้างานแล้ว"}
+              </p>
+            </div>
+
+            {qrCodeData && (
+              <div
+                id="qr-content"
+                class="flex hidden flex-col items-center justify-center"
+              >
+                <div class="mb-4 text-center text-xs">
+                  <p>*สำหรับใช้ลงทะเบียนเข้างาน</p>
+                  <p>โปรดแสดงแก่เจ้าหน้าที่ในวันงาน</p>
+                </div>
+                <img
+                  src={qrCodeData}
+                  alt="QR Code"
+                  class="h-auto w-full max-w-sm"
+                />
+                <p class="text-md mt-6">
+                  {eventStatus.checkinData?.id.slice(0, 8)}...
+                </p>
+              </div>
+            )}
           </Popup>
 
           {eventType === "firstdate" || eventType === "freshmen-night" ? (
-            // <!-- Special buttons for firstdate and freshmen-night events -->
             <div class="flex w-full flex-col items-center justify-center gap-2">
-              <ButtonFd class="mb-1" color="white" href="/firstdate/qr-code/">
-                แสดง QR CODE เข้างาน
+              <ButtonFd class="mb-1" color="white" id="show-qr-btn">
+                แสดง QR Code เข้างาน
               </ButtonFd>
               <ButtonFd class="mb-1" color="white" href="/firstdate/maps/">
                 แผนที่งาน
               </ButtonFd>
             </div>
           ) : eventType === "rpkm" ? (
-            // <!-- Special button for RPKM event -->
             <div class="flex w-full flex-col items-center justify-center gap-2">
               <ButtonFd
                 class="mb-1"
@@ -138,7 +165,6 @@ if (justRegistered) {
               </ButtonFd>
             </div>
           ) : (
-            // <!-- Default button for other events -->
             <ButtonFd class="mb-2" color="white" href="/firstdate/home/">
               กลับหน้าหลัก
             </ButtonFd>
@@ -149,7 +175,6 @@ if (justRegistered) {
 
     {
       eventStatus.isLate && (
-        // <!-- State 4: Registration Closed -->
         <section class="flex flex-col items-center justify-center">
           <Popup
             size="medium"
@@ -161,7 +186,7 @@ if (justRegistered) {
             <p>{eventConfig.registrationInfo}</p>
             <p>{eventConfig.additionalInfo}</p>
           </Popup>
-          <h1 class="mb-4 fill-white text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50">
+          <h1 class="mb-4 text-center text-4xl font-bold text-white drop-shadow-lg drop-shadow-white/50">
             ไม่สามารถลงทะเบียนได้
           </h1>
           <ButtonFd
@@ -179,7 +204,6 @@ if (justRegistered) {
 
     {
       eventStatus.isComingSoon && (
-        // <!-- State 5: Coming Soon -->
         <section class="flex flex-col items-center justify-center">
           <Popup
             size="medium"
@@ -208,26 +232,61 @@ if (justRegistered) {
 </Layout>
 
 <script>
-  // Handle registration button click
   const registerBtn = document.getElementById(
     "register-btn"
   ) as HTMLButtonElement;
+
   if (registerBtn) {
     registerBtn.addEventListener("click", async () => {
       const eventId = registerBtn.getAttribute("data-event-id");
+
       registerBtn.textContent = "กำลังลงทะเบียน...";
       registerBtn.disabled = true;
 
       try {
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const { registerForEvent } = await import("@/lib/eventAPI");
+        const result = await registerForEvent(eventId as any);
 
-        // Show confetti and redirect
-        window.location.href = `/firstdate/events/${eventId}/?registered=true`;
+        if (result.success) {
+          window.location.href = `/firstdate/events/${eventId}/?registered=true`;
+        } else {
+          if (result.needsLogin || result.error?.includes("เข้าสู่ระบบ")) {
+            alert("กรุณาเข้าสู่ระบบก่อนลงทะเบียน");
+            window.location.href = "/login/";
+            return;
+          }
+
+          alert(result.error || "เกิดข้อผิดพลาดในการลงทะเบียน");
+          registerBtn.textContent = "ลงทะเบียนเข้าร่วมงาน";
+          registerBtn.disabled = false;
+        }
       } catch (error) {
         registerBtn.textContent = "ลงทะเบียนเข้าร่วมงาน";
         registerBtn.disabled = false;
         alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+      }
+    });
+  }
+
+  // Handle QR code display toggle
+  const showQrBtn = document.getElementById("show-qr-btn") as HTMLButtonElement;
+  const eventInfoContent = document.getElementById(
+    "event-info-content"
+  ) as HTMLDivElement;
+  const qrContent = document.getElementById("qr-content") as HTMLDivElement;
+
+  if (showQrBtn && eventInfoContent && qrContent) {
+    showQrBtn.addEventListener("click", () => {
+      if (qrContent.classList.contains("hidden")) {
+        // Show QR code content, hide event info content
+        eventInfoContent.classList.add("hidden");
+        qrContent.classList.remove("hidden");
+        showQrBtn.textContent = "ซ่อน QR Code";
+      } else {
+        // Hide QR code content, show event info content
+        qrContent.classList.add("hidden");
+        eventInfoContent.classList.remove("hidden");
+        showQrBtn.textContent = "แสดง QR Code เข้างาน";
       }
     });
   }
