@@ -117,8 +117,8 @@ export default function RegisterForm({
         window.location.href = "/login";
       } else {
         console.error("Registration failed:", response.message);
+        setStep(3);
       }
-      setStep(4);
     },
     []
   );
