@@ -2,6 +2,7 @@ import { type AnchorHTMLAttributes, type ReactNode } from "react";
 
 import type { JSX } from "astro/jsx-runtime";
 
+import { useTheme } from "@/config/ThemeContext";
 import { cn } from "@/lib/utils";
 
 /**
@@ -66,6 +67,12 @@ export default function ButtonRpkm({
   children,
   ...restProps
 }: ButtonRpkmProps): JSX.Element {
+  const { theme } = useTheme();
+
+  if (theme.colorVariants && theme.colorVariants !== color) {
+    color = theme.colorVariants as RpkmColorName;
+  }
+
   // Color configuration for different variants
   const colorConfig = {
     purple: {
