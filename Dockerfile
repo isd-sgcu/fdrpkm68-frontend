@@ -44,7 +44,7 @@ RUN npm install -g pnpm@10.12.4
 COPY package.json pnpm-lock.yaml ./
 
 # Install production dependencies only
-RUN pnpm install --prod --no-frozen-lockfile
+RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist

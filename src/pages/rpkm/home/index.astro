@@ -1,14 +1,57 @@
 ---
-import Layout from "@/layouts/rpkm/WithNavbar.astro";
 import ButtonRpkm from "@/components/common/ButtonRpkm.astro";
+import Divider from "@/components/common/Divider.astro";
+import Layout from "@/layouts/rpkm/WithNavbar.astro";
 ---
 
 <Layout variant="rpkm_home">
-    <div class='min-h-full w-full flex flex-col gap gap-8 mb-8'>
-        <h1 class="text-center text-4xl font-bold mt-4">รับเพื่อนก้าวใหม่ 2025</h1>
-        <div class=' bg-white h-[600px] w-full'>sdf]</div>
-        <ButtonRpkm href="/rpkm/workshops" class="mx-auto" size="lg" color="blue">ลงทะเบียนกิจกรรม</ButtonRpkm>
-        <ButtonRpkm href="/rpkm/rubpuen" class="mx-auto" size="lg" color="purple">ลงทะเบียนบ้านรับเพื่อน</ButtonRpkm>
-        <ButtonRpkm href="/rpkm/summary" class="mx-auto text-nowrap" size="lg" color='pink'>รวมกิจกรรมรับเพื่อนก้าวใหม่</ButtonRpkm>
+  <div class="gap flex min-h-full w-full flex-col gap-8">
+    <h1 class="text-center text-4xl font-bold">รับเพื่อนก้าวใหม่ 2025</h1>
+
+    <div class="flex w-full flex-col items-center gap-5 pb-12">
+      <div class="flex flex-col items-center text-white">
+        <p class="text-2xl font-semibold">17 กรกฎาคม</p>
+        <p class="text-xl font-medium">เปิดลงทะเบียนกิจกรรม FEST</p>
+      </div>
+      <Divider />
+      <div class="flex flex-col items-center text-white">
+        <p class="text-2xl font-semibold">19 กรกฎาคม</p>
+        <p class="text-xl font-medium">เปิดลงทะเบียนบ้านรับเพื่อน</p>
+      </div>
+      <Divider />
+      <div class="flex flex-col items-center text-white">
+        <p class="text-2xl font-semibold">26 กรกฎาคม</p>
+        <p class="text-xl font-medium">ประกาศผลบ้านรับเพื่อน</p>
+      </div>
+      <Divider />
+      <div class="flex flex-col items-center text-white">
+        <p class="text-2xl font-semibold">29 กรกฎาคม</p>
+        <p class="text-xl font-medium">เปิดลงทะเบียนรับน้องก้าวใหม่</p>
+      </div>
+      <Divider />
+      <div class="flex flex-col items-center text-white">
+        <p class="text-[32px] font-semibold">1-3 สิงหาคม</p>
+        <p class="text-[28px]">D-Day</p>
+      </div>
     </div>
-</Layout>   
+
+    <ButtonRpkm
+      href="/rpkm/workshops"
+      class="mx-auto h-fit w-full max-w-[280px] text-nowrap"
+      size="lg"
+      color="blue">ลงทะเบียนกิจกรรม</ButtonRpkm
+    >
+    <ButtonRpkm
+      href="/rpkm/rubpuen"
+      class="mx-auto h-fit w-full max-w-[280px] text-nowrap"
+      size="lg"
+      color="purple">ลงทะเบียนบ้านรับเพื่อน</ButtonRpkm
+    >
+    <ButtonRpkm
+      href="/rpkm/summary"
+      class="mx-auto h-fit w-full max-w-[280px] text-nowrap"
+      size="lg"
+      color="pink">รวมกิจกรรมรับเพื่อนก้าวใหม่</ButtonRpkm
+    >
+  </div>
+</Layout>

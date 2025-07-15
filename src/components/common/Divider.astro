@@ -1,0 +1,100 @@
+---
+import { cn } from "@/lib/utils";
+
+/**
+ * Divider Component
+ * @example
+ * // Basic usage
+ * <Divider />
+ *
+ * @example
+ * // Different colors and sizes
+ * <Divider color="purple" size="lg" />
+ * <Divider color="blue" size="sm" />
+ *
+ * @example
+ * // Custom width
+ * <Divider width={400} color="pink" />
+ *
+ * Features:
+ * - Diamond-shaped endpoints
+ * - Customizable colors
+ * - Multiple size presets
+ * - Custom width support
+ * - Responsive design
+ *
+ * @param {('white'|'purple'|'blue'|'pink'|'black')} color - Divider color (default: 'white')
+ * @param {('xs'|'sm'|'md'|'lg'|'xl')} size - Predefined size (default: 'md')
+ * @param {number} width - Custom width in pixels (overrides size)
+ * @param {string} class - Additional CSS classes
+ */
+
+export interface Props {
+  color?: "white" | "purple" | "blue" | "pink" | "black";
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  width?: number;
+  class?: string;
+}
+
+const {
+  color = "white",
+  size = "md",
+  width,
+  class: additionalClasses = "",
+  ...restProps
+} = Astro.props;
+
+// Color configuration
+const colorConfig = {
+  white: "#ffffff",
+  purple: "#8a2be4",
+  blue: "#00ffff",
+  pink: "#ff1493",
+  black: "#2b2d42",
+};
+
+// Size configuration (width in pixels)
+const sizeConfig = {
+  xs: 156, // Half of original
+  sm: 234, // 3/4 of original
+  md: 312, // Original size
+  lg: 468, // 1.5x original
+  xl: 624, // 2x original
+};
+
+// Determine final width and height
+const finalWidth = width || sizeConfig[size];
+const finalHeight = 12; // Keep original height
+const fillColor = colorConfig[color];
+
+// Calculate diamond positions based on width
+const diamondSize = 6; // Half of the diamond
+const leftDiamondCenter = diamondSize;
+const rightDiamondCenter = finalWidth - diamondSize;
+const lineStart = diamondSize;
+const lineEnd = finalWidth - diamondSize;
+
+// Generate SVG path
+const generatePath = () => {
+  return `M${leftDiamondCenter - diamondSize} ${diamondSize}L${leftDiamondCenter} ${finalHeight - 0.2265}L${leftDiamondCenter + diamondSize} ${diamondSize}L${leftDiamondCenter} 0.2265L${leftDiamondCenter - diamondSize} ${diamondSize}ZM${rightDiamondCenter + diamondSize} ${diamondSize}L${rightDiamondCenter} 0.2265L${rightDiamondCenter - diamondSize} ${diamondSize}L${rightDiamondCenter} ${finalHeight - 0.2265}L${rightDiamondCenter + diamondSize} ${diamondSize}ZM${lineStart} ${diamondSize}V${diamondSize + 1}H${lineEnd}V${diamondSize}V${diamondSize - 1}H${lineStart}V${diamondSize}Z`;
+};
+
+// Generate wrapper classes
+const wrapperClasses = cn(
+  "inline-flex items-center justify-center",
+  additionalClasses
+);
+---
+
+<div class={wrapperClasses} {...restProps}>
+  <svg
+    width={finalWidth}
+    height={finalHeight}
+    viewBox={`0 0 ${finalWidth} ${finalHeight}`}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    class="flex-shrink-0"
+  >
+    <path d={generatePath()} fill={fillColor}></path>
+  </svg>
+</div>
