@@ -5,24 +5,31 @@ import { nonProtectRoutes } from "@/constants/NonProtectedRoutes";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url;
-  const isNonProtectedRoute = nonProtectRoutes.some((route) => {
-    return url.pathname.startsWith(route);
-  });
+  const isProtectedRoute =
+    !nonProtectRoutes.some((route) => {
+      return url.pathname.startsWith(route);
+    }) && url.pathname !== "/";
 
   const cookie = context.request.headers.get("cookie") ?? "";
   const token = parseCookie(cookie).token;
 
-  if (isNonProtectedRoute && token && isValidToken(token)) {
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: "/firstdate/home",
-      },
-    });
-  }
-  if (isNonProtectedRoute) {
+  console.log("Token from cookie:", token);
+  console.log("Is protected route:", isProtectedRoute);
+
+  if (!isProtectedRoute) {
+    if (token && isValidToken(token)) {
+      context.locals.user = jwt.decode(token) as App.Locals["user"];
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: "/firstdate/home",
+        },
+      });
+    }
     return next();
   }
+
+  console.log("Protected route accessed:", url.pathname);
 
   if (token && isValidToken(token)) {
     context.locals.user = jwt.decode(token) as App.Locals["user"];
@@ -32,7 +39,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   return new Response(null, {
     status: 302,
     headers: {
-      Location: "/login",
+      Location: "/",
     },
   });
 });
