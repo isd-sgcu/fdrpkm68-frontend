@@ -1,84 +1,83 @@
 ---
-import { ChevronDown } from '@lucide/astro';
+import { ChevronDown } from "@lucide/astro";
 
 export interface Props {
-  options: { label: string; value: string; }[];
-  selectedOption: { label: string; value: string; };
+  options: { label: string; value: string }[];
+  selectedOption: { label: string; value: string };
   class?: string;
 }
 
-const { options, selectedOption, class: additionalClasses = '' } = Astro.props;
+const { options, selectedOption, class: additionalClasses = "" } = Astro.props;
 ---
 
 <div class={`relative ${additionalClasses}`}>
-  <button 
-    class="flex items-center justify-between w-full text-white font-semibold text-lg leading-none fill-white drop-shadow-lg drop-shadow-white/50"
+  <button
+    class="flex w-full items-center justify-between fill-white text-lg leading-none font-semibold text-white drop-shadow-lg drop-shadow-white/50"
     id="map-dropdown-trigger"
     aria-expanded="false"
     aria-haspopup="true"
   >
-    <span class="text-white drop-shadow-lg px-2">
+    <span class="px-2 text-white drop-shadow-lg">
       {selectedOption.label}
     </span>
-    <div class="w-10 h-10 flex items-center justify-center">
+    <div class="flex h-10 w-10 items-center justify-center">
       <ChevronDown size={18} color="white" />
     </div>
   </button>
-  
-  <div 
-    class="absolute top-full left-0 right-0 mt-1 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 z-10 hidden"
+
+  <div
+    class="absolute top-full right-0 left-0 z-10 mt-1 hidden rounded-lg border border-gray-200 bg-white/90 shadow-lg backdrop-blur-sm"
     id="map-dropdown-menu"
   >
     <ul class="py-1">
-      {options.map((option) => (
-        <li>
-          <button 
-            class="w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-100 transition-colors duration-200 text-lg"
-            data-value={option.value}
-            data-label={option.label}
-          >
-            {option.label}
-          </button>
-        </li>
-      ))}
+      {
+        options.map((option) => (
+          <li>
+            <button
+              class="w-full px-4 py-2 text-left text-lg text-gray-800 transition-colors duration-200 hover:bg-gray-100"
+              data-value={option.value}
+              data-label={option.label}
+            >
+              {option.label}
+            </button>
+          </li>
+        ))
+      }
     </ul>
   </div>
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const trigger = document.getElementById('map-dropdown-trigger');
-    const menu = document.getElementById('map-dropdown-menu');
-    
+  document.addEventListener("DOMContentLoaded", function () {
+    const trigger = document.getElementById("map-dropdown-trigger");
+    const menu = document.getElementById("map-dropdown-menu");
+
     if (trigger && menu) {
-      trigger.addEventListener('click', function() {
-        const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
-        trigger.setAttribute('aria-expanded', (!isExpanded).toString());
-        menu.classList.toggle('hidden');
+      trigger.addEventListener("click", function () {
+        const isExpanded = trigger.getAttribute("aria-expanded") === "true";
+        trigger.setAttribute("aria-expanded", (!isExpanded).toString());
+        menu.classList.toggle("hidden");
       });
-      
-      document.addEventListener('click', function(e) {
-        if (!trigger.contains(e.target) && !menu.contains(e.target)) {
-          trigger.setAttribute('aria-expanded', 'false');
-          menu.classList.add('hidden');
+
+      document.addEventListener("click", function (e) {
+        const targetNode = e.target as Node;
+        if (!trigger.contains(targetNode) && !menu.contains(targetNode)) {
+          trigger.setAttribute("aria-expanded", "false");
+          menu.classList.add("hidden");
         }
       });
-      
-      const options = menu.querySelectorAll('button[data-value]');
-      options.forEach(option => {
-        option.addEventListener('click', function() {
-          const value = this.getAttribute('data-value');
-          const label = this.getAttribute('data-label');
-          const span = trigger.querySelector('span');
-          if (span) {
-            span.textContent = label;
-          }
-          trigger.setAttribute('aria-expanded', 'false');
-          menu.classList.add('hidden');
-          
+
+      const options = menu.querySelectorAll("button[data-value]");
+      options.forEach((option) => {
+        option.addEventListener("click", function (this: HTMLButtonElement) {
+          const value = this.getAttribute("data-value");
+          const label = this.getAttribute("data-label");
+          trigger.setAttribute("aria-expanded", "false");
+          menu.classList.add("hidden");
+
           // Dispatch custom event for map switching
-          const event = new CustomEvent('mapChanged', { 
-            detail: { value, label } 
+          const event = new CustomEvent("mapChanged", {
+            detail: { value, label },
           });
           document.dispatchEvent(event);
         });

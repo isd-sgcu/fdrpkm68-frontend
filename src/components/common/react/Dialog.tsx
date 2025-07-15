@@ -1,9 +1,12 @@
-import React, { useEffect, useRef, type ReactNode } from 'react';
-import { useDialog } from '../../../hooks/useDialog';
-import '../../../lib/dialogManager'; // Ensure DialogManager is initialized
+import { type ReactNode, useEffect, useRef } from "react";
+
+import { useDialog } from "@/hooks/useDialog";
+import "@/lib/dialogManager";
+
+// Ensure DialogManager is initialized
 
 interface DialogProps {
-  id: string;
+  id?: string;
   children: ReactNode;
   className?: string;
   onOpen?: () => void;
@@ -11,18 +14,22 @@ interface DialogProps {
   onConfirm?: () => void;
   backdrop?: boolean;
   closeOnBackdrop?: boolean;
+  forceOpen?: boolean;
+  forceLevel?: number;
 }
 
 export function Dialog({
-  id,
+  id = "",
   children,
-  className = '',
+  className = "",
   onOpen,
   onClose,
   onConfirm,
   backdrop = true,
   closeOnBackdrop = true,
-}: DialogProps) {
+  forceOpen = false,
+  forceLevel,
+}: DialogProps): ReactNode {
   const dialogRef = useRef<HTMLDivElement>(null);
   const {
     isOpen,
@@ -35,39 +42,62 @@ export function Dialog({
 
   // Handle custom callbacks
   useEffect(() => {
-    const unsubscribeOpen = hookOnOpen(() => onOpen?.()); 
-    const unsubscribeClose = hookOnClose(() => onClose?.());
-    const unsubscribeConfirm = hookOnConfirm(() => onConfirm?.());
+    const unsubscribeOpen = hookOnOpen((): void => onOpen?.());
+    const unsubscribeClose = hookOnClose((): void => onClose?.());
+    const unsubscribeConfirm = hookOnConfirm((): void => onConfirm?.());
 
-    return () => {
+    return (): void => {
       unsubscribeOpen();
       unsubscribeClose();
       unsubscribeConfirm();
     };
   }, [hookOnOpen, hookOnClose, hookOnConfirm, onOpen, onClose, onConfirm]);
 
-  // Handle backdrop clicks
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (closeOnBackdrop && e.target === e.currentTarget) {
-      close();
-    }
-  };
+  // default behavior for backdrop clicks
+  // // Handle backdrop clicks
+  // const _handleBackdropClick = (e: React.MouseEvent): void => {
+  //   if (closeOnBackdrop && e.target === e.currentTarget) {
+  //     close();
+  //   }
+  // };
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
+      if (e.key === "Escape" && closeOnBackdrop && isOpen) {
+        close();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+      return (): void => document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [isOpen, closeOnBackdrop, close]);
+
+  if (!isOpen && !forceOpen) {
+    return null;
+  }
 
   return (
     <div
       ref={dialogRef}
-      className={`fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-[440px] h-screen z-50 flex items-center justify-center animate-fade-in ${className}`}
-      style={{ zIndex: 1000 + level }}
-      onClick={backdrop ? handleBackdropClick : undefined}
+      className={`animate-fade-in fixed top-0 left-1/2 z-50 flex h-screen w-full max-w-[440px] -translate-x-1/2 transform items-center justify-center ${className}`}
+      style={{ zIndex: 1000 + (forceLevel ? forceLevel : level) }}
+      role="dialog"
+      aria-modal="true"
     >
       {backdrop && (
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-md fadein" onClick={close} />
+        <button
+          type="button"
+          className="fadein absolute inset-0 cursor-default bg-black/60 backdrop-blur-md"
+          onClick={close}
+          aria-label="Close dialog"
+        />
       )}
       <div
-        className="relative rounded-lg shadow-lg w-full max-w-sm max-h-[80vh] overflow-auto mx-4 animate-scale-in"
-        onClick={(e) => e.stopPropagation()}
+        className="animate-scale-in relative mx-4 max-h-[80vh] w-full max-w-sm rounded-lg shadow-lg"
+        role="document"
+        tabIndex={-1}
       >
         {children}
       </div>
@@ -76,25 +106,41 @@ export function Dialog({
 }
 
 // Simple dialog content components for convenience
-export function DialogHeader({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function DialogHeader({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}): ReactNode {
   return (
-    <div className={`px-6 py-4 border-b border-gray-200 ${className}`}>
+    <div className={`border-b border-gray-200 px-6 py-4 ${className}`}>
       {children}
     </div>
   );
 }
 
-export function DialogBody({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return (
-    <div className={`${className}`}>
-      {children}
-    </div>
-  );
+export function DialogBody({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}): ReactNode {
+  return <div className={`${className}`}>{children}</div>;
 }
 
-export function DialogFooter({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function DialogFooter({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}): ReactNode {
   return (
-    <div className={`px-6 py-4 border-t border-gray-200 flex justify-end space-x-2 ${className}`}>
+    <div
+      className={`flex justify-end space-x-2 border-t border-gray-200 px-6 py-4 ${className}`}
+    >
       {children}
     </div>
   );

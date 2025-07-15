@@ -1,13 +1,17 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+#!/bin/bash
 
 echo "🔍 Running pre-commit checks..."
 
-# Check if we can build
-echo "📦 Testing build..."
-pnpm run build || {
-  echo "❌ Build failed. Please fix errors before committing."
+echo "🔎 Running TypeScript type check..."
+pnpm type-check || {
+  echo "❌ Type checking failed. Please fix errors before committing."
   exit 1
 }
 
-echo "✅ All pre-commit checks passed!"
+echo "🧹 Cleaning up and formatting staged files..."
+lint-staged || {
+  echo "❌ Linting/formatting failed. Please fix errors before committing."
+  exit 1
+}
+
+echo "✅ Pre-commit checks passed!"

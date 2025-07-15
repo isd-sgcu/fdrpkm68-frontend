@@ -1,0 +1,8 @@
+---
+import RegisterForm from "@/components/common/register/RegisterForm.tsx";
+import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
+---
+
+<Layout>
+  <RegisterForm client:load userType="FRESHMAN" />
+</Layout>

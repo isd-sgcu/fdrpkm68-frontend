@@ -1,112 +1,126 @@
 ---
+import { Home } from "@lucide/astro";
+
+import ButtonFd from "@/components/common/ButtonFd.astro";
 import MapDropdown from "@/components/firstdate/MapDropdown.astro";
 import Layout from "@/layouts/firstdate/WithNavbar.astro";
-import ButtonFd from "@/components/common/ButtonFd.astro";
-import { Home } from '@lucide/astro';
 
 const mapOptions = [
   { label: "แผนที่หลัก", value: "maps-main" },
   { label: "สามย่าน สวนหลวง", value: "maps-chula-samyan" },
   { label: "สยามลุมพินี", value: "maps-chula-siam" },
   { label: "จุฬาฯฝั่งใหญ่", value: "maps-chula-henri" },
-  { label: "จุฬาฯฝั่งเล็ก", value: "maps-chula-pyt" }
+  { label: "จุฬาฯฝั่งเล็ก", value: "maps-chula-pyt" },
 ];
 const selectedMap = mapOptions[0];
 ---
-<Layout>    
-    <div class="flex flex-col w-full px-2.5 py-3 items-center justify-center">
-        <h1 class="text-4xl text-white font-zen-dots text-center fill-white drop-shadow-lg drop-shadow-white/50 my-8">Maps</h1>            
-        <!-- Map Frame Container with integrated dropdown -->
-        <section class="relative flex-1 flex items-center justify-center">
-            <!-- Background Frame -->
-            <div class="relative w-full max-w-[90vw] sm:max-w-[356px] mx-auto" style="aspect-ratio: 356/497;">
-                <img 
-                    src="/images/frame/Frame-maps.svg" 
-                    alt="Map Frame"
-                    class="w-full h-full object-contain"
-                />
-                
-                <!-- Dropdown positioned with responsive sizing -->
-                <div class="absolute left-3 top-3 z-10">
-                    <MapDropdown 
-                        options={mapOptions} 
-                        selectedOption={selectedMap}
-                        class="w-[200px] sm:w-[220px] border-b-2 sm:border-b-4 border-[#FFB6C1] "
-                    />
-                </div>
-                
-                <!-- Map content with responsive sizing -->
-                <div class="absolute left-2 right-2 bottom-7 top-16 bg-white rounded-lg overflow-hidden">
-                    <div 
-                        id="map-container" 
-                        class="w-full h-full relative cursor-grab active:cursor-grabbing overflow-hidden"
-                        style="background-color: #efe7e3;"
-                        data-current-map={selectedMap.value}
-                    >
-                        <!-- Map SVG -->
-                        <div 
-                            id="map-content"
-                            class="w-full h-full flex items-center justify-center transition-transform duration-200 ease-out"
-                            style="transform: scale(1) translate(0px, 0px)"
-                        >
-                            <img 
-                                id="current-map"
-                                src={`/images/maps/${selectedMap.value}.svg`}
-                                alt={selectedMap.label}
-                                class="max-w-none max-h-none object-contain"
-                                style="width: auto; height: auto; min-width: 100%; min-height: 100%;"
-                            />
-                        </div>
-                        
-                        <!-- Zoom Controls -->
-                        <div class="absolute bottom-2 right-2 flex flex-col gap-1 bg-white/90 backdrop-blur-sm rounded-lg p-1">
-                            <button 
-                                id="zoom-in"
-                                class="w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 border border-gray-300 rounded text-gray-700 font-bold transition-colors"
-                            >
-                                +
-                            </button>
-                            <button 
-                                id="zoom-out"
-                                class="w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 border border-gray-300 rounded text-gray-700 font-bold transition-colors"
-                            >
-                                −
-                            </button>
-                            <button 
-                                id="reset-zoom"
-                                class="w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 border border-gray-300 rounded text-gray-700 text-xs transition-colors"
-                                title="Reset zoom"
-                            >
-                                ⌂
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Map Description -->
-        <div class="my-4 space-y-4 text-center">
-            <h1 id="map-title" class="text-2xl font-medium mt-8-">{selectedMap.label}</h1>
-            <ButtonFd variant="fill" color="white" href="/firstdate/home/">
-                <Home slot="icon" size={20} />
-                กลับหน้าหลัก
-            </ButtonFd>
+
+<Layout>
+  <div class="flex w-full flex-col items-center justify-center px-2.5 py-3">
+    <h1
+      class="font-zen-dots my-8 fill-white text-center text-4xl text-white drop-shadow-lg drop-shadow-white/50"
+    >
+      Maps
+    </h1>
+    <!-- Map Frame Container with integrated dropdown -->
+    <section class="relative flex flex-1 items-center justify-center">
+      <!-- Background Frame -->
+      <div
+        class="relative mx-auto w-full max-w-[90vw] sm:max-w-[356px]"
+        style="aspect-ratio: 356/497;"
+      >
+        <img
+          src="/images/frame/Frame-maps.svg"
+          alt="Map Frame"
+          class="h-full w-full object-contain"
+        />
+
+        <!-- Dropdown positioned with responsive sizing -->
+        <div class="absolute top-3 left-3 z-10">
+          <MapDropdown
+            options={mapOptions}
+            selectedOption={selectedMap}
+            class="w-[200px] border-b-2 border-[#FFB6C1] sm:w-[220px] sm:border-b-4"
+          />
         </div>
 
+        <!-- Map content with responsive sizing -->
+        <div
+          class="absolute top-16 right-2 bottom-7 left-2 overflow-hidden rounded-lg bg-white"
+        >
+          <div
+            id="map-container"
+            class="relative h-full w-full cursor-grab overflow-hidden active:cursor-grabbing"
+            style="background-color: #efe7e3;"
+            data-current-map={selectedMap.value}
+          >
+            <!-- Map SVG -->
+            <div
+              id="map-content"
+              class="flex h-full w-full items-center justify-center transition-transform duration-200 ease-out"
+              style="transform: scale(1) translate(0px, 0px)"
+            >
+              <img
+                id="current-map"
+                src={`/images/maps/${selectedMap.value}.svg`}
+                alt={selectedMap.label}
+                class="max-h-none max-w-none object-contain"
+                style="width: auto; height: auto; min-width: 100%; min-height: 100%;"
+              />
+            </div>
+
+            <!-- Zoom Controls -->
+            <div
+              class="absolute right-2 bottom-2 flex flex-col gap-1 rounded-lg bg-white/90 p-1 backdrop-blur-sm"
+            >
+              <button
+                id="zoom-in"
+                class="flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white font-bold text-gray-700 transition-colors hover:bg-gray-100"
+              >
+                +
+              </button>
+              <button
+                id="zoom-out"
+                class="flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white font-bold text-gray-700 transition-colors hover:bg-gray-100"
+              >
+                −
+              </button>
+              <button
+                id="reset-zoom"
+                class="flex h-8 w-8 items-center justify-center rounded border border-gray-300 bg-white text-xs text-gray-700 transition-colors hover:bg-gray-100"
+                title="Reset zoom"
+              >
+                ⌂
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Map Description -->
+    <div class="my-4 space-y-4 text-center">
+      <h1 id="map-title" class="mt-8- text-2xl font-medium">
+        {selectedMap.label}
+      </h1>
+      <ButtonFd variant="fill" color="white" href="/firstdate/home/">
+        <Home slot="icon" size={20} />
+        กลับหน้าหลัก
+      </ButtonFd>
     </div>
+  </div>
 </Layout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const mapContainer = document.getElementById('map-container');
-    const mapContent = document.getElementById('map-content');
-    const currentMap = document.getElementById('current-map');
-    const zoomInBtn = document.getElementById('zoom-in');
-    const zoomOutBtn = document.getElementById('zoom-out');
-    const resetZoomBtn = document.getElementById('reset-zoom');
-    
+  document.addEventListener("DOMContentLoaded", function () {
+    const mapContainer = document.getElementById("map-container");
+    const mapContent = document.getElementById("map-content");
+    const currentMap = document.getElementById("current-map");
+    const zoomInBtn = document.getElementById("zoom-in");
+    const zoomOutBtn = document.getElementById("zoom-out");
+    const resetZoomBtn = document.getElementById("reset-zoom");
+
     if (!mapContainer || !mapContent || !currentMap) return;
-    
+
     let scale = 1;
     let translateX = 0;
     let translateY = 0;
@@ -115,69 +129,83 @@ const selectedMap = mapOptions[0];
     let startY = 0;
     let startTranslateX = 0;
     let startTranslateY = 0;
-    
+
     const minScale = 1; // Changed from 0.5 to 1 to prevent zoom out
     const maxScale = 4;
     const zoomStep = 0.3;
-    
+
     function updateTransform() {
+      if (!mapContent || !mapContainer) return;
       mapContent.style.transform = `scale(${scale}) translate(${translateX}px, ${translateY}px)`;
       // Update cursor - always allow grab since we can pan at any zoom level
-      mapContainer.style.cursor = 'grab';
+      mapContainer.style.cursor = "grab";
     }
-    
+
     function resetTransform() {
       scale = 1;
       translateX = 0;
       translateY = 0;
       updateTransform();
     }
-    
+
     function constrainTranslation() {
+      if (!mapContainer || !mapContent) return;
       const containerRect = mapContainer.getBoundingClientRect();
       const contentRect = mapContent.getBoundingClientRect();
-      
-      const maxTranslateX = Math.max(0, (contentRect.width - containerRect.width) / 2 / scale);
-      const maxTranslateY = Math.max(0, (contentRect.height - containerRect.height) / 2 / scale);
-      
-      translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, translateX));
-      translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, translateY));
+
+      const maxTranslateX = Math.max(
+        0,
+        (contentRect.width - containerRect.width) / 2 / scale
+      );
+      const maxTranslateY = Math.max(
+        0,
+        (contentRect.height - containerRect.height) / 2 / scale
+      );
+
+      translateX = Math.max(
+        -maxTranslateX,
+        Math.min(maxTranslateX, translateX)
+      );
+      translateY = Math.max(
+        -maxTranslateY,
+        Math.min(maxTranslateY, translateY)
+      );
     }
-    
+
     // Zoom functionality
-    zoomInBtn?.addEventListener('click', () => {
+    zoomInBtn?.addEventListener("click", () => {
       scale = Math.min(maxScale, scale + zoomStep);
       constrainTranslation();
       updateTransform();
     });
-    
-    zoomOutBtn?.addEventListener('click', () => {
+
+    zoomOutBtn?.addEventListener("click", () => {
       scale = Math.max(minScale, scale - zoomStep);
       constrainTranslation();
       updateTransform();
     });
-    
-    resetZoomBtn?.addEventListener('click', resetTransform);
-    
-    mapContainer.addEventListener('wheel', (e) => {
+
+    resetZoomBtn?.addEventListener("click", resetTransform);
+
+    mapContainer.addEventListener("wheel", (e) => {
       e.preventDefault();
       const delta = e.deltaY > 0 ? -zoomStep : zoomStep;
       scale = Math.max(minScale, Math.min(maxScale, scale + delta));
       constrainTranslation();
       updateTransform();
     });
-    
+
     // Mouse drag functionality
-    mapContainer.addEventListener('mousedown', (e) => {
+    mapContainer.addEventListener("mousedown", (e) => {
       isDragging = true;
       startX = e.clientX;
       startY = e.clientY;
       startTranslateX = translateX;
       startTranslateY = translateY;
-      mapContainer.style.cursor = 'grabbing';
+      mapContainer.style.cursor = "grabbing";
     });
-    
-    document.addEventListener('mousemove', (e) => {
+
+    document.addEventListener("mousemove", (e) => {
       if (!isDragging) return;
       const deltaX = (e.clientX - startX) / scale;
       const deltaY = (e.clientY - startY) / scale;
@@ -186,18 +214,18 @@ const selectedMap = mapOptions[0];
       constrainTranslation();
       updateTransform();
     });
-    
-    document.addEventListener('mouseup', () => {
+
+    document.addEventListener("mouseup", () => {
       isDragging = false;
-      mapContainer.style.cursor = 'grab';
+      mapContainer.style.cursor = "grab";
     });
-    
+
     let touchStartX = 0;
     let touchStartY = 0;
     let touchStartTranslateX = 0;
     let touchStartTranslateY = 0;
-    
-    mapContainer.addEventListener('touchstart', (e) => {
+
+    mapContainer.addEventListener("touchstart", (e) => {
       if (e.touches.length === 1) {
         const touch = e.touches[0];
         touchStartX = touch.clientX;
@@ -206,8 +234,8 @@ const selectedMap = mapOptions[0];
         touchStartTranslateY = translateY;
       }
     });
-    
-    mapContainer.addEventListener('touchmove', (e) => {
+
+    mapContainer.addEventListener("touchmove", (e) => {
       e.preventDefault();
       if (e.touches.length === 1) {
         const touch = e.touches[0];
@@ -219,20 +247,20 @@ const selectedMap = mapOptions[0];
         updateTransform();
       }
     });
-    
+
     // Map switching functionality
-    document.addEventListener('mapChanged', (e) => {
-      const { value, label } = e.detail;
-      currentMap.src = `/images/maps/${value}.svg`;
-      currentMap.alt = label;
-      mapContainer.setAttribute('data-current-map', value);
-      
+    document.addEventListener("mapChanged", (e) => {
+      const { value, label } = (e as CustomEvent).detail;
+      (currentMap as HTMLImageElement).src = `/images/maps/${value}.svg`;
+      (currentMap as HTMLImageElement).alt = label;
+      mapContainer.setAttribute("data-current-map", value);
+
       // Update the map title
-      const mapTitle = document.getElementById('map-title');
+      const mapTitle = document.getElementById("map-title");
       if (mapTitle) {
         mapTitle.textContent = label;
       }
-      
+
       resetTransform();
     });
   });
