@@ -1,0 +1,488 @@
+---
+import Divider from "@/components/common/Divider.astro";
+import Frame from "@/components/common/Frame.astro";
+
+const sampleRoomCode = "UIA321";
+const sampleURL = "rpkm.sgcu.in.th/";
+const sampleHeadName = "มหาเทพ อสูรเพลิง (Lnw)";
+const sampleHeadID = "6812345678";
+---
+
+<!-- Default Wrapper -->
+<div class="block h-full w-full" id="view-group-default">
+  <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
+    <!-- Title -->
+    <p class="pt-2 text-2xl font-semibold text-white">จับกลุ่มเพื่อน (1/3)</p>
+
+    <!-- Room Code Input -->
+    <div class="flex w-full flex-col items-center gap-[14px] pt-9">
+      <!-- Input -->
+      <div class="w-full drop-shadow-[0_0_2px_white] filter">
+        <div
+          class="cut-input-1 bg-gradient-to-r from-[#FF1493] via-[#D38DD8] to-[#FF1493] px-[6px] py-[3px]"
+        >
+          <div class="cut-input-1 bg-[#2B2D42]">
+            <input
+              id="room-id-insert"
+              type="text"
+              placeholder="โปรดกรอกรหัสห้อง"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-lg text-[#0FF] placeholder-[#FFFFFF80] outline-none"
+              maxlength="6"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="drop-shadow-[0_0_4px_white] filter">
+        <button
+          id="btn-join-group"
+          disabled
+          class="cut-edge-all cursor-not-allowed bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
+          type="button"
+          style="width: 140px; height: 40px;"
+        >
+          <p class="text-lg font-medium text-white">ยืนยัน</p>
+        </button>
+      </div>
+    </div>
+
+    <!-- White Bar -->
+    <Divider color="white" class="my-7" width={236} />
+
+    <!-- Head Group Button -->
+    <div class="drop-shadow-[0_0_6px_white] filter">
+      <button
+        id="btn-head-group"
+        class="cut-edge-all cursor-pointer bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
+        type="button"
+        style="width: 260px; height: 48px;"
+      >
+        <p class="text-xl font-medium text-white">เป็นหัวแคลน</p>
+      </button>
+    </div>
+
+    <!-- Note -->
+    <p class="py-3 text-xs text-white">*สามารถเลือกบ้านคนเดียวได้</p>
+  </Frame>
+</div>
+
+<!-- Head Wrapper -->
+<div class="hidden h-full w-full" id="view-group-head">
+  <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
+    <!-- Title -->
+    <div class="relative w-full pt-2 text-center">
+      <p
+        class="absolute left-0 cursor-pointer text-2xl font-semibold text-white"
+        id="btn-back"
+      >
+        {"<"}
+      </p>
+      <p class="text-2xl font-semibold text-white">จับกลุ่มเพื่อน (1/3)</p>
+    </div>
+
+    <!-- Profile -->
+    <div class="flex w-full justify-center gap-[10px] pt-6">
+      <img src="/images/rpkm/sample-profile.png" width="80" height="80" />
+      <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
+      <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
+    </div>
+
+    <!-- Invite URL -->
+    <div class="flex w-full flex-col items-center gap-1 pt-6">
+      <!-- Header -->
+      <p class="text-xs font-semibold text-white">Invite Link</p>
+      <!-- URL -->
+      <div
+        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
+        id="room-invite-url-head-container"
+      >
+        <div
+          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
+        >
+          <div class="cut-input-1 relative flex bg-[#2B2D42]">
+            <span
+              id="room-invite-url-head"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
+            >
+              {sampleURL + sampleRoomCode}
+            </span>
+            <img
+              src="/images/rpkm/link-icon.svg"
+              width="18"
+              height="18"
+              class="absolute top-1/2 right-2 -translate-y-1/2"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Code -->
+    <div class="flex w-full flex-col items-center gap-1 pt-3 pb-5">
+      <!-- Header -->
+      <p class="text-xs font-semibold text-white">Room Code</p>
+      <!-- Code -->
+      <div
+        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
+        id="room-code-head-container"
+      >
+        <div
+          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
+        >
+          <div class="cut-input-1 relative flex bg-[#2B2D42]">
+            <span
+              id="room-code-head"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
+            >
+              {sampleRoomCode}
+            </span>
+            <img
+              src="/images/rpkm/link-icon.svg"
+              width="18"
+              height="18"
+              class="absolute top-1/2 right-2 -translate-y-1/2"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </Frame>
+</div>
+
+<!-- Member Wrapper -->
+<div class="hidden h-full w-full" id="view-group-member">
+  <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
+    <!-- Title -->
+    <div class="relative w-full pt-2 text-center">
+      <p class="z-20 text-center text-2xl font-semibold text-white">
+        จับกลุ่มเพื่อน (2/3)
+      </p>
+      <img
+        src="/images/rpkm/exit-icon.svg"
+        width="24px"
+        height="24px"
+        class="absolute top-3 right-0 cursor-pointer"
+        id="btn-exit"
+      />
+    </div>
+
+    <!-- Profile -->
+    <div class="z-20 flex w-full justify-center gap-[10px] pt-6">
+      <img src="/images/rpkm/sample-profile2.png" width="80" height="80" />
+      <img src="/images/rpkm/sample-profile.png" width="80" height="80" />
+      <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
+    </div>
+
+    <!-- Invite URL -->
+    <div class="flex w-full flex-col items-center gap-1 pt-6">
+      <!-- Header -->
+      <p class="text-xs font-semibold text-white">Invite Link</p>
+      <!-- URL -->
+      <div
+        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
+        id="room-invite-url-member-container"
+      >
+        <div
+          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
+        >
+          <div class="cut-input-1 relative flex bg-[#2B2D42]">
+            <span
+              id="room-invite-url-member"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
+            >
+            </span>
+            <img
+              src="/images/rpkm/link-icon.svg"
+              width="18"
+              height="18"
+              class="absolute top-1/2 right-2 -translate-y-1/2"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Code -->
+    <div class="flex w-full flex-col items-center gap-1 pt-3 pb-5">
+      <!-- Header -->
+      <p class="text-xs font-semibold text-white">Room Code</p>
+      <!-- Code -->
+      <div
+        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
+        id="room-code-member-container"
+      >
+        <div
+          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
+        >
+          <div class="cut-input-1 relative flex bg-[#2B2D42]">
+            <span
+              id="room-code-member"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
+            >
+            </span>
+            <img
+              src="/images/rpkm/link-icon.svg"
+              width="18"
+              height="18"
+              class="absolute top-1/2 right-2 -translate-y-1/2"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </Frame>
+</div>
+
+<!-- Popup Overlay -->
+<div
+  id="view-group-popup"
+  class="fixed inset-0 z-50 flex hidden w-full items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
+>
+  <!-- Popup Wrapper -->
+  <div class="relative w-full max-w-md px-5">
+    <!-- Frame Component -->
+    <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
+      <div
+        class="relative flex h-full w-full flex-col items-center justify-center"
+        id="view-group-popup-content"
+      >
+        <!-- Title -->
+        <p class="z-20 text-center text-2xl font-semibold text-white">
+          คุณต้องการจับกลุ่มกับ
+        </p>
+
+        <!-- Profile -->
+        <div class="z-20 flex w-full justify-center gap-3 px-5 pt-4">
+          <img src="/images/rpkm/sample-profile2.png" width="80" height="80" />
+        </div>
+
+        <!-- Name -->
+        <div class="flex flex-col items-center pt-1">
+          <p class="text-xl font-semibold text-white">{sampleHeadName}</p>
+          <p class="text-white">{sampleHeadID}</p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="z-20 pt-5 drop-shadow-[0_0_6px_white] filter">
+          <button
+            id="btn-submit-group"
+            class="cut-edge-all cursor-pointer bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)]"
+            type="button"
+            style="width: 260px; height: 48px;"
+          >
+            <p class="text-xl font-medium text-white">ยืนยันจับกลุ่ม</p>
+          </button>
+        </div>
+      </div>
+    </Frame>
+    <!-- Cancel Button -->
+    <button
+      class="cut-edge-all-sm absolute left-1/2 z-30 h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer bg-[#8A2BE4] text-xl text-white shadow-lg"
+      id="btn-cancel-group"
+    >
+      X
+    </button>
+  </div>
+</div>
+
+<!-- Popup Success Overlay -->
+<div
+  id="view-group-success-popup"
+  class="fixed inset-0 z-50 flex hidden w-full items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
+>
+  <!-- Popup Success Wrapper -->
+  <div class="relative w-full max-w-md px-5">
+    <!-- Frame Component -->
+    <Frame color="purple" size="sm">
+      <div
+        class="relative flex flex-col items-center justify-center"
+        id="view-group-popup-content"
+      >
+        <!-- Check -->
+        <img
+          src="/images/rpkm/check-icon.svg"
+          class="rounded-full border-4 border-[#FF1493]"
+          width="80"
+          height="80"
+        />
+
+        <!-- Information -->
+        <div class="flex flex-col items-center gap-1 pt-4 text-white">
+          <p class="text-2xl font-medium">คุณได้จับกลุ่มกับ</p>
+          <p class="text-xl font-semibold">{sampleHeadName}</p>
+          <p class="text-2xl font-medium">สำเร็จแล้ว</p>
+        </div>
+      </div>
+    </Frame>
+
+    <!-- Cancel Button -->
+    <button
+      class="cut-edge-all-sm absolute left-1/2 z-30 h-10 w-10 -translate-x-1/2 -translate-y-1/2 cursor-pointer bg-[#8A2BE4] text-xl text-white shadow-lg"
+      id="btn-close-popup"
+    >
+      X
+    </button>
+  </div>
+</div>
+
+<!-- Script -->
+<script>
+  const input = document.getElementById("room-id-insert") as HTMLInputElement;
+
+  const headGroupBtn = document.getElementById(
+    "btn-head-group"
+  ) as HTMLButtonElement;
+  const backBtn = document.getElementById("btn-back") as HTMLButtonElement;
+  const joinGroupButton = document.getElementById(
+    "btn-join-group"
+  ) as HTMLButtonElement;
+  const submitGroupButton = document.getElementById(
+    "btn-submit-group"
+  ) as HTMLButtonElement;
+  const cancelGroupButton = document.getElementById(
+    "btn-cancel-group"
+  ) as HTMLButtonElement;
+  const closeGroupPopupButton = document.getElementById(
+    "btn-close-popup"
+  ) as HTMLButtonElement;
+  const exitButton = document.getElementById("btn-exit") as HTMLButtonElement;
+
+  const groupDefaultView = document.getElementById("view-group-default");
+  const groupHeadView = document.getElementById("view-group-head");
+  const groupMemberView = document.getElementById("view-group-member");
+  const groupPopupView = document.getElementById("view-group-popup");
+  const groupPopupSuccessView = document.getElementById(
+    "view-group-success-popup"
+  );
+
+  const roomInviteHeadContainer = document.getElementById(
+    "room-invite-url-head-container"
+  );
+  const roomCodeHeadContainer = document.getElementById(
+    "room-code-head-container"
+  );
+  const roomInviteMemberContainer = document.getElementById(
+    "room-invite-url-member-container"
+  );
+  const roomCodeMemberContainer = document.getElementById(
+    "room-code-member-container"
+  );
+
+  function formatRoomId(raw: string): string {
+    return raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  }
+
+  function toggleSubmitButton() {
+    if (!input || !joinGroupButton) return;
+
+    // Input Validation
+    const formattedRoomId = formatRoomId(input.value);
+    input.value = formattedRoomId;
+
+    const isValid = formattedRoomId.length === 6;
+
+    joinGroupButton.disabled = !isValid;
+
+    if (isValid) {
+      joinGroupButton.classList.remove(
+        "brightness-75",
+        "opacity-50",
+        "cursor-not-allowed"
+      );
+      joinGroupButton.classList.add("cursor-pointer");
+
+      const outputURL = document.getElementById(
+        "room-invite-url-member"
+      ) as HTMLSpanElement;
+      const outputCode = document.getElementById(
+        "room-code-member"
+      ) as HTMLSpanElement;
+
+      outputURL.textContent = "rpkm.sgcu.in.th/" + input.value;
+      outputCode.textContent = input.value;
+    } else {
+      joinGroupButton.classList.add(
+        "brightness-75",
+        "opacity-50",
+        "cursor-not-allowed"
+      );
+      joinGroupButton.classList.remove("cursor-pointer");
+    }
+  }
+
+  input?.addEventListener("input", toggleSubmitButton);
+  toggleSubmitButton();
+
+  headGroupBtn?.addEventListener("click", () => {
+    groupDefaultView?.classList.add("hidden");
+    groupHeadView?.classList.remove("hidden");
+    input.value = "";
+    toggleSubmitButton();
+  });
+
+  joinGroupButton?.addEventListener("click", () => {
+    groupPopupView?.classList.remove("hidden");
+    input.value = "";
+    toggleSubmitButton();
+  });
+
+  submitGroupButton?.addEventListener("click", () => {
+    groupPopupView?.classList.add("hidden");
+    groupPopupSuccessView?.classList.remove("hidden");
+    groupDefaultView?.classList.add("hidden");
+    groupMemberView?.classList.remove("hidden");
+  });
+
+  cancelGroupButton?.addEventListener("click", () => {
+    groupPopupView?.classList.add("hidden");
+    input.value = "";
+    toggleSubmitButton();
+  });
+
+  closeGroupPopupButton?.addEventListener("click", () => {
+    groupPopupSuccessView?.classList.add("hidden");
+  });
+
+  roomInviteHeadContainer?.addEventListener("click", () => {
+    const urlElement = document.getElementById("room-invite-url-head");
+    if (urlElement && urlElement.textContent) {
+      const url = urlElement.textContent.trim();
+      navigator.clipboard.writeText(url);
+    }
+  });
+
+  roomCodeHeadContainer?.addEventListener("click", () => {
+    const codeElement = document.getElementById("room-code-head");
+    if (codeElement && codeElement.textContent) {
+      const code = codeElement.textContent.trim();
+      navigator.clipboard.writeText(code);
+    }
+  });
+
+  roomInviteMemberContainer?.addEventListener("click", () => {
+    const urlElement = document.getElementById("room-invite-url-member");
+    if (urlElement && urlElement.textContent) {
+      const url = urlElement.textContent.trim();
+      navigator.clipboard.writeText(url);
+    }
+  });
+
+  roomCodeMemberContainer?.addEventListener("click", () => {
+    const codeElement = document.getElementById("room-code-member");
+    if (codeElement && codeElement.textContent) {
+      const code = codeElement.textContent.trim();
+      navigator.clipboard.writeText(code);
+    }
+  });
+
+  backBtn?.addEventListener("click", () => {
+    groupDefaultView?.classList.remove("hidden");
+    groupHeadView?.classList.add("hidden");
+  });
+
+  exitButton?.addEventListener("click", () => {
+    groupMemberView?.classList.add("hidden");
+    groupHeadView?.classList.remove("hidden");
+  });
+</script>

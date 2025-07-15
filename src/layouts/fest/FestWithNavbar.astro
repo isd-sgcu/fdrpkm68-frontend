@@ -1,7 +1,7 @@
---- 
+---
 import "@/styles/global.css";
-import Navbar from "@firstdate/Navbar.astro";
 import Footer from "@firstdate/Footer.astro";
+import Navbar from "@firstdate/Navbar.astro";
 
 interface Props {
   title?: string;
@@ -22,12 +22,14 @@ const { title, description } = Astro.props;
     <meta name="description" content={description} />
   </head>
   <body class="min-h-screen min-w-screen bg-slate-500">
-    <div class="min-h-screen max-w-[440px] mx-auto flex flex-col bg-[url(/fest/BG-Fest.png)] bg-cover bg-center bg-no-repeat text-white ">
+    <div
+      class="mx-auto flex min-h-screen max-w-[440px] flex-col bg-[url(/fest/BG-Fest.png)] bg-cover bg-center bg-no-repeat text-white"
+    >
       <Navbar />
       <main class="flex-grow px-3">
         <slot />
       </main>
-      <Footer variant="fest"/>
+      <Footer variant="fest" />
     </div>
   </body>
 </html>

@@ -1,0 +1,125 @@
+---
+import Frame from "@/components/common/Frame.astro";
+
+const colors = [
+  { size: "S", bgColor: "#0FF", textColor: "#000" },
+  { size: "M", bgColor: "#FF1493", textColor: "#fff" },
+  { size: "L", bgColor: "#FFB6C1", textColor: "#000" },
+  { size: "XL", bgColor: "#D38DD8", textColor: "#000" },
+  { size: "XXL", bgColor: "#2B2D42", textColor: "#fff" },
+];
+
+// Default color
+const defaultColor = colors[0];
+---
+
+<!-- House Popup Overlay -->
+<div
+  id="view-house-popup"
+  class="fixed inset-0 z-50 hidden w-full items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
+>
+  <!-- House Popup Wrapper -->
+  <div class="relative w-full max-w-md px-5">
+    <!-- Frame Component -->
+    <Frame size="md" color="purple" contentContainerClass="!h-full !py-4 !px-4">
+      <div
+        class="relative flex h-full w-full flex-col items-center"
+        id="view-house-popup-content"
+      >
+        <!-- House Size -->
+        <div
+          id="house-size-badge"
+          class="absolute top-0 left-0 flex aspect-square w-[40px] items-center justify-center rounded-full px-3 py-1 text-xl font-bold"
+          style={`background-color: ${defaultColor.bgColor}; color: ${defaultColor.textColor};`}
+        >
+          S
+        </div>
+
+        <!-- House Image -->
+        <img
+          id="house-image"
+          src="/images/rpkm/house-blank.png"
+          width="104"
+          height="104"
+          class="border border-white"
+        />
+
+        <!-- House People -->
+        <div class="absolute top-0 right-0 flex items-center gap-[1px] text-sm">
+          <p class="text-white">
+            <span id="house-amount" style="color: #68A987;">0</span>/<span
+              id="house-capacity">0</span
+            >
+          </p>
+          <img
+            src="/images/rpkm/person-icon-white.svg"
+            width="18"
+            height="18"
+          />
+        </div>
+
+        <!-- House Thai Title -->
+        <p id="house-thai-title" class="pt-5 text-2xl font-semibold text-white">
+          ชื่อบ้าน
+        </p>
+
+        <!-- House Thai Description -->
+        <p id="house-thai-description" class="text-center text-xs text-white">
+          คำอธิบายบ้าน
+        </p>
+
+        <!-- House English Title -->
+        <p id="house-eng-title" class="pt-5 text-2xl font-semibold text-white">
+          House Name
+        </p>
+
+        <!-- House English Description -->
+        <p id="house-eng-description" class="text-center text-xs text-white">
+          House Description
+        </p>
+
+        <!-- House Instagram -->
+        <a
+          id="house-instagram-link"
+          href="#"
+          target="_blank"
+          class="flex cursor-pointer items-center gap-2 pt-8"
+        >
+          <img src="/images/rpkm/instagram-icon.svg" width="20" height="20" />
+          <p id="house-instagram" class="font-medium text-white">Instagram</p>
+        </a>
+
+        <!-- House Buttons -->
+        <div class="flex gap-5 py-7">
+          <div class="filter">
+            <button
+              id="btn-cancel-house"
+              class="cut-edge-all cursor-pointer border-4 border-[#00FFFF] bg-transparent transition-all"
+              type="button"
+              style="width: 130px; height: 48px;"
+            >
+              <p
+                id="btn-cancel-text"
+                class="text-xl font-medium text-[#00FFFF]"
+              >
+                ย้อนกลับ
+              </p>
+            </button>
+          </div>
+          <div class="drop-shadow-[0_0_6px_white] filter">
+            <button
+              id="btn-add-house"
+              class="cut-edge-all cursor-pointer bg-[linear-gradient(90deg,_#00FFFF_0%,_#2B2D42_100%)] transition-all"
+              type="button"
+              style="width: 130px; height: 48px;"
+            >
+              <p id="btn-add-text" class="text-xl font-medium text-white">
+                เพิ่มบ้านนี้
+              </p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </Frame>
+  </div>
+</div>
