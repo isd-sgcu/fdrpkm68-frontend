@@ -8,11 +8,11 @@ const rankHeight = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
 
 {
   name ? (
-    <div class="relative flex h-[84px] w-[68px] flex-col gap-2">
-      <div class="relative h-[60px] w-[60px] bg-white p-1">
+    <div class="relative flex h-[100px] w-[80px] flex-col gap-2">
+      <div class="relative h-[73.442px] w-[73.442px] bg-white p-1">
         <img
           src={`/images/rpkm/rank-${rank}.svg`}
-          class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform"
+          class="absolute top-0 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 transform"
           width={rankWidth}
           height={rankHeight}
         />
@@ -30,12 +30,12 @@ const rankHeight = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
     </div>
   ) : (
     <button
-      class="relative flex h-[84px] w-[68px] cursor-pointer items-center justify-center border-2 border-dashed border-[#D38DD8] transition-colors hover:bg-[#D38DD8]/20"
+      class="relative flex h-[100px] w-[80px] cursor-pointer items-center justify-center border-2 border-dashed border-[#D38DD8] transition-colors hover:bg-[#D38DD8]/20"
       data-rank={rank}
     >
       <img
         src={`/images/rpkm/rank-${rank}.svg`}
-        class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 transform"
+        class="absolute top-0 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 transform"
         width={rankWidth}
         height={rankHeight}
       />

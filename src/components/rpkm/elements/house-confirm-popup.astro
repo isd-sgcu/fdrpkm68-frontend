@@ -12,14 +12,14 @@ declare global {
 <!-- House Confirm Popup Overlay -->
 <div
   id="view-house-confirm-popup"
-  class="fixed inset-0 z-50 hidden min-h-[500px] w-full translate-x-[9px] items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
+  class="fixed inset-0 z-50 hidden w-full items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
 >
   <!-- House Confirm Popup Wrapper -->
   <div class="relative w-full max-w-md px-5">
     <!-- Frame Component -->
-    <Frame size="sm" color="purple" contentContainerClass="!px-5 !py-8">
+    <Frame size="sm" color="purple" contentContainerClass="!h-full">
       <div
-        class="relative flex flex-col items-center"
+        class="relative flex h-full w-full flex-col items-center"
         id="view-house-confirm-popup-content"
       >
         <!-- Header -->
@@ -35,7 +35,7 @@ declare global {
         </div>
 
         <!-- Buttons -->
-        <div class="flex gap-5 pt-7">
+        <div class="flex gap-5 py-7">
           <button
             id="btn-cancel-house-popup"
             class="cut-edge-all flex cursor-pointer items-center justify-center gap-2 bg-[linear-gradient(90deg,_#FF1493_0%,_#2B2D42_100%)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -61,14 +61,14 @@ declare global {
 <!-- House Success Popup Overlay -->
 <div
   id="view-house-success-popup"
-  class="fixed inset-0 z-50 hidden w-full translate-x-[9px] items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
+  class="fixed inset-0 z-50 hidden w-full items-center justify-center bg-[rgba(0,0,0,0.7)] transition-opacity duration-200"
 >
   <!-- Popup Success Wrapper -->
   <div class="relative w-full max-w-md px-5">
     <!-- Frame Component -->
-    <Frame size="xs" color="purple">
+    <Frame size="xs" color="purple" contentContainerClass="!h-full">
       <div
-        class="relative flex flex-col items-center justify-center"
+        class="relative flex h-full w-full flex-col items-center justify-center"
         id="view-house-success-popup-content"
       >
         <!-- Check -->

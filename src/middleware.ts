@@ -19,6 +19,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const token = parseCookie(cookie).token;
 
   if (token && isValidToken(token)) {
+    context.locals.user = jwt.decode(token) as App.Locals["user"];
     return next();
   }
 
@@ -41,7 +42,7 @@ function parseCookie(cookie: string): Record<string, string> {
 
 function isValidToken(token: string): boolean {
   try {
-    jwt.verify(token, import.meta.env.JWT_SECRET || "");
+    jwt.verify(token, import.meta.env.JWT_SECRET || "secret");
     return true;
   } catch (error) {
     console.error("Invalid token:", error);

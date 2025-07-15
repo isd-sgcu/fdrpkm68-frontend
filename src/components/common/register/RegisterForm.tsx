@@ -17,6 +17,7 @@ import HealthInformationStep, {
 import PersonalInformationStep, {
   type PersonalInfo,
 } from "@/components/common/register/PersonalInformationStep";
+import { api } from "@/lib/api";
 
 export interface RegisterFormData
   extends PersonalInfo,
@@ -91,10 +92,36 @@ export default function RegisterForm({
     setStep(1);
   }, []);
 
-  const onFinalSubmit = useCallback((_data: RegisterFormData): void => {
-    console.log("Final form submitted:", _data);
-    // Handle final form submission
-  }, []);
+  const onFinalSubmit = useCallback(
+    async (data: RegisterFormData): Promise<void> => {
+      console.log("DATA FRFR", data);
+      const response = await api.post("/auth/register", {
+        studentId: data.studentId,
+        citizenId: data.citizenId,
+        password: data.password,
+        prefix: data.prefix,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        nickname: data.nickname,
+        faculty: data.faculty,
+        academicYear: parseInt(data.academicYear),
+        phoneNumber: data.phoneNumber,
+        parentName: data.parentName,
+        parentPhoneNumber: data.parentPhoneNumber,
+        parentRelationship: data.parentRelationship,
+        foodAllergy: data.hasAllergies ? data.foodAllergy : null,
+        drugAllergy: data.hasMedications ? data.drugAllergy : null,
+        illness: data.hasChronicDiseases ? data.illness : null,
+      });
+      if (response.success) {
+        window.location.href = "/login";
+      } else {
+        console.error("Registration failed:", response.message);
+        setStep(3);
+      }
+    },
+    []
+  );
 
   const handleConsentAccept = useCallback((): void => {
     setIsConsentGiven(true);
@@ -153,7 +180,7 @@ export default function RegisterForm({
               setValue={setValue}
               control={control}
               clearErrors={clearErrors}
-              onSubmit={handleSubmit(onHealthSubmit)}
+              onSubmit={handleSubmit(onFinalSubmit)}
               setStep={setStep}
               userType={userType}
             />

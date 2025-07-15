@@ -5,7 +5,9 @@ A modern, dual-environment SSR frontend for FreshmenFest 2025 built with Astro, 
 ## 🏗️ Enhanced Architecture
 
 ### Production Environment
+
 **URL:** `https://freshmenfest2025.com`
+
 ```
 freshmenfest2025.com → Load Balancer
 ├── /api/* → Cloud Run (Backend) - strips /api prefix
@@ -14,11 +16,13 @@ freshmenfest2025.com → Load Balancer
 └── /* → Cloud Run (Astro SSR Frontend)
 ```
 
-### Development Environment  
+### Development Environment
+
 **URL:** `https://dev.freshmenfest2025.com`
+
 ```
 dev.freshmenfest2025.com → Load Balancer
-├── /api/* → Cloud Run (Backend) - strips /api prefix  
+├── /api/* → Cloud Run (Backend) - strips /api prefix
 ├── /_astro/* → Cloud Storage Bucket (CDN)
 ├── /images/* → Cloud Storage Bucket (CDN)
 └── /* → Cloud Run (Astro SSR Frontend)
@@ -36,6 +40,7 @@ dev.freshmenfest2025.com → Load Balancer
 ## 🌳 Branch Strategy
 
 ### Workflow
+
 ```
 feature/new-feature → dev (PR + review) → Auto-deploy to dev.freshmenfest2025.com
                          ↓
@@ -43,6 +48,7 @@ feature/new-feature → dev (PR + review) → Auto-deploy to dev.freshmenfest202
 ```
 
 ### Branch Rules
+
 - **`main`** → Production (requires manual approval)
 - **`dev`** → Development (team can merge)
 - **`feature/*`** → Feature branches
@@ -50,11 +56,13 @@ feature/new-feature → dev (PR + review) → Auto-deploy to dev.freshmenfest202
 ## 🛠️ Quick Start
 
 ### Prerequisites
+
 - Node.js 20 or later
 - pnpm
 - Git
 
 ### Setup
+
 ```bash
 # Clone and setup
 git clone <repository-url>
@@ -69,21 +77,23 @@ pnpm dev
 ```
 
 **Local URLs:**
+
 - **Frontend**: http://localhost:4321
-- **API Proxy**: http://localhost:4321/api/* → http://localhost:8080/*
+- **API Proxy**: http://localhost:4321/api/_ → http://localhost:8080/_
 
 ## ⚡ Development Commands
 
-| Command | Action |
-|---------|--------|
-| `pnpm dev` | Start dev server with API proxy |
-| `pnpm build` | Build for production |
-| `pnpm preview` | Preview production build |
-| `pnpm astro ...` | Run Astro CLI commands |
+| Command          | Action                          |
+| ---------------- | ------------------------------- |
+| `pnpm dev`       | Start dev server with API proxy |
+| `pnpm build`     | Build for production            |
+| `pnpm preview`   | Preview production build        |
+| `pnpm astro ...` | Run Astro CLI commands          |
 
 ## 🔧 Environment Configuration
 
 ### Local Development (.env.local)
+
 ```bash
 # Frontend runs on :4321, API proxy forwards to :8080
 PUBLIC_API_URL=http://localhost:4321/api
@@ -92,6 +102,7 @@ NODE_ENV=development
 ```
 
 ### GitHub Secrets (Production Only)
+
 ```
 # Production secrets
 PROD_API_URL=https://freshmenfest2025.com/api
@@ -108,7 +119,7 @@ GCP_SA_KEY={service account JSON}
 src/
 ├── components/
 │   ├── common/              # Shared components (Header, Footer)
-│   ├── firstdate/           # First Date specific components  
+│   ├── firstdate/           # First Date specific components
 │   └── rpkm/               # RPKM specific components
 ├── layouts/
 │   └── MainLayout.astro     # Main page layout
@@ -124,45 +135,49 @@ src/
 ## 🚨 **CRITICAL** Development Rules
 
 ### Frontend API Calls (ALWAYS)
+
 ```javascript
 // ✅ CORRECT - Always use /api prefix
-await fetch('/api/register');
-await fetch('/api/events');
+await fetch("/api/register");
+await fetch("/api/events");
 
-// ❌ WRONG - Never omit /api prefix  
-await fetch('/register');
+// ❌ WRONG - Never omit /api prefix
+await fetch("/register");
 ```
 
 ### Backend Routes (NEVER)
+
 ```javascript
 // ✅ CORRECT - No /api prefix in backend
-app.post('/register', handler);
-app.get('/events', handler);
+app.post("/register", handler);
+app.get("/events", handler);
 
 // ❌ WRONG - Don't include /api in backend
-app.post('/api/register', handler);
+app.post("/api/register", handler);
 ```
 
 ### Asset Management (MANDATORY)
+
 ```bash
 # ✅ CORRECT - Images location
 public/images/logo.png
 public/images/events/event1.jpg
 
-# ✅ CORRECT - Image references  
+# ✅ CORRECT - Image references
 <img src="/images/logo.png" alt="Logo" />
 ```
 
 ## 🔌 API Integration
 
 ### Use the Built-in API Utility
+
 ```typescript
 import { api } from '@/lib/api';
 
 // GET request
 const { data, error } = await api.get('/users');
 
-// POST request  
+// POST request
 const result = await api.post('/register', userData);
 
 // Error handling
@@ -175,10 +190,12 @@ if (error) {
 ## 🚢 Deployment Process
 
 ### Automatic Deployments
+
 1. **Push to `dev`** → Auto-deploy to `dev.freshmenfest2025.com`
 2. **Push to `main`** → Auto-deploy to `freshmenfest2025.com`
 
 ### Promotion Workflow
+
 ```bash
 # 1. Develop on feature branch
 git checkout -b feature/new-feature
@@ -192,13 +209,14 @@ gh pr create --base dev --head feature/new-feature
 # 4. When ready for production
 gh pr create --base main --head dev --title "Deploy to Production"
 
-# 5. After approval, merge to main  
+# 5. After approval, merge to main
 # → Auto-deploys to freshmenfest2025.com
 ```
 
 ### Environment URLs
+
 - **Development**: https://dev.freshmenfest2025.com
-- **Production**: https://freshmenfest2025.com  
+- **Production**: https://freshmenfest2025.com
 - **Local**: http://localhost:4321
 
 ## 📊 Monitoring & Health Checks
@@ -229,11 +247,13 @@ gh pr create --base main --head dev --title "Deploy to Production"
 ## 📚 Documentation
 
 ### Essential Reading
+
 1. **[DEVELOPER_GUIDELINES.md](./DEVELOPER_GUIDELINES.md)** - **MANDATORY** coding standards
 2. **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Detailed deployment setup
 3. **GCP Setup Guide** - Infrastructure configuration
 
 ### Quick References
+
 - [Astro Documentation](https://docs.astro.build)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Google Cloud Run](https://cloud.google.com/run)
@@ -270,7 +290,7 @@ This project is licensed under the MIT License.
 ## 🆘 Need Help?
 
 1. **Check [DEVELOPER_GUIDELINES.md](./DEVELOPER_GUIDELINES.md)** first
-2. Review error messages carefully  
+2. Review error messages carefully
 3. Test with `pnpm build` locally
 4. Ask in team chat if stuck
 

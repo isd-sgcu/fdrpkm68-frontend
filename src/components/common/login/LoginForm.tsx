@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 
 import ForgotPasswordStep from "@/components/common/login/ForgetPasswordStep";
 import LoginStep from "@/components/common/login/LoginStep";
+import { api } from "@/lib/api";
 
 interface LoginFormData {
   studentId: string;
@@ -44,10 +45,20 @@ export default function LoginForm({
 
   const formValues = watch();
 
-  const onLoginSubmit = useCallback((data: LoginFormData): void => {
-    console.log("Login form submitted:", data);
-    // Handle login logic here
-  }, []);
+  const onLoginSubmit = useCallback(
+    async (data: LoginFormData): Promise<void> => {
+      const response = await api.post("/auth/login", {
+        studentId: data.studentId,
+        citizenId: data.citizenId,
+        password: data.password,
+      });
+
+      if (response.success) {
+        window.location.href = "/firstdate/home";
+      }
+    },
+    []
+  );
 
   const onForgotPasswordSubmit = useCallback((data: LoginFormData): void => {
     console.log("Password reset form submitted:", data);
