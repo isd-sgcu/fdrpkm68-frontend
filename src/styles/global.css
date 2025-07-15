@@ -1,9 +1,18 @@
+/* src/styles/global.css (or your main input CSS file) */
+
 @import "tailwindcss";
 
-/* Fonts */
-@import '@fontsource-variable/orbitron';
-@import '@fontsource/ibm-plex-sans-thai';
-@import '@fontsource/zen-dots';
+@import "@fontsource-variable/orbitron";
+@import "@fontsource/ibm-plex-sans-thai";
+@import "@fontsource/zen-dots";
+
+@layer theme {
+  :root, :host {
+    --font-orbitron: "Orbitron Variable", sans-serif;
+    --font-ibm-plex-sans-thai: "IBM Plex Sans Thai", sans-serif;
+    --font-zen-dots: "Zen Dots", cursive;
+  }
+}
 
 body {
   font-family: var(--font-ibm-plex-sans-thai), sans-serif;
@@ -21,21 +30,16 @@ body {
   }
 }
 
-@layer theme {
-  :root, :host {
-    --font-orbitron: "Orbitron Variable", sans-serif;
-    --font-ibm-plex-sans-thai: "IBM Plex Sans Thai", sans-serif;
-    --font-zen-dots: "Zen Dots", cursive;
-  }
-}
 /* Font Family Registrations */
-/*@theme {
+/*
+@theme {
   --font-family-zen-dots: "Zen Dots", cursive;
   --font-family-orbitron: "Orbitron Variable", "Orbitron", sans-serif;
   --font-family-ibm-plex-sans-thai: "IBM Plex Sans Thai", sans-serif;
-  --font-sans: 'IBM Plex Sans Thai', 'sans-serif';
-  --font-zen-dots: 'Zen Dots', 'sans-serif';
-}*/
+  --font-sans: "IBM Plex Sans Thai", "sans-serif";
+  --font-zen-dots: "Zen Dots", "sans-serif";
+}
+*/
 
 /* Cut edge Classes */
 
@@ -48,7 +52,14 @@ body {
 
 /* Cut all */
 .cut-edge-all {
-  clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+  clip-path: polygon(
+    20px 0,
+    100% 0,
+    100% calc(100% - 20px),
+    calc(100% - 20px) 100%,
+    0 100%,
+    0 20px
+  );
 }
 
 /* Cut individual */
@@ -62,26 +73,80 @@ body {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 20px 100%, 0 calc(100% - 20px));
 }
 .cut-edge-b-r {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 20px),
+    calc(100% - 20px) 100%,
+    0 100%
+  );
 }
 
 /* Cut t,b,l,r group */
 .cut-edge-top {
-  clip-path: polygon(20px 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%, 0 20px);
+  clip-path: polygon(
+    20px 0,
+    calc(100% - 20px) 0,
+    100% 20px,
+    100% 100%,
+    0 100%,
+    0 20px
+  );
 }
 .cut-edge-bottom {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0 calc(100% - 20px));
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 20px),
+    calc(100% - 20px) 100%,
+    20px 100%,
+    0 calc(100% - 20px)
+  );
 }
 .cut-edge-left {
-  clip-path: polygon(20px 0, 100% 0, 100% 100%, 20px 100%, 0 calc(100% - 20px), 0 20px);
+  clip-path: polygon(
+    20px 0,
+    100% 0,
+    100% 100%,
+    20px 100%,
+    0 calc(100% - 20px),
+    0 20px
+  );
 }
 .cut-edge-right {
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 20px) 0,
+    100% 20px,
+    100% calc(100% - 20px),
+    calc(100% - 20px) 100%,
+    0 100%
+  );
+}
+.cut-edge-r {
+  clip-path: polygon(
+    calc(20%) 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(90%) 100%,
+    0 100%,
+    0 100%
+  );
+}
+.cut-edge-l {
+  clip-path: polygon(10px 0, 100% 0, 100% 0, calc(80%) 100%, 0 100%, 0 10px);
 }
 
 /* sm (10px) */
 .cut-edge-all-sm {
-  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    0 100%,
+    0 10px
+  );
 }
 .cut-edge-t-l-sm {
   clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
@@ -93,13 +158,36 @@ body {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
 .cut-edge-b-r-sm {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    0 100%
+  );
+}
+.cut-edge-t-l-b-r-sm {
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    0 100%,
+    0 10px
+  );
 }
 /* md (20px) default please see above na krub */
 
 /* lg (30px) */
 .cut-edge-all-lg {
-  clip-path: polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px);
+  clip-path: polygon(
+    30px 0,
+    100% 0,
+    100% calc(100% - 30px),
+    calc(100% - 30px) 100%,
+    0 100%,
+    0 30px
+  );
 }
 .cut-edge-t-l-lg {
   clip-path: polygon(30px 0, 100% 0, 100% 100%, 0 100%, 0 30px);
@@ -111,12 +199,25 @@ body {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 30px 100%, 0 calc(100% - 30px));
 }
 .cut-edge-b-r-lg {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 30px),
+    calc(100% - 30px) 100%,
+    0 100%
+  );
 }
 
 /* xl (40px) */
 .cut-edge-all-xl {
-  clip-path: polygon(40px 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%, 0 40px);
+  clip-path: polygon(
+    40px 0,
+    100% 0,
+    100% calc(100% - 40px),
+    calc(100% - 40px) 100%,
+    0 100%,
+    0 40px
+  );
 }
 .cut-edge-t-l-xl {
   clip-path: polygon(40px 0, 100% 0, 100% 100%, 0 100%, 0 40px);
@@ -128,5 +229,16 @@ body {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 40px 100%, 0 calc(100% - 40px));
 }
 .cut-edge-b-r-xl {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 40px), calc(100% - 40px) 100%, 0 100%);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 40px),
+    calc(100% - 40px) 100%,
+    0 100%
+  );
+}
+
+body.no-scroll {
+  overflow: hidden;
+  height: 100%;
 }
