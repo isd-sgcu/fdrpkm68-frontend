@@ -1,5 +1,4 @@
 export const houseDisplayData = [
-  // Size S Houses
   {
     id: 1,
     thName: "บ้านว้อนท์",
@@ -124,8 +123,6 @@ export const houseDisplayData = [
     amount: 0,
     capacity: 129,
   },
-
-  // Size M Houses
   {
     id: 9,
     thName: "บ้านนอก",
@@ -156,7 +153,7 @@ export const houseDisplayData = [
       "https://www.instagram.com/baanjijah.chula?igsh=OHFmYnFtejBzaXpq&utm_source=qr",
     size: "M",
     amount: 0,
-    capacity: 201,
+    capacity: 204,
   },
   {
     id: 11,
@@ -172,7 +169,7 @@ export const houseDisplayData = [
       "https://www.instagram.com/baanachuan_official?igsh=a3A1c2Ryd2FnNmJ2",
     size: "M",
     amount: 0,
-    capacity: 249,
+    capacity: 246,
   },
   {
     id: 12,
@@ -185,7 +182,7 @@ export const houseDisplayData = [
     instagram: "jodeh_official",
     instagramURL:
       "https://www.instagram.com/jodeh_official?igsh=MWZuMTZ5bXgycGIxaA%3D%3D&utm_source=qr",
-    size: "M",
+    size: "L",
     amount: 0,
     capacity: 297,
   },
@@ -205,8 +202,6 @@ export const houseDisplayData = [
     amount: 0,
     capacity: 252,
   },
-
-  // Size L Houses
   {
     id: 14,
     thName: "บ้านคิดส์",
@@ -219,7 +214,7 @@ export const houseDisplayData = [
     instagram: "baankids.official",
     instagramURL:
       "https://www.instagram.com/baankids.official?igsh=MTI5YzZ4c3c0ZGwyYg==",
-    size: "L",
+    size: "M",
     amount: 0,
     capacity: 210,
   },
@@ -269,8 +264,6 @@ export const houseDisplayData = [
     amount: 0,
     capacity: 357,
   },
-
-  // Size XL Houses
   {
     id: 18,
     thName: "บ้านคุ้ม",
@@ -318,8 +311,6 @@ export const houseDisplayData = [
     amount: 0,
     capacity: 784,
   },
-
-  // Size XXL Houses
   {
     id: 21,
     thName: "บ้านแรงส์",
@@ -334,7 +325,7 @@ export const houseDisplayData = [
       "https://www.instagram.com/baanrangs.official/?igsh=MWViczk0a2ZtaDh6Mg%3D%3D&utm_source=qr",
     size: "XXL",
     amount: 0,
-    capacity: 1248,
+    capacity: 888,
   },
   {
     id: 22,
