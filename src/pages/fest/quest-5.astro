@@ -13,94 +13,98 @@ const eventDetails = [
 ---
 <Layout>
   
-  <div class="px-10 py-6 flex flex-col space-y-2"> {/* Fix Padding X = 10 */}
+  <div class="px-2 py-6 flex flex-col space-y-2"> {/* Fix Padding X = 10 */}
     <div class="w-full sticky top-0 z-10 backdrop-blur-md px-3 justify-between flex py-2">
       <a href="/fest/quest-4" class="text-2xl font-bold">{'<'}</a>
       <div class="text-center">
-        <p class="text-5xl font-bold">
+        <p class="text-5xl" style="font-family: var(--font-orbitron);">
           Quest 5
         </p>
-        <p class="text-[48px font-bold font-Orbitron">งานปฐมนิเทศ X Freshmen</p>
-        <p class="text-[48px font-bold font-Orbitron">Festival 2025 : ส่งเพื่อนไปก้าวใหม่</p>
+        <div class="text-[24px]">
+          <p >งานปฐมนิเทศ X Freshmen</p>
+          <p >Festival 2025 : ส่งเพื่อนไปก้าวใหม่</p>
+        </div>
 
       </div>
       <a href="/fest/quest-5" class="text-2xl font-bold">{'>'}</a>
     </div>
 
-    <div class="pt-2 mx-auto">
+    <div class="px-10">
+      <div class="pt-2 mx-auto">
 
-      <div class="text-center mb-[10px]">
-        <img src="/fest/PosterQuest5.png" alt="PosterQuest5" width="315px" height="466px"
-      class="inline-block mt-[10px]"/>
-      </div>
-
-      <div>
-        <p class="text-justify leading-relaxed [text-indent:2em]">
-          เมื่อเหล่านักท่องเวลาทั้งหมดได้กลับมาพบกัน<br/>อีกครั้ง เป็นสัญญาณสำคัญว่า
-        </p>
-
-        <p class=" text-center leading-relaxed [text-indent:2em] my-[20px] text-shadow-md text-shadow-[#00FFFF]">
-          “เครื่องบินสายการบิน Chulalongkorn <br/>เที่ยวบินที่ CU109 พร้อมแล้วที่จะ Landing”
-        </p>
-
-        <p>
-          ถึงอย่างไร เหล่านักท่องเวลาก็ยังต้องเจอ กับภารกิจส่วนสุดท้าย เพื่อเป็นการพิสูจน์ ความร่วมแรงร่วมใจที่จะฝ่าฟันอุปสรรค 
-          ไปด้วยกัน ก่อนจะหวนกลับสู่มิติเวลาที่จากมาเหล่านักท่องเวลา จะสามารถรักษาคำสัญญา และปฏิบัติภารกิจจนจบได้หรือไม่!!!
-          นอกจากนิสิตใหม่จะได้เข้ากิจกรรมสุดท้าย ของเทศกาล เพื่อทำ misison สุดท้าย และเฉลิมฉลองการเสร็จสิ้นภารกิจผจญภัย 
-          ในมิติเวลา “The Time Quest” ทั้ง 5 Quest แล้วนั้น ยังจะได้รับชมโชว์พิเศษจากชมรมต่าง ๆ รวมถึงได้รู้จักจุฬาฯ 
-          มากขึ้นร่วมกับ Guest ที่ Freshmen Festival ได้เชิญมาเพื่อ CU109 โดยเฉพาะ พร้อมทั้งเปิดตัวบ้านรับเพื่อน ครั้งเเรก และพาทุกคน
-        </p>
-
-        <p class="text-shadow-md text-shadow-[#00FFFF] text-center text-[20px] my-[15px]">Landing to Rubpuenkaomai</p>
-        <HorizonlineFest variant="blue" />
-
-        <div class="text-center my-[15px]">
-          <p class="text-[16px]">What’s in </p>
-          <p class="text-[20px] font-bold ">
-            งานปฐมนิเทศ X <br/>Freshmen Festival 2025 <br/>: ส่งเพื่อนไปก้าวใหม่</p>
+        <div class="text-center mb-[10px]">
+          <img src="/fest/PosterQuest5.png" alt="PosterQuest5" width="315px" height="466px"
+        class="inline-block mt-[10px]"/>
         </div>
-        <ul class="list-none mb-[20px]">
-          {eventDetails.map((item, index) => (
-            <li class="mb-2">
-              <span class="inline-block w-4">•</span>{item}
-            </li>
-          ))}
-        </ul>
-        <HorizonlineFest variant="blue" />
+
+        <div>
+          <p class="text-justify leading-relaxed [text-indent:2em]">
+            เมื่อเหล่านักท่องเวลาทั้งหมดได้กลับมาพบกัน<br/>อีกครั้ง เป็นสัญญาณสำคัญว่า
+          </p>
+
+          <p class=" text-center leading-relaxed [text-indent:2em] my-[20px] text-shadow-md text-shadow-[#00FFFF]">
+            “เครื่องบินสายการบิน Chulalongkorn <br/>เที่ยวบินที่ CU109 พร้อมแล้วที่จะ Landing”
+          </p>
+
+          <p>
+            ถึงอย่างไร เหล่านักท่องเวลาก็ยังต้องเจอ กับภารกิจส่วนสุดท้าย เพื่อเป็นการพิสูจน์ ความร่วมแรงร่วมใจที่จะฝ่าฟันอุปสรรค 
+            ไปด้วยกัน ก่อนจะหวนกลับสู่มิติเวลาที่จากมาเหล่านักท่องเวลา จะสามารถรักษาคำสัญญา และปฏิบัติภารกิจจนจบได้หรือไม่!!!
+            นอกจากนิสิตใหม่จะได้เข้ากิจกรรมสุดท้าย ของเทศกาล เพื่อทำ misison สุดท้าย และเฉลิมฉลองการเสร็จสิ้นภารกิจผจญภัย 
+            ในมิติเวลา “The Time Quest” ทั้ง 5 Quest แล้วนั้น ยังจะได้รับชมโชว์พิเศษจากชมรมต่าง ๆ รวมถึงได้รู้จักจุฬาฯ 
+            มากขึ้นร่วมกับ Guest ที่ Freshmen Festival ได้เชิญมาเพื่อ CU109 โดยเฉพาะ พร้อมทั้งเปิดตัวบ้านรับเพื่อน ครั้งเเรก และพาทุกคน
+          </p>
+
+          <p class="text-shadow-md text-shadow-[#00FFFF] text-center text-[20px] my-[15px]">Landing to Rubpuenkaomai</p>
+          <HorizonlineFest variant="blue" />
+
+          <div class="text-center my-[15px]">
+            <p class="text-[16px]">What&apos;s in </p>
+            <p class="text-[20px] font-bold ">
+              งานปฐมนิเทศ X <br/>Freshmen Festival 2025 <br/>: ส่งเพื่อนไปก้าวใหม่</p>
+          </div>
+          <ul class="list-none mb-[20px]">
+            {eventDetails.map((item, index) => (
+              <li class="mb-2">
+                <span class="inline-block w-4">•</span>{item}
+              </li>
+            ))}
+          </ul>
+          <HorizonlineFest variant="blue" />
+        </div>
+
       </div>
 
-    </div>
+      <div class="text-center text-shadow-md text-shadow-[#00FFFF] text-[20px] font-bold text-center">
+        <p >เพราะ “เวลา”<br/>คือสิ่งเดียวที่เราใช้ไปแล้ว <br/>ไม่มีวันหวนกลับ</p>
+      </div>
 
-    <div class="text-center text-shadow-md text-shadow-[#00FFFF] text-[20px] font-bold text-center">
-      <p >เพราะ “เวลา”<br/>คือสิ่งเดียวที่เราใช้ไปแล้ว <br/>ไม่มีวันหวนกลับ</p>
-    </div>
+      <p class="text-[16px]">
+        ขอให้นิสิตจุฬาฯ รุ่นที่ 109 ทุกคน ได้เป็นนิสิต  <br/>ดั่งที่ทุกคนใฝ่ฝันไว้ 
+        และใช้ทุกวินาทีในรั้วจุฬาฯ ให้คุ้มค่าทั้งต่อตนเองและสังคม
+        เพราะ เกียรติภูมิจุฬาฯ คือเกียรติแห่งการรับใช้ประชาชน
+      </p>
+      <HorizonlineFest variant="blue" />
+      <div class="text-center">
+        <p class="text-[20px] font-bold ">วันที่จัดกิจกรรม</p>
+        <p class="text-[16px] ">31 กรกฎาคม 2568</p>
+        <p class="text-[20px] font-bold mt-[10px]">สถานที่</p>
+        <p class="text-[16px]">หอประชุมจุฬาลงกรณ์มหาวิทยาลัย</p>
+      </div>
+      <HorizonlineFest variant="blue" />
+      <div class="my-[20px]">
+        <p>สามารถติดตามรายละเอียดเพิ่มเติมได้ที่</p>
+        <p>เว็บไซต์ Freshmen Festival 2025</p>
+        <p>Instagram : freshmenfest.2025</p>
+        <p>Line OA : freshmenfest.2025</p>
+      </div>
 
-    <p class="text-[16px]">
-      ขอให้นิสิตจุฬาฯ รุ่นที่ 109 ทุกคน ได้เป็นนิสิต  <br/>ดั่งที่ทุกคนใฝ่ฝันไว้ 
-      และใช้ทุกวินาทีในรั้วจุฬาฯ ให้คุ้มค่าทั้งต่อตนเองและสังคม
-       เพราะ เกียรติภูมิจุฬาฯ คือเกียรติแห่งการรับใช้ประชาชน
-    </p>
-    <HorizonlineFest variant="blue" />
-    <div class="text-center">
-      <p class="text-[20px] font-bold ">วันที่จัดกิจกรรม</p>
-      <p class="text-[16px] ">31 กรกฎาคม 2568</p>
-      <p class="text-[20px] font-bold mt-[10px]">สถานที่</p>
-      <p class="text-[16px]">หอประชุมจุฬาลงกรณ์มหาวิทยาลัย</p>
+      <diV class="mt-[20px] mb-[40px] text-center">
+        <ButtonFest color="pink" size="big"  
+        href="https://docs.google.com/forms/d/e/1FAIpQLSccX0yiGEwpjEppS7cUMrj4idQDHycRLM1aXMJ-YyfT3hJzWg/viewform?usp=dialog">
+        ลงทะเบียน Quest
+      </ButtonFest>
+      </diV>
     </div>
-    <HorizonlineFest variant="blue" />
-    <div class="my-[20px]">
-      <p>สามารถติดตามรายละเอียดเพิ่มเติมได้ที่</p>
-      <p>เว็บไซต์ Freshmen Festival 2025</p>
-      <p>Instagram : freshmenfest.2025</p>
-      <p>Line OA : freshmenfest.2025</p>
-    </div>
-
-    <diV class="mt-[20px] mb-[40px] text-center">
-      <ButtonFest color="pink" size="big"  
-      href="https://docs.google.com/forms/d/e/1FAIpQLSccX0yiGEwpjEppS7cUMrj4idQDHycRLM1aXMJ-YyfT3hJzWg/viewform?usp=dialog">
-      ลงทะเบียน Quest
-    </ButtonFest>
-    </diV>
     
   </div>
 </Layout>

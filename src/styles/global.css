@@ -6,17 +6,36 @@
 @import '@fontsource/zen-dots';
 
 body {
-  font-family: 'IBM Plex Sans Thai', sans-serif;
+  font-family: var(--font-ibm-plex-sans-thai), sans-serif;
 }
 
+@layer utilities {
+  .font-orbitron {
+    font-family: var(--font-orbitron);
+  }
+  .font-ibm-plex-sans-thai-custom {
+    font-family: var(--font-ibm-plex-sans-thai);
+  }
+  .font-zen-dots-custom {
+    font-family: var(--font-zen-dots);
+  }
+}
+
+@layer theme {
+  :root, :host {
+    --font-orbitron: "Orbitron Variable", sans-serif;
+    --font-ibm-plex-sans-thai: "IBM Plex Sans Thai", sans-serif;
+    --font-zen-dots: "Zen Dots", cursive;
+  }
+}
 /* Font Family Registrations */
-@theme {
+/*@theme {
   --font-family-zen-dots: "Zen Dots", cursive;
   --font-family-orbitron: "Orbitron Variable", "Orbitron", sans-serif;
   --font-family-ibm-plex-sans-thai: "IBM Plex Sans Thai", sans-serif;
   --font-sans: 'IBM Plex Sans Thai', 'sans-serif';
   --font-zen-dots: 'Zen Dots', 'sans-serif';
-}
+}*/
 
 /* Cut edge Classes */
 
