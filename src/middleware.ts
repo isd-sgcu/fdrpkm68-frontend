@@ -42,7 +42,7 @@ function parseCookie(cookie: string): Record<string, string> {
 
 function isValidToken(token: string): boolean {
   try {
-    jwt.verify(token, import.meta.env.JWT_SECRET || "");
+    jwt.verify(token, import.meta.env.JWT_SECRET || "secret");
     return true;
   } catch (error) {
     console.error("Invalid token:", error);
