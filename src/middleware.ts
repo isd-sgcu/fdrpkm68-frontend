@@ -36,12 +36,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: "/",
-    },
-  });
+  return next();
 });
 
 function parseCookie(cookie: string): Record<string, string> {

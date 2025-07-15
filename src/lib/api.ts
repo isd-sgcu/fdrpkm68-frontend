@@ -1,6 +1,5 @@
 // API utility functions
-const API_BASE_URL =
-  import.meta.env.PUBLIC_API_URL || "http://localhost:8080/api";
+const API_BASE_URL = import.meta.env.PUBLIC_API_URL || "http://localhost:8080/";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;

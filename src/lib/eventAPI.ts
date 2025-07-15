@@ -224,7 +224,9 @@ export const registerForEvent = async (
   error?: string;
   needsLogin?: boolean;
 }> => {
+  console.log("Event Type", eventType);
   const apiEventName = API_EVENT_NAMES[eventType];
+  console.log("API Event", apiEventName);
 
   if (!apiEventName || eventType === "cufest") {
     return { success: false, error: "Event not available for registration" };
