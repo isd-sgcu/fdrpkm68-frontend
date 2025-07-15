@@ -1,2 +1,2 @@
 // TODO: Add NON-PROTECTED ROUTES HERE
-export const nonProtectRoutes = ["/register", "/login"];
+export const nonProtectRoutes = ["/", "/register", "/login"];
