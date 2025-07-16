@@ -35,7 +35,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/staff",
+        Location: "/staff/home",
       },
     });
   }
