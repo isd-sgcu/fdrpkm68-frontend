@@ -115,7 +115,7 @@ export const api = {
   ): Promise<ApiResponse<T>> =>
     apiRequest<T>(endpoint, {
       ...options,
-      method: "POST",
+      method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
     }),
 };

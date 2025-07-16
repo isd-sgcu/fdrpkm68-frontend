@@ -121,7 +121,7 @@ export default function AccountStep({
                 },
                 pattern: {
                   value:
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.+/-])[A-Za-z\d@$!%*?&.+/-]/,
                   message:
                     "รหัสผ่านต้องประกอบด้วยตัวพิมพ์เล็ก ตัวพิมพ์ใหญ่ ตัวเลข และอักขระพิเศษ",
                 },
@@ -172,7 +172,7 @@ export default function AccountStep({
         <a
           type="button"
           className="mt-5 text-right text-sm text-gray-500 underline"
-          href="/login"
+          href={userType === "STAFF" ? "/staff/login" : "/login"}
         >
           มีบัญชีอยู่แล้ว? เข้าสู่ระบบ
         </a>

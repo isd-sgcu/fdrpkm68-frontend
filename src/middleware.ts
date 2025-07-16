@@ -6,7 +6,7 @@ import { nonProtectRoutes } from "@/constants/Routes";
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url;
 
-  if (url.pathname === "/" || url.pathname === "/logout ") {
+  if (url.pathname === "/" || url.pathname === "/logout") {
     return next();
   }
 
@@ -35,7 +35,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/staff",
+        Location: "/staff/home",
       },
     });
   }
