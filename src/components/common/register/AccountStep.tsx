@@ -172,7 +172,7 @@ export default function AccountStep({
         <a
           type="button"
           className="mt-5 text-right text-sm text-gray-500 underline"
-          href="/login"
+          href={userType === "STAFF" ? "/staff/login" : "/login"}
         >
           มีบัญชีอยู่แล้ว? เข้าสู่ระบบ
         </a>
