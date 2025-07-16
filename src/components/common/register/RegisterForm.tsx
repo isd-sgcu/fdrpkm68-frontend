@@ -18,6 +18,7 @@ import PersonalInformationStep, {
   type PersonalInfo,
 } from "@/components/common/register/PersonalInformationStep";
 import { api } from "@/lib/api";
+import { showSnackbar } from "@/lib/utils";
 
 export interface RegisterFormData
   extends PersonalInfo,
@@ -94,8 +95,10 @@ export default function RegisterForm({
 
   const onFinalSubmit = useCallback(
     async (data: RegisterFormData): Promise<void> => {
-      console.log("DATA FRFR", data);
-      const response = await api.post("/auth/register", {
+      const endPoint =
+        userType === "FRESHMAN" ? "/auth/register" : "/auth/staff-register";
+
+      const response = await api.post(endPoint, {
         studentId: data.studentId,
         citizenId: data.citizenId,
         password: data.password,
@@ -117,6 +120,11 @@ export default function RegisterForm({
         window.location.href = "/login";
       } else {
         console.error("Registration failed:", response.message);
+        showSnackbar(
+          response.error || "Registration failed. Please try again.",
+          "error"
+        );
+
         setStep(3);
       }
     },

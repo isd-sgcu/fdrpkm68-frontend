@@ -1,8 +1,10 @@
 ---
 import Login from "@/components/common/login/LoginForm";
+import Snackbar from "@/components/common/Snackbar.astro";
 import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
 ---
 
 <Layout>
+  <Snackbar />
   <Login client:load userType="FRESHMAN" />
 </Layout>

@@ -242,7 +242,7 @@ export const registerForEvent = async (
   const response = await api.post<CheckinResponse>(
     `/checkin/register`,
     { event: apiEventName },
-    { headers: getAuthHeaders() }
+    { headers: getAuthHeaders(token) }
   );
 
   if (response.success && response.data) {
