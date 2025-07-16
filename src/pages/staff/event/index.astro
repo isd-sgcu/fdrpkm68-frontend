@@ -306,51 +306,160 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
 </Layout>
 
 <script>
+  import { api } from "@/lib/api";
   import { getEventStatus, EVENT_CONFIGS } from "@/lib/eventAPI";
   import type { EventType } from "@/lib/eventAPI";
+  import { useCallback } from "react";
 
+  interface QrFormData {
+    studentId: string;
+    citizenId: string;
+  }
+  interface CheckinRecord {
+    id: string;
+    userId: string;
+    event: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+  }
+  const ActualCheckinRecord: CheckinRecord = {
+    id: "",
+    userId: "",
+    event: "",
+    status: "",
+    createdAt: "",
+    updatedAt: "",
+  };
   let currentActiveEvent: any = null;
   (window as any).handleQRScan = null;
+  const onQrSubmit = useCallback(async (data: QrFormData): Promise<void> => {
+    const response = await api.post<CheckinRecord>(
+      "/checkin/registerByStudentId",
+      {
+        studentId: data.studentId,
+        citizenId: data.citizenId,
+      }
+    );
 
-  function extractUserId(qrData: string): { userId: string | null } {
+    if (response.success) {
+      window.location.href = "/staff/event";
+    }
+    if (!response.data) {
+      throw new Error("ลงทะเบียนไม่สำเร็จ: ไม่มีข้อมูลการลงทะเบียน");
+    }
+    ActualCheckinRecord.id = response.data.id;
+  }, []);
+
+  export function extractIds(qrData: string): {
+    citizenId: string | null;
+    studentId: string | null;
+  } {
     const cleanData = qrData.trim();
-    let userId: string | null = null;
 
+    let citizenId: string | null = null;
+    let studentId: string | null = null;
+
+    // First, try to extract from URL query
     if (cleanData.includes("?")) {
-      const urlParams = new URLSearchParams(cleanData.split("?")[1]);
-      userId =
-        urlParams.get("userId") ||
+      const queryPart = cleanData.split("?")[1];
+      const urlParams = new URLSearchParams(queryPart);
+
+      citizenId =
+        urlParams.get("citizenId") ||
+        urlParams.get("citizen_id") ||
+        urlParams.get("cid");
+
+      studentId =
+        urlParams.get("studentId") ||
         urlParams.get("user_id") ||
         urlParams.get("id");
     }
 
-    if (!userId) {
+    // Try to extract from raw query string (e.g. without "?")
+    if (!citizenId || !studentId) {
       const params = new URLSearchParams(cleanData);
-      userId =
-        params.get("userId") || params.get("user_id") || params.get("id");
+
+      if (!citizenId) {
+        citizenId =
+          params.get("citizenId") ||
+          params.get("citizen_id") ||
+          params.get("cid");
+      }
+
+      if (!studentId) {
+        studentId =
+          params.get("studentId") || params.get("user_id") || params.get("id");
+      }
     }
 
-    if (
-      !userId &&
-      (cleanData.includes("userId=") ||
-        cleanData.includes("user_id=") ||
-        cleanData.includes("id="))
-    ) {
-      const userIdMatch = cleanData.match(/(?:userId|user_id|id)=([^&\s]+)/);
-      userId = userIdMatch ? userIdMatch[1] : null;
+    // Fallback: regex match from string
+    if (!citizenId) {
+      const citizenIdMatch = cleanData.match(
+        /(?:citizenId|citizen_id|cid)=([^&\s]+)/i
+      );
+      citizenId = citizenIdMatch ? citizenIdMatch[1] : null;
     }
 
+    if (!studentId) {
+      const studentIdMatch = cleanData.match(
+        /(?:studentId|user_id|id)=([^&\s]+)/i
+      );
+      studentId = studentIdMatch ? studentIdMatch[1] : null;
+    }
+
+    // If full UUID is passed as clean data, use as studentId fallback
     if (
-      !userId &&
+      !studentId &&
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
         cleanData
       )
     ) {
-      userId = cleanData;
+      studentId = cleanData;
     }
 
-    return { userId };
+    return { citizenId, studentId };
   }
+
+  // function extractUserId(qrData: string): { userId: string | null } {
+  //   const cleanData = qrData.trim();
+  //   let userId: string | null = null;
+
+  //   if (cleanData.includes("?")) {
+  //     const urlParams = new URLSearchParams(cleanData.split("?")[1]);
+  //     userId =
+  //       urlParams.get("userId") ||
+  //       urlParams.get("user_id") ||
+  //       urlParams.get("id");
+  //   }
+
+  //   if (!userId) {
+  //     const params = new URLSearchParams(cleanData);
+  //     userId =
+  //       params.get("userId") || params.get("user_id") || params.get("id");
+  //   }
+
+  //   if (
+  //     !userId &&
+  //     (cleanData.includes("userId=") ||
+  //       cleanData.includes("user_id=") ||
+  //       cleanData.includes("id="))
+  //   ) {
+  //     const userIdMatch = cleanData.match(/(?:userId|user_id|id)=([^&\s]+)/);
+  //     userId = userIdMatch ? userIdMatch[1] : null;
+  //   }
+
+  //   if (
+  //     !userId &&
+  //     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+  //       cleanData
+  //     )
+  //   ) {
+  //     userId = cleanData;
+  //   }
+
+  //   return { userId };
+  // }
 
   async function determineActiveEvent(): Promise<any> {
     const events: EventType[] = ["firstdate", "rpkm", "freshmen-night"];
@@ -510,26 +619,34 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
 
   const handleQRScanFunction = async (qrData: string): Promise<void> => {
     try {
-      const { userId } = extractUserId(qrData);
+      const { citizenId, studentId } = extractIds(qrData);
 
-      if (!userId) {
-        throw new Error("QR Code ไม่ถูกต้อง: ไม่พบ User ID");
+      if (!citizenId || !studentId) {
+        throw new Error("QR Code ไม่ถูกต้อง: ไม่พบ Citizen ID หรือ Student ID");
       }
 
-      if (userId !== "a8e7e644-ed12-4748-89fc-4599f868ab5d") {
-        throw new Error("QR Code ไม่ถูกต้อง: User ID ไม่ถูกต้อง");
-      }
+      // // Replace with your expected valid values
+      // const expectedCitizenId = "1234567890123"; // example
+      // const expectedStudentId = "6605090001"; // example
 
-      const mockCheckinRecord = {
-        id: "mock-checkin-123",
-        userId: userId,
-        event: "FIRSTDATE",
-        status: "PRE_REGISTER",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      // if (citizenId !== expectedCitizenId || studentId !== expectedStudentId) {
+      //   throw new Error("QR Code ไม่ถูกต้อง: ข้อมูลไม่ตรงกัน");
+      // }
 
-      showSuccessModal(mockCheckinRecord);
+      // const mockCheckinRecord = {
+      //   id: "mock-checkin-123",
+      //   citizenId,
+      //   studentId,
+      //   event: "FIRSTDATE",
+      //   status: "PRE_REGISTER",
+      //   createdAt: new Date().toISOString(),
+      //   updatedAt: new Date().toISOString(),
+      // };
+      console.log("QR Code Data:", { citizenId, studentId });
+
+      await onQrSubmit({ studentId, citizenId });
+      showSuccessModal(ActualCheckinRecord);
+
       return Promise.resolve();
     } catch (error) {
       showErrorModal();
@@ -587,16 +704,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
           throw new Error("ข้อมูลไม่ถูกต้อง");
         }
 
-        const mockCheckinRecord = {
-          id: "mock-manual-456",
-          userId: "a8e7e644-ed12-4748-89fc-4599f868ab5d",
-          event: "FIRSTDATE",
-          status: "EVENT_REGISTER",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-
-        showSuccessModal(mockCheckinRecord);
+        showSuccessModal(ActualCheckinRecord);
         studentIdInput.value = "";
         citizenIdInput.value = "";
       } catch (error) {
