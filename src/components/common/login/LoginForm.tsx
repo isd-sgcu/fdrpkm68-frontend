@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import ForgotPasswordStep from "@/components/common/login/ForgetPasswordStep";
 import LoginStep from "@/components/common/login/LoginStep";
 import { api } from "@/lib/api";
+import { showSnackbar } from "@/lib/utils";
 
 interface LoginFormData {
   studentId: string;
@@ -55,6 +56,11 @@ export default function LoginForm({
 
       if (response.success) {
         window.location.href = "/firstdate/home";
+      } else {
+        showSnackbar(
+          response.error || "Login failed. Please try again.",
+          "error"
+        );
       }
     },
     []
