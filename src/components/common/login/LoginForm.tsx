@@ -55,7 +55,8 @@ export default function LoginForm({
       });
 
       if (response.success) {
-        window.location.href = "/firstdate/home";
+        window.location.href =
+          userType === "FRESHMAN" ? "/firstdate/home" : "/staff/home";
       } else {
         showSnackbar(
           response.error || "Login failed. Please try again.",
