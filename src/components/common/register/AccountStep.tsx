@@ -67,6 +67,10 @@ export default function AccountStep({
               placeholder="รหัสนิสิต"
               {...register("studentId", {
                 required: "กรุณากรอกรหัสนิสิต",
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: "กรุณากรอกรหัสนิสิตให้ถูกต้อง (10 หลัก)",
+                },
               })}
             />
           </div>
@@ -89,6 +93,10 @@ export default function AccountStep({
               placeholder="รหัสประจำตัวประชาชน"
               {...register("citizenId", {
                 required: "กรุณากรอกรหัสประจำตัวประชาชน",
+                pattern: {
+                  value: /^[0-9]{13}$/,
+                  message: "กรุณากรอกรหัสบัตรประชาชนให้ถูกต้อง (13 หลัก)",
+                },
               })}
             />
           </div>
