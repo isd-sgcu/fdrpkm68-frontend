@@ -1,5 +1,20 @@
 ---
+import ButtonFest from "@/components/common/ButtonFest.astro";
+import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
 import Layout from "@/layouts/fest/FestWithNavbar.astro";
+
+const listLandmarks = [
+  "สำนักงานวิทยทรัพยากร \nจุฬาลงกรณ์มหาวิทยาลัย (หอกลาง)",
+  "อาคารจามจุรี 9",
+  "อุทยาน 100 ปี จุฬาลงกรณ์มหาวิทยาลัย",
+  "ตึกจักรพงษ์ \n(หอประวัติจุฬาลงกรณ์มหาวิทยาลัย)",
+  "ศาลเจ้าแม่ทับทิม สะพานเหลือง",
+  "CU Sports Complex \n(อาคารเฉลิมราชสุดากีฬาสถาน)",
+  "CU Plearn Space",
+  "ศาลาพระเกี้ยว",
+  "ศาลเจ้าพ่อเสือ ตั่วเหล่าเอี๊ย สามย่าน",
+  "อาคารมหาจุฬาลงกรณ์",
+];
 ---
 
 {/*How to use style="font-family: var(--font-orbitron);" */}
@@ -8,65 +23,118 @@ import Layout from "@/layouts/fest/FestWithNavbar.astro";
     <div
       class="sticky top-0 z-10 flex w-full justify-between px-3 py-2 backdrop-blur-md"
     >
-      <a href="/fest/home" class="text-2xl font-bold">{"<"}</a>
-      <div class="text-center">
-        <p class="text-5xl" style="font-family: var(--font-orbitron);">
-          Quest 1
-        </p>
-        <p>Chula Stamp Journey</p>
-        <p>จุฬา แสตมป์ เจอนี่!</p>
+
+      <a href="/fest" class="mt-2.5 text-2xl font-bold">{"<"}</a>
+      <div class="flex flex-col gap-1 text-center">
+        <p class="font-family-orbitron text-5xl">Quest 1</p>
+        <p class="text-2xl font-extralight">Chula Stamp Journey</p>
+        <p class="text-2xl font-extralight">จุฬา แสตมป์ เจอนี่!</p>
       </div>
-      <a href="/fest/quest-2" class="text-2xl font-bold">{">"}</a>
+      <a href="/fest/quest-2" class="mt-2.5 text-2xl font-bold">{">"}</a>
+
     </div>
     <div class="pt-4">
+      <!-- <img src="/images/quest-1-banner.jpg" alt="Quest 1 Banner" class="w-full h-auto rounded-lg shadow-md mb-4" /> -->
       <p
-        class="text-justify leading-relaxed hyphens-auto"
+        class="text-justify indent-20 leading-relaxed hyphens-auto whitespace-pre-line"
         lang="th"
         style="text-align: justify; text-align-last: left; word-spacing: 0.2em;"
       >
-        เหล่านักท่องเวลาถูกพายุสุริยะพัดพาไป ในดินแดนอันเต็มไปด้วยผู้คน
-        ประวัติศาสตร์ วัฒนธรรม ความเชื่อ หลายต่อหลายดินแดน แต่สุดท้ายแล้ว
-        ทุกดินแดน กลับมีจุดร่วมเดียวกัน นั่นคือความเป็นชุมชนจุฬาฯ
-        ในฐานะนิสิตจุฬาฯ หนึ่งในองค์ประกอบเล็ก ๆ ที่สำคัญของชุมชนนี้
-        ควรจะใช้ความรู้ ความสามารถที่มี เพื่อเติมเต็มพัฒนาชุมชนจุฬาฯ ที่ดำเนิน
-        และเป็นอยู่มาอย่างยาวนานตั้งแต่อดีต จวบจนปัจจุบัน
-        และคาดหวังว่าจะยังคงดำเนินต่อไป ในอนาคต นักท่องเวลาทุกคนจะได้ CU109
-        FRESHY GUIDEBOOK เป็นตัวช่วยพิเศษที่จะใช้เก็บบันทึก ประสบการณ์
-        การผจญภัยในแต่ละมิติเวลา และ จะได้รับการประทับตราแสตมป์ เพื่อเป็นหลักฐาน
-        ว่าเหล่านักท่องเวลาได้สำรวจพื้นที่ต่าง ๆ ในแต่ละ มิติเวลามาแล้ว
+        {
+          `เหล่านักท่องเวลาถูกพายุสุริยะพัดพาไป
+        ในดินแดนอันเต็มไปด้วยผู้คน ประวัติศาสตร์ วัฒนธรรม ความเชื่อ หลายต่อหลายดินแดน แต่สุดท้ายเเล้ว ทุกดินแดน กลับมีจุดร่วมเดียวกัน นั่นคือความเป็นชุมชนจุฬาฯ ในฐานะนิสิตจุฬาฯ หนึ่งในองค์ประกอบเล็ก ๆ ที่สำคัญของชุมชนนี้ ควรจะใช้ความรู้ ความสามารถที่มี เพื่อเติมเต็มพัฒนาชุมชนจุฬาฯ ที่ดำเนิน และเป็นอยู่มาอย่างยาวนานตั้งเเต่อดีต จวบจนปัจจุบัน และคาดหวังว่าจะยังคงดำเนินต่อไป ในอนาคต นักท่องเวลาทุกคนจะได้ CU109 FRESHY GUIDEBOOK ป็นตัวช่วยพิเศษที่จะใช้เก็บบันทึก ประสบการณ์ การผจญภัยในแต่ละมิติเวลา และ จะได้รับการประทับตราแสตมป์ เพื่อเป็นหลักฐาน ว่าเหล่านักท่องเวลาได้สำรวจพื้นที่ต่าง ๆ ในแต่ละ มิติเวลามาแล้ว`
+        }
       </p>
       <p
-        class="text-justify leading-relaxed hyphens-auto"
+        class="my-5 text-center font-bold tracking-wide whitespace-pre-line text-shadow-md text-shadow-sky-300"
+        lang="th"
+      >
+        {
+          `นับจากนี้ไป
+          จะมีอะไรให้ได้ท้าทายเหล่านักท่องเวลา
+          อย่างเเน่นอน`
+        }
+      </p>
+      <HorizonlineFest variant="blue" />
+      <div
+        class="my-5 text-center text-xl tracking-wide whitespace-pre-line"
+        lang="th"
+      >
+        <p class="font-bold">ระยะเวลากิจกรรม</p>
+        <p class="text-base">19 กรกฎาคม - 3 สิงหาคม 2568</p>
+      </div>
+      <HorizonlineFest variant="blue" />
+      <p
+        class="my-5 text-center text-xl font-bold tracking-wide whitespace-pre-line"
+        lang="th"
+      >
+        {`วิธีการทำกิจกรรม`}
+      </p>
+      <div
+        class="mb-3 text-justify indent-20 leading-relaxed hyphens-auto whitespace-pre-line"
         lang="th"
         style="text-align: justify; text-align-last: left; word-spacing: 0.2em;"
       >
-        เหล่านักท่องเวลาถูกพายุสุริยะพัดพาไป ในดินแดนอันเต็มไปด้วยผู้คน
-        ประวัติศาสตร์ วัฒนธรรม ความเชื่อ หลายต่อหลายดินแดน แต่สุดท้ายแล้ว
-        ทุกดินแดน กลับมีจุดร่วมเดียวกัน นั่นคือความเป็นชุมชนจุฬาฯ
-        ในฐานะนิสิตจุฬาฯ หนึ่งในองค์ประกอบเล็ก ๆ ที่สำคัญของชุมชนนี้
-        ควรจะใช้ความรู้ ความสามารถที่มี เพื่อเติมเต็มพัฒนาชุมชนจุฬาฯ ที่ดำเนิน
-        และเป็นอยู่มาอย่างยาวนานตั้งแต่อดีต จวบจนปัจจุบัน
-        และคาดหวังว่าจะยังคงดำเนินต่อไป ในอนาคต นักท่องเวลาทุกคนจะได้ CU109
-        FRESHY GUIDEBOOK เป็นตัวช่วยพิเศษที่จะใช้เก็บบันทึก ประสบการณ์
-        การผจญภัยในแต่ละมิติเวลา และ จะได้รับการประทับตราแสตมป์ เพื่อเป็นหลักฐาน
-        ว่าเหล่านักท่องเวลาได้สำรวจพื้นที่ต่าง ๆ ในแต่ละ มิติเวลามาแล้ว
-      </p>
+        <p>
+          <strong
+            >เยี่ยมชมสถานที่สำคัญทั้งในและรอบ มหาวิทยาลัย
+            ปั๊มตราจากแลนด์มาร์กทั้ง 10 ที่ ลงในพาสปอร์ตสะสมแสตมป์</strong
+          >
+          {
+            `โดยจะได้รับพาสปอร์ตสะสมแสตมป์ใน CU109 FRESHY GUIDEBOOK หรือสามารถรับพาสปอร์ตแสตมป์ได้ที่ อาคารจามจุรี 9 ชั้น 1, สำนักงานวิทยทรัพยากร จุฬาลงกรณ์มหาวิทยาลัย (หอกลาง) ชั้น 1 และ CU Plearn Space (ใกล้เครื่องพิมพ์ Double A)`
+          }
+        </p>
+      </div>
+      <HorizonlineFest variant="blue" />
       <p
-        class="text-justify leading-relaxed hyphens-auto"
+        class="my-5 text-center text-xl font-bold tracking-wide whitespace-pre-line"
+        lang="th"
+      >
+        {`แลนด์มาร์ก`}
+      </p>
+      <img
+        src="/public/images/fest/mapMark.png"
+        alt="Map of Landmarks"
+        class="aspect-square w-80 justify-self-center"
+      />
+      <div
+        class="mb-3 w-full text-justify text-sm leading-relaxed hyphens-auto whitespace-pre-line"
         lang="th"
         style="text-align: justify; text-align-last: left; word-spacing: 0.2em;"
       >
-        เหล่านักท่องเวลาถูกพายุสุริยะพัดพาไป ในดินแดนอันเต็มไปด้วยผู้คน
-        ประวัติศาสตร์ วัฒนธรรม ความเชื่อ หลายต่อหลายดินแดน แต่สุดท้ายแล้ว
-        ทุกดินแดน กลับมีจุดร่วมเดียวกัน นั่นคือความเป็นชุมชนจุฬาฯ
-        ในฐานะนิสิตจุฬาฯ หนึ่งในองค์ประกอบเล็ก ๆ ที่สำคัญของชุมชนนี้
-        ควรจะใช้ความรู้ ความสามารถที่มี เพื่อเติมเต็มพัฒนาชุมชนจุฬาฯ ที่ดำเนิน
-        และเป็นอยู่มาอย่างยาวนานตั้งแต่อดีต จวบจนปัจจุบัน
-        และคาดหวังว่าจะยังคงดำเนินต่อไป ในอนาคต นักท่องเวลาทุกคนจะได้ CU109
-        FRESHY GUIDEBOOK เป็นตัวช่วยพิเศษที่จะใช้เก็บบันทึก ประสบการณ์
-        การผจญภัยในแต่ละมิติเวลา และ จะได้รับการประทับตราแสตมป์ เพื่อเป็นหลักฐาน
-        ว่าเหล่านักท่องเวลาได้สำรวจพื้นที่ต่าง ๆ ในแต่ละ มิติเวลามาแล้ว
-      </p>
+        <ul class="mt-2 ml-13 w-fit">
+          {
+            listLandmarks.map((landmark) => (
+              <li class="list-disc">{landmark}</li>
+            ))
+          }
+        </ul>
+      </div>
+      <HorizonlineFest variant="blue" />
+      <div
+        class="my-5 text-center text-xl tracking-wide whitespace-pre-line"
+        lang="th"
+      >
+        <p class="font-bold">เงื่อนไขการรับรางวัล</p>
+        <p class="mt-3 text-base">
+          {`สะสมแสตมป์ครบ 10 ดวง\nจะได้รับของรางวัลสุดพิเศษ`}
+        </p>
+      </div>
+      <div class="flex flex-col items-center gap-4">
+        <ButtonFest href="/firstdate/maps" color="blue" size="big"
+          >แผนที่งาน</ButtonFest
+        >
+        <ButtonFest href="https://lin.ee/xpZkNQf" color="blue" size="big"
+          >สะสมแต้มใน LineOA</ButtonFest
+        >
+        <ButtonFest
+          href="https://forms.gle/VgEbs394BveNz1iEA"
+          color="pink"
+          size="big">ลงทะเบียน Quest</ButtonFest
+        >
+      </div>
+      <!-- <p class="text-justify leading-relaxed hyphens-auto" lang="th" style="text-align: justify; text-align-last: left; word-spacing: 0.2em;">เหล่านักท่องเวลาถูกพายุสุริยะพัดพาไป ในดินแดนอันเต็มไปด้วยผู้คน ประวัติศาสตร์ วัฒนธรรม ความเชื่อ หลายต่อหลายดินแดน แต่สุดท้ายแล้ว ทุกดินแดน กลับมีจุดร่วมเดียวกัน นั่นคือความเป็นชุมชนจุฬาฯ ในฐานะนิสิตจุฬาฯ หนึ่งในองค์ประกอบเล็ก ๆ ที่สำคัญของชุมชนนี้ ควรจะใช้ความรู้ ความสามารถที่มี เพื่อเติมเต็มพัฒนาชุมชนจุฬาฯ ที่ดำเนิน และเป็นอยู่มาอย่างยาวนานตั้งแต่อดีต จวบจนปัจจุบัน และคาดหวังว่าจะยังคงดำเนินต่อไป ในอนาคต นักท่องเวลาทุกคนจะได้ CU109 FRESHY GUIDEBOOK เป็นตัวช่วยพิเศษที่จะใช้เก็บบันทึก ประสบการณ์ การผจญภัยในแต่ละมิติเวลา และ จะได้รับการประทับตราแสตมป์ เพื่อเป็นหลักฐาน ว่าเหล่านักท่องเวลาได้สำรวจพื้นที่ต่าง ๆ ในแต่ละ มิติเวลามาแล้ว</p> -->
+      <!-- <p class="text-justify leading-relaxed hyphens-auto" lang="th" style="text-align: justify; text-align-last: left; word-spacing: 0.2em;">เหล่านักท่องเวลาถูกพายุสุริยะพัดพาไป ในดินแดนอันเต็มไปด้วยผู้คน ประวัติศาสตร์ วัฒนธรรม ความเชื่อ หลายต่อหลายดินแดน แต่สุดท้ายแล้ว ทุกดินแดน กลับมีจุดร่วมเดียวกัน นั่นคือความเป็นชุมชนจุฬาฯ ในฐานะนิสิตจุฬาฯ หนึ่งในองค์ประกอบเล็ก ๆ ที่สำคัญของชุมชนนี้ ควรจะใช้ความรู้ ความสามารถที่มี เพื่อเติมเต็มพัฒนาชุมชนจุฬาฯ ที่ดำเนิน และเป็นอยู่มาอย่างยาวนานตั้งแต่อดีต จวบจนปัจจุบัน และคาดหวังว่าจะยังคงดำเนินต่อไป ในอนาคต นักท่องเวลาทุกคนจะได้ CU109 FRESHY GUIDEBOOK เป็นตัวช่วยพิเศษที่จะใช้เก็บบันทึก ประสบการณ์ การผจญภัยในแต่ละมิติเวลา และ จะได้รับการประทับตราแสตมป์ เพื่อเป็นหลักฐาน ว่าเหล่านักท่องเวลาได้สำรวจพื้นที่ต่าง ๆ ในแต่ละ มิติเวลามาแล้ว</p> -->
     </div>
   </div>
 </Layout>

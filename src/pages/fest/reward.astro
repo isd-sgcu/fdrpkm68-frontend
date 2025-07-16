@@ -1,0 +1,51 @@
+---
+import ButtonFest from "@/components/common/ButtonFest.astro";
+import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
+import Layout from "@/layouts/fest/FestWithNavbar.astro";
+import { Home } from "@lucide/astro";
+---
+
+<Layout>
+    <div class="flex flex-col px-4 py-2 gap-2 items-center text-center my-5">
+        <div class="relative w-full">
+            <!-- Shadow layer -->
+            <h1 class="absolute font-zen-dots font-normal text-[clamp(3rem,13vw,3.75rem)] leading-[140%] tracking-normal select-none inset-0 text-[#72CED7] blur-sm">
+                CU FEST
+            </h1>
+
+            <!-- Gradient text layer -->
+            <h1 class="relative font-zen-dots font-normal text-[clamp(3rem,13vw,3.75rem)] leading-[140%] tracking-normal select-none text-transparent bg-gradient-to-b from-[#F94FC6] to-[#E0BBE4] bg-clip-text">
+                CU FEST
+            </h1>
+        </div>  
+        <HorizonlineFest variant="blue" />
+        <div class="text-left font-sans px-4 flex flex-col gap-5">
+            <p class="text-xl font-semibold text-center">เงื่อนไขรับรางวัล</p>
+            <div>
+                <p class="text-lg font-medium">Chula Stamp Journey: จุฬา แสตมป์ เจอนี่ !</p>
+                <ul class="list-disc list-inside text-lg font-normal px-4">
+                    <li>
+                        สะสมแสตมป์ครบ 10 ดวง <span class="whitespace-nowrap pl-7">จะได้รับของรางวัลสุดพิเศษ</span>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <p class="text-lg font-medium">Chula QR Quest: กิจกรรมชุมชน แต้ม LINE OA</p>
+                <ul class="list-disc list-inside text-lg font-normal px-4">
+                    <li>สะสม  5  แต้ม จะได้รับ Bronze Set</li>
+                    <li>สะสม 10 แต้ม จะได้รับ Silver Set</li>
+                    <li>สะสม 15 แต้ม จะได้รับ Gold Set</li>
+                </ul>
+            </div>
+        </div>
+        <p class="text-xl font-semibold mt-8">วัน เวลา และสถานที่รับของรางวัล</p>
+        <img src="/fest/fest-reward.png" alt="Reward Collection" class="my-5">
+        <ButtonFest color="blue" size="big" class="whitespace-nowrap" href="https://lin.ee/xpZkNQf">สะสมแต้มใน LineOA</ButtonFest>
+        <ButtonFest color="white" size="big" class="whitespace-nowrap my-5" href="/fest">
+            <div class="flex gap-4 items-center">
+                <Home size={20} />
+                กลับหน้าหลัก
+            </div>
+        </ButtonFest>
+    </div>
+</Layout>
