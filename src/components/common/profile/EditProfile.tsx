@@ -173,6 +173,8 @@ function EditProfileContent({
 
     if (reponse.success) {
       setIsEditMode(false);
+      // Optionally refresh the data from the server
+      // queryClient.invalidateQueries(['profile']);
     }
   };
 
@@ -203,9 +205,9 @@ function EditProfileContent({
     window.location.href = "/home";
   };
 
-  const onSubmit = (data: EditProfileFormData): void => {
+  const onSubmit = async (data: EditProfileFormData): Promise<void> => {
+    await updateProfile(data);
     setProfileData(data);
-    setIsEditMode(false);
   };
 
   const CustomCheckbox = ({
@@ -675,7 +677,6 @@ function EditProfileContent({
             <button
               type="submit"
               className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
-              onClick={() => updateProfile(profileData)}
             >
               บันทึก
             </button>
