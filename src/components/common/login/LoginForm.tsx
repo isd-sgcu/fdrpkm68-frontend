@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import ForgotPasswordStep from "@/components/common/login/ForgetPasswordStep";
 import LoginStep from "@/components/common/login/LoginStep";
 import { api } from "@/lib/api";
+import { showSnackbar } from "@/lib/utils";
 
 interface LoginFormData {
   studentId: string;
@@ -55,15 +56,41 @@ export default function LoginForm({
 
       if (response.success) {
         window.location.href = "/firstdate/home";
+      } else {
+        showSnackbar(
+          response.error || "Login failed. Please try again.",
+          "error"
+        );
       }
     },
     []
   );
 
-  const onForgotPasswordSubmit = useCallback((data: LoginFormData): void => {
-    console.log("Password reset form submitted:", data);
-    // Handle password reset logic here
-  }, []);
+  const onForgotPasswordSubmit = useCallback(
+    async (data: LoginFormData): Promise<void> => {
+      console.log("Password reset form submitted:", data);
+      // Handle password reset logic here
+      const response = await api.post("/auth/forgot-password", {
+        studentId: data.studentId,
+        citizenId: data.citizenId,
+        newPassword: data.newPassword,
+      });
+
+      if (response.success) {
+        showSnackbar(
+          "Password reset successful. You can now log in.",
+          "success"
+        );
+        setStep(1); // Go back to login step
+      } else {
+        showSnackbar(
+          response.error || "Password reset failed. Please try again.",
+          "error"
+        );
+      }
+    },
+    []
+  );
 
   const handleForgot = useCallback((): void => {
     setStep(2);
