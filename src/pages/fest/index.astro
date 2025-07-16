@@ -1,26 +1,30 @@
 ---
 import ButtonFest from "@/components/common/ButtonFest.astro";
 import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
+import PopupFest from "@/components/fest/PopupFest.astro";
 import Layout from "@/layouts/fest/FestWithNavbar.astro";
-import PopupFest from "@/components/fest/PopupFest.astro"
 ---
 
 <Layout>
-  <PopupFest/>
-  <div class="flex flex-col px-4 py-2 gap-2 text-center my-5">
+  <PopupFest />
+  <div class="my-5 flex flex-col gap-2 px-4 py-2 text-center">
     <div class="relative w-full">
       <!-- Shadow layer -->
-      <h1 class="absolute font-zen-dots font-normal text-[clamp(3rem,13vw,3.75rem)] leading-[140%] tracking-normal select-none inset-0 text-[#72CED7] blur-sm">
+      <h1
+        class="font-zen-dots absolute inset-0 text-[clamp(3rem,13vw,3.75rem)] leading-[140%] font-normal tracking-normal text-[#72CED7] blur-sm select-none"
+      >
         CU FEST
       </h1>
 
       <!-- Gradient text layer -->
-      <h1 class="relative font-zen-dots font-normal text-[clamp(3rem,13vw,3.75rem)] leading-[140%] tracking-normal select-none text-transparent bg-gradient-to-b from-[#F94FC6] to-[#E0BBE4] bg-clip-text">
+      <h1
+        class="font-zen-dots relative bg-gradient-to-b from-[#F94FC6] to-[#E0BBE4] bg-clip-text text-[clamp(3rem,13vw,3.75rem)] leading-[140%] font-normal tracking-normal text-transparent select-none"
+      >
         CU FEST
       </h1>
-    </div>  
+    </div>
     <HorizonlineFest variant="yellow" />
-    <div class="flex flex-col px-4 gap-5">
+    <div class="flex flex-col gap-5 px-4">
       <div class="font-sans">
         <h2 class="text-2xl font-semibold">CU Festival หรือ CU FEST</h2>
         <p class="text-xl font-normal">คือ เทศกาลที่ให้นิสิตใหม่ได้มาทำ</p>
@@ -28,48 +32,95 @@ import PopupFest from "@/components/fest/PopupFest.astro"
       </div>
       <div class="font-sans">
         <p class="text-2xl font-semibold">โดยจะจัดงานในวันที่</p>
-        <p class="text-[clamp(1rem,8vw,2.25rem)] font-semibold text-shadow-[0_0_10px_#72CED7]">19 กรกฎาคม 2568</p>
+        <p
+          class="text-[clamp(1rem,8vw,2.25rem)] font-semibold text-shadow-[0_0_10px_#72CED7]"
+        >
+          19 กรกฎาคม 2568
+        </p>
       </div>
-      <p class="text-left text-2xl font-semibold">
-        มีกิจกรรมได้แก่
-      </p>
-      <div class="flex flex-col pl-2 pr-4 gap-8">
-        <div class="text-shadow-[0_0_4px_#F09810] flex flex-col gap-2 items-center">
-          <h3 class="text-left text-lg font-bold font-family-orbitron">Quest 1 : Chula Stamp Journey : จุฬา แสตมป์ เจอนี่!</h3>
-          <ButtonFest color="white" size="big" href="/fest/quest-1">ลุยเควส 1</ButtonFest>
+      <p class="text-left text-2xl font-semibold">มีกิจกรรมได้แก่</p>
+      <div class="flex flex-col gap-8 pr-4 pl-2">
+        <div
+          class="flex flex-col items-center gap-2 text-shadow-[0_0_4px_#F09810]"
+        >
+          <h3 class="font-family-orbitron text-left text-lg font-bold">
+            Quest 1 : Chula Stamp Journey : จุฬา แสตมป์ เจอนี่!
+          </h3>
+          <ButtonFest color="white" size="big" href="/fest/quest-1"
+            >ลุยเควส 1</ButtonFest
+          >
         </div>
-        <div class="text-shadow-[0_0_4px_#F94FC6] flex flex-col gap-2 items-center">
-          <h3 class="w-full text-left text-lg font-bold font-family-orbitron">Quest 2 : Chula QR Quest</h3>
-          <ButtonFest color="white" size="big" href="/fest/quest-2">ลุยเควส 2</ButtonFest>
+        <div
+          class="flex flex-col items-center gap-2 text-shadow-[0_0_4px_#F94FC6]"
+        >
+          <h3 class="font-family-orbitron w-full text-left text-lg font-bold">
+            Quest 2 : Chula QR Quest
+          </h3>
+          <ButtonFest color="white" size="big" href="/fest/quest-2"
+            >ลุยเควส 2</ButtonFest
+          >
         </div>
-        <div class="text-shadow-[0_0_4px_#72CED7] flex flex-col gap-2 items-center">
-          <h3 class="text-left text-lg font-bold font-family-orbitron">Quest 3: Dimensions Unfold : Field Trips</h3>
-          <div class="text-left font-family-orbitron font-bold pl-2">
+        <div
+          class="flex flex-col items-center gap-2 text-shadow-[0_0_4px_#72CED7]"
+        >
+          <h3 class="font-family-orbitron text-left text-lg font-bold">
+            Quest 3: Dimensions Unfold : Field Trips
+          </h3>
+          <div class="font-family-orbitron pl-2 text-left font-bold">
             <p>Quest 3.1 เดินเดินจุฬาฯ</p>
             <p>Quest 3.2 เดินสามย่าน สายกินสายมู</p>
             <p>Quest 3.3 Birdwalk</p>
             <p>Quest 3.4 Trashvenger</p>
             <p>Quest 3.5 Plantwalk</p>
           </div>
-          <ButtonFest color="white" size="big" href="/fest/quest-3-1">ลุยเควส 3</ButtonFest>
+          <ButtonFest color="white" size="big" href="/fest/quest-3-1"
+            >ลุยเควส 3</ButtonFest
+          >
         </div>
-        <div class="text-shadow-[0_0_4px_#F94FC6] flex flex-col gap-2 items-center">
-          <h3 class="text-left text-lg font-bold font-family-orbitron">Quest 4 : On the way to nowhere 109 Theatre</h3>
-          <ButtonFest color="white" size="big" href="/fest/quest-4">ลุยเควส 4</ButtonFest>
+        <div
+          class="flex flex-col items-center gap-2 text-shadow-[0_0_4px_#F94FC6]"
+        >
+          <h3 class="font-family-orbitron text-left text-lg font-bold">
+            Quest 4 : On the way to nowhere 109 Theatre
+          </h3>
+          <ButtonFest color="white" size="big" href="/fest/quest-4"
+            >ลุยเควส 4</ButtonFest
+          >
         </div>
-        <div class="text-shadow-[0_0_4px_#F09810] flex flex-col gap-2 items-center">
-          <h3 class="text-left text-lg font-bold font-family-orbitron">Quest 5 : งานปฐมนิเทศ X Freshmen Festival 2025 : <span class="whitespace-nowrap">ส่งเพื่อนไปก้าวใหม่</span></h3>
-          <ButtonFest color="white" size="big" href="/fest/quest-5">ลุยเควส 5</ButtonFest>
+        <div
+          class="flex flex-col items-center gap-2 text-shadow-[0_0_4px_#F09810]"
+        >
+          <h3 class="font-family-orbitron text-left text-lg font-bold">
+            Quest 5 : งานปฐมนิเทศ X Freshmen Festival 2025 : <span
+              class="whitespace-nowrap">ส่งเพื่อนไปก้าวใหม่</span>
+          </h3>
+          <ButtonFest color="white" size="big" href="/fest/quest-5"
+            >ลุยเควส 5</ButtonFest
+          >
         </div>
       </div>
     </div>
     <HorizonlineFest variant="yellow" />
-    <div class="grid grid-cols-2 w-fit mx-auto gap-x-2 gap-y-2">
-      <ButtonFest color="white" size="small" class="whitespace-nowrap w-36" href="https://lin.ee/xpZkNQf">สะสมแต้ม</ButtonFest>
-      <ButtonFest color="white" size="small" class="whitespace-nowrap w-36" href="/fest/reward">รับรางวัล</ButtonFest>
-      <ButtonFest color="white" size="small" class="w-36" href="firstdate/maps">แผนที่</ButtonFest>
+    <div class="mx-auto grid w-fit grid-cols-2 gap-x-2 gap-y-2">
+      <ButtonFest
+        color="white"
+        size="small"
+        class="w-36 whitespace-nowrap"
+        href="https://lin.ee/xpZkNQf">สะสมแต้ม</ButtonFest
+      >
+      <ButtonFest
+        color="white"
+        size="small"
+        class="w-36 whitespace-nowrap"
+        href="/fest/reward">รับรางวัล</ButtonFest
+      >
+      <ButtonFest color="white" size="small" class="w-36" href="firstdate/maps"
+        >แผนที่</ButtonFest
+      >
       <div id="openPopup" class="w-fit">
-        <ButtonFest color="white" size="small" class="w-36">เนื้อเรื่อง</ButtonFest>
+        <ButtonFest color="white" size="small" class="w-36"
+          >เนื้อเรื่อง</ButtonFest
+        >
       </div>
     </div>
   </div>
