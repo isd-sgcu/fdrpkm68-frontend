@@ -1,34 +1,54 @@
 import { defineMiddleware } from "astro:middleware";
 import jwt from "jsonwebtoken";
 
-import { nonProtectRoutes } from "@/constants/NonProtectedRoutes";
+import { nonProtectRoutes } from "@/constants/Routes";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url;
 
-  console.log(`middleware from ${context.url.pathname}`);
-
-  const isProtectedRoute = !nonProtectRoutes.some((route) => {
-    return url.pathname.startsWith(route);
-  });
-  if (!isProtectedRoute) {
-    return next();
-  }
-
   const cookie = context.request.headers.get("cookie") ?? "";
   const token = parseCookie(cookie).token;
 
-  if (token && isValidToken(token)) {
-    context.locals.user = jwt.decode(token) as App.Locals["user"];
+  if (url.pathname === "/") {
     return next();
   }
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: "/login",
-    },
-  });
+  if (!token || !isValidToken(token)) {
+    if (
+      nonProtectRoutes.some((route) => url.pathname.startsWith(route)) &&
+      url.pathname !== "/"
+    ) {
+      return next();
+    }
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/",
+      },
+    });
+  }
+
+  const user = jwt.decode(token) as App.Locals["user"];
+  context.locals.user = user;
+
+  if (user.role === "STAFF" && !url.pathname.startsWith("/staff")) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/staff/profile",
+      },
+    });
+  }
+  if (user.role === "FRESHMAN" && url.pathname.startsWith("/staff")) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/firstdate/home",
+      },
+    });
+  }
+
+  return next();
 });
 
 function parseCookie(cookie: string): Record<string, string> {
