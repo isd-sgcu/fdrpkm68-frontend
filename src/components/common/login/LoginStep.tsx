@@ -129,6 +129,14 @@ export default function LoginStep({
         >
           เข้าสู่ระบบ
         </button>
+
+        <a
+          type="button"
+          className="mt-5 text-right text-sm text-gray-500 underline"
+          href="/register"
+        >
+          ลงทะเบียนบัญชีใหม่
+        </a>
       </form>
     </div>
   );
