@@ -26,14 +26,17 @@ export async function apiRequest<T = unknown>(
 ): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  const defaultOptions: RequestInit = {
+  const defaultHeaders = {
+    "Content-Type": "application/json",
+  };
+
+  const requestOptions: RequestInit = {
+    ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...defaultHeaders,
       ...options.headers,
     },
   };
-
-  const requestOptions = { ...defaultOptions, ...options };
 
   try {
     const response = await fetch(url, requestOptions);
