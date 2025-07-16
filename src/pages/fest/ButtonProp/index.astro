@@ -1,0 +1,55 @@
+---
+import ButtonFest from "@/components/common/ButtonFest.astro";
+
+const questItems = [
+  {
+    description: "เดินเดินจุ๊บๆ",
+    questLabel: "Quest 3.1",
+    href: "/fest/quest-3-1",
+  },
+  {
+    description: "เดินสามย่าน สายกินสายมู",
+    questLabel: "Quest 3.2",
+    href: "/fest/quest-3-2",
+  },
+  {
+    description: "Birdwalk",
+    questLabel: "Quest 3.3",
+    href: "/fest/quest-3-3",
+  },
+  {
+    description: "Trashvenger",
+    questLabel: "Quest 3.4",
+    href: "/fest/quest-3-4",
+  },
+  {
+    description: "Plantwalk",
+    questLabel: "Quest 3.5",
+    href: "/fest/quest-3-5",
+  },
+];
+---
+
+<div class="mx-auto mb-[20px] w-[315px]">
+  {/* Added mx-auto and p-4 for centering within the overall page layout */}
+  <p class="font-ibm-plex-sans-thai my-[20px] text-[24px] font-bold text-white">
+    รายละเอียด Quest ย่อย
+  </p>
+
+  <div class="mx-[10px] flex flex-col gap-4">
+    {
+      questItems.map((item) => (
+        <div class="flex items-center justify-between">
+          <p class="mr-4 max-w-[100px] flex-none overflow-hidden text-lg text-white">
+            {item.description}
+          </p>
+
+          {/* Explicitly set size="small" to use the predefined width */}
+          <ButtonFest href={item.href} size="small" class="w-32">
+            <p class="whitespace-nowrap">{item.questLabel}</p>
+          </ButtonFest>
+        </div>
+      ))
+    }
+  </div>
+</div>

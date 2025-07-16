@@ -28,7 +28,20 @@ function parseCookie(cookie: string): Record<string, string> {
 
 const cookie = Astro.request.headers.get("cookie") ?? "";
 const authToken = parseCookie(cookie).token;
-const eventStatus = await getEventStatus(eventType, authToken);
+
+let eventStatus;
+try {
+  eventStatus = await getEventStatus(eventType, authToken);
+} catch (error) {
+  console.error("Error getting event status:", error);
+  // Default to not registered if there's an error
+  eventStatus = {
+    isRegistered: false,
+    isLate: false,
+    isComingSoon: false,
+  };
+}
+
 const justRegistered =
   new URL(Astro.request.url).searchParams.get("registered") === "true";
 
