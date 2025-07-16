@@ -20,30 +20,43 @@ export class ApiError extends Error {
   }
 }
 
+interface ApiResponseRaw {
+  message?: string;
+  error?: string;
+}
+
 export async function apiRequest<T = unknown>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  const defaultOptions: RequestInit = {
+  const defaultHeaders = {
+    "Content-Type": "application/json",
+  };
+
+  const requestOptions: RequestInit = {
+    ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...defaultHeaders,
       ...options.headers,
     },
   };
-
-  const requestOptions = { ...defaultOptions, ...options };
 
   try {
     const response = await fetch(url, requestOptions);
 
     if (!response.ok) {
-      throw new ApiError(
-        `API request failed: ${response.status} ${response.statusText}`,
-        response.status,
-        response
-      );
+      let errorMsg = "Request failed";
+      if (response.body) {
+        try {
+          const raw: ApiResponseRaw = JSON.parse(await response.text());
+          errorMsg = raw.error || raw.message || errorMsg;
+        } catch {
+          errorMsg = await response.text();
+        }
+      }
+      throw new ApiError(errorMsg, response.status, response);
     }
 
     const data = await response.json();
