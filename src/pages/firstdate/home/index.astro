@@ -44,7 +44,7 @@ import Layout from "@/layouts/firstdate/WithNavbar.astro";
           <ButtonFd
             variant="fill"
             color="white"
-            href="/firstdate/events/cufest/"
+            id="festival-button"
             class="w-full"
           >
             Festival
@@ -91,7 +91,12 @@ import Layout from "@/layouts/firstdate/WithNavbar.astro";
               <ButtonFd variant="fill" color="white" href="/firstdate/maps/">
                 แผนที่
               </ButtonFd>
-              <ButtonFd variant="fill" color="white" href="/">
+              <ButtonFd
+                variant="fill"
+                color="white"
+                target="_blank"
+                href="https://drive.google.com/drive/folders/1kG6EeVk5KbGxjZCcLOEaA93fQ2ppjXX0?usp=sharing"
+              >
                 E-book
               </ButtonFd>
             </div>
@@ -103,7 +108,11 @@ import Layout from "@/layouts/firstdate/WithNavbar.astro";
               >
                 ปฏิทิน
               </ButtonFd>
-              <ButtonFd variant="fill" color="white" href="/emergency/">
+              <ButtonFd
+                variant="fill"
+                color="white"
+                href="/firstdate/emergency/"
+              >
                 Emergency
               </ButtonFd>
             </div>
@@ -113,3 +122,26 @@ import Layout from "@/layouts/firstdate/WithNavbar.astro";
     </div>
   </div>
 </Layout>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const festivalButton = document.getElementById("festival-button");
+
+    if (festivalButton) {
+      festivalButton.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        // Target date: July 18, 2025 at 19:00 (7:00 PM)
+        const targetDate = new Date("2025-07-18T19:00:00+07:00");
+        const currentDate = new Date();
+
+        // Check if current time is on or after the target date
+        if (currentDate >= targetDate) {
+          window.location.href = "/fest/home";
+        } else {
+          window.location.href = "/firstdate/events/cufest";
+        }
+      });
+    }
+  });
+</script>
