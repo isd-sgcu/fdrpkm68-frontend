@@ -69,7 +69,7 @@ export const EVENT_CONFIGS: Record<EventType, EventConfig> = {
   },
   cufest: {
     id: "cufest",
-    title: "CU Fest",
+    title: "Festival",
     description:
       "เทศกาลแห่งความสนุกสนาน ที่รวมการแสดง กิจกรรม และความบันเทิงต่าง ๆ ไว้ในงานเดียว",
     schedule: "พร้อมให้ลงทะเบียนในวันที่ 20 กรกฎาคม 2568 ",
