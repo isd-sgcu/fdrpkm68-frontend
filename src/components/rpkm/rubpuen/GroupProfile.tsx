@@ -34,7 +34,11 @@ export default function GroupProfile({
               ? groupAvatarMap[user.avatarId]
               : "/images/rpkm/profile/profile-unknown.png"
           }
-          alt="User Avatar"
+          alt={
+            user && user.firstName && user.lastName
+              ? `${user.firstName} ${user.lastName} avatar`
+              : "Unknown user avatar"
+          }
           // style={{
           //   WebkitMaskImage: `url(${FRAME_MASK})`,
           //   maskImage: `url(${FRAME_MASK})`,
