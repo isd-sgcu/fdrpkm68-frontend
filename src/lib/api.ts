@@ -94,4 +94,15 @@ export const api = {
     options?: RequestInit
   ): Promise<ApiResponse<T>> =>
     apiRequest<T>(endpoint, { ...options, method: "DELETE" }),
+
+  patch: <T>(
+    endpoint: string,
+    data?: unknown,
+    options?: RequestInit
+  ): Promise<ApiResponse<T>> =>
+    apiRequest<T>(endpoint, {
+      ...options,
+      method: "POST",
+      body: data ? JSON.stringify(data) : undefined,
+    }),
 };
