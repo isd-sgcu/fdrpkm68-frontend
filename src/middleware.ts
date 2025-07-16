@@ -5,7 +5,7 @@ import { nonProtectRoutes } from "@/constants/NonProtectedRoutes";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url;
-
+  // return next();
   console.log(`middleware from ${context.url.pathname}`);
 
   const isProtectedRoute = !nonProtectRoutes.some((route) => {
