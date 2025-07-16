@@ -169,6 +169,13 @@ export default function AccountStep({
             ถัดไป
           </button>
         </div>
+        <a
+          type="button"
+          className="mt-5 text-right text-sm text-gray-500 underline"
+          href="/login"
+        >
+          มีบัญชีอยู่แล้ว? เข้าสู่ระบบ
+        </a>
       </form>
     </div>
   );
