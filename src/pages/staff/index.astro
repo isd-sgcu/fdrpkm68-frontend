@@ -1,5 +1,5 @@
 ---
-import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
+import Layout from "@/layouts/WithoutNavbar.astro";
 ---
 
 <Layout>
@@ -52,14 +52,17 @@ import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
 
         <button
           class="mb-4 w-full max-w-sm rounded-md bg-white px-6 py-3 text-base font-medium text-black transition duration-200"
-          onclick="window.location.href='/register'"
+          onclick="window.location.href='/staff/register'"
         >
           ลงทะเบียน
         </button>
 
         <div class="mb-4 text-center">
           <p class="mb-2 text-sm">เคยลงทะเบียนมาแล้ว?</p>
-          <button class="underline" onclick="window.location.href='/login'">
+          <button
+            class="underline"
+            onclick="window.location.href='/staff/login'"
+          >
             เข้าสู่ระบบ
           </button>
         </div>

@@ -1,14 +1,11 @@
 ---
 import "@/styles/global.css";
 import Footer from "@firstdate/Footer.astro";
-import Navbar from "@firstdate/Navbar.astro";
 import { ClientRouter } from "astro:transitions";
-
 interface Props {
   title?: string;
   description?: string;
 }
-
 const { title, description } = Astro.props;
 ---
 
@@ -16,11 +13,7 @@ const { title, description } = Astro.props;
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link
-      rel="icon"
-      type="image/png"
-      href="/firstdate/register/freshmen-fest-logo.png"
-    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
@@ -29,12 +22,9 @@ const { title, description } = Astro.props;
   </head>
   <body class="min-h-screen min-w-screen bg-slate-500">
     <div
-      class="mx-auto flex min-h-screen max-w-[440px] flex-col bg-[url(/firstdate/main-bg.png)] bg-cover bg-center bg-no-repeat text-white"
+      class="mx-auto flex min-h-screen max-w-[440px] flex-col bg-[url(/images/background/bg-welcome.png)] bg-cover bg-center bg-no-repeat text-white"
     >
-      <Navbar />
-      <main class="flex-grow px-3">
-        <slot />
-      </main>
+      <main class="flex-grow px-3"><slot /></main>
       <Footer variant="firstdate" />
     </div>
   </body>
