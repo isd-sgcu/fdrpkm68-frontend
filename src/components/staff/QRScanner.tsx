@@ -64,15 +64,18 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, onError }) => {
     async (result: unknown): Promise<void> => {
       if (result && Array.isArray(result) && result.length > 0) {
         const qrData = (result[0] as { rawValue: string }).rawValue;
-        const testQRData =
-          "id=7137ec7e-0f4b-4d65-88c4-982d36f7692f&userId=a8e7e644-ed12-4748-89fc-4599f868ab5d";
 
+        // Accept QR codes with studentId and citizenId format
         let finalQRData = qrData;
-        if (
+        if (qrData.includes("studentId=") && qrData.includes("citizenId=")) {
+          finalQRData = qrData;
+        } else if (
           qrData.includes("id=7137ec7e-0f4b-4d65-88c4-982d36f7692f") &&
           qrData.includes("userId=a8e7e644-ed12-4748-89fc-4599f868ab5d")
         ) {
-          finalQRData = testQRData;
+          // Keep the old test QR support
+          finalQRData =
+            "id=7137ec7e-0f4b-4d65-88c4-982d36f7692f&userId=a8e7e644-ed12-4748-89fc-4599f868ab5d";
         } else {
           const error = new Error("QR Code ไม่ถูกต้อง: ไม่ใช่ QR Code ของระบบ");
           if (onError) {

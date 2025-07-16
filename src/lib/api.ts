@@ -20,20 +20,45 @@ export class ApiError extends Error {
   }
 }
 
+function getAuthToken(): string | null {
+  if (typeof window !== "undefined") {
+    const localToken = localStorage.getItem("auth_token");
+    if (localToken) {
+      return localToken;
+    }
+
+    const cookies = document.cookie.split("; ");
+    const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
+    return tokenCookie ? decodeURIComponent(tokenCookie.split("=")[1]) : null;
+  }
+
+  return null;
+}
+
+function getAuthHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export async function apiRequest<T = unknown>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
 
+  const authHeaders = getAuthHeaders();
+  console.log("🔑 Auth Headers being sent:", authHeaders);
+
   const defaultOptions: RequestInit = {
     headers: {
       "Content-Type": "application/json",
+      ...authHeaders,
       ...options.headers,
     },
   };
 
   const requestOptions = { ...defaultOptions, ...options };
+  console.log("📨 Full request options:", requestOptions);
 
   try {
     const response = await fetch(url, requestOptions);

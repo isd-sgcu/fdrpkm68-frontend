@@ -199,6 +199,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
                   ยินดีต้อนรับ
                 </div>
                 <div
+                  id="student-name-display"
                   class="text-[24px] leading-[1.4] font-medium text-[#fffff2]"
                   style="text-shadow: rgba(0,0,0,0.5) 0px 2px 4px, #cb438b 0px 0px 6px; font-family: 'IBM Plex Sans Thai', sans-serif;"
                 >
@@ -307,9 +308,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
 
 <script>
   import { api } from "@/lib/api";
-  import { getEventStatus, EVENT_CONFIGS } from "@/lib/eventAPI";
-  import type { EventType } from "@/lib/eventAPI";
-  import { useCallback } from "react";
+  import { EVENT_CONFIGS } from "@/lib/eventAPI";
 
   interface QrFormData {
     studentId: string;
@@ -322,6 +321,15 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
     status: string;
     createdAt: string;
     updatedAt: string;
+    user?: {
+      id: string;
+      studentId: string;
+      citizenId: string;
+      firstName: string;
+      lastName: string;
+      nickname: string;
+      prefix: string;
+    };
   }
   const ActualCheckinRecord: CheckinRecord = {
     id: "",
@@ -333,7 +341,8 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
   };
   let currentActiveEvent: any = null;
   (window as any).handleQRScan = null;
-  const onQrSubmit = useCallback(async (data: QrFormData): Promise<void> => {
+
+  const onQrSubmit = async (data: QrFormData): Promise<void> => {
     const response = await api.post<CheckinRecord>(
       "/checkin/registerByStudentId",
       {
@@ -342,25 +351,73 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       }
     );
 
-    if (response.success) {
-      window.location.href = "/staff/event";
+    if (response.success && response.data) {
+      ActualCheckinRecord.id = response.data.id;
+      ActualCheckinRecord.userId = response.data.userId;
+      ActualCheckinRecord.event = response.data.event;
+      ActualCheckinRecord.status = response.data.status;
+      ActualCheckinRecord.createdAt = response.data.createdAt;
+      ActualCheckinRecord.updatedAt = response.data.updatedAt;
+
+      (ActualCheckinRecord as any).originalStudentId = data.studentId;
+      (ActualCheckinRecord as any).originalCitizenId = data.citizenId;
+
+      if (response.data.user) {
+        (ActualCheckinRecord as any).user = response.data.user;
+      } else {
+        try {
+          let userResponse = null;
+
+          try {
+            userResponse = await api.get(
+              `/users?studentId=${data.studentId}&citizenId=${data.citizenId}`
+            );
+          } catch (e) {
+            try {
+              userResponse = await api.get(
+                `/auth/user/${data.studentId}/${data.citizenId}`
+              );
+            } catch (e) {
+              try {
+                userResponse = await api.get(`/profile/${data.studentId}`);
+              } catch (e) {
+                if (response.data.userId) {
+                  userResponse = await api.get(
+                    `/users/${response.data.userId}`
+                  );
+                }
+              }
+            }
+          }
+
+          if (userResponse?.success && userResponse.data) {
+            (ActualCheckinRecord as any).user = userResponse.data;
+          }
+        } catch (userError) {
+          // Silent fail - will use fallback display
+        }
+      }
+
+      return;
     }
-    if (!response.data) {
-      throw new Error("ลงทะเบียนไม่สำเร็จ: ไม่มีข้อมูลการลงทะเบียน");
+
+    const errorMessage = response.error || "ลงทะเบียนไม่สำเร็จ";
+
+    if (errorMessage.includes("already exists")) {
+      throw new Error("already exists");
     }
-    ActualCheckinRecord.id = response.data.id;
-  }, []);
+
+    throw new Error(errorMessage);
+  };
 
   export function extractIds(qrData: string): {
     citizenId: string | null;
     studentId: string | null;
   } {
     const cleanData = qrData.trim();
-
     let citizenId: string | null = null;
     let studentId: string | null = null;
 
-    // First, try to extract from URL query
     if (cleanData.includes("?")) {
       const queryPart = cleanData.split("?")[1];
       const urlParams = new URLSearchParams(queryPart);
@@ -376,7 +433,6 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
         urlParams.get("id");
     }
 
-    // Try to extract from raw query string (e.g. without "?")
     if (!citizenId || !studentId) {
       const params = new URLSearchParams(cleanData);
 
@@ -393,7 +449,6 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       }
     }
 
-    // Fallback: regex match from string
     if (!citizenId) {
       const citizenIdMatch = cleanData.match(
         /(?:citizenId|citizen_id|cid)=([^&\s]+)/i
@@ -408,7 +463,6 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       studentId = studentIdMatch ? studentIdMatch[1] : null;
     }
 
-    // If full UUID is passed as clean data, use as studentId fallback
     if (
       !studentId &&
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
@@ -462,24 +516,36 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
   // }
 
   async function determineActiveEvent(): Promise<any> {
-    const events: EventType[] = ["firstdate", "rpkm", "freshmen-night"];
+    // Force show FIRSTDATE event for staff scanning
+    return {
+      eventId: "firstdate",
+      eventConfig: EVENT_CONFIGS["firstdate"],
+      eventStatus: {
+        isRegistered: false,
+        isLate: false,
+        isComingSoon: false,
+      },
+    };
 
-    for (const eventId of events) {
-      try {
-        const eventStatus = await getEventStatus(eventId);
-        if (!eventStatus.isComingSoon && !eventStatus.isLate) {
-          return {
-            eventId,
-            eventConfig: EVENT_CONFIGS[eventId],
-            eventStatus,
-          };
-        }
-      } catch (error) {
-        continue;
-      }
-    }
+    // Original logic commented out - uncomment when event periods are configured
+    // const events: EventType[] = ["firstdate", "rpkm", "freshmen-night"];
 
-    return null;
+    // for (const eventId of events) {
+    //   try {
+    //     const eventStatus = await getEventStatus(eventId);
+    //     if (!eventStatus.isComingSoon && !eventStatus.isLate) {
+    //       return {
+    //         eventId,
+    //         eventConfig: EVENT_CONFIGS[eventId],
+    //         eventStatus,
+    //       };
+    //     }
+    //   } catch (error) {
+    //     continue;
+    //   }
+    // }
+
+    // return null;
   }
 
   function updateEventUI(activeEventData: any): void {
@@ -528,6 +594,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
     const checkinTimeSpan = document.getElementById("checkin-time");
     const userIdDisplaySpan = document.getElementById("user-id-display");
     const popupContainer = modal?.querySelector(".transform");
+    const studentNameDiv = document.getElementById("student-name-display");
 
     if (
       modal &&
@@ -545,8 +612,24 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
           : "ลงทะเบียนเข้างาน";
       checkinTimeSpan.textContent = new Date().toLocaleTimeString("th-TH");
 
-      const shortUserId = checkinRecord.userId.slice(-8);
-      userIdDisplaySpan.textContent = shortUserId;
+      if (checkinRecord.user) {
+        const fullName = `${checkinRecord.user.firstName} ${checkinRecord.user.lastName}`;
+        const studentId = checkinRecord.user.studentId;
+
+        if (studentNameDiv) {
+          studentNameDiv.textContent = fullName;
+        }
+
+        userIdDisplaySpan.textContent = studentId;
+      } else {
+        const originalStudentId =
+          checkinRecord.originalStudentId || checkinRecord.userId.slice(-10);
+        userIdDisplaySpan.textContent = originalStudentId;
+
+        if (studentNameDiv) {
+          studentNameDiv.textContent = "นิสิต";
+        }
+      }
 
       modal.classList.remove("hidden");
 
@@ -580,11 +663,20 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
     }
   }
 
-  function showErrorModal(): void {
+  function showErrorModal(customMessage?: string): void {
     const modal = document.getElementById("error-modal");
     const popupContainer = modal?.querySelector(".transform");
+    const errorText = modal?.querySelector("p");
 
     if (modal) {
+      // Update message if provided
+      if (customMessage && errorText) {
+        errorText.textContent = customMessage;
+      } else if (errorText) {
+        // Reset to default message
+        errorText.textContent = "เลขนิสิต หรือ เลขบัตรประชาชน ไม่ถูกต้อง";
+      }
+
       modal.classList.remove("hidden");
 
       setTimeout(() => {
@@ -596,6 +688,10 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
         }
       }, 10);
     }
+  }
+
+  function showAlreadyRegisteredModal(): void {
+    showErrorModal("นิสิตคนนี้ลงทะเบียนไปแล้ว");
   }
 
   function hideErrorModal(): void {
@@ -613,7 +709,26 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
 
       setTimeout(() => {
         modal.classList.add("hidden");
+
+        // Clear the manual form when closing error modal
+        clearManualForm();
       }, 300);
+    }
+  }
+
+  function clearManualForm(): void {
+    const studentIdInput = document.getElementById(
+      "student-id-input"
+    ) as HTMLInputElement;
+    const citizenIdInput = document.getElementById(
+      "citizen-id-input"
+    ) as HTMLInputElement;
+
+    if (studentIdInput) {
+      studentIdInput.value = "";
+    }
+    if (citizenIdInput) {
+      citizenIdInput.value = "";
     }
   }
 
@@ -625,32 +740,36 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
         throw new Error("QR Code ไม่ถูกต้อง: ไม่พบ Citizen ID หรือ Student ID");
       }
 
-      // // Replace with your expected valid values
-      // const expectedCitizenId = "1234567890123"; // example
-      // const expectedStudentId = "6605090001"; // example
-
-      // if (citizenId !== expectedCitizenId || studentId !== expectedStudentId) {
-      //   throw new Error("QR Code ไม่ถูกต้อง: ข้อมูลไม่ตรงกัน");
-      // }
-
-      // const mockCheckinRecord = {
-      //   id: "mock-checkin-123",
-      //   citizenId,
-      //   studentId,
-      //   event: "FIRSTDATE",
-      //   status: "PRE_REGISTER",
-      //   createdAt: new Date().toISOString(),
-      //   updatedAt: new Date().toISOString(),
-      // };
-      console.log("QR Code Data:", { citizenId, studentId });
-
       await onQrSubmit({ studentId, citizenId });
       showSuccessModal(ActualCheckinRecord);
-
-      return Promise.resolve();
     } catch (error) {
-      showErrorModal();
-      return Promise.reject(error);
+      const errorMessage = (error as Error)?.message || "";
+
+      if (
+        errorMessage.includes("already exists") ||
+        errorMessage.includes("Check-in already exists")
+      ) {
+        showAlreadyRegisteredModal();
+        return;
+      }
+
+      if (
+        (errorMessage.includes("400") || errorMessage.includes("404")) &&
+        errorMessage.includes("Bad Request")
+      ) {
+        showAlreadyRegisteredModal();
+        return;
+      }
+
+      if (
+        errorMessage.includes("401") ||
+        errorMessage.includes("Unauthorized")
+      ) {
+        alert("❌ กรุณาเข้าสู่ระบบก่อนใช้งาน QR Scanner");
+        return;
+      }
+
+      alert("❌ เกิดข้อผิดพลาด: " + errorMessage);
     }
   };
 
@@ -658,6 +777,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
   (window as any).showErrorModal = showErrorModal;
 
   const manualForm = document.getElementById("manual-entry-form");
+
   if (manualForm) {
     manualForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -668,6 +788,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       const citizenIdInput = document.getElementById(
         "citizen-id-input"
       ) as HTMLInputElement;
+
       const studentId = studentIdInput.value.trim();
       const citizenId = citizenIdInput.value.trim();
 
@@ -700,20 +821,126 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
         submitButton.textContent = "กำลังลงทะเบียน...";
         submitButton.disabled = true;
 
-        if (studentId !== "6812345678" || citizenId !== "1234567890123") {
-          throw new Error("ข้อมูลไม่ถูกต้อง");
-        }
+        // Use the same API call as QR scanner
+        await onQrSubmit({ studentId, citizenId });
 
+        // Success - show success modal and clear form
         showSuccessModal(ActualCheckinRecord);
         studentIdInput.value = "";
         citizenIdInput.value = "";
       } catch (error) {
-        showErrorModal();
+        const errorMessage = (error as Error)?.message || "";
+        if (
+          errorMessage.includes("already exists") ||
+          errorMessage.includes("Check-in already exists")
+        ) {
+          showAlreadyRegisteredModal();
+        } else if (
+          (errorMessage.includes("400") || errorMessage.includes("404")) &&
+          errorMessage.includes("Bad Request")
+        ) {
+          showAlreadyRegisteredModal();
+        } else if (
+          errorMessage.includes("401") ||
+          errorMessage.includes("Unauthorized")
+        ) {
+          showErrorModal("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+        } else if (errorMessage.includes("User not found")) {
+          showErrorModal(
+            "ไม่พบข้อมูลนิสิต กรุณาตรวจสอบรหัสนิสิตและรหัสประชาชน"
+          );
+        } else {
+          showErrorModal();
+        }
       } finally {
         submitButton.textContent = originalText;
         submitButton.disabled = false;
       }
     });
+  } else {
+    const submitButton = document.getElementById(
+      "manual-submit-btn"
+    ) as HTMLButtonElement;
+
+    if (submitButton) {
+      submitButton.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        const studentIdInput = document.getElementById(
+          "student-id-input"
+        ) as HTMLInputElement;
+        const citizenIdInput = document.getElementById(
+          "citizen-id-input"
+        ) as HTMLInputElement;
+
+        if (!studentIdInput || !citizenIdInput) {
+          return;
+        }
+
+        const studentId = studentIdInput.value.trim();
+        const citizenId = citizenIdInput.value.trim();
+
+        if (!studentId) {
+          alert("กรุณากรอกรหัสนิสิต");
+          return;
+        }
+
+        if (!citizenId) {
+          alert("กรุณากรอกรหัสประชาชน");
+          return;
+        }
+
+        if (!/^[0-9]{10}$/.test(studentId)) {
+          alert("รหัสนิสิตต้องเป็นตัวเลข 10 หลัก");
+          return;
+        }
+
+        if (!/^[0-9]{13}$/.test(citizenId)) {
+          alert("รหัสประชาชนต้องเป็นตัวเลข 13 หลัก");
+          return;
+        }
+
+        const originalText = submitButton.textContent;
+
+        try {
+          submitButton.textContent = "กำลังลงทะเบียน...";
+          submitButton.disabled = true;
+
+          await onQrSubmit({ studentId, citizenId });
+
+          showSuccessModal(ActualCheckinRecord);
+          studentIdInput.value = "";
+          citizenIdInput.value = "";
+        } catch (error) {
+          const errorMessage = (error as Error)?.message || "";
+          if (
+            errorMessage.includes("already exists") ||
+            errorMessage.includes("Check-in already exists")
+          ) {
+            showAlreadyRegisteredModal();
+          } else if (
+            (errorMessage.includes("400") || errorMessage.includes("404")) &&
+            errorMessage.includes("Bad Request")
+          ) {
+            showAlreadyRegisteredModal();
+          } else if (
+            errorMessage.includes("401") ||
+            errorMessage.includes("Unauthorized")
+          ) {
+            showErrorModal("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+          } else if (errorMessage.includes("User not found")) {
+            showErrorModal(
+              "ไม่พบข้อมูลนิสิต กรุณาตรวจสอบรหัสนิสิตและรหัสประชาชน"
+            );
+          } else {
+            showErrorModal();
+          }
+        } finally {
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
+        }
+      });
+    }
   }
 
   document
