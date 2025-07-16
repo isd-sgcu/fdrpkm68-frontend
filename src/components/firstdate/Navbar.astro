@@ -45,7 +45,7 @@ import ButtonFd from "@common/ButtonFd.astro";
         <a href="/firstdate/home">หน้าหลัก</a>
       </li>
       <li>
-        <a href="/cufest/">CU FEST</a>
+        <a href="/" id="cufest-link">Festival</a>
       </li>
       <li>
         <a href="/rpkm/home">รับเพื่อนก้าวใหม่</a>
@@ -75,6 +75,7 @@ import ButtonFd from "@common/ButtonFd.astro";
       "hamburger-button-menu"
     );
     const navMenu = document.getElementById("nav-menu");
+    const cufestLink = document.getElementById("cufest-link");
 
     hamburgerButton.addEventListener("click", () => {
       navMenu.classList.toggle("hidden");
@@ -84,6 +85,19 @@ import ButtonFd from "@common/ButtonFd.astro";
     hamburgerButtonMenu.addEventListener("click", () => {
       navMenu.classList.toggle("hidden");
       document.body.classList.remove("no-scroll");
+    });
+
+    cufestLink.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const now = new Date();
+      const cutoffDate = new Date("2025-07-18T19:00:00+07:00");
+
+      if (now < cutoffDate) {
+        window.location.href = "/firstdate/events/cufest";
+      } else {
+        window.location.href = "/fest/home";
+      }
     });
   });
 </script>
