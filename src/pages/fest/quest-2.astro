@@ -1,7 +1,7 @@
 ---
-import Layout from "@/layouts/fest/FestWithNavbar.astro";
-import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
 import ButtonFest from "@/components/common/ButtonFest.astro";
+import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
+import Layout from "@/layouts/fest/FestWithNavbar.astro";
 const awardConditions = [
   "สะสมกิจกรรมชุมชน ผ่าน แต้ม LINE OA",
   "สะสม 5 แต้ม จะได้รับ Bronze Set",
@@ -75,7 +75,8 @@ const awardConditions = [
         lang="th"
         style="text-align: justify; text-align-last: left; word-spacing: 0.2em;"
       >
-        <p>สแกน QR Code กับ LINE OA จากการเข้าชมสถานที่สำคัญ และการใช้บริการ
+        <p>
+          สแกน QR Code กับ LINE OA จากการเข้าชมสถานที่สำคัญ และการใช้บริการ
           ร้านอาหาร ร้านของหวาน ร้านเครื่องดื่ม
           ที่เป็นที่รู้จักบริเวณรอบจุฬาลงกรณ์มหาวิทยาลัย
           ผู้เข้าร่วมกิจกรรมสามารถ<strong
@@ -97,30 +98,38 @@ const awardConditions = [
           }
         </ul>
       </div>
-      
+
       <HorizonlineFest variant="blue" />
       <div
-        class="my-5 text-center text-xl tracking-wide whitespace-pre-line space-y-4"
+        class="my-5 space-y-4 text-center text-xl tracking-wide whitespace-pre-line"
         lang="th"
       >
         <p class="font-bold">ร้านอาหารแยกตามโซน</p>
-        <ButtonFest href="/fest/quest-2-A" color="white" size="big"> โซน A</ButtonFest>
-        <ButtonFest href="/fest/quest-2-B" color="white" size="big"> โซน B</ButtonFest>
-        <ButtonFest href="/fest/quest-2-C" color="white" size="big"> โซน C</ButtonFest>
-        <ButtonFest href="/fest/quest-2-D" color="white" size="big"> โซน D</ButtonFest>
-        </div>
+        <ButtonFest href="/fest/quest-2-A" color="white" size="big">
+          โซน A</ButtonFest
+        >
+        <ButtonFest href="/fest/quest-2-B" color="white" size="big">
+          โซน B</ButtonFest
+        >
+        <ButtonFest href="/fest/quest-2-C" color="white" size="big">
+          โซน C</ButtonFest
+        >
+        <ButtonFest href="/fest/quest-2-D" color="white" size="big">
+          โซน D</ButtonFest
+        >
       </div>
-      <HorizonlineFest variant="blue" />
+    </div>
+    <HorizonlineFest variant="blue" />
 
-      <div class="flex flex-col items-center gap-4">
-        <ButtonFest href="https://lin.ee/xpZkNQf" color="blue" size="big"
-          >สะสมแต้มใน LineOA</ButtonFest
-        >
-        <ButtonFest
-          href="https://forms.gle/VgEbs394BveNz1iEA"
-          color="pink"
-          size="big">ลงทะเบียน Quest</ButtonFest
-        >
-      </div>
+    <div class="flex flex-col items-center gap-4">
+      <ButtonFest href="https://lin.ee/xpZkNQf" color="blue" size="big"
+        >สะสมแต้มใน LineOA</ButtonFest
+      >
+      <ButtonFest
+        href="https://forms.gle/VgEbs394BveNz1iEA"
+        color="pink"
+        size="big">ลงทะเบียน Quest</ButtonFest
+      >
+    </div>
   </div>
 </Layout>

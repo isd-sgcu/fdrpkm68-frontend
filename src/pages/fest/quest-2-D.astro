@@ -1,13 +1,13 @@
 ---
-import Layout from "@/layouts/fest/FestWithNavbar.astro";
-import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
 import ButtonFest from "@/components/common/ButtonFest.astro";
-import {zoneDShops} from "@/components/fest/quest2_csv_reader"
+import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
+import { zoneDShops } from "@/components/fest/quest2_csv_reader";
+import Layout from "@/layouts/fest/FestWithNavbar.astro";
 ---
 
 <Layout>
   <div class="flex flex-col space-y-2 px-4 py-6">
-   <div
+    <div
       class="sticky top-0 z-10 flex w-full justify-between px-3 py-2 backdrop-blur-md"
     >
       <a href="/fest/quest-2-C" class="mt-2.5 text-2xl font-bold">{"<"}</a>
@@ -17,81 +17,88 @@ import {zoneDShops} from "@/components/fest/quest2_csv_reader"
       </div>
       <a href="/fest/quest-3" class="mt-2.5 text-2xl font-bold">{">"}</a>
     </div>
-    
+
     <div class="space-y-6 pt-4">
-      {zoneDShops.map((shop, index) => (
-        <div class="shop-item">
-          {index > 0 && <HorizonlineFest variant="blue" />}
-          
-          <div class="space-y-4">
-            {/* Shop Name */}
-            <h2 class="text-2xl font-bold text-center text-pink-500">
-              {shop.name}
-            </h2>
-            
-            {/* Shop Image */}
-            {shop.image && (
-              <div class="flex justify-center">
-                <img 
-                  src={shop.image} 
-                  alt={shop.name}
-                  class="max-w-full h-48 object-cover rounded-lg shadow-md"
-                  loading="lazy"
-                  onerror="console.log('Image failed to load:', this.src); this.style.display='none';"
-                  onload="console.log('Image loaded successfully:', this.src);"
-                />
-              </div>
-            )} 
-            
-            <div class="p-4">
-              <h3 class="font-semibold text-lg text-pink-400 mb-2">เมนูแนะนำ:</h3>
-              <p 
-                class="text-justify leading-relaxed hyphens-auto text-white" 
-                lang="th" 
-                style="text-align: justify; text-align-last: left; word-spacing: 0.1em;"
-              >
-               {shop.manu}
-              </p>
-            </div>
-            <div class="p-4">
-              <h3 class="font-semibold text-lg text-pink-400 mb-2">รายละเอียด:</h3>
-              <p 
-                class="text-justify leading-relaxed hyphens-auto text-white" 
-                lang="th" 
-                style="text-align: justify; text-align-last: left; word-spacing: 0.1em;"
-              >
-                {shop.description}
-              </p>
-            </div>
-            <div class="p-4">
-              <h3 class="font-semibold text-lg text-pink-400 mb-2">เวลาเปิด-ปิด:</h3>
-              <p 
-                class="text-justify leading-relaxed hyphens-auto text-white" 
-                lang="th" 
-                style="text-align: justify; text-align-last: left; word-spacing: 0.1em;"
-              >
-                {shop.time}
-              </p>
-            </div>
-            
-          
-            {/* Google Maps Button */}
-            {shop.maps && (
-              <div class="flex justify-center pt-2">
-                <ButtonFest 
-                  color="pink" 
-                  size="big" 
-                  href={shop.maps}
-                  target="_blank"
-                  rel="noopener noreferrer"
+      {
+        zoneDShops.map((shop, index) => (
+          <div class="shop-item">
+            {index > 0 && <HorizonlineFest variant="blue" />}
+
+            <div class="space-y-4">
+              {/* Shop Name */}
+              <h2 class="text-center text-2xl font-bold text-pink-500">
+                {shop.name}
+              </h2>
+
+              {/* Shop Image */}
+              {shop.image && (
+                <div class="flex justify-center">
+                  <img
+                    src={shop.image}
+                    alt={shop.name}
+                    class="h-48 max-w-full rounded-lg object-cover shadow-md"
+                    loading="lazy"
+                    onerror="console.log('Image failed to load:', this.src); this.style.display='none';"
+                    onload="console.log('Image loaded successfully:', this.src);"
+                  />
+                </div>
+              )}
+
+              <div class="p-4">
+                <h3 class="mb-2 text-lg font-semibold text-pink-400">
+                  เมนูแนะนำ:
+                </h3>
+                <p
+                  class="text-justify leading-relaxed hyphens-auto text-white"
+                  lang="th"
+                  style="text-align: justify; text-align-last: left; word-spacing: 0.1em;"
                 >
-                  Google Maps
-                </ButtonFest>
+                  {shop.manu}
+                </p>
               </div>
-            )}
+              <div class="p-4">
+                <h3 class="mb-2 text-lg font-semibold text-pink-400">
+                  รายละเอียด:
+                </h3>
+                <p
+                  class="text-justify leading-relaxed hyphens-auto text-white"
+                  lang="th"
+                  style="text-align: justify; text-align-last: left; word-spacing: 0.1em;"
+                >
+                  {shop.description}
+                </p>
+              </div>
+              <div class="p-4">
+                <h3 class="mb-2 text-lg font-semibold text-pink-400">
+                  เวลาเปิด-ปิด:
+                </h3>
+                <p
+                  class="text-justify leading-relaxed hyphens-auto text-white"
+                  lang="th"
+                  style="text-align: justify; text-align-last: left; word-spacing: 0.1em;"
+                >
+                  {shop.time}
+                </p>
+              </div>
+
+              {/* Google Maps Button */}
+              {shop.maps && (
+                <div class="flex justify-center pt-2">
+                  <ButtonFest
+                    color="pink"
+                    size="big"
+                    href={shop.maps}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Google Maps
+                  </ButtonFest>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      }
     </div>
   </div>
 </Layout>
