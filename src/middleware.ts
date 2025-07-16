@@ -6,12 +6,12 @@ import { nonProtectRoutes } from "@/constants/Routes";
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url;
 
-  const cookie = context.request.headers.get("cookie") ?? "";
-  const token = parseCookie(cookie).token;
-
-  if (url.pathname === "/") {
+  if (url.pathname === "/" || url.pathname === "/logout ") {
     return next();
   }
+
+  const cookie = context.request.headers.get("cookie") ?? "";
+  const token = parseCookie(cookie).token;
 
   if (!token || !isValidToken(token)) {
     if (
