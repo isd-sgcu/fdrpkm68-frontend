@@ -78,7 +78,7 @@ import ButtonFd from "@common/ButtonFd.astro";
 </nav>
 
 <script is:inline type="module">
-  document.addEventListener("DOMContentLoaded", () => {
+  function setupHamburgerMenu() {
     const hamburgerButton = document.getElementById("hamburger-button-main");
     const hamburgerButtonMenu = document.getElementById(
       "hamburger-button-menu"
@@ -118,30 +118,11 @@ import ButtonFd from "@common/ButtonFd.astro";
         }
       });
     }
-  });
-
-  // Fallback for cases where DOMContentLoaded might have already fired
-  if (document.readyState === "loading") {
-    // DOMContentLoaded has not fired yet
-  } else {
-    // DOMContentLoaded has already fired, run the code immediately
-    setTimeout(() => {
-      const hamburgerButton = document.getElementById("hamburger-button-main");
-      const navMenu = document.getElementById("nav-menu");
-
-      if (
-        hamburgerButton &&
-        navMenu &&
-        !hamburgerButton.hasAttribute("data-listener-added")
-      ) {
-        hamburgerButton.setAttribute("data-listener-added", "true");
-        hamburgerButton.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          navMenu.classList.toggle("hidden");
-          document.body.classList.add("no-scroll");
-        });
-      }
-    }, 5000);
   }
+
+  document.addEventListener("DOMContentLoaded", setupHamburgerMenu);
+
+  // Optional: Handle Astro's page navigation if SPA-like behavior is used
+  // Replace this with your router's event (e.g., `astro:after-swap`)
+  document.addEventListener("astro:after-swap", setupHamburgerMenu);
 </script>
