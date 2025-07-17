@@ -154,7 +154,10 @@ export const getEventStatus = async (
     const errorMessage = response.error;
 
     // Check for specific error patterns from backend
-    if (errorMessage.includes("before register period")) {
+    if (
+      errorMessage.includes("before register period") ||
+      errorMessage.includes("Check-in not found")
+    ) {
       return {
         isRegistered: false,
         isLate: false,
