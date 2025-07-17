@@ -38,8 +38,7 @@ import Layout from "@/layouts/fest/FestWithNavbar.astro";
                     alt={shop.name}
                     class="h-48 max-w-full rounded-lg object-cover shadow-md"
                     loading="lazy"
-                    onerror="console.log('Image failed to load:', this.src); this.style.display='none';"
-                    onload="console.log('Image loaded successfully:', this.src);"
+                    onerror="this.style.display='none';"
                   />
                 </div>
               )}
