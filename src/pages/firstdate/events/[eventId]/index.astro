@@ -214,7 +214,13 @@ if (eventStatus.isRegistered && eventStatus.checkinData) {
         </section>
       )
     }
-
+    {
+      eventStatus.isRegistered && eventType == "rpkm" && (
+        <ButtonFd variant="fill" color="white" href="/rpkm/home/">
+          เข้าเว็บรับเพื่อนก้าวใหม่
+        </ButtonFd>
+      )
+    }
     {
       eventStatus.isComingSoon && (
         <section class="flex flex-col items-center justify-center">

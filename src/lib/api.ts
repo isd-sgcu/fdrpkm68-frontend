@@ -20,24 +20,9 @@ export class ApiError extends Error {
   }
 }
 
-function getAuthToken(): string | null {
-  if (typeof window !== "undefined") {
-    const localToken = localStorage.getItem("auth_token");
-    if (localToken) {
-      return localToken;
-    }
-
-    const cookies = document.cookie.split("; ");
-    const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
-    return tokenCookie ? decodeURIComponent(tokenCookie.split("=")[1]) : null;
-  }
-
-  return null;
-}
-
-function getAuthHeaders(): Record<string, string> {
-  const token = getAuthToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
+interface ApiResponseRaw {
+  message?: string;
+  error?: string;
 }
 
 export async function apiRequest<T = unknown>(
@@ -46,29 +31,32 @@ export async function apiRequest<T = unknown>(
 ): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  const authHeaders = getAuthHeaders();
-  console.log("🔑 Auth Headers being sent:", authHeaders);
+  const defaultHeaders = {
+    "Content-Type": "application/json",
+  };
 
-  const defaultOptions: RequestInit = {
+  const requestOptions: RequestInit = {
+    ...options,
     headers: {
-      "Content-Type": "application/json",
-      ...authHeaders,
+      ...defaultHeaders,
       ...options.headers,
     },
   };
-
-  const requestOptions = { ...defaultOptions, ...options };
-  console.log("📨 Full request options:", requestOptions);
 
   try {
     const response = await fetch(url, requestOptions);
 
     if (!response.ok) {
-      throw new ApiError(
-        `API request failed: ${response.status} ${response.statusText}`,
-        response.status,
-        response
-      );
+      let errorMsg = "Request failed";
+      if (response.body) {
+        try {
+          const raw: ApiResponseRaw = JSON.parse(await response.text());
+          errorMsg = raw.error || raw.message || errorMsg;
+        } catch {
+          errorMsg = await response.text();
+        }
+      }
+      throw new ApiError(errorMsg, response.status, response);
     }
 
     const data = await response.json();
@@ -127,7 +115,7 @@ export const api = {
   ): Promise<ApiResponse<T>> =>
     apiRequest<T>(endpoint, {
       ...options,
-      method: "POST",
+      method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
     }),
 };

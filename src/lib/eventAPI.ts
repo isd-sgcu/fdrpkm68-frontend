@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import { getAuthHeaders, getAuthToken } from "@/lib/auth";
 
 export type EventType = "firstdate" | "rpkm" | "freshmen-night" | "cufest";
 
@@ -25,27 +26,6 @@ export interface EventStatus {
   registrationSuccess?: boolean;
   isComingSoon?: boolean;
   checkinData?: CheckinResponse;
-}
-
-function getAuthToken(): string | null {
-  if (typeof window !== "undefined") {
-    const localToken = localStorage.getItem("auth_token");
-    if (localToken) {
-      return localToken;
-    }
-
-    const cookies = document.cookie.split("; ");
-    const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
-    return tokenCookie ? decodeURIComponent(tokenCookie.split("=")[1]) : null;
-  }
-
-  return null;
-}
-
-// Helper function to create authorized headers
-function getAuthHeaders(token?: string): Record<string, string> {
-  const authToken = token || getAuthToken();
-  return authToken ? { Authorization: `Bearer ${authToken}` } : {};
 }
 
 export type ColorVariant =
@@ -89,7 +69,7 @@ export const EVENT_CONFIGS: Record<EventType, EventConfig> = {
   },
   cufest: {
     id: "cufest",
-    title: "CU Fest",
+    title: "Festival",
     description:
       "เทศกาลแห่งความสนุกสนาน ที่รวมการแสดง กิจกรรม และความบันเทิงต่าง ๆ ไว้ในงานเดียว",
     schedule: "พร้อมให้ลงทะเบียนในวันที่ 20 กรกฎาคม 2568 ",
@@ -242,7 +222,7 @@ export const registerForEvent = async (
   const response = await api.post<CheckinResponse>(
     `/checkin/register`,
     { event: apiEventName },
-    { headers: getAuthHeaders() }
+    { headers: getAuthHeaders(token) }
   );
 
   if (response.success && response.data) {

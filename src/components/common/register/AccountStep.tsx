@@ -67,6 +67,10 @@ export default function AccountStep({
               placeholder="รหัสนิสิต"
               {...register("studentId", {
                 required: "กรุณากรอกรหัสนิสิต",
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: "กรุณากรอกรหัสนิสิตให้ถูกต้อง (10 หลัก)",
+                },
               })}
             />
           </div>
@@ -89,6 +93,10 @@ export default function AccountStep({
               placeholder="รหัสประจำตัวประชาชน"
               {...register("citizenId", {
                 required: "กรุณากรอกรหัสประจำตัวประชาชน",
+                pattern: {
+                  value: /^[0-9]{13}$/,
+                  message: "กรุณากรอกรหัสบัตรประชาชนให้ถูกต้อง (13 หลัก)",
+                },
               })}
             />
           </div>
@@ -121,7 +129,7 @@ export default function AccountStep({
                 },
                 pattern: {
                   value:
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.+/-])[A-Za-z\d@$!%*?&.+/-]/,
                   message:
                     "รหัสผ่านต้องประกอบด้วยตัวพิมพ์เล็ก ตัวพิมพ์ใหญ่ ตัวเลข และอักขระพิเศษ",
                 },
@@ -169,6 +177,13 @@ export default function AccountStep({
             ถัดไป
           </button>
         </div>
+        <a
+          type="button"
+          className="mt-5 text-right text-sm text-gray-500 underline"
+          href={userType === "STAFF" ? "/staff/login" : "/login"}
+        >
+          มีบัญชีอยู่แล้ว? เข้าสู่ระบบ
+        </a>
       </form>
     </div>
   );

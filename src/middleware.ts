@@ -1,17 +1,26 @@
 import { defineMiddleware } from "astro:middleware";
 import jwt from "jsonwebtoken";
 
-import { nonProtectRoutes } from "@/constants/Routes";
+import { nonProtectRoutes, nonStartedRoutes } from "@/constants/Routes";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url;
 
-  const cookie = context.request.headers.get("cookie") ?? "";
-  const token = parseCookie(cookie).token;
-
-  if (url.pathname === "/") {
+  if (url.pathname === "/" || url.pathname === "/logout") {
     return next();
   }
+
+  if (nonStartedRoutes.some((route) => url.pathname.startsWith(route))) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/",
+      },
+    });
+  }
+
+  const cookie = context.request.headers.get("cookie") ?? "";
+  const token = parseCookie(cookie).token;
 
   if (!token || !isValidToken(token)) {
     if (
@@ -35,7 +44,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/staff",
+        Location: "/staff/home",
       },
     });
   }
