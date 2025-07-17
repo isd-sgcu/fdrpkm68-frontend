@@ -209,15 +209,16 @@ import Layout from "@/layouts/firstdate/WithNavbar.astro";
 
   const startAutoReload = () => {
     // Clear any existing interval
+    // DO NOT CLEAR THIS INTERVAL OUTSIDE THIS FUNCTION
     if (reloadInterval) {
       clearInterval(reloadInterval);
     }
 
-    // Reload QR code every 30 seconds
+    // Reload QR code every 1 seconds
     reloadInterval = setInterval(() => {
-      console.log("Auto-reloading QR code...");
+      // console.log("Auto-reloading QR code...");
       loadQRCode();
-    }, 30000);
+    }, 1000);
   };
 
   // Start auto-reload when page is visible
