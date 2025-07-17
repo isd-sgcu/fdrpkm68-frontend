@@ -1,15 +1,15 @@
 import { type ApiResponse, api } from "@/lib/api";
 import { getAuthHeaders, getAuthToken } from "@/lib/auth";
-import type { User } from "@/types/common";
+import type { Group } from "@/types/common";
 
 /**
- * Fetches user data from the backend.
+ * Fetches group data from the backend.
  * @param authToken - Optional authentication token for server-side use.
  * @returns ApiResponse from the backend.
  */
-export async function getProfile(
+export async function getGroupData(
   authToken?: string
-): Promise<ApiResponse<{ user: User }>> {
+): Promise<ApiResponse<{ data: Group }>> {
   const token = authToken || getAuthToken();
   if (!token) {
     return {
@@ -18,11 +18,11 @@ export async function getProfile(
     };
   }
 
-  const response = await api.get<{ user: User }>("/user", {
+  const response = await api.get<{ data: Group }>("/group", {
     headers: getAuthHeaders(token),
   });
   if (!response.success) {
-    console.error("Failed to fetch user data:", response.error);
+    console.error("Failed to fetch group data:", response.error);
   }
   return response;
 }
