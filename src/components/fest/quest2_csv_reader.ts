@@ -6,7 +6,7 @@ const csvPath = path.join(
   process.cwd(),
   "public",
   "fest",
-  "fest_quest2_shop_list_4.csv"
+  "fest_quest2_shop_list.csv"
 );
 const csvContent = fs.readFileSync(csvPath, "utf-8");
 

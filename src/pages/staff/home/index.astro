@@ -1,0 +1,42 @@
+---
+import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
+---
+
+<StaffWithNavbar>
+  <div class="relative">
+    <div class="flex min-h-screen items-center justify-center px-8">
+      {/* Corner brackets */}
+      <div
+        class="absolute top-6 left-6 h-6 w-6 border-t-2 border-l-2 border-white"
+      >
+      </div>
+      <div
+        class="absolute top-6 right-6 h-6 w-6 border-t-2 border-r-2 border-white"
+      >
+      </div>
+      <div
+        class="absolute bottom-6 left-6 h-6 w-6 border-b-2 border-l-2 border-white"
+      >
+      </div>
+      <div
+        class="absolute right-6 bottom-6 h-6 w-6 border-r-2 border-b-2 border-white"
+      >
+      </div>
+
+      <div class="flex flex-col items-center">
+        <button
+          class="mb-4 w-full max-w-sm rounded-md bg-white px-10 py-3 text-xl font-medium text-black transition duration-200"
+          onclick="window.location.href='/staff/event'"
+        >
+          ลงทะเบียนน้องเข้างาน
+        </button>
+        <button
+          class="mb-4 w-full max-w-sm rounded-md bg-white px-10 py-3 text-xl font-medium text-black transition duration-200"
+          onclick="window.location.href='/staff/profile'"
+        >
+          หน้าโปรไฟล์
+        </button>
+      </div>
+    </div>
+  </div>
+</StaffWithNavbar>

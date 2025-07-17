@@ -13,27 +13,29 @@ import { api } from "@/lib/api";
 
 // Define the form data structure (reuse from register)
 interface EditProfileFormData {
-  // Personal Info
-  prefix: string;
-  firstName: string;
-  lastName: string;
-  nickname: string;
-  faculty: string;
-  academicYear: string;
-  studentId: string;
-  citizenId: string;
-  // Contact Info
-  phoneNumber: string;
-  parentName: string;
-  parentRelationship: string;
-  parentPhoneNumber: string;
-  // Health Info
-  hasAllergies: boolean | null;
-  foodAllergy: string;
-  hasMedications: boolean | null;
-  drugAllergy: string;
-  hasChronicDiseases: boolean | null;
-  illness: string;
+  user: {
+    // Personal Info
+    prefix: string;
+    firstName: string;
+    lastName: string;
+    nickname: string;
+    faculty: string;
+    academicYear: string;
+    studentId: string;
+    citizenId: string;
+    // Contact Info
+    phoneNumber: string;
+    parentName: string;
+    parentRelationship: string;
+    parentPhoneNumber: string;
+    // Health Info
+    hasAllergies: boolean | null;
+    foodAllergy: string;
+    hasMedications: boolean | null;
+    drugAllergy: string;
+    hasChronicDiseases: boolean | null;
+    illness: string;
+  };
 }
 
 const queryClient = new QueryClient();
@@ -72,7 +74,7 @@ const faculties = [
   { text: "บัณฑิตวิทยาลัย", value: "GRADUATE_SCHOOL" },
 ];
 
-export default function EditProfile({
+function EditProfileContent({
   userType,
 }: {
   userType: "FRESHMAN" | "STAFF";
@@ -84,24 +86,26 @@ export default function EditProfile({
   const themeColor = userType === "FRESHMAN" ? "#C6EBC5" : "#FFB6C1";
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [profileData, setProfileData] = useState<EditProfileFormData>({
-    prefix: "mr",
-    firstName: "นาย",
-    lastName: "บลา ๆ บลา ๆ",
-    nickname: "น",
-    faculty: "FACULTY_OF_ENGINEERING",
-    academicYear: "1",
-    studentId: "1234567890",
-    citizenId: "1234567890123",
-    phoneNumber: "0812345678",
-    parentName: "นาย บลา ๆ บลา ๆ",
-    parentRelationship: "พ่อ",
-    parentPhoneNumber: "0812345678",
-    hasAllergies: null,
-    foodAllergy: "-",
-    hasMedications: null,
-    drugAllergy: "-",
-    hasChronicDiseases: null,
-    illness: "-",
+    user: {
+      prefix: "mr",
+      firstName: "นาย",
+      lastName: "บลา ๆ บลา ๆ",
+      nickname: "น",
+      faculty: "FACULTY_OF_ENGINEERING",
+      academicYear: "1",
+      studentId: "1234567890",
+      citizenId: "1234567890123",
+      phoneNumber: "0812345678",
+      parentName: "นาย บลา ๆ บลา ๆ",
+      parentRelationship: "พ่อ",
+      parentPhoneNumber: "0812345678",
+      hasAllergies: null,
+      foodAllergy: "-",
+      hasMedications: null,
+      drugAllergy: "-",
+      hasChronicDiseases: null,
+      illness: "-",
+    },
   });
 
   const getAuthToken = (): string | null => {
@@ -144,21 +148,21 @@ export default function EditProfile({
 
   const updateProfile = async (data: EditProfileFormData): Promise<void> => {
     const formData = {
-      // studentId: data.studentId,
-      // citizenId: data.citizenId,
-      prefix: data.prefix,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      nickname: data.nickname,
-      faculty: data.faculty,
-      academicYear: parseInt(data.academicYear),
-      phoneNumber: data.phoneNumber,
-      parentName: data.parentName,
-      parentPhoneNumber: data.parentPhoneNumber,
-      parentRelationship: data.parentRelationship,
-      foodAllergy: data.hasAllergies ? data.foodAllergy : null,
-      drugAllergy: data.hasMedications ? data.drugAllergy : null,
-      illness: data.hasChronicDiseases ? data.illness : null,
+      // studentId: data.user.studentId,
+      // citizenId: data.user.citizenId,
+      prefix: data.user.prefix,
+      firstName: data.user.firstName,
+      lastName: data.user.lastName,
+      nickname: data.user.nickname,
+      faculty: data.user.faculty,
+      academicYear: parseInt(data.user.academicYear),
+      phoneNumber: data.user.phoneNumber,
+      parentName: data.user.parentName,
+      parentPhoneNumber: data.user.parentPhoneNumber,
+      parentRelationship: data.user.parentRelationship,
+      foodAllergy: data.user.hasAllergies ? data.user.foodAllergy : null,
+      drugAllergy: data.user.hasMedications ? data.user.drugAllergy : null,
+      illness: data.user.hasChronicDiseases ? data.user.illness : null,
     };
 
     const reponse = await api.patch("/user/update", formData, {
@@ -169,6 +173,8 @@ export default function EditProfile({
 
     if (reponse.success) {
       setIsEditMode(false);
+      // Optionally refresh the data from the server
+      // queryClient.invalidateQueries(['profile']);
     }
   };
 
@@ -180,6 +186,7 @@ export default function EditProfile({
     clearErrors,
     formState: { errors },
     watch,
+    reset: resetForm,
   } = useForm<EditProfileFormData>({
     defaultValues: profileData,
     mode: "onChange",
@@ -187,13 +194,20 @@ export default function EditProfile({
 
   const formValues = watch();
 
+  // Reset form when API data is fetched
+  useEffect(() => {
+    if (fetchedProfileData && !isLoading && !isError) {
+      resetForm(fetchedProfileData);
+    }
+  }, [fetchedProfileData, isLoading, isError, resetForm]);
+
   const handleReturnHome = (): void => {
     window.location.href = "/home";
   };
 
-  const onSubmit = (data: EditProfileFormData): void => {
+  const onSubmit = async (data: EditProfileFormData): Promise<void> => {
+    await updateProfile(data);
     setProfileData(data);
-    setIsEditMode(false);
   };
 
   const CustomCheckbox = ({
@@ -220,586 +234,603 @@ export default function EditProfile({
   );
 
   const handleHasAllergiesYes = (): void => {
-    setValue("hasAllergies", true);
-    setValue("foodAllergy", "");
-    clearErrors("foodAllergy");
+    setValue("user.hasAllergies", true);
+    setValue("user.foodAllergy", "");
+    clearErrors("user.foodAllergy");
   };
   const handleHasAllergiesNo = (): void => {
-    setValue("hasAllergies", false);
-    setValue("foodAllergy", "");
-    clearErrors("foodAllergy");
+    setValue("user.hasAllergies", false);
+    setValue("user.foodAllergy", "");
+    clearErrors("user.foodAllergy");
   };
   const handleHasMedicationsYes = (): void => {
-    setValue("hasMedications", true);
-    setValue("drugAllergy", "");
-    clearErrors("drugAllergy");
+    setValue("user.hasMedications", true);
+    setValue("user.drugAllergy", "");
+    clearErrors("user.drugAllergy");
   };
   const handleHasMedicationsNo = (): void => {
-    setValue("hasMedications", false);
-    setValue("drugAllergy", "");
-    clearErrors("drugAllergy");
+    setValue("user.hasMedications", false);
+    setValue("user.drugAllergy", "");
+    clearErrors("user.drugAllergy");
   };
   const handleHasChronicDiseasesYes = (): void => {
-    setValue("hasChronicDiseases", true);
-    setValue("illness", "");
-    clearErrors("illness");
+    setValue("user.hasChronicDiseases", true);
+    setValue("user.illness", "");
+    clearErrors("user.illness");
   };
   const handleHasChronicDiseasesNo = (): void => {
-    setValue("hasChronicDiseases", false);
-    setValue("illness", "");
-    clearErrors("illness");
+    setValue("user.hasChronicDiseases", false);
+    setValue("user.illness", "");
+    clearErrors("user.illness");
   };
 
-  const watchHasAllergies = formValues.hasAllergies === true;
-  const watchHasMedications = formValues.hasMedications === true;
-  const watchHasChronicDiseases = formValues.hasChronicDiseases === true;
+  const watchHasAllergies = formValues.user?.hasAllergies === true;
+  const watchHasMedications = formValues.user?.hasMedications === true;
+  const watchHasChronicDiseases = formValues.user?.hasChronicDiseases === true;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <section
-        className={`my-3 flex min-h-screen flex-col gap-8 border-2 border-[${themeColor}] bg-[rgba(0,0,0,0.4)] p-8`}
-      >
-        <div className="flex justify-between underline">
-          <h1 className="text-2xl font-bold">แก้ไขข้อมูล</h1>
-          <div
-            className="rounded-full p-2"
-            style={{ backgroundColor: themeColor, color: "black" }}
-          >
-            <Pencil className="h-6 w-6" onClick={() => setIsEditMode(true)} />
+    <section
+      className={`my-3 flex min-h-screen flex-col gap-8 border-2 border-[${themeColor}] bg-[rgba(0,0,0,0.4)] p-8`}
+    >
+      <div className="flex justify-between underline">
+        <h1 className="text-2xl font-bold">แก้ไขข้อมูล</h1>
+        <div
+          className="rounded-full p-2"
+          style={{ backgroundColor: themeColor, color: "black" }}
+        >
+          <Pencil className="h-6 w-6" onClick={() => setIsEditMode(true)} />
+        </div>
+      </div>
+      <div className="flex w-full flex-col items-center justify-center gap-2">
+        <img src={globUrl} alt="Background" />
+        <h1 className="text-lg font-semibold">ข้อมูลส่วนตัว</h1>
+      </div>
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <div className="text-white">กำลังโหลดข้อมูล...</div>
+        </div>
+      ) : isError ? (
+        <div className="flex items-center justify-center py-8">
+          <div className="text-red-400">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>
+        </div>
+      ) : isEditMode ? (
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          {/* Personal Information */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm" htmlFor="prefix">
+              คำนำหน้าชื่อ
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <select
+                id="prefix"
+                className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
+                {...register("user.prefix")}
+              >
+                <option value="mr">นาย</option>
+                <option value="ms">นางสาว</option>
+                <option value="mrs">นาง</option>
+              </select>
+            </div>
+            <label className="text-sm" htmlFor="firstName">
+              ชื่อจริง <span className="text-red-400">*</span>
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <input
+                id="firstName"
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.firstName ? "border-red-500" : ""}`}
+                type="text"
+                placeholder="ชื่อจริง"
+                {...register("user.firstName", {
+                  required: "กรุณากรอกชื่อจริง",
+                })}
+              />
+            </div>
+            {errors.user?.firstName && (
+              <span className="text-xs text-red-400">
+                {errors.user.firstName.message}
+              </span>
+            )}
+            <label className="text-sm" htmlFor="lastName">
+              นามสกุล <span className="text-red-400">*</span>
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <input
+                id="lastName"
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.lastName ? "border-red-500" : ""}`}
+                type="text"
+                placeholder="นามสกุล"
+                {...register("user.lastName", { required: "กรุณากรอกนามสกุล" })}
+              />
+            </div>
+            {errors.user?.lastName && (
+              <span className="text-xs text-red-400">
+                {errors.user.lastName.message}
+              </span>
+            )}
+            <label className="text-sm" htmlFor="nickname">
+              ชื่อเล่น <span className="text-red-400">*</span>
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <input
+                id="nickname"
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.nickname ? "border-red-500" : ""}`}
+                type="text"
+                placeholder="ชื่อเล่น"
+                {...register("user.nickname", {
+                  required: "กรุณากรอกชื่อเล่น",
+                })}
+              />
+            </div>
+            {errors.user?.nickname && (
+              <span className="text-xs text-red-400">
+                {errors.user.nickname.message}
+              </span>
+            )}
+            <label className="text-sm" htmlFor="faculty">
+              คณะ
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <select
+                id="faculty"
+                className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
+                {...register("user.faculty")}
+              >
+                {faculties.map((faculty) => (
+                  <option key={faculty.value} value={faculty.value}>
+                    {faculty.text}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <label className="text-sm" htmlFor="academicYear">
+              ชั้นปี
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <select
+                id="academicYear"
+                className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
+                {...register("user.academicYear")}
+              >
+                <option value="1">ชั้นปีที่ 1</option>
+                <option value="2">ชั้นปีที่ 2</option>
+                <option value="3">ชั้นปีที่ 3</option>
+                <option value="4">ชั้นปีที่ 4</option>
+              </select>
+            </div>
+            {/* Removed editable studentId and citizenId fields */}
           </div>
-        </div>
-        <div className="flex w-full flex-col items-center justify-center gap-2">
-          <img src={globUrl} alt="Background" />
-          <h1 className="text-lg font-semibold">ข้อมูลส่วนตัว</h1>
-        </div>
-        {isEditMode ? (
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
-            {/* Personal Information */}
-            <div className="flex flex-col gap-2">
-              <label className="text-sm" htmlFor="prefix">
-                คำนำหน้าชื่อ
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <select
-                  id="prefix"
-                  className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-                  {...register("prefix")}
-                >
-                  <option value="mr">นาย</option>
-                  <option value="ms">นางสาว</option>
-                  <option value="mrs">นาง</option>
-                </select>
-              </div>
-              <label className="text-sm" htmlFor="firstName">
-                ชื่อจริง <span className="text-red-400">*</span>
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <input
-                  id="firstName"
-                  className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.firstName ? "border-red-500" : ""}`}
-                  type="text"
-                  placeholder="ชื่อจริง"
-                  {...register("firstName", { required: "กรุณากรอกชื่อจริง" })}
-                />
-              </div>
-              {errors.firstName && (
-                <span className="text-xs text-red-400">
-                  {errors.firstName.message}
-                </span>
-              )}
-              <label className="text-sm" htmlFor="lastName">
-                นามสกุล <span className="text-red-400">*</span>
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <input
-                  id="lastName"
-                  className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.lastName ? "border-red-500" : ""}`}
-                  type="text"
-                  placeholder="นามสกุล"
-                  {...register("lastName", { required: "กรุณากรอกนามสกุล" })}
-                />
-              </div>
-              {errors.lastName && (
-                <span className="text-xs text-red-400">
-                  {errors.lastName.message}
-                </span>
-              )}
-              <label className="text-sm" htmlFor="nickname">
-                ชื่อเล่น <span className="text-red-400">*</span>
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <input
-                  id="nickname"
-                  className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.nickname ? "border-red-500" : ""}`}
-                  type="text"
-                  placeholder="ชื่อเล่น"
-                  {...register("nickname", { required: "กรุณากรอกชื่อเล่น" })}
-                />
-              </div>
-              {errors.nickname && (
-                <span className="text-xs text-red-400">
-                  {errors.nickname.message}
-                </span>
-              )}
-              <label className="text-sm" htmlFor="faculty">
-                คณะ
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <select
-                  id="faculty"
-                  className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-                  {...register("faculty")}
-                >
-                  {faculties.map((faculty) => (
-                    <option key={faculty.value} value={faculty.value}>
-                      {faculty.text}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <label className="text-sm" htmlFor="academicYear">
-                ชั้นปี
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <select
-                  id="academicYear"
-                  className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-                  {...register("academicYear")}
-                >
-                  <option value="1">ชั้นปีที่ 1</option>
-                  <option value="2">ชั้นปีที่ 2</option>
-                  <option value="3">ชั้นปีที่ 3</option>
-                  <option value="4">ชั้นปีที่ 4</option>
-                </select>
-              </div>
-              {/* Removed editable studentId and citizenId fields */}
+          <img
+            src="/firstdate/register/divider.png"
+            alt="Divider"
+            className="w-full"
+          />
+          {/* Contact Information */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm" htmlFor="phoneNumber">
+              เบอร์โทรศัพท์ <span className="text-red-400">*</span>
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <input
+                id="phoneNumber"
+                type="text"
+                placeholder="เบอร์โทรศัพท์"
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.phoneNumber ? "border-red-500" : ""}`}
+                {...register("user.phoneNumber", {
+                  required: "กรุณากรอกเบอร์โทรศัพท์",
+                  pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก)",
+                  },
+                })}
+              />
             </div>
-            <img
-              src="/firstdate/register/divider.png"
-              alt="Divider"
-              className="w-full"
-            />
-            {/* Contact Information */}
-            <div className="flex flex-col gap-2">
-              <label className="text-sm" htmlFor="phoneNumber">
-                เบอร์โทรศัพท์ <span className="text-red-400">*</span>
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <input
-                  id="phoneNumber"
-                  type="text"
-                  placeholder="เบอร์โทรศัพท์"
-                  className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.phoneNumber ? "border-red-500" : ""}`}
-                  {...register("phoneNumber", {
-                    required: "กรุณากรอกเบอร์โทรศัพท์",
-                    pattern: {
-                      value: /^[0-9]{10}$/,
-                      message: "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก)",
-                    },
-                  })}
-                />
-              </div>
-              {errors.phoneNumber && (
-                <span className="text-xs text-red-400">
-                  {errors.phoneNumber.message}
-                </span>
-              )}
-              <label className="text-sm" htmlFor="parentName">
-                ชื่อผู้ปกครอง <span className="text-red-400">*</span>
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <input
-                  id="parentName"
-                  type="text"
-                  placeholder="ชื่อผู้ปกครอง"
-                  className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.parentName ? "border-red-500" : ""}`}
-                  {...register("parentName", {
-                    required: "กรุณากรอกชื่อผู้ปกครอง",
-                  })}
-                />
-              </div>
-              {errors.parentName && (
-                <span className="text-xs text-red-400">
-                  {errors.parentName.message}
-                </span>
-              )}
-              <label className="text-sm" htmlFor="parentRelationship">
-                ความสัมพันธ์ <span className="text-red-400">*</span>
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <input
-                  id="parentRelationship"
-                  type="text"
-                  placeholder="ความสัมพันธ์"
-                  className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.parentRelationship ? "border-red-500" : ""}`}
-                  {...register("parentRelationship", {
-                    required: "กรุณากรอกความสัมพันธ์",
-                    minLength: {
-                      value: 2,
-                      message: "กรุณากรอกความสัมพันธ์ให้ชัดเจน",
-                    },
-                  })}
-                />
-              </div>
-              {errors.parentRelationship && (
-                <span className="text-xs text-red-400">
-                  {errors.parentRelationship.message}
-                </span>
-              )}
-              <label className="text-sm" htmlFor="parentPhoneNumber">
-                เบอร์โทรศัพท์ของผู้ปกครอง{" "}
-                <span className="text-red-400">*</span>
-              </label>
-              <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                <input
-                  id="parentPhoneNumber"
-                  type="text"
-                  placeholder="เบอร์โทรศัพท์ของผู้ปกครอง"
-                  className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.parentPhoneNumber ? "border-red-500" : ""}`}
-                  {...register("parentPhoneNumber", {
-                    required: "กรุณากรอกเบอร์โทรศัพท์ของผู้ปกครอง",
-                    pattern: {
-                      value: /^[0-9]{10}$/,
-                      message: "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก)",
-                    },
-                  })}
-                />
-              </div>
-              {errors.parentPhoneNumber && (
-                <span className="text-xs text-red-400">
-                  {errors.parentPhoneNumber.message}
-                </span>
-              )}
+            {errors.user?.phoneNumber && (
+              <span className="text-xs text-red-400">
+                {errors.user.phoneNumber.message}
+              </span>
+            )}
+            <label className="text-sm" htmlFor="parentName">
+              ชื่อผู้ปกครอง <span className="text-red-400">*</span>
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <input
+                id="parentName"
+                type="text"
+                placeholder="ชื่อผู้ปกครอง"
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.parentName ? "border-red-500" : ""}`}
+                {...register("user.parentName", {
+                  required: "กรุณากรอกชื่อผู้ปกครอง",
+                })}
+              />
             </div>
-            <img
-              src="/firstdate/register/divider.png"
-              alt="Divider"
-              className="w-full"
-            />
-            {/* Health Information */}
-            <div className="flex flex-col gap-2">
-              <label className="text-sm" htmlFor="foodAllergy">
-                อาหารที่แพ้ / ข้อจำกัดด้านอาหาร
-              </label>
-              <div className="flex gap-2">
+            {errors.user?.parentName && (
+              <span className="text-xs text-red-400">
+                {errors.user.parentName.message}
+              </span>
+            )}
+            <label className="text-sm" htmlFor="parentRelationship">
+              ความสัมพันธ์ <span className="text-red-400">*</span>
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <input
+                id="parentRelationship"
+                type="text"
+                placeholder="ความสัมพันธ์"
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.parentRelationship ? "border-red-500" : ""}`}
+                {...register("user.parentRelationship", {
+                  required: "กรุณากรอกความสัมพันธ์",
+                  minLength: {
+                    value: 2,
+                    message: "กรุณากรอกความสัมพันธ์ให้ชัดเจน",
+                  },
+                })}
+              />
+            </div>
+            {errors.user?.parentRelationship && (
+              <span className="text-xs text-red-400">
+                {errors.user.parentRelationship.message}
+              </span>
+            )}
+            <label className="text-sm" htmlFor="parentPhoneNumber">
+              เบอร์โทรศัพท์ของผู้ปกครอง <span className="text-red-400">*</span>
+            </label>
+            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
+              <input
+                id="parentPhoneNumber"
+                type="text"
+                placeholder="เบอร์โทรศัพท์ของผู้ปกครอง"
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.parentPhoneNumber ? "border-red-500" : ""}`}
+                {...register("user.parentPhoneNumber", {
+                  required: "กรุณากรอกเบอร์โทรศัพท์ของผู้ปกครอง",
+                  pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก)",
+                  },
+                })}
+              />
+            </div>
+            {errors.user?.parentPhoneNumber && (
+              <span className="text-xs text-red-400">
+                {errors.user.parentPhoneNumber.message}
+              </span>
+            )}
+          </div>
+          <img
+            src="/firstdate/register/divider.png"
+            alt="Divider"
+            className="w-full"
+          />
+          {/* Health Information */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm" htmlFor="foodAllergy">
+              อาหารที่แพ้ / ข้อจำกัดด้านอาหาร
+            </label>
+            <div className="flex gap-2">
+              <Controller
+                name="user.hasAllergies"
+                control={control}
+                rules={{
+                  validate: (v) =>
+                    v === true || v === false || "กรุณาเลือกมีหรือไม่มี",
+                }}
+                render={({ field }) => (
+                  <div className="flex w-full justify-between">
+                    <CustomCheckbox
+                      checked={field.value === true}
+                      onClick={handleHasAllergiesYes}
+                      type="yes"
+                    />
+                    <CustomCheckbox
+                      checked={field.value === false}
+                      onClick={handleHasAllergiesNo}
+                      type="no"
+                    />
+                  </div>
+                )}
+              />
+            </div>
+            {errors.user?.hasAllergies && (
+              <span className="text-xs text-red-400">
+                {errors.user.hasAllergies.message}
+              </span>
+            )}
+            {watchHasAllergies && (
+              <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
                 <Controller
-                  name="hasAllergies"
+                  name="user.foodAllergy"
                   control={control}
-                  rules={{
-                    validate: (v) =>
-                      v === true || v === false || "กรุณาเลือกมีหรือไม่มี",
-                  }}
+                  rules={{ required: "กรุณาระบุอาหารที่แพ้" }}
                   render={({ field }) => (
-                    <div className="flex w-full justify-between">
-                      <CustomCheckbox
-                        checked={field.value === true}
-                        onClick={handleHasAllergiesYes}
-                        type="yes"
-                      />
-                      <CustomCheckbox
-                        checked={field.value === false}
-                        onClick={handleHasAllergiesNo}
-                        type="no"
-                      />
-                    </div>
+                    <input
+                      id="foodAllergy"
+                      type="text"
+                      placeholder="อาหารที่แพ้"
+                      className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.foodAllergy ? "border-red-500" : ""}`}
+                      {...field}
+                    />
                   )}
                 />
               </div>
-              {errors.hasAllergies && (
-                <span className="text-xs text-red-400">
-                  {errors.hasAllergies.message}
-                </span>
-              )}
-              {watchHasAllergies && (
-                <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                  <Controller
-                    name="foodAllergy"
-                    control={control}
-                    rules={{ required: "กรุณาระบุอาหารที่แพ้" }}
-                    render={({ field }) => (
-                      <input
-                        id="foodAllergy"
-                        type="text"
-                        placeholder="อาหารที่แพ้"
-                        className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.foodAllergy ? "border-red-500" : ""}`}
-                        {...field}
-                      />
-                    )}
-                  />
-                </div>
-              )}
-              {errors.foodAllergy && (
-                <span className="text-xs text-red-400">
-                  {errors.foodAllergy.message}
-                </span>
-              )}
-              <label className="text-sm" htmlFor="drugAllergy">
-                ยาที่แพ้
-              </label>
-              <div className="flex gap-2">
+            )}
+            {errors.user?.foodAllergy && (
+              <span className="text-xs text-red-400">
+                {errors.user.foodAllergy.message}
+              </span>
+            )}
+            <label className="text-sm" htmlFor="drugAllergy">
+              ยาที่แพ้
+            </label>
+            <div className="flex gap-2">
+              <Controller
+                name="user.hasMedications"
+                control={control}
+                rules={{
+                  validate: (v) =>
+                    v === true || v === false || "กรุณาเลือกมีหรือไม่มี",
+                }}
+                render={({ field }) => (
+                  <div className="flex w-full justify-between">
+                    <CustomCheckbox
+                      checked={field.value === true}
+                      onClick={handleHasMedicationsYes}
+                      type="yes"
+                    />
+                    <CustomCheckbox
+                      checked={field.value === false}
+                      onClick={handleHasMedicationsNo}
+                      type="no"
+                    />
+                  </div>
+                )}
+              />
+            </div>
+            {errors.user?.hasMedications && (
+              <span className="text-xs text-red-400">
+                {errors.user.hasMedications.message}
+              </span>
+            )}
+            {watchHasMedications && (
+              <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
                 <Controller
-                  name="hasMedications"
+                  name="user.drugAllergy"
                   control={control}
-                  rules={{
-                    validate: (v) =>
-                      v === true || v === false || "กรุณาเลือกมีหรือไม่มี",
-                  }}
+                  rules={{ required: "กรุณาระบุยาที่แพ้" }}
                   render={({ field }) => (
-                    <div className="flex w-full justify-between">
-                      <CustomCheckbox
-                        checked={field.value === true}
-                        onClick={handleHasMedicationsYes}
-                        type="yes"
-                      />
-                      <CustomCheckbox
-                        checked={field.value === false}
-                        onClick={handleHasMedicationsNo}
-                        type="no"
-                      />
-                    </div>
+                    <input
+                      id="drugAllergy"
+                      type="text"
+                      placeholder="ยาที่แพ้"
+                      className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.drugAllergy ? "border-red-500" : ""}`}
+                      {...field}
+                    />
                   )}
                 />
               </div>
-              {errors.hasMedications && (
-                <span className="text-xs text-red-400">
-                  {errors.hasMedications.message}
-                </span>
-              )}
-              {watchHasMedications && (
-                <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                  <Controller
-                    name="drugAllergy"
-                    control={control}
-                    rules={{ required: "กรุณาระบุยาที่แพ้" }}
-                    render={({ field }) => (
-                      <input
-                        id="drugAllergy"
-                        type="text"
-                        placeholder="ยาที่แพ้"
-                        className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.drugAllergy ? "border-red-500" : ""}`}
-                        {...field}
-                      />
-                    )}
-                  />
-                </div>
-              )}
-              {errors.drugAllergy && (
-                <span className="text-xs text-red-400">
-                  {errors.drugAllergy.message}
-                </span>
-              )}
-              <label className="text-sm" htmlFor="illness">
-                โรคประจำตัว
-              </label>
-              <div className="flex gap-2">
+            )}
+            {errors.user?.drugAllergy && (
+              <span className="text-xs text-red-400">
+                {errors.user.drugAllergy.message}
+              </span>
+            )}
+            <label className="text-sm" htmlFor="illness">
+              โรคประจำตัว
+            </label>
+            <div className="flex gap-2">
+              <Controller
+                name="user.hasChronicDiseases"
+                control={control}
+                rules={{
+                  validate: (v) =>
+                    v === true || v === false || "กรุณาเลือกมีหรือไม่มี",
+                }}
+                render={({ field }) => (
+                  <div className="flex w-full justify-between">
+                    <CustomCheckbox
+                      checked={field.value === true}
+                      onClick={handleHasChronicDiseasesYes}
+                      type="yes"
+                    />
+                    <CustomCheckbox
+                      checked={field.value === false}
+                      onClick={handleHasChronicDiseasesNo}
+                      type="no"
+                    />
+                  </div>
+                )}
+              />
+            </div>
+            {errors.user?.hasChronicDiseases && (
+              <span className="text-xs text-red-400">
+                {errors.user.hasChronicDiseases.message}
+              </span>
+            )}
+            {watchHasChronicDiseases && (
+              <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
                 <Controller
-                  name="hasChronicDiseases"
+                  name="user.illness"
                   control={control}
-                  rules={{
-                    validate: (v) =>
-                      v === true || v === false || "กรุณาเลือกมีหรือไม่มี",
-                  }}
+                  rules={{ required: "กรุณาระบุโรคประจำตัว" }}
                   render={({ field }) => (
-                    <div className="flex w-full justify-between">
-                      <CustomCheckbox
-                        checked={field.value === true}
-                        onClick={handleHasChronicDiseasesYes}
-                        type="yes"
-                      />
-                      <CustomCheckbox
-                        checked={field.value === false}
-                        onClick={handleHasChronicDiseasesNo}
-                        type="no"
-                      />
-                    </div>
+                    <input
+                      id="illness"
+                      type="text"
+                      placeholder="โรคประจำตัว"
+                      className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.illness ? "border-red-500" : ""}`}
+                      {...field}
+                    />
                   )}
                 />
               </div>
-              {errors.hasChronicDiseases && (
-                <span className="text-xs text-red-400">
-                  {errors.hasChronicDiseases.message}
-                </span>
-              )}
-              {watchHasChronicDiseases && (
-                <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-                  <Controller
-                    name="illness"
-                    control={control}
-                    rules={{ required: "กรุณาระบุโรคประจำตัว" }}
-                    render={({ field }) => (
-                      <input
-                        id="illness"
-                        type="text"
-                        placeholder="โรคประจำตัว"
-                        className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.illness ? "border-red-500" : ""}`}
-                        {...field}
-                      />
-                    )}
-                  />
-                </div>
-              )}
-              {errors.illness && (
-                <span className="text-xs text-red-400">
-                  {errors.illness.message}
-                </span>
-              )}
-            </div>
-            <img
-              src="/firstdate/register/divider.png"
-              alt="Divider"
-              className="w-full"
-            />
-            <div className="flex w-full flex-col items-center gap-4">
-              <button
-                type="submit"
-                className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
-                onClick={() => updateProfile(profileData)}
-              >
-                บันทึก
-              </button>
-              <button
-                type="button"
-                className="flex w-36 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 py-2"
-                onClick={() => setIsEditMode(false)}
-              >
-                ยกเลิก
-              </button>
-            </div>
-          </form>
-        ) : (
-          <>
-            {/* Personal Information */}
-            <div className="flex flex-col gap-4">
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>ชื่อ:</span>
-                <p>
-                  {profileData.prefix === "mr"
-                    ? "นาย"
-                    : profileData.prefix === "ms"
-                      ? "นางสาว"
-                      : "นาง"}{" "}
-                  {profileData.firstName} {profileData.lastName}
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>ชื่อเล่น:</span>
-                <p>{profileData.nickname}</p>
-              </div>
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>คณะ:</span>
-                <p>
-                  {faculties.find((f) => f.value === profileData.faculty)
-                    ?.text || ""}
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>รหัสนิสิต:</span>
-                <p>{profileData.studentId}</p>
-              </div>
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>รหัสประชาชน:</span>
-                <p>{profileData.citizenId}</p>
-              </div>
-            </div>
-            <img
-              src="/firstdate/register/divider.png"
-              alt="Divider"
-              className="w-full"
-            />
-            {/* Contact Information */}
-            <div className="flex flex-col gap-4">
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>เบอร์โทรศัพท์:</span>
-                <p>{profileData.phoneNumber}</p>
-              </div>
-              <hr className="m-2 w-48 self-center" />
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>ผู้ปกครอง:</span>
-                <p>{profileData.parentName}</p>
-              </div>
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>ความสัมพันธ์:</span>
-                <p>{profileData.parentRelationship}</p>
-              </div>
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>เบอร์โทรศัพท์:</span>
-                <p>{profileData.parentPhoneNumber}</p>
-              </div>
-            </div>
-            <img
-              src="/firstdate/register/divider.png"
-              alt="Divider"
-              className="w-full"
-            />
-            {/* Health Information */}
-            <div className="flex flex-col gap-4">
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>
-                  อาหารที่แพ้ / ข้อจำกัดด้านอาหาร:
-                </span>
-                <p>
-                  {profileData.hasAllergies === true
-                    ? profileData.foodAllergy
-                    : profileData.hasAllergies === false
-                      ? "ไม่มี"
-                      : "-"}
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>ยาที่แพ้:</span>
-                <p>
-                  {profileData.hasMedications === true
-                    ? profileData.drugAllergy
-                    : profileData.hasMedications === false
-                      ? "ไม่มี"
-                      : "-"}
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <span className={`text-[${themeColor}]`}>โรคประจำตัว:</span>
-                <p>
-                  {profileData.hasChronicDiseases === true
-                    ? profileData.illness
-                    : profileData.hasChronicDiseases === false
-                      ? "ไม่มี"
-                      : "-"}
-                </p>
-              </div>
-            </div>
-            <img
-              src="/firstdate/register/divider.png"
-              alt="Divider"
-              className="w-full"
-            />
-            {/* Security Information */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between gap-2">
-                <span className={`text-[${themeColor}]`}>รหัสผ่าน:</span>
-                <button
-                  className="flex w-36 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 py-2"
-                  onClick={() => (window.location.href = "/login")}
-                >
-                  รีเซ็ตรหัสผ่าน
-                </button>
-              </div>
-            </div>
-            <img
-              src="/firstdate/register/divider.png"
-              alt="Divider"
-              className="w-full"
-            />
+            )}
+            {errors.user?.illness && (
+              <span className="text-xs text-red-400">
+                {errors.user.illness.message}
+              </span>
+            )}
+          </div>
+          <img
+            src="/firstdate/register/divider.png"
+            alt="Divider"
+            className="w-full"
+          />
+          <div className="flex w-full flex-col items-center gap-4">
             <button
-              onClick={handleReturnHome}
-              className="bg-white py-2 text-black"
+              type="submit"
+              className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
             >
-              กลับสู่หน้าหลัก
+              บันทึก
             </button>
-          </>
-        )}
-      </section>
+            <button
+              type="button"
+              className="flex w-36 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 py-2"
+              onClick={() => setIsEditMode(false)}
+            >
+              ยกเลิก
+            </button>
+          </div>
+        </form>
+      ) : (
+        <>
+          {/* Personal Information */}
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>ชื่อ:</span>
+              <p>
+                {profileData.user.prefix === "mr"
+                  ? "นาย"
+                  : profileData.user.prefix === "ms"
+                    ? "นางสาว"
+                    : "นาง"}{" "}
+                {profileData.user.firstName} {profileData.user.lastName}
+              </p>
+            </div>
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>ชื่อเล่น:</span>
+              <p>{profileData.user.nickname}</p>
+            </div>
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>คณะ:</span>
+              <p>
+                {faculties.find((f) => f.value === profileData.user.faculty)
+                  ?.text || ""}
+              </p>
+            </div>
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>รหัสนิสิต:</span>
+              <p>{profileData.user.studentId}</p>
+            </div>
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>รหัสประชาชน:</span>
+              <p>{profileData.user.citizenId}</p>
+            </div>
+          </div>
+          <img
+            src="/firstdate/register/divider.png"
+            alt="Divider"
+            className="w-full"
+          />
+          {/* Contact Information */}
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>เบอร์โทรศัพท์:</span>
+              <p>{profileData.user.phoneNumber}</p>
+            </div>
+            <hr className="m-2 w-48 self-center" />
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>ผู้ปกครอง:</span>
+              <p>{profileData.user.parentName}</p>
+            </div>
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>ความสัมพันธ์:</span>
+              <p>{profileData.user.parentRelationship}</p>
+            </div>
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>เบอร์โทรศัพท์:</span>
+              <p>{profileData.user.parentPhoneNumber}</p>
+            </div>
+          </div>
+          <img
+            src="/firstdate/register/divider.png"
+            alt="Divider"
+            className="w-full"
+          />
+          {/* Health Information */}
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>
+                อาหารที่แพ้ / ข้อจำกัดด้านอาหาร:
+              </span>
+              <p>
+                {profileData.user.hasAllergies === true
+                  ? profileData.user.foodAllergy
+                  : profileData.user.hasAllergies === false
+                    ? "ไม่มี"
+                    : "-"}
+              </p>
+            </div>
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>ยาที่แพ้:</span>
+              <p>
+                {profileData.user.hasMedications === true
+                  ? profileData.user.drugAllergy
+                  : profileData.user.hasMedications === false
+                    ? "ไม่มี"
+                    : "-"}
+              </p>
+            </div>
+            <div className="flex justify-between">
+              <span className={`text-[${themeColor}]`}>โรคประจำตัว:</span>
+              <p>
+                {profileData.user.hasChronicDiseases === true
+                  ? profileData.user.illness
+                  : profileData.user.hasChronicDiseases === false
+                    ? "ไม่มี"
+                    : "-"}
+              </p>
+            </div>
+          </div>
+          <img
+            src="/firstdate/register/divider.png"
+            alt="Divider"
+            className="w-full"
+          />
+          {/* Security Information */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between gap-2">
+              <span className={`text-[${themeColor}]`}>รหัสผ่าน:</span>
+              <button
+                className="flex w-36 items-center justify-center gap-2 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 py-2"
+                onClick={() => (window.location.href = "/login")}
+              >
+                รีเซ็ตรหัสผ่าน
+              </button>
+            </div>
+          </div>
+          <img
+            src="/firstdate/register/divider.png"
+            alt="Divider"
+            className="w-full"
+          />
+          <button
+            onClick={handleReturnHome}
+            className="bg-white py-2 text-black"
+          >
+            กลับสู่หน้าหลัก
+          </button>
+        </>
+      )}
+    </section>
+  );
+}
+
+export default function EditProfile({
+  userType,
+}: {
+  userType: "FRESHMAN" | "STAFF";
+}): ReactNode {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <EditProfileContent userType={userType} />
     </QueryClientProvider>
   );
 }

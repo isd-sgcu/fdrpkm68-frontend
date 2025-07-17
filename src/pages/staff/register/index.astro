@@ -1,8 +1,10 @@
 ---
 import RegisterForm from "@/components/common/register/RegisterForm.tsx";
+import Snackbar from "@/components/common/Snackbar.astro";
 import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
 ---
 
 <Layout>
+  <Snackbar />
   <RegisterForm client:load userType="STAFF" />
 </Layout>
