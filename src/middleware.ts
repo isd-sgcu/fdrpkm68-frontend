@@ -1,13 +1,22 @@
 import { defineMiddleware } from "astro:middleware";
 import jwt from "jsonwebtoken";
 
-import { nonProtectRoutes } from "@/constants/Routes";
+import { nonProtectRoutes, nonStartedRoutes } from "@/constants/Routes";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url;
 
   if (url.pathname === "/" || url.pathname === "/logout") {
     return next();
+  }
+
+  if (nonStartedRoutes.some((route) => url.pathname.startsWith(route))) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/",
+      },
+    });
   }
 
   const cookie = context.request.headers.get("cookie") ?? "";

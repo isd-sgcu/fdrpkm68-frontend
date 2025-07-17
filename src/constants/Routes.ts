@@ -6,3 +6,5 @@ export const nonProtectRoutes = [
   "/staff/register",
   "/staff/login",
 ];
+
+export const nonStartedRoutes = ["/rpkm"];
