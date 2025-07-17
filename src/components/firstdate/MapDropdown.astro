@@ -105,8 +105,6 @@ const { options, selectedOption, class: additionalClasses = "" } = Astro.props;
           document.dispatchEvent(event);
         });
       });
-    } else {
-      console.error("MapDropdown elements not found!", { trigger, menu });
     }
   });
 
@@ -122,13 +120,6 @@ const { options, selectedOption, class: additionalClasses = "" } = Astro.props;
     setTimeout(() => {
       const trigger = document.getElementById("map-dropdown-trigger");
       const menu = document.getElementById("map-dropdown-menu");
-
-      if (!trigger || !menu) {
-        console.warn("Dropdown elements still not found, retrying...");
-        return;
-      }
-
-      console.log("Fallback initialization successful");
     }, 100);
   }
 </script>

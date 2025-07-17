@@ -37,6 +37,7 @@ export default function RegisterForm({
       : "/firstdate/register/staff/form-bg.png";
   const [step, setStep] = useState<number>(0);
   const [isConsentGiven, setIsConsentGiven] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -85,7 +86,7 @@ export default function RegisterForm({
     setStep(3);
   }, []);
 
-  const onHealthSubmit = useCallback((_data: HealthInfo): void => {
+  const _onHealthSubmit = useCallback((_data: HealthInfo): void => {
     setStep(4);
   }, []);
 
@@ -95,40 +96,56 @@ export default function RegisterForm({
 
   const onFinalSubmit = useCallback(
     async (data: RegisterFormData): Promise<void> => {
-      const endPoint =
-        userType === "FRESHMAN" ? "/auth/register" : "/auth/staff-register";
+      // Prevent multiple submissions
+      if (isLoading) {
+        return;
+      }
 
-      const response = await api.post(endPoint, {
-        studentId: data.studentId,
-        citizenId: data.citizenId,
-        password: data.password,
-        prefix: data.prefix,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        nickname: data.nickname,
-        faculty: data.faculty,
-        academicYear: parseInt(data.academicYear),
-        phoneNumber: data.phoneNumber,
-        parentName: data.parentName,
-        parentPhoneNumber: data.parentPhoneNumber,
-        parentRelationship: data.parentRelationship,
-        foodAllergy: data.hasAllergies ? data.foodAllergy : null,
-        drugAllergy: data.hasMedications ? data.drugAllergy : null,
-        illness: data.hasChronicDiseases ? data.illness : null,
-      });
-      if (response.success) {
-        window.location.href = "/login";
-      } else {
-        console.error("Registration failed:", response.message);
+      setIsLoading(true);
+
+      try {
+        const endPoint =
+          userType === "FRESHMAN" ? "/auth/register" : "/auth/staff-register";
+
+        const response = await api.post(endPoint, {
+          studentId: data.studentId,
+          citizenId: data.citizenId,
+          password: data.password,
+          prefix: data.prefix,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          nickname: data.nickname,
+          faculty: data.faculty,
+          academicYear: parseInt(data.academicYear),
+          phoneNumber: data.phoneNumber,
+          parentName: data.parentName,
+          parentPhoneNumber: data.parentPhoneNumber,
+          parentRelationship: data.parentRelationship,
+          foodAllergy: data.hasAllergies ? data.foodAllergy : null,
+          drugAllergy: data.hasMedications ? data.drugAllergy : null,
+          illness: data.hasChronicDiseases ? data.illness : null,
+        });
+
+        if (response.success) {
+          window.location.href = "/login";
+        } else {
+          showSnackbar(
+            response.error || "Registration failed. Please try again.",
+            "error"
+          );
+          setStep(3);
+        }
+      } catch {
         showSnackbar(
-          response.error || "Registration failed. Please try again.",
+          "An unexpected error occurred. Please try again.",
           "error"
         );
-
         setStep(3);
+      } finally {
+        setIsLoading(false);
       }
     },
-    []
+    [isLoading, userType]
   );
 
   const handleConsentAccept = useCallback((): void => {
@@ -191,6 +208,7 @@ export default function RegisterForm({
               onSubmit={handleSubmit(onFinalSubmit)}
               setStep={setStep}
               userType={userType}
+              isLoading={isLoading}
             />
           )}
           {step === 4 && <CompleteStep userType={userType} />}

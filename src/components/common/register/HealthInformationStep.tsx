@@ -33,6 +33,7 @@ export default function HealthInformationStep({
   onSubmit,
   setStep,
   userType,
+  isLoading = false,
 }: {
   register: UseFormRegister<RegisterFormData>;
   errors: FieldErrors<RegisterFormData>;
@@ -43,6 +44,7 @@ export default function HealthInformationStep({
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   setStep: (step: number) => void;
   userType: "FRESHMAN" | "STAFF";
+  isLoading?: boolean;
 }): ReactNode {
   const globUrl =
     userType === "FRESHMAN"
@@ -315,9 +317,21 @@ export default function HealthInformationStep({
         <div className="mt-2 flex w-full flex-col items-center justify-center gap-4">
           <button
             type="submit"
-            className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
+            disabled={isLoading}
+            className={`w-36 rounded-full py-2 text-black transition-colors duration-200 ${
+              isLoading
+                ? "cursor-not-allowed bg-gradient-to-t from-gray-400 to-gray-300"
+                : "bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] hover:from-[#FFB6C1]/80 hover:to-[#FFFFF2]/80"
+            }`}
           >
-            ถัดไป
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-600 border-t-transparent" />
+                กำลังสมัคร...
+              </div>
+            ) : (
+              "ถัดไป"
+            )}
           </button>
           <button
             type="button"
