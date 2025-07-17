@@ -191,7 +191,7 @@ export const getEventStatus = async (
 
   return {
     isRegistered: false,
-    isLate: false,
+    isLate: true,
     isComingSoon: false,
   };
 };
