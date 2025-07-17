@@ -4,10 +4,10 @@ import Popup from "@/components/common/Popup.astro";
 import Tabs from "@/components/common/Tabs.astro";
 import Box from "@/components/firstdate/Box.astro";
 import QRScanner from "@/components/staff/QRScanner.tsx";
-import Layout from "@/layouts/staff/WithNavbar.astro";
+import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
 ---
 
-<Layout>
+<StaffWithNavbar>
   <!-- QR Scanner Section (shown when events are active) -->
   <div id="qr-scanner-section" class="flex w-full flex-col">
     <div class="mb-8 flex flex-col items-center justify-center">
@@ -326,7 +326,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       </div>
     </div>
   </div>
-</Layout>
+</StaffWithNavbar>
 
 <script>
   import { api } from "@/lib/api";
