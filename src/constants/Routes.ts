@@ -8,3 +8,4 @@ export const nonProtectRoutes = [
 ];
 
 export const nonStartedRoutes = [];
+// export const nonStartedRoutes = ["/rpkm", "/fest"];
