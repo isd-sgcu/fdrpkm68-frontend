@@ -13,11 +13,13 @@ import ButtonFd from "@common/ButtonFd.astro";
     aria-label="Toggle menu"
     aria-controls="nav-menu"
     aria-expanded="false"
+    class="relative z-10 cursor-pointer p-2 hover:opacity-80 active:scale-95"
+    style="min-width: 44px; min-height: 44px;"
   >
     <img
       src="/common/hamburger.svg"
       alt="menu"
-      class="h-3 w-auto -translate-x-4"
+      class="pointer-events-none h-3 w-auto -translate-x-4"
     />
   </button>
 </nav>
@@ -28,11 +30,15 @@ import ButtonFd from "@common/ButtonFd.astro";
   <div class="relative flex w-full items-center justify-between bg-white p-1">
     <div></div>
     <img src="/common/logo_freshmenfest.svg" alt="logo" />
-    <button id="hamburger-button-menu">
+    <button
+      id="hamburger-button-menu"
+      class="relative z-10 cursor-pointer p-2 hover:opacity-80 active:scale-95"
+      style="min-width: 44px; min-height: 44px;"
+    >
       <img
         src="/common/hamburger.svg"
         alt="menu"
-        class="h-3 w-auto -translate-x-4"
+        class="pointer-events-none h-3 w-auto -translate-x-4"
       />
     </button>
   </div>
@@ -67,14 +73,47 @@ import ButtonFd from "@common/ButtonFd.astro";
     );
     const navMenu = document.getElementById("nav-menu");
 
-    hamburgerButton.addEventListener("click", () => {
-      navMenu.classList.toggle("hidden");
-      document.body.classList.add("no-scroll");
-    });
+    if (hamburgerButton && navMenu) {
+      hamburgerButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navMenu.classList.toggle("hidden");
+        document.body.classList.add("no-scroll");
+      });
+    }
 
-    hamburgerButtonMenu.addEventListener("click", () => {
-      navMenu.classList.toggle("hidden");
-      document.body.classList.remove("no-scroll");
-    });
+    if (hamburgerButtonMenu && navMenu) {
+      hamburgerButtonMenu.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navMenu.classList.toggle("hidden");
+        document.body.classList.remove("no-scroll");
+      });
+    }
   });
+
+  // Fallback for cases where DOMContentLoaded might have already fired
+  if (document.readyState === "loading") {
+    // DOMContentLoaded has not fired yet
+  } else {
+    // DOMContentLoaded has already fired, run the code immediately
+    setTimeout(() => {
+      const hamburgerButton = document.getElementById("hamburger-button-main");
+      const navMenu = document.getElementById("nav-menu");
+
+      if (
+        hamburgerButton &&
+        navMenu &&
+        !hamburgerButton.hasAttribute("data-listener-added")
+      ) {
+        hamburgerButton.setAttribute("data-listener-added", "true");
+        hamburgerButton.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          navMenu.classList.toggle("hidden");
+          document.body.classList.add("no-scroll");
+        });
+      }
+    }, 5000);
+  }
 </script>
