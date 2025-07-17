@@ -160,7 +160,7 @@ if (eventStatus.isRegistered && eventStatus.checkinData) {
 
           {eventType === "firstdate" || eventType === "freshmen-night" ? (
             <div class="flex w-full flex-col items-center justify-center gap-2">
-              <ButtonFd class="mb-1" color="white" id="show-qr-btn">
+              <ButtonFd class="mb-1" color="white" href="/firstdate/qrcode/">
                 แสดง QR Code เข้างาน
               </ButtonFd>
               <ButtonFd class="mb-1" color="white" href="/firstdate/maps/">
@@ -273,29 +273,6 @@ if (eventStatus.isRegistered && eventStatus.checkinData) {
         registerBtn.textContent = "ลงทะเบียนเข้าร่วมงาน";
         registerBtn.disabled = false;
         alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
-      }
-    });
-  }
-
-  // Handle QR code display toggle
-  const showQrBtn = document.getElementById("show-qr-btn") as HTMLButtonElement;
-  const eventInfoContent = document.getElementById(
-    "event-info-content"
-  ) as HTMLDivElement;
-  const qrContent = document.getElementById("qr-content") as HTMLDivElement;
-
-  if (showQrBtn && eventInfoContent && qrContent) {
-    showQrBtn.addEventListener("click", () => {
-      if (qrContent.classList.contains("hidden")) {
-        // Show QR code content, hide event info content
-        eventInfoContent.classList.add("hidden");
-        qrContent.classList.remove("hidden");
-        showQrBtn.textContent = "ซ่อน QR Code";
-      } else {
-        // Hide QR code content, show event info content
-        qrContent.classList.add("hidden");
-        eventInfoContent.classList.remove("hidden");
-        showQrBtn.textContent = "แสดง QR Code เข้างาน";
       }
     });
   }
