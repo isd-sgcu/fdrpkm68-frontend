@@ -305,25 +305,28 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       </Popup>
     </div>
   </div>
-</Layout>
 
-<!-- Placeholder Section (shown when no events are active) -->
-<div id="no-event-section" class="hidden min-h-screen px-4 py-16">
-  <div class="mx-auto max-w-4xl">
-    <h1 class="mb-12 text-center text-2xl font-bold">
-      ยังไม่ถึงเวลาลงทะเบียนงาน
-    </h1>
+  <!-- Placeholder Section (shown when no events are active) -->
+  <div
+    id="no-event-section"
+    class="flex hidden min-h-screen flex-col items-center justify-center px-4"
+  >
+    <div class="mx-auto max-w-4xl text-center">
+      <h1 class="mb-12 text-2xl font-bold text-white">
+        ยังไม่ถึงเวลาลงทะเบียนงาน
+      </h1>
 
-    <div class="text-center">
-      <a
-        href="/staff/home"
-        class="inline-block rounded-lg bg-white px-8 py-3 text-black transition-colors hover:bg-slate-200"
-      >
-        back to home
-      </a>
+      <div>
+        <a
+          href="/staff/home"
+          class="inline-block rounded-lg bg-white px-8 py-3 text-black transition-colors hover:bg-slate-200"
+        >
+          back to home
+        </a>
+      </div>
     </div>
   </div>
-</div>
+</Layout>
 
 <script>
   import { api } from "@/lib/api";
