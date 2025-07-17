@@ -203,7 +203,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
                   class="text-[24px] leading-[1.4] font-medium text-[#fffff2]"
                   style="text-shadow: rgba(0,0,0,0.5) 0px 2px 4px, #cb438b 0px 0px 6px; font-family: 'IBM Plex Sans Thai', sans-serif;"
                 >
-                  น้องใหม่ จุฬา
+                  Freshmen
                 </div>
                 <div
                   class="text-[24px] leading-[1.4] font-semibold text-[#fffff2]"
@@ -737,7 +737,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       const { citizenId, studentId } = extractIds(qrData);
 
       if (!citizenId || !studentId) {
-        throw new Error("QR Code ไม่ถูกต้อง: ไม่พบ Citizen ID หรือ Student ID");
+        throw new Error("QR Code ไม่ถูกต้อง");
       }
 
       await onQrSubmit({ studentId, citizenId });
@@ -765,11 +765,17 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
         errorMessage.includes("401") ||
         errorMessage.includes("Unauthorized")
       ) {
-        alert("❌ กรุณาเข้าสู่ระบบก่อนใช้งาน QR Scanner");
+        showErrorModal("กรุณาเข้าสู่ระบบก่อนใช้งาน QR Scanner");
         return;
       }
 
-      alert("❌ เกิดข้อผิดพลาด: " + errorMessage);
+      // Handle specific "Failed to find checkin" error
+      if (errorMessage.includes("Failed to find checkin by studentId")) {
+        showErrorModal("ไม่พบข้อมูลการลงทะเบียน");
+        return;
+      }
+
+      showErrorModal("เกิดข้อผิดพลาด: " + errorMessage);
     }
   };
 
