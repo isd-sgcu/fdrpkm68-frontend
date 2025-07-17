@@ -112,7 +112,7 @@ export const houseDisplayData = [
     id: 8,
     thName: "บ้านโบ้",
     enName: "Baan Boe",
-    image: "BaanBoe.png",
+    image: "BaanBoe.PNG",
     thDescription:
       "บ้านโบ้ จุดรวมพลน้องหมาสุดน่ารัก ทุกสายพันธุ์ ทุกสไตล์ อยู่ด้วยกันอย่างอบอุ่น มาเป็นโบ้ด้วยกันมั้ย โฮ่งง!",
     enDescription:
