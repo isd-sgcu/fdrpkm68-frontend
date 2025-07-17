@@ -1,18 +1,322 @@
 ---
+import ButtonFd from "@/components/common/ButtonFd.astro";
+import Popup from "@/components/common/Popup.astro";
+import Tabs from "@/components/common/Tabs.astro";
+import Box from "@/components/firstdate/Box.astro";
+import QRScanner from "@/components/staff/QRScanner.tsx";
 import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
 ---
 
-<StaffWithNavbar
-  title="About - FreshmenFest 2025"
-  description="Learn more about FreshmenFest 2025, the ultimate orientation experience for new students."
->
-  <div class="min-h-screen px-4 py-16">
-    <div class="mx-auto max-w-4xl">
-      <h1 class="mb-12 text-center text-2xl font-bold">
+<StaffWithNavbar>
+  <!-- QR Scanner Section (shown when events are active) -->
+  <div id="qr-scanner-section" class="flex w-full flex-col">
+    <div class="mb-8 flex flex-col items-center justify-center">
+      <p class="mt-[26px] text-xl">สแกน QR เข้างาน</p>
+      <h1
+        id="event-title"
+        class="font-zen-dots mt-1.5 fill-white text-center text-4xl text-white drop-shadow-lg drop-shadow-pink-500"
+      >
+        กำลังโหลด...
+      </h1>
+
+      <div id="event-status" class="mt-4 text-center">
+        <p id="event-period" class="text-lg text-gray-200"></p>
+        <p id="event-schedule" class="text-sm text-gray-300"></p>
+      </div>
+
+      <section class="my-4 w-full">
+        <Tabs>
+          <div slot="qr-content">
+            <div class="flex flex-col items-center justify-center text-center">
+              <Popup
+                size="small"
+                color="light-pink"
+                class="flex flex-col items-center justify-center text-center"
+              >
+                <div id="scanner-container">
+                  <QRScanner
+                    client:load
+                    onScan={(qrData) => {
+                      if (window.handleQRScan) {
+                        return window.handleQRScan(qrData);
+                      } else {
+                        setTimeout(() => {
+                          if (window.handleQRScan) {
+                            window.handleQRScan(qrData);
+                          }
+                        }, 100);
+                      }
+                    }}
+                    onError={(error) => {
+                      if (window.showErrorModal) {
+                        window.showErrorModal(
+                          error.message || "เกิดข้อผิดพลาดในการสแกน QR Code"
+                        );
+                      }
+                    }}
+                  />
+                </div>
+                <div id="no-active-event" class="hidden p-8 text-center">
+                  <p class="text-lg text-gray-600">
+                    ไม่มีงานที่เปิดให้ลงทะเบียนในขณะนี้
+                  </p>
+                  <p class="mt-2 text-sm text-gray-500">
+                    กรุณาลองใหม่ในช่วงเวลาที่เปิดลงทะเบียน
+                  </p>
+                </div>
+              </Popup>
+            </div>
+          </div>
+
+          <div slot="student-content">
+            <Box
+              size="small"
+              color="light-pink"
+              class="flex flex-col items-center justify-center text-start"
+            >
+              <form
+                id="manual-entry-form"
+                class="flex w-full flex-col gap-[30px]"
+              >
+                <div
+                  class="flex w-full flex-col items-end justify-start gap-2.5"
+                >
+                  <div class="w-full">
+                    <div class="flex w-full flex-row items-center">
+                      <div
+                        class="flex w-full flex-row items-center justify-start gap-2.5 px-2.5 py-0"
+                      >
+                        <label class="text-lg text-white"> รหัสนิสิต </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]"
+                  >
+                    <input
+                      type="text"
+                      id="student-id-input"
+                      name="studentId"
+                      class="h-9 w-full bg-black p-[10px] text-[16px] leading-[1.4] text-[rgba(255,255,255,0.8)] placeholder:text-[rgba(255,255,255,0.8)]"
+                      placeholder="กรุณากรอกเลขนิสิต 10 หลัก"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  class="flex w-full flex-col items-end justify-start gap-2.5"
+                >
+                  <div class="w-full">
+                    <div class="flex w-full flex-row items-center">
+                      <div
+                        class="flex w-full flex-row items-center justify-start gap-2.5 px-2.5 py-0"
+                      >
+                        <label class="text-lg text-white"> รหัสประชาชน </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]"
+                  >
+                    <input
+                      type="text"
+                      id="citizen-id-input"
+                      name="citizenId"
+                      class="h-9 w-full bg-black p-[10px] text-[16px] leading-[1.4] text-[rgba(255,255,255,0.8)] placeholder:text-[rgba(255,255,255,0.8)]"
+                      placeholder="กรุณากรอกเลขบัตรประชาชน"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  class="mt-16 flex w-full flex-row items-center justify-center"
+                >
+                  <ButtonFd
+                    variant="fill"
+                    color="light-beige"
+                    id="manual-submit-btn"
+                  >
+                    ลงทะเบียน
+                  </ButtonFd>
+                </div>
+              </form>
+              <div id="manual-no-active-event" class="hidden p-4 text-center">
+                <p class="text-lg text-gray-600">
+                  ไม่มีงานที่เปิดให้ลงทะเบียนในขณะนี้
+                </p>
+              </div>
+            </Box>
+          </div>
+        </Tabs>
+      </section>
+    </div>
+  </div>
+
+  <div
+    id="success-modal"
+    class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-800/50 opacity-0 transition-opacity duration-300 ease-in-out"
+  >
+    <div
+      class="relative mx-4 w-full max-w-sm scale-95 transform transition-all duration-300 ease-in-out"
+    >
+      <Popup
+        size="medium"
+        color="light-green"
+        class="relative flex flex-col items-center justify-center overflow-hidden p-8 text-center"
+      >
+        <div class="flex w-[260px] flex-col items-center justify-start gap-5">
+          <div class="flex flex-col items-center justify-start gap-2.5">
+            <div class="flex flex-col items-center justify-start gap-[15px]">
+              <div class="flex flex-col items-center justify-start gap-2.5">
+                <div
+                  class="relative flex h-[35px] w-[35px] items-center justify-center overflow-hidden rounded-[38px] bg-[#fffff2]"
+                  style="box-shadow: 0px 0px 10px 0px #cb438b;"
+                >
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M13.5 4.5L6 12L2.5 8.5"
+                      stroke="#cb438b"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"></path>
+                  </svg>
+                </div>
+
+                <h2
+                  class="w-[194px] text-center text-[28px] leading-[1.4] font-semibold text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.5) 0px 2px 4px, #cb438b 0px 0px 10px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  ลงทะเบียนสำเร็จ
+                </h2>
+              </div>
+
+              <div
+                class="flex flex-col items-center justify-start gap-[3px] text-center"
+              >
+                <div
+                  class="text-[20px] leading-[1.4] text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.6) 0px 1px 4px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  ยินดีต้อนรับ
+                </div>
+                <div
+                  id="student-name-display"
+                  class="text-[24px] leading-[1.4] font-medium text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.5) 0px 2px 4px, #cb438b 0px 0px 6px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  Freshmen
+                </div>
+                <div
+                  class="text-[24px] leading-[1.4] font-semibold text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.6) 0px 1px 4px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  <span id="user-id-display">681234567</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <ButtonFd
+              id="close-modal-btn"
+              variant="fill"
+              color="light-beige"
+              class="h-[43px] w-full text-[20px] leading-[1.4]"
+            >
+              ลงทะเบียนคนต่อไป
+            </ButtonFd>
+          </div>
+        </div>
+
+        <div class="hidden">
+          <span id="user-id"></span>
+          <span id="event-name"></span>
+          <span id="checkin-status"></span>
+          <span id="checkin-time"></span>
+        </div>
+      </Popup>
+    </div>
+  </div>
+
+  <div
+    id="error-modal"
+    class="fixed inset-0 z-50 flex hidden items-center justify-center bg-gray-800/50 opacity-0 transition-opacity duration-300 ease-in-out"
+  >
+    <div
+      class="relative mx-4 w-full max-w-sm scale-95 transform transition-all duration-300 ease-in-out"
+    >
+      <Popup
+        size="small"
+        color="light-pink"
+        class="relative flex flex-col items-center justify-center overflow-hidden p-8 text-center"
+      >
+        <div class="flex w-[260px] flex-col items-center justify-start gap-5">
+          <div class="flex flex-col items-center justify-start gap-2.5">
+            <div class="flex flex-col items-center justify-start gap-[15px]">
+              <div class="flex flex-col items-center justify-start gap-2.5">
+                <div
+                  class="relative flex h-[35px] w-[35px] items-center justify-center overflow-hidden rounded-[35px] bg-[#fffff2]"
+                  style="box-shadow: 0px 0px 10px 0px #cb438b;"
+                >
+                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M12 4L4 12M4 4l8 8"
+                      stroke="#cb438b"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"></path>
+                  </svg>
+                </div>
+
+                <h2
+                  class="w-[194px] text-center text-[28px] leading-[1.4] font-semibold text-[#fffff2]"
+                  style="text-shadow: rgba(0,0,0,0.5) 0px 2px 4px, #cb438b 0px 0px 10px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  ลงทะเบียนไม่สำเร็จ
+                </h2>
+              </div>
+
+              <div
+                class="flex flex-col items-center justify-start gap-[3px] text-center"
+              >
+                <div
+                  class="w-[231px] text-center text-[24px] leading-[1.4] font-medium text-[#ffffff]"
+                  style="text-shadow: rgba(0,0,0,0.6) 0px 1px 4px; font-family: 'IBM Plex Sans Thai', sans-serif;"
+                >
+                  <p class="mb-0 block">
+                    เลขนิสิต หรือ เลขบัตรประชาชน ไม่ถูกต้อง
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <ButtonFd
+              id="close-error-modal-btn"
+              variant="fill"
+              color="light-beige"
+              class="h-[43px] w-full text-[20px] leading-[1.4]"
+            >
+              ลงทะเบียนคนต่อไป
+            </ButtonFd>
+          </div>
+        </div>
+      </Popup>
+    </div>
+  </div>
+
+  <!-- Placeholder Section (shown when no events are active) -->
+  <div
+    id="no-event-section"
+    class="flex hidden min-h-screen flex-col items-center justify-center px-4"
+  >
+    <div class="mx-auto max-w-4xl text-center">
+      <h1 class="mb-12 text-2xl font-bold text-white">
         ยังไม่ถึงเวลาลงทะเบียนงาน
       </h1>
 
-      <div class="text-center">
+      <div>
         <a
           href="/staff/home"
           class="inline-block rounded-lg bg-white px-8 py-3 text-black transition-colors hover:bg-slate-200"
@@ -23,3 +327,707 @@ import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
     </div>
   </div>
 </StaffWithNavbar>
+
+<script>
+  import { api } from "@/lib/api";
+  import { EVENT_CONFIGS, getEventStatus } from "@/lib/eventAPI";
+  import type { EventType } from "@/lib/eventAPI";
+
+  interface QrFormData {
+    studentId: string;
+    citizenId: string;
+  }
+  interface CheckinRecord {
+    id: string;
+    userId: string;
+    event: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    user?: {
+      id: string;
+      studentId: string;
+      citizenId: string;
+      firstName: string;
+      lastName: string;
+      nickname: string;
+      prefix: string;
+    };
+  }
+  const ActualCheckinRecord: CheckinRecord = {
+    id: "",
+    userId: "",
+    event: "",
+    status: "",
+    createdAt: "",
+    updatedAt: "",
+  };
+  let currentActiveEvent: any = null;
+  (window as any).handleQRScan = null;
+
+  const onQrSubmit = async (data: QrFormData): Promise<void> => {
+    const response = await api.post<CheckinRecord>(
+      "/checkin/registerByStudentId",
+      {
+        studentId: data.studentId,
+        citizenId: data.citizenId,
+      }
+    );
+
+    if (response.success && response.data) {
+      ActualCheckinRecord.id = response.data.id;
+      ActualCheckinRecord.userId = response.data.userId;
+      ActualCheckinRecord.event = response.data.event;
+      ActualCheckinRecord.status = response.data.status;
+      ActualCheckinRecord.createdAt = response.data.createdAt;
+      ActualCheckinRecord.updatedAt = response.data.updatedAt;
+
+      (ActualCheckinRecord as any).originalStudentId = data.studentId;
+      (ActualCheckinRecord as any).originalCitizenId = data.citizenId;
+
+      if (response.data.user) {
+        (ActualCheckinRecord as any).user = response.data.user;
+      } else {
+        try {
+          let userResponse = null;
+
+          try {
+            userResponse = await api.get(
+              `/users?studentId=${data.studentId}&citizenId=${data.citizenId}`
+            );
+          } catch (e) {
+            try {
+              userResponse = await api.get(
+                `/auth/user/${data.studentId}/${data.citizenId}`
+              );
+            } catch (e) {
+              try {
+                userResponse = await api.get(`/profile/${data.studentId}`);
+              } catch (e) {
+                if (response.data.userId) {
+                  userResponse = await api.get(
+                    `/users/${response.data.userId}`
+                  );
+                }
+              }
+            }
+          }
+
+          if (userResponse?.success && userResponse.data) {
+            (ActualCheckinRecord as any).user = userResponse.data;
+          }
+        } catch (userError) {
+          // Silent fail - will use fallback display
+        }
+      }
+
+      return;
+    }
+
+    const errorMessage = response.error || "ลงทะเบียนไม่สำเร็จ";
+
+    if (errorMessage.includes("already exists")) {
+      throw new Error("already exists");
+    }
+
+    throw new Error(errorMessage);
+  };
+
+  export function extractIds(qrData: string): {
+    citizenId: string | null;
+    studentId: string | null;
+  } {
+    const cleanData = qrData.trim();
+    let citizenId: string | null = null;
+    let studentId: string | null = null;
+
+    if (cleanData.includes("?")) {
+      const queryPart = cleanData.split("?")[1];
+      const urlParams = new URLSearchParams(queryPart);
+
+      citizenId =
+        urlParams.get("citizenId") ||
+        urlParams.get("citizen_id") ||
+        urlParams.get("cid");
+
+      studentId =
+        urlParams.get("studentId") ||
+        urlParams.get("user_id") ||
+        urlParams.get("id");
+    }
+
+    if (!citizenId || !studentId) {
+      const params = new URLSearchParams(cleanData);
+
+      if (!citizenId) {
+        citizenId =
+          params.get("citizenId") ||
+          params.get("citizen_id") ||
+          params.get("cid");
+      }
+
+      if (!studentId) {
+        studentId =
+          params.get("studentId") || params.get("user_id") || params.get("id");
+      }
+    }
+
+    if (!citizenId) {
+      const citizenIdMatch = cleanData.match(
+        /(?:citizenId|citizen_id|cid)=([^&\s]+)/i
+      );
+      citizenId = citizenIdMatch ? citizenIdMatch[1] : null;
+    }
+
+    if (!studentId) {
+      const studentIdMatch = cleanData.match(
+        /(?:studentId|user_id|id)=([^&\s]+)/i
+      );
+      studentId = studentIdMatch ? studentIdMatch[1] : null;
+    }
+
+    if (
+      !studentId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        cleanData
+      )
+    ) {
+      studentId = cleanData;
+    }
+
+    return { citizenId, studentId };
+  }
+
+  // function extractUserId(qrData: string): { userId: string | null } {
+  //   const cleanData = qrData.trim();
+  //   let userId: string | null = null;
+
+  //   if (cleanData.includes("?")) {
+  //     const urlParams = new URLSearchParams(cleanData.split("?")[1]);
+  //     userId =
+  //       urlParams.get("userId") ||
+  //       urlParams.get("user_id") ||
+  //       urlParams.get("id");
+  //   }
+
+  //   if (!userId) {
+  //     const params = new URLSearchParams(cleanData);
+  //     userId =
+  //       params.get("userId") || params.get("user_id") || params.get("id");
+  //   }
+
+  //   if (
+  //     !userId &&
+  //     (cleanData.includes("userId=") ||
+  //       cleanData.includes("user_id=") ||
+  //       cleanData.includes("id="))
+  //   ) {
+  //     const userIdMatch = cleanData.match(/(?:userId|user_id|id)=([^&\s]+)/);
+  //     userId = userIdMatch ? userIdMatch[1] : null;
+  //   }
+
+  //   if (
+  //     !userId &&
+  //     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+  //       cleanData
+  //     )
+  //   ) {
+  //     userId = cleanData;
+  //   }
+
+  //   return { userId };
+  // }
+
+  async function determineActiveEvent(): Promise<any> {
+    const currentDate = new Date(); // Uses local timezone
+
+    // Date ranges for events
+    const firstdateStart = new Date("2025-07-19T00:00:00+07:00");
+    const firstdateEnd = new Date("2025-07-19T23:59:59+07:00");
+
+    const rpkmStart = new Date("2025-08-02T00:00:00+07:00");
+    const rpkmEnd = new Date("2025-08-02T23:59:59+07:00");
+
+    let activeEventId: EventType | null = null;
+
+    // Check if current date falls within firstdate period
+    if (currentDate >= firstdateStart && currentDate <= firstdateEnd) {
+      activeEventId = "firstdate";
+    }
+    // Check if current date falls within rpkm period
+    else if (currentDate >= rpkmStart && currentDate <= rpkmEnd) {
+      activeEventId = "rpkm";
+    }
+
+    // If no active event found, return null
+    if (!activeEventId) {
+      return null;
+    }
+
+    // Return the active event data
+    return {
+      eventId: activeEventId,
+      eventConfig: EVENT_CONFIGS[activeEventId],
+      eventStatus: {
+        isRegistered: false,
+        isLate: false,
+        isComingSoon: false,
+      },
+    };
+  }
+
+  function updateEventUI(activeEventData: any): void {
+    const eventTitle = document.getElementById("event-title");
+    const eventPeriod = document.getElementById("event-period");
+    const eventSchedule = document.getElementById("event-schedule");
+    const scannerContainer = document.getElementById("scanner-container");
+    const noActiveEventScanner = document.getElementById("no-active-event");
+    const manualForm = document.getElementById("manual-entry-form");
+    const manualNoActiveEvent = document.getElementById(
+      "manual-no-active-event"
+    );
+
+    const qrScannerSection = document.getElementById("qr-scanner-section");
+    const noEventSection = document.getElementById("no-event-section");
+
+    if (activeEventData) {
+      const { eventConfig, eventStatus } = activeEventData;
+
+      if (qrScannerSection) qrScannerSection.classList.remove("hidden");
+      if (noEventSection) noEventSection.classList.add("hidden");
+
+      if (eventTitle) eventTitle.textContent = eventConfig.title;
+      if (eventPeriod)
+        eventPeriod.textContent = eventStatus.isRegistered
+          ? "ลงทะเบียนแล้ว"
+          : "เปิดให้ลงทะเบียน";
+      if (eventSchedule) eventSchedule.textContent = eventConfig.schedule;
+
+      if (scannerContainer) scannerContainer.classList.remove("hidden");
+      if (noActiveEventScanner) noActiveEventScanner.classList.add("hidden");
+      if (manualForm) manualForm.classList.remove("hidden");
+      if (manualNoActiveEvent) manualNoActiveEvent.classList.add("hidden");
+    } else {
+      // Hide QR scanner section, show placeholder
+      if (qrScannerSection) qrScannerSection.classList.add("hidden");
+      if (noEventSection) noEventSection.classList.remove("hidden");
+
+      if (eventTitle) eventTitle.textContent = "ไม่มีงานที่เปิดลงทะเบียน";
+      if (eventPeriod)
+        eventPeriod.textContent = "กรุณาลองใหม่ในช่วงเวลาที่เปิดลงทะเบียน";
+      if (eventSchedule) eventSchedule.textContent = "";
+
+      if (scannerContainer) scannerContainer.classList.add("hidden");
+      if (noActiveEventScanner) noActiveEventScanner.classList.remove("hidden");
+      if (manualForm) manualForm.classList.add("hidden");
+      if (manualNoActiveEvent) manualNoActiveEvent.classList.remove("hidden");
+    }
+  }
+
+  function showSuccessModal(checkinRecord: any): void {
+    const modal = document.getElementById("success-modal");
+    const userIdSpan = document.getElementById("user-id");
+    const eventNameSpan = document.getElementById("event-name");
+    const checkinStatusSpan = document.getElementById("checkin-status");
+    const checkinTimeSpan = document.getElementById("checkin-time");
+    const userIdDisplaySpan = document.getElementById("user-id-display");
+    const popupContainer = modal?.querySelector(".transform");
+    const studentNameDiv = document.getElementById("student-name-display");
+
+    if (
+      modal &&
+      userIdSpan &&
+      eventNameSpan &&
+      checkinStatusSpan &&
+      checkinTimeSpan &&
+      userIdDisplaySpan
+    ) {
+      userIdSpan.textContent = checkinRecord.userId;
+      eventNameSpan.textContent = checkinRecord.event;
+      checkinStatusSpan.textContent =
+        checkinRecord.status === "PRE_REGISTER"
+          ? "ลงทะเบียนล่วงหน้า"
+          : "ลงทะเบียนเข้างาน";
+      checkinTimeSpan.textContent = new Date().toLocaleTimeString("th-TH");
+
+      if (checkinRecord.user) {
+        const fullName = `${checkinRecord.user.firstName} ${checkinRecord.user.lastName}`;
+        const studentId = checkinRecord.user.studentId;
+
+        if (studentNameDiv) {
+          studentNameDiv.textContent = fullName;
+        }
+
+        userIdDisplaySpan.textContent = studentId;
+      } else {
+        const originalStudentId =
+          checkinRecord.originalStudentId || checkinRecord.userId.slice(-10);
+        userIdDisplaySpan.textContent = originalStudentId;
+
+        if (studentNameDiv) {
+          studentNameDiv.textContent = "นิสิต";
+        }
+      }
+
+      modal.classList.remove("hidden");
+
+      setTimeout(() => {
+        modal.classList.remove("opacity-0");
+        modal.classList.add("opacity-100");
+        if (popupContainer) {
+          popupContainer.classList.remove("scale-95");
+          popupContainer.classList.add("scale-100");
+        }
+      }, 10);
+    }
+  }
+
+  function hideSuccessModal(): void {
+    const modal = document.getElementById("success-modal");
+    const popupContainer = modal?.querySelector(".transform");
+
+    if (modal) {
+      modal.classList.remove("opacity-100");
+      modal.classList.add("opacity-0");
+
+      if (popupContainer) {
+        popupContainer.classList.remove("scale-100");
+        popupContainer.classList.add("scale-95");
+      }
+
+      setTimeout(() => {
+        modal.classList.add("hidden");
+      }, 300);
+    }
+  }
+
+  function showErrorModal(customMessage?: string): void {
+    const modal = document.getElementById("error-modal");
+    const popupContainer = modal?.querySelector(".transform");
+    const errorText = modal?.querySelector("p");
+
+    if (modal) {
+      // Update message if provided
+      if (customMessage && errorText) {
+        errorText.textContent = customMessage;
+      } else if (errorText) {
+        // Reset to default message
+        errorText.textContent = "เลขนิสิต หรือ เลขบัตรประชาชน ไม่ถูกต้อง";
+      }
+
+      modal.classList.remove("hidden");
+
+      setTimeout(() => {
+        modal.classList.remove("opacity-0");
+        modal.classList.add("opacity-100");
+        if (popupContainer) {
+          popupContainer.classList.remove("scale-95");
+          popupContainer.classList.add("scale-100");
+        }
+      }, 10);
+    }
+  }
+
+  function showAlreadyRegisteredModal(): void {
+    showErrorModal("นิสิตคนนี้ลงทะเบียนไปแล้ว");
+  }
+
+  function hideErrorModal(): void {
+    const modal = document.getElementById("error-modal");
+    const popupContainer = modal?.querySelector(".transform");
+
+    if (modal) {
+      modal.classList.remove("opacity-100");
+      modal.classList.add("opacity-0");
+
+      if (popupContainer) {
+        popupContainer.classList.remove("scale-100");
+        popupContainer.classList.add("scale-95");
+      }
+
+      setTimeout(() => {
+        modal.classList.add("hidden");
+
+        // Clear the manual form when closing error modal
+        clearManualForm();
+      }, 300);
+    }
+  }
+
+  function clearManualForm(): void {
+    const studentIdInput = document.getElementById(
+      "student-id-input"
+    ) as HTMLInputElement;
+    const citizenIdInput = document.getElementById(
+      "citizen-id-input"
+    ) as HTMLInputElement;
+
+    if (studentIdInput) {
+      studentIdInput.value = "";
+    }
+    if (citizenIdInput) {
+      citizenIdInput.value = "";
+    }
+  }
+
+  const handleQRScanFunction = async (qrData: string): Promise<void> => {
+    try {
+      const { citizenId, studentId } = extractIds(qrData);
+
+      if (!citizenId || !studentId) {
+        throw new Error("QR Code ไม่ถูกต้อง");
+      }
+
+      await onQrSubmit({ studentId, citizenId });
+      showSuccessModal(ActualCheckinRecord);
+    } catch (error) {
+      const errorMessage = (error as Error)?.message || "";
+
+      if (
+        errorMessage.includes("already exists") ||
+        errorMessage.includes("Check-in already exists")
+      ) {
+        showAlreadyRegisteredModal();
+        return;
+      }
+
+      if (
+        (errorMessage.includes("400") || errorMessage.includes("404")) &&
+        errorMessage.includes("Bad Request")
+      ) {
+        showAlreadyRegisteredModal();
+        return;
+      }
+
+      if (
+        errorMessage.includes("401") ||
+        errorMessage.includes("Unauthorized")
+      ) {
+        showErrorModal("กรุณาเข้าสู่ระบบก่อนใช้งาน QR Scanner");
+        return;
+      }
+
+      // Handle specific "Failed to find checkin" error
+      if (errorMessage.includes("Failed to find checkin by studentId")) {
+        showErrorModal("ไม่พบข้อมูลการลงทะเบียน");
+        return;
+      }
+
+      showErrorModal("เกิดข้อผิดพลาด: " + errorMessage);
+    }
+  };
+
+  (window as any).handleQRScan = handleQRScanFunction;
+  (window as any).showErrorModal = showErrorModal;
+
+  const manualForm = document.getElementById("manual-entry-form");
+
+  if (manualForm) {
+    manualForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const studentIdInput = document.getElementById(
+        "student-id-input"
+      ) as HTMLInputElement;
+      const citizenIdInput = document.getElementById(
+        "citizen-id-input"
+      ) as HTMLInputElement;
+
+      const studentId = studentIdInput.value.trim();
+      const citizenId = citizenIdInput.value.trim();
+
+      if (!studentId) {
+        showErrorModal("กรุณากรอกรหัสนิสิต");
+        return;
+      }
+
+      if (!citizenId) {
+        showErrorModal("กรุณากรอกรหัสประชาชน");
+        return;
+      }
+
+      if (!/^[0-9]{10}$/.test(studentId)) {
+        showErrorModal("รหัสนิสิตต้องเป็นตัวเลข 10 หลัก");
+        return;
+      }
+
+      if (!/^[0-9]{13}$/.test(citizenId)) {
+        showErrorModal("รหัสประชาชนต้องเป็นตัวเลข 13 หลัก");
+        return;
+      }
+
+      const submitButton = document.getElementById(
+        "manual-submit-btn"
+      ) as HTMLButtonElement;
+      const originalText = submitButton.textContent;
+
+      try {
+        submitButton.textContent = "กำลังลงทะเบียน...";
+        submitButton.disabled = true;
+
+        // Use the same API call as QR scanner
+        await onQrSubmit({ studentId, citizenId });
+        // Success - show success modal and clear form
+        showSuccessModal(ActualCheckinRecord);
+        studentIdInput.value = "";
+        citizenIdInput.value = "";
+      } catch (error) {
+        const errorMessage = (error as Error)?.message || "";
+        if (
+          errorMessage.includes("already exists") ||
+          errorMessage.includes("Check-in already exists")
+        ) {
+          showAlreadyRegisteredModal();
+        } else if (
+          (errorMessage.includes("400") || errorMessage.includes("404")) &&
+          errorMessage.includes("Bad Request")
+        ) {
+          showAlreadyRegisteredModal();
+        } else if (
+          errorMessage.includes("401") ||
+          errorMessage.includes("Unauthorized")
+        ) {
+          showErrorModal("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+        } else if (errorMessage.includes("User not found")) {
+          showErrorModal(
+            "ไม่พบข้อมูลนิสิต กรุณาตรวจสอบรหัสนิสิตและรหัสประชาชน"
+          );
+        } else {
+          showErrorModal();
+        }
+      } finally {
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+      }
+    });
+  }
+
+  // Add click handler for ButtonFd to handle form submission directly
+  const submitButton = document.getElementById("manual-submit-btn");
+  if (submitButton) {
+    submitButton.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const studentIdInput = document.getElementById(
+        "student-id-input"
+      ) as HTMLInputElement;
+      const citizenIdInput = document.getElementById(
+        "citizen-id-input"
+      ) as HTMLInputElement;
+
+      const studentId = studentIdInput.value.trim();
+      const citizenId = citizenIdInput.value.trim();
+
+      if (!studentId) {
+        showErrorModal("กรุณากรอกรหัสนิสิต");
+        return;
+      }
+
+      if (!citizenId) {
+        showErrorModal("กรุณากรอกรหัสประชาชน");
+        return;
+      }
+
+      if (!/^[0-9]{10}$/.test(studentId)) {
+        showErrorModal("รหัสนิสิตต้องเป็นตัวเลข 10 หลัก");
+        return;
+      }
+
+      if (!/^[0-9]{13}$/.test(citizenId)) {
+        showErrorModal("รหัสประชาชนต้องเป็นตัวเลข 13 หลัก");
+        return;
+      }
+
+      const originalText = submitButton.textContent;
+
+      try {
+        submitButton.textContent = "กำลังลงทะเบียน...";
+        submitButton.style.pointerEvents = "none";
+
+        // Use the same API call as QR scanner
+        await onQrSubmit({ studentId, citizenId });
+
+        // Success - show success modal and clear form
+        showSuccessModal(ActualCheckinRecord);
+        studentIdInput.value = "";
+        citizenIdInput.value = "";
+      } catch (error) {
+        const errorMessage = (error as Error)?.message || "";
+        if (
+          errorMessage.includes("already exists") ||
+          errorMessage.includes("Check-in already exists")
+        ) {
+          showAlreadyRegisteredModal();
+        } else if (
+          (errorMessage.includes("400") || errorMessage.includes("404")) &&
+          errorMessage.includes("Bad Request")
+        ) {
+          showAlreadyRegisteredModal();
+        } else if (
+          errorMessage.includes("401") ||
+          errorMessage.includes("Unauthorized")
+        ) {
+          showErrorModal("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+        } else if (errorMessage.includes("User not found")) {
+          showErrorModal(
+            "ไม่พบข้อมูลนิสิต กรุณาตรวจสอบรหัสนิสิตและรหัสประชาชน"
+          );
+        } else {
+          showErrorModal();
+        }
+      } finally {
+        submitButton.textContent = originalText;
+        submitButton.style.pointerEvents = "auto";
+      }
+    });
+  }
+
+  document
+    .getElementById("close-modal-btn")
+    ?.addEventListener("click", hideSuccessModal);
+  document.getElementById("success-modal")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) hideSuccessModal();
+  });
+  document
+    .getElementById("close-error-modal-btn")
+    ?.addEventListener("click", hideErrorModal);
+  document.getElementById("error-modal")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) hideErrorModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hideSuccessModal();
+      hideErrorModal();
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const activeEventData = await determineActiveEvent();
+      currentActiveEvent = activeEventData;
+      updateEventUI(activeEventData);
+    } catch (error) {
+      updateEventUI(null);
+    }
+  });
+
+  setInterval(async () => {
+    try {
+      const activeEventData = await determineActiveEvent();
+
+      if (
+        (!currentActiveEvent && activeEventData) ||
+        (currentActiveEvent && !activeEventData) ||
+        (currentActiveEvent &&
+          activeEventData &&
+          currentActiveEvent.eventId !== activeEventData.eventId)
+      ) {
+        currentActiveEvent = activeEventData;
+        updateEventUI(activeEventData);
+      }
+    } catch (error) {
+      // Silent error handling
+    }
+  }, 30000);
+</script>

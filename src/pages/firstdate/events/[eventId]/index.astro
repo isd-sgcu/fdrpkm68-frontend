@@ -28,7 +28,20 @@ function parseCookie(cookie: string): Record<string, string> {
 
 const cookie = Astro.request.headers.get("cookie") ?? "";
 const authToken = parseCookie(cookie).token;
-const eventStatus = await getEventStatus(eventType, authToken);
+
+let eventStatus;
+try {
+  eventStatus = await getEventStatus(eventType, authToken);
+} catch (error) {
+  console.error("Error getting event status:", error);
+  // Default to not registered if there's an error
+  eventStatus = {
+    isRegistered: false,
+    isLate: false,
+    isComingSoon: false,
+  };
+}
+
 const justRegistered =
   new URL(Astro.request.url).searchParams.get("registered") === "true";
 
@@ -68,20 +81,33 @@ if (eventStatus.isRegistered && eventStatus.checkinData) {
               <p class="mt-4">{eventConfig.schedule}</p>
               <p>{eventConfig.registrationInfo}</p>
               <p>{eventConfig.additionalInfo}</p>
-              <p class="mt-4 font-bold text-red-500">
-                สถานะ: ยังไม่ได้ลงทะเบียน
-              </p>
+              {eventType != "cufest" && (
+                <p class="mt-4 font-bold text-red-500">
+                  สถานะ: ยังไม่ได้ลงทะเบียน
+                </p>
+              )}
             </Popup>
 
             <div class="flex w-full flex-col items-center justify-center gap-2">
-              <ButtonFd
-                class="mb-1"
-                color="white"
-                id="register-btn"
-                data-event-id={eventId}
-              >
-                ลงทะเบียนเข้าร่วมงาน
-              </ButtonFd>
+              {eventType != "cufest" ? (
+                <ButtonFd
+                  class="mb-1"
+                  color="white"
+                  id="register-btn"
+                  data-event-id={eventId}
+                >
+                  ลงทะเบียนเข้าร่วมงาน
+                </ButtonFd>
+              ) : (
+                <ButtonFd
+                  class="mb-1"
+                  color="white"
+                  href="/fest"
+                  data-event-id={eventId}
+                >
+                  ลงทะเบียนเข้าร่วมงาน
+                </ButtonFd>
+              )}
 
               {(eventType === "firstdate" ||
                 eventType === "freshmen-night") && (
@@ -147,7 +173,7 @@ if (eventStatus.isRegistered && eventStatus.checkinData) {
 
           {eventType === "firstdate" || eventType === "freshmen-night" ? (
             <div class="flex w-full flex-col items-center justify-center gap-2">
-              <ButtonFd class="mb-1" color="white" id="show-qr-btn">
+              <ButtonFd class="mb-1" color="white" href="/firstdate/qrcode/">
                 แสดง QR Code เข้างาน
               </ButtonFd>
               <ButtonFd class="mb-1" color="white" href="/firstdate/maps/">
@@ -158,6 +184,12 @@ if (eventStatus.isRegistered && eventStatus.checkinData) {
             <div class="flex w-full flex-col items-center justify-center gap-2">
               <ButtonFd class="mb-1" color="white" href="/rpkm/home/">
                 เข้าเว็บรับเพื่อนก้าวใหม่
+              </ButtonFd>
+            </div>
+          ) : eventType === "cufest" ? (
+            <div class="flex w-full flex-col items-center justify-center gap-2">
+              <ButtonFd class="mb-1" color="white" href="/fest">
+                เข้าเว็บ Festival
               </ButtonFd>
             </div>
           ) : (
@@ -260,29 +292,6 @@ if (eventStatus.isRegistered && eventStatus.checkinData) {
         registerBtn.textContent = "ลงทะเบียนเข้าร่วมงาน";
         registerBtn.disabled = false;
         alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
-      }
-    });
-  }
-
-  // Handle QR code display toggle
-  const showQrBtn = document.getElementById("show-qr-btn") as HTMLButtonElement;
-  const eventInfoContent = document.getElementById(
-    "event-info-content"
-  ) as HTMLDivElement;
-  const qrContent = document.getElementById("qr-content") as HTMLDivElement;
-
-  if (showQrBtn && eventInfoContent && qrContent) {
-    showQrBtn.addEventListener("click", () => {
-      if (qrContent.classList.contains("hidden")) {
-        // Show QR code content, hide event info content
-        eventInfoContent.classList.add("hidden");
-        qrContent.classList.remove("hidden");
-        showQrBtn.textContent = "ซ่อน QR Code";
-      } else {
-        // Hide QR code content, show event info content
-        qrContent.classList.add("hidden");
-        eventInfoContent.classList.remove("hidden");
-        showQrBtn.textContent = "แสดง QR Code เข้างาน";
       }
     });
   }

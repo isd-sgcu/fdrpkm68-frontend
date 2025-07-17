@@ -72,8 +72,8 @@ export const EVENT_CONFIGS: Record<EventType, EventConfig> = {
     title: "Festival",
     description:
       "เทศกาลแห่งความสนุกสนาน ที่รวมการแสดง กิจกรรม และความบันเทิงต่าง ๆ ไว้ในงานเดียว",
-    schedule: "พร้อมให้ลงทะเบียนในวันที่ 20 กรกฎาคม 2568 ",
-    registrationInfo: "📝 ลงทะเบียนเข้าร่วมงานได้ตั้งแต่วันนี้",
+    schedule: "พร้อมให้ลงทะเบียนในวันที่ 18 กรกฎาคม 2568 19.00",
+    registrationInfo: "📝 เลือกดูกิจกรรมในงานได้เลย",
     additionalInfo: "",
     popupColors: {
       notRegistered: "vivid-pink",
@@ -122,13 +122,25 @@ export const getEventStatus = async (
 ): Promise<EventStatus> => {
   const apiEventName = API_EVENT_NAMES[eventType];
 
-  // Handle events that don't have API mapping
-  if (!apiEventName || eventType === "cufest") {
+  if (!apiEventName) {
     return {
       isRegistered: false,
       isLate: false,
       isComingSoon: true,
     };
+  }
+
+  if (eventType === "cufest") {
+    const targetDate = new Date("2025-07-18T19:00:00+07:00");
+    const currentDate = new Date();
+
+    if (currentDate >= targetDate) {
+      return {
+        isRegistered: false,
+        isLate: false,
+        isComingSoon: false,
+      };
+    }
   }
 
   // Check if authenticated
@@ -154,7 +166,10 @@ export const getEventStatus = async (
     const errorMessage = response.error;
 
     // Check for specific error patterns from backend
-    if (errorMessage.includes("before register period")) {
+    if (
+      errorMessage.includes("before register period") ||
+      errorMessage.includes("Check-in not found")
+    ) {
       return {
         isRegistered: false,
         isLate: false,
@@ -241,6 +256,60 @@ export const registerForEvent = async (
       errorMessage.includes("unauthorized")
     ) {
       return { success: false, error: "กรุณาเข้าสู่ระบบก่อน" };
+    } else {
+      return { success: false, error: errorMessage };
+    }
+  }
+};
+
+export const staffQRScanRegister = async (
+  studentId: string,
+  citizenId: string
+): Promise<{
+  success: boolean;
+  data?: CheckinResponse;
+  error?: string;
+  needsLogin?: boolean;
+}> => {
+  const token = getAuthToken();
+  if (!token) {
+    return {
+      success: false,
+      error: "กรุณาเข้าสู่ระบบก่อน",
+      needsLogin: true,
+    };
+  }
+
+  const response = await api.post<CheckinResponse>(
+    `/checkin/registerByStudentId`,
+    {
+      studentId,
+      citizenId,
+    },
+    { headers: getAuthHeaders() }
+  );
+
+  if (response.success && response.data) {
+    return { success: true, data: response.data };
+  } else {
+    const errorMessage = response.error || "QR scan registration failed";
+
+    if (errorMessage.includes("already exists")) {
+      return { success: false, error: "นิสิตคนนี้ได้ลงทะเบียนไปแล้ว" };
+    } else if (errorMessage.includes("before register period")) {
+      return { success: false, error: "ยังไม่ถึงเวลาลงทะเบียน" };
+    } else if (errorMessage.includes("after register period")) {
+      return { success: false, error: "หมดเวลาลงทะเบียนแล้ว" };
+    } else if (
+      errorMessage.includes("401") ||
+      errorMessage.includes("unauthorized")
+    ) {
+      return { success: false, error: "กรุณาเข้าสู่ระบบก่อน" };
+    } else if (
+      errorMessage.includes("404") ||
+      errorMessage.includes("not found")
+    ) {
+      return { success: false, error: "ไม่พบข้อมูลนิสิต" };
     } else {
       return { success: false, error: errorMessage };
     }

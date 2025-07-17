@@ -37,6 +37,9 @@ importers:
       "@types/react-dom":
         specifier: ^19.1.6
         version: 19.1.6(@types/react@19.1.8)
+      "@yudiel/react-qr-scanner":
+        specifier: ^2.3.1
+        version: 2.3.1(@types/emscripten@1.40.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       astro:
         specifier: ^5.10.1
         version: 5.10.1(@types/node@24.0.7)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.44.1)(typescript@5.8.3)(yaml@2.8.0)
@@ -1517,6 +1520,12 @@ packages:
         integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==,
       }
 
+  "@types/emscripten@1.40.1":
+    resolution:
+      {
+        integrity: sha512-sr53lnYkQNhjHNN0oJDdUm5564biioI5DuOpycufDVK7D3y+GR3oUswe2rlwY1nPNyusHbrJ9WoTyIHl4/Bpwg==,
+      }
+
   "@types/estree@1.0.8":
     resolution:
       {
@@ -1927,6 +1936,15 @@ packages:
         integrity: sha512-KYSIHVmslkaCDyw013pphY+d7x1qV8IZupYfeIfzNA+nsaWHbn5uPuQRvdRFsa9zFzGeudPuoGoZ1Op4jrJXIQ==,
       }
 
+  "@yudiel/react-qr-scanner@2.3.1":
+    resolution:
+      {
+        integrity: sha512-fE7217QvMKT/AxAEeKIheFhkKO13PSGHiqJfg4dLK/SGPpelpXNpZZ0Qeph1Cm08/AqMlGhvzQbCmoPeD/VVIg==,
+      }
+    peerDependencies:
+      react: ^17 || ^18 || ^19
+      react-dom: ^17 || ^18 || ^19
+
   acorn-jsx@5.3.2:
     resolution:
       {
@@ -2147,6 +2165,12 @@ packages:
     resolution:
       {
         integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==,
+      }
+
+  barcode-detector@3.0.3:
+    resolution:
+      {
+        integrity: sha512-N07CNbpudOB3oIYm0tvaezCM6zy9HOlYnUCBhX6Q5UGhnqngyBgOf/p/5ZhqHxsf9/QYy5dX95RrblIs0hNaiw==,
       }
 
   base-64@1.0.0:
@@ -5366,6 +5390,12 @@ packages:
         integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==,
       }
 
+  sdp@3.2.1:
+    resolution:
+      {
+        integrity: sha512-lwsAIzOPlH8/7IIjjz3K0zYBk7aBVVcvjMwt3M4fLxpjMYyy7i3I97SLHebgn4YBjirkzfp3RvRDWSKsh/+WFw==,
+      }
+
   semver@6.3.1:
     resolution:
       {
@@ -6310,6 +6340,13 @@ packages:
         integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==,
       }
 
+  webrtc-adapter@9.0.3:
+    resolution:
+      {
+        integrity: sha512-5fALBcroIl31OeXAdd1YUntxiZl1eHlZZWzNg3U4Fn+J9/cGL3eT80YlrsWGvj2ojuz1rZr2OXkgCzIxAZ7vRQ==,
+      }
+    engines: { node: ">=6.0.0", npm: ">=3.10.0" }
+
   whatwg-url@5.0.0:
     resolution:
       {
@@ -6544,6 +6581,14 @@ packages:
       {
         integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==,
       }
+
+  zxing-wasm@2.2.0:
+    resolution:
+      {
+        integrity: sha512-RyHxVaAHsLSDzmwcAG05IF8sVOE5Ta2JT1dRDh0mzVZOIiDXZstsjkqvKHasN1n4lvFSbX7ngkHDufnt/XI07Q==,
+      }
+    peerDependencies:
+      "@types/emscripten": ">=1.39.6"
 
 snapshots:
   "@ampproject/remapping@2.3.0":
@@ -7350,6 +7395,8 @@ snapshots:
     dependencies:
       "@types/ms": 2.1.0
 
+  "@types/emscripten@1.40.1": {}
+
   "@types/estree@1.0.8": {}
 
   "@types/fontkit@2.0.8":
@@ -7624,6 +7671,15 @@ snapshots:
 
   "@vscode/l10n@0.0.18": {}
 
+  "@yudiel/react-qr-scanner@2.3.1(@types/emscripten@1.40.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
+    dependencies:
+      barcode-detector: 3.0.3(@types/emscripten@1.40.1)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      webrtc-adapter: 9.0.3
+    transitivePeerDependencies:
+      - "@types/emscripten"
+
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
       acorn: 8.15.0
@@ -7877,6 +7933,12 @@ snapshots:
   bail@2.0.2: {}
 
   balanced-match@1.0.2: {}
+
+  barcode-detector@3.0.3(@types/emscripten@1.40.1):
+    dependencies:
+      zxing-wasm: 2.2.0(@types/emscripten@1.40.1)
+    transitivePeerDependencies:
+      - "@types/emscripten"
 
   base-64@1.0.0: {}
 
@@ -10039,6 +10101,8 @@ snapshots:
 
   scheduler@0.26.0: {}
 
+  sdp@3.2.1: {}
+
   semver@6.3.1: {}
 
   semver@7.7.2: {}
@@ -10668,6 +10732,10 @@ snapshots:
 
   webidl-conversions@3.0.1: {}
 
+  webrtc-adapter@9.0.3:
+    dependencies:
+      sdp: 3.2.1
+
   whatwg-url@5.0.0:
     dependencies:
       tr46: 0.0.3
@@ -10830,3 +10898,8 @@ snapshots:
   zod@4.0.5: {}
 
   zwitch@2.0.4: {}
+
+  zxing-wasm@2.2.0(@types/emscripten@1.40.1):
+    dependencies:
+      "@types/emscripten": 1.40.1
+      type-fest: 4.41.0

@@ -1,6 +1,6 @@
 // API utility functions
 const API_BASE_URL =
-  import.meta.env.PUBLIC_API_URL || "http://localhost:8080/api";
+  import.meta.env.PUBLIC_API_URL || "http://localhost:4321/api";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -20,6 +20,25 @@ export class ApiError extends Error {
   }
 }
 
+function getAuthToken(): string | null {
+  if (typeof window !== "undefined") {
+    const localToken = localStorage.getItem("auth_token");
+    if (localToken) {
+      return localToken;
+    }
+
+    const cookies = document.cookie.split("; ");
+    const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
+    return tokenCookie ? decodeURIComponent(tokenCookie.split("=")[1]) : null;
+  }
+
+  return null;
+}
+
+function getAuthHeaders(): Record<string, string> {
+  const token = getAuthToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 interface ApiResponseRaw {
   message?: string;
   error?: string;
@@ -31,8 +50,11 @@ export async function apiRequest<T = unknown>(
 ): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
 
+  const authHeaders = getAuthHeaders();
+
   const defaultHeaders = {
     "Content-Type": "application/json",
+    ...authHeaders,
   };
 
   const requestOptions: RequestInit = {
@@ -50,10 +72,11 @@ export async function apiRequest<T = unknown>(
       let errorMsg = "Request failed";
       if (response.body) {
         try {
-          const raw: ApiResponseRaw = JSON.parse(await response.text());
+          const responseText = await response.text();
+          const raw: ApiResponseRaw = JSON.parse(responseText);
           errorMsg = raw.error || raw.message || errorMsg;
         } catch {
-          errorMsg = await response.text();
+          errorMsg = "Request failed";
         }
       }
       throw new ApiError(errorMsg, response.status, response);
@@ -62,8 +85,6 @@ export async function apiRequest<T = unknown>(
     const data = await response.json();
     return { success: true, data };
   } catch (error) {
-    console.error("API request error:", error);
-
     if (error instanceof ApiError) {
       return { success: false, error: error.message };
     }
