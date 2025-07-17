@@ -258,8 +258,38 @@ jobs:
 
       - name: Build and push Docker image (Prod)
         run: |
-          # Build image with build args
+          echo "🐳 Building Docker image..."
+
+          # Store the GitHub Actions build for comparison
+          cp -r ./dist ./dist-github
+
+          # Build Docker image (will rebuild inside container)
           docker build --build-arg PUBLIC_API_URL=${{ secrets.PROD_API_URL }} --build-arg PUBLIC_SITE_URL=${{ secrets.PROD_SITE_URL }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }} -t ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:latest .
+
+          # Extract build from Docker image to verify consistency
+          docker create --name temp-container ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          docker cp temp-container:/app/dist ./dist-docker
+          docker rm temp-container
+
+          # Compare the builds
+          echo "🔍 Comparing GitHub Actions build vs Docker build..."
+          find ./dist-github -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | sed 's|./dist-github|./dist|' | xargs -I {} sh -c 'sha256sum ./dist-github/$(echo {} | sed "s|./dist/||")' > github-manifest.txt
+          find ./dist-docker -type f -name "*.css" -o -name "*.js" -o -name "*.mjs" | sort | sed 's|./dist-docker|./dist|' | xargs -I {} sh -c 'sha256sum ./dist-docker/$(echo {} | sed "s|./dist/||")' > docker-manifest.txt
+
+          if ! diff github-manifest.txt docker-manifest.txt; then
+            echo "⚠️ WARNING: Docker build produced different artifacts!"
+            echo "GitHub build files:"
+            ls -la ./dist-github/client/_astro/
+            echo "Docker build files:"
+            ls -la ./dist-docker/client/_astro/
+            echo "Using Docker build (this is what runs in production)"
+          else
+            echo "✅ Docker build matches GitHub Actions build perfectly"
+          fi
+
+          # Use Docker build artifacts for bucket upload
+          rm -rf ./dist
+          mv ./dist-docker ./dist
 
           # Push both tags
           docker push ${{ env.REGISTRY_HOSTNAME }}/${{ env.GCP_PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE_NAME }}:${{ github.sha }}
@@ -289,13 +319,26 @@ jobs:
 
       - name: Upload static assets to Cloud Storage (Prod)
         run: |
-          # Only upload if Cloud Run deployment succeeded
-          echo "Uploading static assets after successful deployment..."
+          echo "📦 Uploading static assets (EXACT same files from deployed Docker image)..."
+
+          # Verify we're using Docker build artifacts
+          if [ ! -f "./dist/server/entry.mjs" ]; then
+            echo "❌ Docker build artifacts not found!"
+            exit 1
+          fi
+          echo "✅ Using Docker build artifacts (matches deployed container)"
 
           # Upload Astro static assets
           if [ -d "./dist/client/_astro" ]; then
+            echo "📄 Files being uploaded:"
+            ls -la ./dist/client/_astro/
+            
             gsutil -m rsync -r -d ./dist/client/_astro gs://${{ env.BUCKET_NAME }}/_astro/
             echo "✅ Uploaded _astro assets"
+            
+            # Verify upload
+            echo "📄 Files in bucket after upload:"
+            gsutil ls gs://${{ env.BUCKET_NAME }}/_astro/
           else
             echo "❌ No _astro directory found"
             exit 1
@@ -313,7 +356,7 @@ jobs:
           gsutil -m setmeta -h "Cache-Control:public, max-age=86400" \
             "gs://${{ env.BUCKET_NAME }}/images/**" || true
 
-          echo "✅ Static assets uploaded successfully"
+          echo "🎉 Static assets uploaded successfully and verified!"
 
   # Test job for PRs
   test:
