@@ -21,6 +21,45 @@ const footerGradient = bgGradient[variant].classes;
 ---
 
 <footer class="text-xs">
+  <!-- Sponsor Banners -->
+  {
+    (variant === "rpkm_home" ||
+      variant === "rpkm_summary" ||
+      variant === "rpkm_workshops" ||
+      variant === "rpkm_rubpuen") && (
+      <div class="flex h-fit min-h-[120px] w-full flex-col items-center bg-white p-4 pb-6">
+        <p class="font-semibold text-black">PRESENTED BY</p>
+        <img
+          src="/images/rpkm/sponsor/logo-gangnam.png"
+          class="mt-2 mb-6 h-[60px] w-auto object-contain"
+        />
+        <div class="flex h-[20px] w-fit max-w-full items-center justify-center gap-x-4">
+          <img
+            src="/images/rpkm/sponsor/logo-top-charoen.png"
+            class="h-full w-auto object-contain"
+          />
+          <img
+            src="/images/rpkm/sponsor/logo-major.png"
+            class="h-[28px] w-auto object-contain"
+          />
+          <img
+            src="/images/rpkm/sponsor/logo-gulf.png"
+            class="h-full w-auto object-contain"
+          />
+          <img
+            src="/images/rpkm/sponsor/logo-ais.png"
+            class="h-full w-auto object-contain"
+          />
+          <img
+            src="/images/rpkm/sponsor/logo-pmcu.png"
+            class="h-full w-auto object-contain"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  <!-- ISD -->
   <div
     class={cn(
       "flex w-full flex-col items-center justify-center py-4 text-white",
@@ -45,6 +84,8 @@ const footerGradient = bgGradient[variant].classes;
       <p>Student Government Chulalongkorn University</p>
     </div>
   </div>
+
+  <!-- Contact -->
   <div
     class="flex w-full flex-col items-center justify-center bg-white py-4 text-black"
   >
