@@ -81,20 +81,33 @@ if (eventStatus.isRegistered && eventStatus.checkinData) {
               <p class="mt-4">{eventConfig.schedule}</p>
               <p>{eventConfig.registrationInfo}</p>
               <p>{eventConfig.additionalInfo}</p>
-              <p class="mt-4 font-bold text-red-500">
-                สถานะ: ยังไม่ได้ลงทะเบียน
-              </p>
+              {eventType != "cufest" && (
+                <p class="mt-4 font-bold text-red-500">
+                  สถานะ: ยังไม่ได้ลงทะเบียน
+                </p>
+              )}
             </Popup>
 
             <div class="flex w-full flex-col items-center justify-center gap-2">
-              <ButtonFd
-                class="mb-1"
-                color="white"
-                id="register-btn"
-                data-event-id={eventId}
-              >
-                ลงทะเบียนเข้าร่วมงาน
-              </ButtonFd>
+              {eventType != "cufest" ? (
+                <ButtonFd
+                  class="mb-1"
+                  color="white"
+                  id="register-btn"
+                  data-event-id={eventId}
+                >
+                  ลงทะเบียนเข้าร่วมงาน
+                </ButtonFd>
+              ) : (
+                <ButtonFd
+                  class="mb-1"
+                  color="white"
+                  href="/fest"
+                  data-event-id={eventId}
+                >
+                  ลงทะเบียนเข้าร่วมงาน
+                </ButtonFd>
+              )}
 
               {(eventType === "firstdate" ||
                 eventType === "freshmen-night") && (
@@ -171,6 +184,12 @@ if (eventStatus.isRegistered && eventStatus.checkinData) {
             <div class="flex w-full flex-col items-center justify-center gap-2">
               <ButtonFd class="mb-1" color="white" href="/rpkm/home/">
                 เข้าเว็บรับเพื่อนก้าวใหม่
+              </ButtonFd>
+            </div>
+          ) : eventType === "cufest" ? (
+            <div class="flex w-full flex-col items-center justify-center gap-2">
+              <ButtonFd class="mb-1" color="white" href="/fest">
+                เข้าเว็บ Festival
               </ButtonFd>
             </div>
           ) : (
