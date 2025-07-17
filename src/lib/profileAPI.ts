@@ -1,5 +1,6 @@
 import { type ApiResponse, api } from "@/lib/api";
 import { getAuthHeaders, getAuthToken } from "@/lib/auth";
+import type { User } from "@/types/common";
 
 /**
  * Fetches user data from the backend.

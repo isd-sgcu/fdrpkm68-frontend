@@ -38,7 +38,22 @@ interface EditProfileFormData {
   };
 }
 
-const queryClient = new QueryClient();
+// Create a stable query client instance
+let queryClient: QueryClient | null = null;
+
+function getQueryClient(): QueryClient {
+  if (!queryClient) {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 1000 * 60 * 5, // 5 minutes
+          refetchOnWindowFocus: false,
+        },
+      },
+    });
+  }
+  return queryClient;
+}
 
 const faculties = [
   { text: "คณะครุศาสตร์", value: "FACULTY_OF_EDUCATION" },
@@ -85,6 +100,7 @@ function EditProfileContent({
       : "/firstdate/register/staff/glob.svg";
   const themeColor = userType === "FRESHMAN" ? "#C6EBC5" : "#FFB6C1";
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [isUpdateLoading, setIsUpdateLoading] = useState<boolean>(false);
   const [profileData, setProfileData] = useState<EditProfileFormData>({
     user: {
       prefix: "mr",
@@ -147,34 +163,51 @@ function EditProfileContent({
   }, [fetchedProfileData, isLoading, isError]);
 
   const updateProfile = async (data: EditProfileFormData): Promise<void> => {
-    const formData = {
-      // studentId: data.user.studentId,
-      // citizenId: data.user.citizenId,
-      prefix: data.user.prefix,
-      firstName: data.user.firstName,
-      lastName: data.user.lastName,
-      nickname: data.user.nickname,
-      faculty: data.user.faculty,
-      academicYear: parseInt(data.user.academicYear),
-      phoneNumber: data.user.phoneNumber,
-      parentName: data.user.parentName,
-      parentPhoneNumber: data.user.parentPhoneNumber,
-      parentRelationship: data.user.parentRelationship,
-      foodAllergy: data.user.hasAllergies ? data.user.foodAllergy : null,
-      drugAllergy: data.user.hasMedications ? data.user.drugAllergy : null,
-      illness: data.user.hasChronicDiseases ? data.user.illness : null,
-    };
+    // Prevent multiple submissions
+    if (isUpdateLoading) {
+      return;
+    }
 
-    const reponse = await api.patch("/user/update", formData, {
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`,
-      },
-    });
+    setIsUpdateLoading(true);
 
-    if (reponse.success) {
-      setIsEditMode(false);
-      // Optionally refresh the data from the server
-      // queryClient.invalidateQueries(['profile']);
+    try {
+      const formData = {
+        // studentId: data.user.studentId,
+        // citizenId: data.user.citizenId,
+        prefix: data.user.prefix,
+        firstName: data.user.firstName,
+        lastName: data.user.lastName,
+        nickname: data.user.nickname,
+        faculty: data.user.faculty,
+        academicYear: parseInt(data.user.academicYear),
+        phoneNumber: data.user.phoneNumber,
+        parentName: data.user.parentName,
+        parentPhoneNumber: data.user.parentPhoneNumber,
+        parentRelationship: data.user.parentRelationship,
+        foodAllergy: data.user.hasAllergies ? data.user.foodAllergy : null,
+        drugAllergy: data.user.hasMedications ? data.user.drugAllergy : null,
+        illness: data.user.hasChronicDiseases ? data.user.illness : null,
+      };
+
+      const reponse = await api.patch("/user/update", formData, {
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      });
+
+      if (reponse.success) {
+        setIsEditMode(false);
+        // Optionally refresh the data from the server
+        // queryClient.invalidateQueries(['profile']);
+      } else {
+        console.error("Profile update failed:", reponse.message);
+        // You could add a snackbar or error message here
+      }
+    } catch (error) {
+      console.error("Profile update error:", error);
+      // You could add a snackbar or error message here
+    } finally {
+      setIsUpdateLoading(false);
     }
   };
 
@@ -676,9 +709,21 @@ function EditProfileContent({
           <div className="flex w-full flex-col items-center gap-4">
             <button
               type="submit"
-              className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
+              disabled={isUpdateLoading}
+              className={`w-36 rounded-full py-2 transition-colors duration-200 ${
+                isUpdateLoading
+                  ? "cursor-not-allowed bg-gradient-to-t from-gray-400 to-gray-300 text-gray-600"
+                  : "bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] text-black hover:from-[#FFB6C1]/80 hover:to-[#FFFFF2]/80"
+              }`}
             >
-              บันทึก
+              {isUpdateLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-600 border-t-transparent" />
+                  กำลังบันทึก...
+                </div>
+              ) : (
+                "บันทึก"
+              )}
             </button>
             <button
               type="button"
@@ -828,8 +873,10 @@ export default function EditProfile({
 }: {
   userType: "FRESHMAN" | "STAFF";
 }): ReactNode {
+  const client = getQueryClient();
+
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={client}>
       <EditProfileContent userType={userType} />
     </QueryClientProvider>
   );

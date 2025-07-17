@@ -27,6 +27,7 @@ export default function LoginForm({
       ? "/firstdate/register/student-form-bg.png"
       : "/firstdate/register/staff/form-bg.png";
   const [step, setStep] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -48,28 +49,45 @@ export default function LoginForm({
 
   const onLoginSubmit = useCallback(
     async (data: LoginFormData): Promise<void> => {
-      const response = await api.post("/auth/login", {
-        studentId: data.studentId,
-        citizenId: data.citizenId,
-        password: data.password,
-      });
+      if (isLoading) {
+        return;
+      }
 
-      if (response.success) {
-        window.location.href =
-          userType === "FRESHMAN" ? "/firstdate/home" : "/staff/home";
-      } else {
+      setIsLoading(true);
+
+      try {
+        const response = await api.post("/auth/login", {
+          studentId: data.studentId,
+          citizenId: data.citizenId,
+          password: data.password,
+        });
+
+        if (response.success) {
+          window.location.href =
+            userType === "FRESHMAN" ? "/firstdate/home" : "/staff/home";
+        } else {
+          showSnackbar(
+            response.error || "Login failed. Please try again.",
+            "error"
+          );
+        }
+      } catch {
         showSnackbar(
-          response.error || "Login failed. Please try again.",
+          "An unexpected error occurred. Please try again.",
           "error"
         );
+      } finally {
+        setIsLoading(false);
       }
     },
-    []
+    [isLoading, userType]
   );
 
   const onForgotPasswordSubmit = useCallback(
     async (data: LoginFormData): Promise<void> => {
-      console.log("Password reset form submitted:", data);
+      if (isLoading) {
+        return;
+      }
       // Handle password reset logic here
       const response = await api.post("/auth/forgot-password", {
         studentId: data.studentId,
@@ -117,6 +135,7 @@ export default function LoginForm({
               onSubmit={handleSubmit(onLoginSubmit)}
               onForgot={handleForgot}
               userType={userType}
+              isLoading={isLoading}
             />
           )}
           {step === 2 && (
