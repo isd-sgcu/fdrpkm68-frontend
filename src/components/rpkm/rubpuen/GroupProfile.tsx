@@ -35,7 +35,7 @@ export default function GroupProfile({
               : "/images/rpkm/profile/profile-unknown.png"
           }
           alt={
-            user && user.firstName && user.lastName
+            user?.firstName && user?.lastName
               ? `${user.firstName} ${user.lastName} avatar`
               : "Unknown user avatar"
           }
