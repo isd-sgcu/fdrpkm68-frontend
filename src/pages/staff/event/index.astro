@@ -539,8 +539,7 @@ import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
   // }
 
   async function determineActiveEvent(): Promise<any> {
-    const now = new Date();
-    const currentDate = new Date(now.getTime() + 7 * 60 * 60 * 1000); // UTC+7 (Thailand timezone)
+    const currentDate = new Date(); // Uses local timezone
 
     // Date ranges for events
     const firstdateStart = new Date("2025-07-19T00:00:00+07:00");
