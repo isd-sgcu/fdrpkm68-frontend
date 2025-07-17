@@ -7,5 +7,4 @@ export const nonProtectRoutes = [
   "/staff/login",
 ];
 
-export const nonStartedRoutes = [];
-// export const nonStartedRoutes = ["/rpkm", "/fest"];
+export const nonStartedRoutes = ["/rpkm", "/fest"];
