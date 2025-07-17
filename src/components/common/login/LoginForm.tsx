@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import ForgotPasswordStep from "@/components/common/login/ForgetPasswordStep";
 import LoginStep from "@/components/common/login/LoginStep";
 import { api } from "@/lib/api";
+import { showSnackbar } from "@/lib/utils";
 
 interface LoginFormData {
   studentId: string;
@@ -26,6 +27,7 @@ export default function LoginForm({
       ? "/firstdate/register/student-form-bg.png"
       : "/firstdate/register/staff/form-bg.png";
   const [step, setStep] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -47,23 +49,67 @@ export default function LoginForm({
 
   const onLoginSubmit = useCallback(
     async (data: LoginFormData): Promise<void> => {
-      const response = await api.post("/auth/login", {
+      if (isLoading) {
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await api.post("/auth/login", {
+          studentId: data.studentId,
+          citizenId: data.citizenId,
+          password: data.password,
+        });
+
+        if (response.success) {
+          window.location.href =
+            userType === "FRESHMAN" ? "/firstdate/home" : "/staff/home";
+        } else {
+          showSnackbar(
+            response.error || "Login failed. Please try again.",
+            "error"
+          );
+        }
+      } catch {
+        showSnackbar(
+          "An unexpected error occurred. Please try again.",
+          "error"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isLoading, userType]
+  );
+
+  const onForgotPasswordSubmit = useCallback(
+    async (data: LoginFormData): Promise<void> => {
+      if (isLoading) {
+        return;
+      }
+      // Handle password reset logic here
+      const response = await api.post("/auth/forgot-password", {
         studentId: data.studentId,
         citizenId: data.citizenId,
-        password: data.password,
+        newPassword: data.newPassword,
       });
 
       if (response.success) {
-        window.location.href = "/firstdate/home";
+        showSnackbar(
+          "Password reset successful. You can now log in.",
+          "success"
+        );
+        setStep(1); // Go back to login step
+      } else {
+        showSnackbar(
+          response.error || "Password reset failed. Please try again.",
+          "error"
+        );
       }
     },
     []
   );
-
-  const onForgotPasswordSubmit = useCallback((data: LoginFormData): void => {
-    console.log("Password reset form submitted:", data);
-    // Handle password reset logic here
-  }, []);
 
   const handleForgot = useCallback((): void => {
     setStep(2);
@@ -89,6 +135,7 @@ export default function LoginForm({
               onSubmit={handleSubmit(onLoginSubmit)}
               onForgot={handleForgot}
               userType={userType}
+              isLoading={isLoading}
             />
           )}
           {step === 2 && (

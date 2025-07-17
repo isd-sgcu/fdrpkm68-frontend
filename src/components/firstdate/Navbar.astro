@@ -7,17 +7,24 @@ import ButtonFd from "@common/ButtonFd.astro";
   class="relative flex w-full items-center justify-between bg-white p-1"
 >
   <div></div>
-  <img src="/common/logo_freshmenfest.svg" alt="logo" />
+  <img
+    src="/common/freshmen-fest-logo.png"
+    width={148.377}
+    height={67}
+    alt="Freshmen Fest Logo"
+  />
   <button
     id="hamburger-button-main"
     aria-label="Toggle menu"
     aria-controls="nav-menu"
     aria-expanded="false"
+    class="relative z-10 cursor-pointer p-2 hover:opacity-80 active:scale-95"
+    style="min-width: 44px; min-height: 44px;"
   >
     <img
       src="/common/hamburger.svg"
       alt="menu"
-      class="h-3 w-auto -translate-x-4"
+      class="pointer-events-none h-3 w-auto -translate-x-4"
     />
   </button>
 </nav>
@@ -27,12 +34,21 @@ import ButtonFd from "@common/ButtonFd.astro";
 >
   <div class="relative flex w-full items-center justify-between bg-white p-1">
     <div></div>
-    <img src="/common/logo_freshmenfest.svg" alt="logo" />
-    <button id="hamburger-button-menu">
+    <img
+      src="/common/freshmen-fest-logo.png"
+      width={148.377}
+      height={67}
+      alt="Freshmen Fest Logo"
+    />
+    <button
+      id="hamburger-button-menu"
+      class="relative z-10 cursor-pointer p-2 hover:opacity-80 active:scale-95"
+      style="min-width: 44px; min-height: 44px;"
+    >
       <img
         src="/common/hamburger.svg"
         alt="menu"
-        class="h-3 w-auto -translate-x-4"
+        class="pointer-events-none h-3 w-auto -translate-x-4"
       />
     </button>
   </div>
@@ -45,13 +61,16 @@ import ButtonFd from "@common/ButtonFd.astro";
         <a href="/firstdate/home">หน้าหลัก</a>
       </li>
       <li>
-        <a href="/cufest/">CU FEST</a>
+        <a href="/firstdate/events/firstdate">CU First Date</a>
       </li>
       <li>
-        <a href="/rpkm/home">รับเพื่อนก้าวใหม่</a>
+        <a href="/" id="cufest-link">Festival</a>
       </li>
       <li>
-        <a href="/firstdate/profile">PROFILE</a>
+        <a href="/firstdate/events/rpkm">รับเพื่อนก้าวใหม่</a>
+      </li>
+      <li>
+        <a href="/profile">PROFILE</a>
       </li>
       <li>
         <a href="/firstdate/qrcode">QR CODE</a>
@@ -69,21 +88,51 @@ import ButtonFd from "@common/ButtonFd.astro";
 </nav>
 
 <script is:inline type="module">
-  document.addEventListener("DOMContentLoaded", () => {
+  function setupHamburgerMenu() {
     const hamburgerButton = document.getElementById("hamburger-button-main");
     const hamburgerButtonMenu = document.getElementById(
       "hamburger-button-menu"
     );
     const navMenu = document.getElementById("nav-menu");
+    const cufestLink = document.getElementById("cufest-link");
 
-    hamburgerButton.addEventListener("click", () => {
-      navMenu.classList.toggle("hidden");
-      document.body.classList.add("no-scroll");
-    });
+    if (hamburgerButton && navMenu) {
+      hamburgerButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navMenu.classList.toggle("hidden");
+        document.body.classList.add("no-scroll");
+      });
+    }
 
-    hamburgerButtonMenu.addEventListener("click", () => {
-      navMenu.classList.toggle("hidden");
-      document.body.classList.remove("no-scroll");
-    });
-  });
+    if (hamburgerButtonMenu && navMenu) {
+      hamburgerButtonMenu.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navMenu.classList.toggle("hidden");
+        document.body.classList.remove("no-scroll");
+      });
+    }
+
+    if (cufestLink) {
+      cufestLink.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const now = new Date();
+        const cutoffDate = new Date("2025-07-18T19:00:00+07:00");
+
+        if (now < cutoffDate) {
+          window.location.href = "/firstdate/events/cufest";
+        } else {
+          window.location.href = "/fest";
+        }
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", setupHamburgerMenu);
+
+  // Optional: Handle Astro's page navigation if SPA-like behavior is used
+  // Replace this with your router's event (e.g., `astro:after-swap`)
+  document.addEventListener("astro:after-swap", setupHamburgerMenu);
 </script>

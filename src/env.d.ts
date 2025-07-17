@@ -13,6 +13,7 @@ type User = {
   id: string;
   studentId: string;
   citizenId: string;
+  role: string;
 };
 
 declare namespace App {

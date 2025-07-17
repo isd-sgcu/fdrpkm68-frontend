@@ -1,0 +1,120 @@
+---
+import ButtonFest from "@/components/common/ButtonFest.astro";
+import HorizonlineFest from "@/components/common/HorizonlineFest.astro";
+---
+
+<div class="relative">
+  <div
+    id="popup"
+    class="pointer-events-none fixed inset-0 z-50 mx-auto flex w-full max-w-[440px] items-center justify-center opacity-0 transition-opacity duration-300"
+  >
+    <div
+      class="flex h-screen w-full flex-col gap-5 bg-[url('/fest/BG-Fest.png')] bg-no-repeat py-15 text-center"
+    >
+      <div class="relative w-full px-2 whitespace-nowrap">
+        <!-- Shadow layer -->
+        <h1
+          class="font-zen-dots absolute inset-0 px-2 text-[clamp(3rem,13vw,3.75rem)] leading-[140%] font-normal tracking-normal text-[#72CED7] blur-sm select-none"
+        >
+          CU FEST
+        </h1>
+
+        <!-- Gradient text layer -->
+        <h1
+          class="font-zen-dots relative bg-gradient-to-b from-[#F94FC6] to-[#E0BBE4] bg-clip-text text-[clamp(3rem,13vw,3.75rem)] leading-[140%] font-normal tracking-normal text-transparent select-none"
+        >
+          CU FEST
+        </h1>
+      </div>
+      <HorizonlineFest variant="yellow" />
+      <div
+        class="flex grow flex-col gap-5 overflow-y-auto p-4 px-8 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border [&::-webkit-scrollbar-thumb]:border-white [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_#CB438B] [&::-webkit-scrollbar-track]:bg-transparent"
+      >
+        <div class="text-[#F09810] text-shadow-[0_0_10px_#6F84B8]">
+          <p
+            class="font-family-orbitron text-[clamp(1.25rem,40vw,1.75rem)] font-bold"
+          >
+            Mysterious thing, Time
+          </p>
+          <p class="font-sans text-[clamp(1rem,8vw,1.25rem)] font-bold">
+            สิ่งที่น่าพิศวงที่สุด คือ เวลา
+          </p>
+        </div>
+        <p class="font-sans">
+          อดีต สร้างปัจจุบัน เติมเต็มอนาคต กับ “นิสิตจุฬาฯ”
+          เราพร้อมจริงๆเเล้วหรือยัง?
+        </p>
+        <p
+          class="text-[clamp(1rem,8vw,2.25rem)] font-semibold text-shadow-[0_0_10px_#72CED7]"
+        >
+          19 กรกฎาคม 2568
+        </p>
+        <div>
+          <p>เหล่านักท่องเวลามือใหม่ ในนามนิสิตจุฬาฯ</p>
+          <p>ได้ทะยานขึ้นสู่ห้วงนภา ไปกับสายการบิน</p>
+          <p>Chulalongkorn เที่ยวบินที่ CU109</p>
+          <p>และได้พบกับจุดเริ่มต้นของการเดินทางครั้งใหม่</p>
+        </div>
+
+        <div>
+          <p>ในขณะที่ทุกอย่างกำลังเป็นไปอย่างราบรื่น</p>
+          <p>ทันใดนั้น มิติเวลาได้บิดงอ พับทบบรรจบกัน</p>
+          <p>ท้องฟ้าเกิดวิปริต ดวงอาทิตย์ได้ปลดปล่อย</p>
+          <p>กระแสอนุภาคที่มีพลังงานสูงอย่างรุนแรง</p>
+          <p>จนเกิดเป็นพายุสุริยะ สร้างช่องว่างระหว่างกาลเวลา</p>
+          <p>นำพาให้นิสิตที่อยู่บนเครื่องบินอันตรธานสู่</p>
+          <p>ดินแดนต่าง ๆ เพื่อสำรวจความเป็นไป</p>
+          <p>และไขข้อเท็จจริงที่ซ่อนอยู่ในมิติเวลา</p>
+        </div>
+
+        <div>
+          <p>หากจะฝ่าพายุสุริยะนี้ไปให้ได้ นิสิตจุฬาฯ</p>
+          <p>บนเที่ยวบินนี้ต้องจับมือผ่านอุปสรรคไปด้วยกัน</p>
+          <p>ได้เวลาเเล้วที่มิติแห่งห้วงเวลาจะต้อนรับ</p>
+          <p>นักท่องเวลามือใหม่ เที่ยวบินที่ CU109 ทุกคน เข้าสู่</p>
+        </div>
+
+        <div>
+          <p
+            class="font-family-orbitron text-[clamp(1rem,8vw,2.25rem)] font-semibold text-shadow-[0_0_10px_#F09810]"
+          >
+            "The Time Quest"
+          </p>
+        </div>
+      </div>
+      <HorizonlineFest variant="yellow" />
+      <div id="closePopup" class="mx-auto w-fit">
+        <ButtonFest color="pink" size="big">ไปกันต่อ!</ButtonFest>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Script -->
+<script type="module">
+  const popup = document.getElementById("popup");
+  const openBtn = document.getElementById("openPopup");
+  const closeBtn = document.getElementById("closePopup");
+
+  const showPopup = () => {
+    popup.classList.remove("opacity-0", "pointer-events-none");
+    popup.classList.add("opacity-100", "pointer-events-auto");
+    document.body.classList.add("overflow-hidden");
+  };
+
+  const hidePopup = () => {
+    popup.classList.add("opacity-0", "pointer-events-none");
+    popup.classList.remove("opacity-100", "pointer-events-auto");
+    document.body.classList.remove("overflow-hidden");
+  };
+
+  // Show on first visit
+  if (!localStorage.getItem("hasVisited")) {
+    showPopup();
+    localStorage.setItem("hasVisited", "true");
+  }
+
+  // Manual trigger
+  openBtn?.addEventListener("click", showPopup);
+  closeBtn?.addEventListener("click", hidePopup);
+</script>

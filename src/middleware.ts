@@ -1,47 +1,63 @@
 import { defineMiddleware } from "astro:middleware";
 import jwt from "jsonwebtoken";
 
-import { nonProtectRoutes } from "@/constants/NonProtectedRoutes";
+import { nonProtectRoutes, nonStartedRoutes } from "@/constants/Routes";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url;
-  const isProtectedRoute =
-    !nonProtectRoutes.some((route) => {
-      return url.pathname.startsWith(route);
-    }) && url.pathname !== "/";
+
+  if (url.pathname === "/" || url.pathname === "/logout") {
+    return next();
+  }
+
+  if (nonStartedRoutes.some((route) => url.pathname.startsWith(route))) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/firstdate/home",
+      },
+    });
+  }
 
   const cookie = context.request.headers.get("cookie") ?? "";
   const token = parseCookie(cookie).token;
 
-  console.log("Token from cookie:", token);
-  console.log("Is protected route:", isProtectedRoute);
-
-  if (!isProtectedRoute) {
-    if (token && isValidToken(token)) {
-      context.locals.user = jwt.decode(token) as App.Locals["user"];
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: "/firstdate/home",
-        },
-      });
+  if (!token || !isValidToken(token)) {
+    if (
+      nonProtectRoutes.some((route) => url.pathname.startsWith(route)) &&
+      url.pathname !== "/"
+    ) {
+      return next();
     }
-    return next();
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/",
+      },
+    });
   }
 
-  console.log("Protected route accessed:", url.pathname);
+  const user = jwt.decode(token) as App.Locals["user"];
+  context.locals.user = user;
 
-  if (token && isValidToken(token)) {
-    context.locals.user = jwt.decode(token) as App.Locals["user"];
-    return next();
+  if (user.role === "STAFF" && !url.pathname.startsWith("/staff")) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/staff/home",
+      },
+    });
+  }
+  if (user.role === "FRESHMAN" && url.pathname.startsWith("/staff")) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/firstdate/home",
+      },
+    });
   }
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: "/",
-    },
-  });
+  return next();
 });
 
 function parseCookie(cookie: string): Record<string, string> {

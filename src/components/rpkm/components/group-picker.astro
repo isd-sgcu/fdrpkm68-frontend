@@ -1,11 +1,37 @@
 ---
+import GroupProfile from "@rpkm/rubpuen/GroupProfile";
+
 import Divider from "@/components/common/Divider.astro";
 import Frame from "@/components/common/Frame.astro";
+import { getGroupData } from "@/lib/groupAPI";
+import type { Group } from "@/types/common";
 
-const sampleRoomCode = "UIA321";
-const sampleURL = "rpkm.sgcu.in.th/";
-const sampleHeadName = "มหาเทพ อสูรเพลิง (Lnw)";
-const sampleHeadID = "6812345678";
+const token = Astro.cookies.get("token")?.value;
+
+let groupData = null;
+if (token) {
+  const response = await getGroupData(token);
+  if (response.success && response.data) {
+    groupData = response.data.data as Group;
+  }
+}
+
+if (!groupData) {
+  return Astro.redirect("/login");
+}
+
+const inviteCode = groupData.inviteCode;
+const headName =
+  groupData.owner.firstName +
+  " " +
+  groupData.owner.lastName +
+  " (" +
+  groupData.owner.nickname +
+  ")";
+const headId = groupData.owner.studentId;
+
+const member1 = groupData.memberCount > 1 ? groupData.users[1] : null;
+const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 ---
 
 <!-- Default Wrapper -->
@@ -58,7 +84,7 @@ const sampleHeadID = "6812345678";
         type="button"
         style="width: 260px; height: 48px;"
       >
-        <p class="text-xl font-medium text-white">เป็นหัวแคลน</p>
+        <p class="text-xl font-medium text-white">สร้างห้อง</p>
       </button>
     </div>
 
@@ -83,9 +109,9 @@ const sampleHeadID = "6812345678";
 
     <!-- Profile -->
     <div class="flex w-full justify-center gap-[10px] pt-6">
-      <img src="/images/rpkm/sample-profile.png" width="80" height="80" />
-      <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
-      <img src="/images/rpkm/sample-blank.png" width="80" height="80" />
+      <GroupProfile user={groupData.owner} variant="red-star" />
+      <GroupProfile user={member1} variant="blue" />
+      <GroupProfile user={member2} variant="blue" />
     </div>
 
     <!-- Invite URL -->
@@ -105,7 +131,7 @@ const sampleHeadID = "6812345678";
               id="room-invite-url-head"
               class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
             >
-              {sampleURL + sampleRoomCode}
+              {"rpkm.sgcu.in.th/" + inviteCode}
             </span>
             <img
               src="/images/rpkm/link-icon.svg"
@@ -135,7 +161,7 @@ const sampleHeadID = "6812345678";
               id="room-code-head"
               class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
             >
-              {sampleRoomCode}
+              {inviteCode}
             </span>
             <img
               src="/images/rpkm/link-icon.svg"
@@ -259,8 +285,8 @@ const sampleHeadID = "6812345678";
 
         <!-- Name -->
         <div class="flex flex-col items-center pt-1">
-          <p class="text-xl font-semibold text-white">{sampleHeadName}</p>
-          <p class="text-white">{sampleHeadID}</p>
+          <p class="text-xl font-semibold text-white">{headName}</p>
+          <p class="text-white">{headId}</p>
         </div>
 
         <!-- Submit Button -->
@@ -310,7 +336,7 @@ const sampleHeadID = "6812345678";
         <!-- Information -->
         <div class="flex flex-col items-center gap-1 pt-4 text-white">
           <p class="text-2xl font-medium">คุณได้จับกลุ่มกับ</p>
-          <p class="text-xl font-semibold">{sampleHeadName}</p>
+          <p class="text-xl font-semibold">{headName}</p>
           <p class="text-2xl font-medium">สำเร็จแล้ว</p>
         </div>
       </div>

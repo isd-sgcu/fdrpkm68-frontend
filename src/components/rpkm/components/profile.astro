@@ -1,32 +1,30 @@
 ---
+import UserProfile from "@rpkm/rubpuen/UserProfile";
+
+import { getProfile } from "@/lib/profileAPI";
 import type { User } from "@/types/common";
 
-import UserProfile from "../rubpuen/UserProfile";
+const token = Astro.cookies.get("token")?.value;
 
-// Example mock user object
-const mockUser: User = {
-  id: "c1a2b3d4-e5f6-7890-abcd-ef1234567890",
-  studentId: "6898765432",
-  citizenId: "1234567890123",
-  prefix: "MR",
-  firstName: "ทนงนวย",
-  lastName: "อุอิอา",
-  nickname: "สโน",
-  academicYear: 2,
-  faculty: "Engineering",
-  password: "mockPassword123",
-  phoneNumber: "0812345678",
-  parentName: "Somchai Pat",
-  parentPhoneNumber: "0898765432",
-  parentRelationship: "Father",
-  foodAllergy: "Peanuts",
-  drugAllergy: "Penicillin",
-  illness: "Asthma",
-  avatarId: 1,
-  groupId: "d2e3f4a5-b6c7-8901-defg-234567890123",
-  role: "FRESHMAN",
-  bottleChoice: "A",
-};
+if (!token) {
+  return Astro.redirect("/login");
+}
+
+let user = null;
+try {
+  const response = await getProfile(token);
+  if (response.success && response.data) {
+    user = response.data.user as User;
+  } else {
+    console.error("Failed to fetch user data:", response.error);
+  }
+} catch (error) {
+  console.error("Error fetching user data:", error);
+}
+
+if (!user) {
+  return Astro.redirect("/login");
+}
 ---
 
-<UserProfile user={mockUser} className="profile-avatar" />
+<UserProfile user={user} className="profile-avatar" />

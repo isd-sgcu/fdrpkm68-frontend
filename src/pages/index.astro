@@ -1,220 +1,69 @@
 ---
-import MainLayout from "@/layouts/MainLayout.astro";
-import { api } from "@/lib/api";
-
-// Test backend health endpoint
-type HealthData = {
-  status: string;
-  environment: string;
-  timestamp: string;
-} | null;
-
-let healthData: HealthData = null;
-let healthError: string | null = null;
-let apiLoadTime: number = 0;
-
-const startTime = performance.now();
-try {
-  const healthResponse = await api.get("/healthz");
-  const endTime = performance.now();
-  apiLoadTime = Math.round(endTime - startTime);
-
-  if (healthResponse.success) {
-    healthData = healthResponse.data as HealthData;
-  } else {
-    healthError = healthResponse.error ?? null;
-  }
-} catch (error) {
-  const endTime = performance.now();
-  apiLoadTime = Math.round(endTime - startTime);
-  healthError = `Failed to fetch health: ${error instanceof Error ? error.message : String(error)}`;
-}
+import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
 ---
 
-<MainLayout title="Home" description="Hello World@Firstdate and RPKM">
-  <!-- 8K Test Image as Backdrop -->
-  <div class="fixed inset-0 -z-10">
-    <img
-      src="/images/8ktest.jpg"
-      alt="8K Test Background"
-      class="h-full w-full object-cover"
-      style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;"
-      loading="eager"
-      fetchpriority="high"
-      id="bg-image"
-    />
-    <!-- Dark overlay for text readability -->
-    <div class="absolute inset-0 bg-black/30"></div>
-  </div>
+<Layout>
+  <div class="relative">
+    <div class="flex min-h-screen items-center justify-center px-8">
+      {/* Corner brackets */}
+      <div
+        class="absolute top-6 left-6 h-6 w-6 border-t-2 border-l-2 border-white"
+      >
+      </div>
+      <div
+        class="absolute top-6 right-6 h-6 w-6 border-t-2 border-r-2 border-white"
+      >
+      </div>
+      <div
+        class="absolute bottom-6 left-6 h-6 w-6 border-b-2 border-l-2 border-white"
+      >
+      </div>
+      <div
+        class="absolute right-6 bottom-6 h-6 w-6 border-r-2 border-b-2 border-white"
+      >
+      </div>
 
-  <!-- Content with backdrop -->
-  <div class="relative z-10 min-h-screen">
-    <div class="p-8">
-      <h1 class="mb-6 text-4xl font-bold text-white drop-shadow-lg">
-        FreshmenFest 2025
-      </h1>
-      <p class="mb-8 text-lg text-white/90 drop-shadow">
-        Testing 8K image load performance via Cloud Storage CDN
-      </p>
-
-      <!-- Test grid -->
-      <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
-          <h3 class="mb-2 font-semibold text-white">Logo Test</h3>
-          <img src="/images/logo.svg" alt="Logo" class="h-24 w-24" />
-        </div>
-
-        <div class="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
-          <h3 class="mb-2 font-semibold text-white">SVG Test</h3>
+      <div class="flex flex-col items-center">
+        <div class="mb-2 flex flex-col items-center">
           <img
-            src="/images/test-image.svg"
-            alt="Test Image"
-            class="h-16 w-32"
+            src="/firstdate/register/sgcu-logo.png"
+            alt="SGCU Logo"
+            class="h-12"
+          />
+          <img
+            src="/firstdate/register/freshmen-fest-logo.png"
+            alt="Freshmen Fest Logo"
           />
         </div>
 
-        <!-- Backend Health Check -->
-        <div class="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
-          <h3 class="mb-2 font-semibold text-white">Backend Health</h3>
-          {
-            healthData ? (
-              <div class="space-y-2 text-sm">
-                <div class="flex items-center gap-2">
-                  <span class="h-2 w-2 rounded-full bg-green-400" />
-                  <span class="text-green-300">Healthy</span>
-                </div>
-                <div class="text-white/70">
-                  <div>Status: {healthData.status}</div>
-                  <div>Environment: {healthData.environment}</div>
-                  <div>Time: {healthData.timestamp}</div>
-                </div>
-              </div>
-            ) : (
-              <div class="space-y-2 text-sm">
-                <div class="flex items-center gap-2">
-                  <span class="h-2 w-2 rounded-full bg-red-400" />
-                  <span class="text-red-300">Error</span>
-                </div>
-                <div class="text-xs text-white/70">{healthError}</div>
-              </div>
-            )
-          }
-        </div>
-      </div>
+        <svg
+          width="10"
+          height="220"
+          viewBox="0 0 10 220"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="mb-8"
+        >
+          <circle cx="5" cy="5" r="5" fill="white"></circle>
+          <line x1="5" y1="10" x2="5" y2="220" stroke="white" stroke-width="2"
+          ></line>
+          <circle cx="5" cy="215" r="5" fill="white"></circle>
+        </svg>
 
-      <!-- Performance info -->
-      <div class="rounded-lg bg-white/10 p-6 text-white backdrop-blur-sm">
-        <h3 class="mb-3 text-xl font-semibold">Load Test Info</h3>
+        <button
+          class="mb-4 w-full max-w-sm rounded-md bg-white px-6 py-3 text-base font-medium text-black transition duration-200"
+          onclick="window.location.href='/register'"
+        >
+          ลงทะเบียน
+        </button>
 
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <!-- Image Performance -->
-          <div>
-            <h4 class="mb-2 font-semibold text-blue-300">
-              Static Assets (CDN)
-            </h4>
-            <ul class="space-y-1 text-sm">
-              <li>
-                • 8K Background: <code class="rounded bg-black/20 px-1"
-                  >/images/8ktest.jpg</code
-                >
-              </li>
-              <li>• Resolution: 7680×4320 pixels</li>
-              <li>• Served from: Cloud Storage CDN</li>
-              <li>• Cache headers: 1 day TTL</li>
-              <li>• Loading: eager, fetchpriority: high</li>
-              <li>
-                • Load time: <span id="image-load-time" class="text-blue-400"
-                  >Measuring...</span
-                >
-              </li>
-            </ul>
-          </div>
-
-          <!-- API Performance -->
-          <div>
-            <h4 class="mb-2 font-semibold text-green-300">API Performance</h4>
-            <ul class="space-y-1 text-sm">
-              <li>
-                • Endpoint: <code class="rounded bg-black/20 px-1"
-                  >/api/health</code
-                >
-              </li>
-              <li>• Routing: Load balancer → Backend</li>
-              <li>• URL rewrite: /api/health → /health</li>
-              <li>• Response: {healthData ? "Success" : "Failed"}</li>
-              <li>
-                • Load time: <span class="text-green-400">{apiLoadTime}ms</span>
-              </li>
-              <li>
-                • Status: {
-                  healthData ? (
-                    <span class="text-green-400">✓ Connected</span>
-                  ) : (
-                    <span class="text-red-400">✗ Error</span>
-                  )
-                }
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="mt-4 border-t border-white/20 pt-4">
-          <p class="text-xs text-white/60">
-            This page tests both static asset delivery (CDN) and API routing
-            (load balancer) to verify the complete infrastructure setup.
-          </p>
+        <div class="mb-4 text-center">
+          <p class="mb-2 text-sm">เคยลงทะเบียนมาแล้ว?</p>
+          <button class="underline" onclick="window.location.href='/login'">
+            เข้าสู่ระบบ
+          </button>
         </div>
       </div>
     </div>
   </div>
-</MainLayout>
-
-<script>
-  // Track 8K image load time using Performance API
-  const bgImage = document.getElementById("bg-image") as HTMLImageElement;
-  const imageLoadTimeElement = document.getElementById("image-load-time");
-  const apiLoadTimeElement = document.createElement("span");
-  apiLoadTimeElement.className = "text-green-400";
-
-  function checkResourceTimings() {
-    // Get image network timing
-    const imageUrl = bgImage?.src;
-    if (imageUrl) {
-      const imagePerfEntries = performance.getEntriesByName(imageUrl);
-      if (imagePerfEntries.length > 0) {
-        const imageEntry = imagePerfEntries[0] as PerformanceResourceTiming;
-        const imageNetworkTime = Math.round(imageEntry.duration);
-        if (imageLoadTimeElement) {
-          imageLoadTimeElement.textContent = `${imageNetworkTime}ms`;
-        }
-      }
-    }
-
-    // Get API network timing - make a client-side call to measure
-    fetch("https://dev.freshmenfest2025.com/api/health").then(() => {
-      const apiPerfEntries = performance.getEntriesByName(
-        "https://dev.freshmenfest2025.com/api/health"
-      );
-      if (apiPerfEntries.length > 0) {
-        const apiEntry = apiPerfEntries[
-          apiPerfEntries.length - 1
-        ] as PerformanceResourceTiming;
-        const apiNetworkTime = Math.round(apiEntry.duration);
-        // Update API load time display
-        const apiLoadTimeSpan = document.querySelector("span.text-green-400");
-        if (apiLoadTimeSpan && apiLoadTimeSpan.textContent?.includes("ms")) {
-          apiLoadTimeSpan.textContent = `${apiNetworkTime}ms (network)`;
-        }
-      }
-    });
-  }
-
-  // Check timings after page load
-  if (document.readyState === "complete") {
-    setTimeout(checkResourceTimings, 100);
-  } else {
-    window.addEventListener("load", () => {
-      setTimeout(checkResourceTimings, 100);
-    });
-  }
-</script>
+</Layout>

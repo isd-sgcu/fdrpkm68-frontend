@@ -202,6 +202,9 @@ jobs:
     env:
       BUCKET_NAME: freshmenfest2025-static
       SERVICE_NAME: freshmenfest2025-frontend
+      API_URL: https://freshmenfest2025.com/api
+      SITE_URL: https://freshmenfest2025.com
+      JWT_SECRET: ${{ secrets.PROD_SECRET_JWT_KEY }}
 
     steps:
       - name: Checkout code

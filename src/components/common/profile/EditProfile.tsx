@@ -1,32 +1,58 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 import { Pencil } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 
 
+import { api } from "@/lib/api";
+
 // Define the form data structure (reuse from register)
 interface EditProfileFormData {
-  // Personal Info
-  prefix: string;
-  firstName: string;
-  lastName: string;
-  nickname: string;
-  faculty: string;
-  academicYear: string;
-  studentId: string;
-  citizenId: string;
-  // Contact Info
-  phoneNumber: string;
-  parentName: string;
-  parentRelationship: string;
-  parentPhoneNumber: string;
-  // Health Info
-  hasAllergies: boolean | null;
-  foodAllergy: string;
-  hasMedications: boolean | null;
-  drugAllergy: string;
-  hasChronicDiseases: boolean | null;
-  illness: string;
+  user: {
+    // Personal Info
+    prefix: string;
+    firstName: string;
+    lastName: string;
+    nickname: string;
+    faculty: string;
+    academicYear: string;
+    studentId: string;
+    citizenId: string;
+    // Contact Info
+    phoneNumber: string;
+    parentName: string;
+    parentRelationship: string;
+    parentPhoneNumber: string;
+    // Health Info
+    hasAllergies: boolean | null;
+    foodAllergy: string;
+    hasMedications: boolean | null;
+    drugAllergy: string;
+    hasChronicDiseases: boolean | null;
+    illness: string;
+  };
+}
+
+// Create a stable query client instance
+let queryClient: QueryClient | null = null;
+
+function getQueryClient(): QueryClient {
+  if (!queryClient) {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 1000 * 60 * 5, // 5 minutes
+          refetchOnWindowFocus: false,
+        },
+      },
+    });
+  }
+  return queryClient;
 }
 
 const faculties = [
@@ -63,7 +89,7 @@ const faculties = [
   { text: "บัณฑิตวิทยาลัย", value: "GRADUATE_SCHOOL" },
 ];
 
-export default function EditProfile({
+function EditProfileContent({
   userType,
 }: {
   userType: "FRESHMAN" | "STAFF";
@@ -74,26 +100,116 @@ export default function EditProfile({
       : "/firstdate/register/staff/glob.svg";
   const themeColor = userType === "FRESHMAN" ? "#C6EBC5" : "#FFB6C1";
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [isUpdateLoading, setIsUpdateLoading] = useState<boolean>(false);
   const [profileData, setProfileData] = useState<EditProfileFormData>({
-    prefix: "mr",
-    firstName: "นาย",
-    lastName: "บลา ๆ บลา ๆ",
-    nickname: "น",
-    faculty: "FACULTY_OF_ENGINEERING",
-    academicYear: "1",
-    studentId: "1234567890",
-    citizenId: "1234567890123",
-    phoneNumber: "0812345678",
-    parentName: "นาย บลา ๆ บลา ๆ",
-    parentRelationship: "พ่อ",
-    parentPhoneNumber: "0812345678",
-    hasAllergies: null,
-    foodAllergy: "-",
-    hasMedications: null,
-    drugAllergy: "-",
-    hasChronicDiseases: null,
-    illness: "-",
+    user: {
+      prefix: "mr",
+      firstName: "นาย",
+      lastName: "บลา ๆ บลา ๆ",
+      nickname: "น",
+      faculty: "FACULTY_OF_ENGINEERING",
+      academicYear: "1",
+      studentId: "1234567890",
+      citizenId: "1234567890123",
+      phoneNumber: "0812345678",
+      parentName: "นาย บลา ๆ บลา ๆ",
+      parentRelationship: "พ่อ",
+      parentPhoneNumber: "0812345678",
+      hasAllergies: null,
+      foodAllergy: "-",
+      hasMedications: null,
+      drugAllergy: "-",
+      hasChronicDiseases: null,
+      illness: "-",
+    },
   });
+
+  const getAuthToken = (): string | null => {
+    if (typeof window !== "undefined") {
+      const localToken = localStorage.getItem("auth_token");
+      if (localToken) {
+        return localToken;
+      }
+
+      const cookies = document.cookie.split("; ");
+      const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
+      return tokenCookie ? decodeURIComponent(tokenCookie.split("=")[1]) : null;
+    }
+
+    return null;
+  };
+
+  const {
+    data: fetchedProfileData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const reponse = await api.get("/user", {
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      });
+
+      return reponse.data as EditProfileFormData;
+    },
+  });
+
+  useEffect(() => {
+    if (fetchedProfileData && !isLoading && !isError) {
+      setProfileData(fetchedProfileData);
+    }
+  }, [fetchedProfileData, isLoading, isError]);
+
+  const updateProfile = async (data: EditProfileFormData): Promise<void> => {
+    // Prevent multiple submissions
+    if (isUpdateLoading) {
+      return;
+    }
+
+    setIsUpdateLoading(true);
+
+    try {
+      const formData = {
+        // studentId: data.user.studentId,
+        // citizenId: data.user.citizenId,
+        prefix: data.user.prefix,
+        firstName: data.user.firstName,
+        lastName: data.user.lastName,
+        nickname: data.user.nickname,
+        faculty: data.user.faculty,
+        academicYear: parseInt(data.user.academicYear),
+        phoneNumber: data.user.phoneNumber,
+        parentName: data.user.parentName,
+        parentPhoneNumber: data.user.parentPhoneNumber,
+        parentRelationship: data.user.parentRelationship,
+        foodAllergy: data.user.hasAllergies ? data.user.foodAllergy : null,
+        drugAllergy: data.user.hasMedications ? data.user.drugAllergy : null,
+        illness: data.user.hasChronicDiseases ? data.user.illness : null,
+      };
+
+      const reponse = await api.patch("/user/update", formData, {
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      });
+
+      if (reponse.success) {
+        setIsEditMode(false);
+        // Optionally refresh the data from the server
+        // queryClient.invalidateQueries(['profile']);
+      } else {
+        console.error("Profile update failed:", reponse.message);
+        // You could add a snackbar or error message here
+      }
+    } catch (error) {
+      console.error("Profile update error:", error);
+      // You could add a snackbar or error message here
+    } finally {
+      setIsUpdateLoading(false);
+    }
+  };
 
   const {
     register,
@@ -103,6 +219,7 @@ export default function EditProfile({
     clearErrors,
     formState: { errors },
     watch,
+    reset: resetForm,
   } = useForm<EditProfileFormData>({
     defaultValues: profileData,
     mode: "onChange",
@@ -110,13 +227,20 @@ export default function EditProfile({
 
   const formValues = watch();
 
+  // Reset form when API data is fetched
+  useEffect(() => {
+    if (fetchedProfileData && !isLoading && !isError) {
+      resetForm(fetchedProfileData);
+    }
+  }, [fetchedProfileData, isLoading, isError, resetForm]);
+
   const handleReturnHome = (): void => {
     window.location.href = "/home";
   };
 
-  const onSubmit = (data: EditProfileFormData): void => {
+  const onSubmit = async (data: EditProfileFormData): Promise<void> => {
+    await updateProfile(data);
     setProfileData(data);
-    setIsEditMode(false);
   };
 
   const CustomCheckbox = ({
@@ -143,39 +267,39 @@ export default function EditProfile({
   );
 
   const handleHasAllergiesYes = (): void => {
-    setValue("hasAllergies", true);
-    setValue("foodAllergy", "");
-    clearErrors("foodAllergy");
+    setValue("user.hasAllergies", true);
+    setValue("user.foodAllergy", "");
+    clearErrors("user.foodAllergy");
   };
   const handleHasAllergiesNo = (): void => {
-    setValue("hasAllergies", false);
-    setValue("foodAllergy", "");
-    clearErrors("foodAllergy");
+    setValue("user.hasAllergies", false);
+    setValue("user.foodAllergy", "");
+    clearErrors("user.foodAllergy");
   };
   const handleHasMedicationsYes = (): void => {
-    setValue("hasMedications", true);
-    setValue("drugAllergy", "");
-    clearErrors("drugAllergy");
+    setValue("user.hasMedications", true);
+    setValue("user.drugAllergy", "");
+    clearErrors("user.drugAllergy");
   };
   const handleHasMedicationsNo = (): void => {
-    setValue("hasMedications", false);
-    setValue("drugAllergy", "");
-    clearErrors("drugAllergy");
+    setValue("user.hasMedications", false);
+    setValue("user.drugAllergy", "");
+    clearErrors("user.drugAllergy");
   };
   const handleHasChronicDiseasesYes = (): void => {
-    setValue("hasChronicDiseases", true);
-    setValue("illness", "");
-    clearErrors("illness");
+    setValue("user.hasChronicDiseases", true);
+    setValue("user.illness", "");
+    clearErrors("user.illness");
   };
   const handleHasChronicDiseasesNo = (): void => {
-    setValue("hasChronicDiseases", false);
-    setValue("illness", "");
-    clearErrors("illness");
+    setValue("user.hasChronicDiseases", false);
+    setValue("user.illness", "");
+    clearErrors("user.illness");
   };
 
-  const watchHasAllergies = formValues.hasAllergies === true;
-  const watchHasMedications = formValues.hasMedications === true;
-  const watchHasChronicDiseases = formValues.hasChronicDiseases === true;
+  const watchHasAllergies = formValues.user?.hasAllergies === true;
+  const watchHasMedications = formValues.user?.hasMedications === true;
+  const watchHasChronicDiseases = formValues.user?.hasChronicDiseases === true;
 
   return (
     <section
@@ -194,7 +318,15 @@ export default function EditProfile({
         <img src={globUrl} alt="Background" />
         <h1 className="text-lg font-semibold">ข้อมูลส่วนตัว</h1>
       </div>
-      {isEditMode ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <div className="text-white">กำลังโหลดข้อมูล...</div>
+        </div>
+      ) : isError ? (
+        <div className="flex items-center justify-center py-8">
+          <div className="text-red-400">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>
+        </div>
+      ) : isEditMode ? (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           {/* Personal Information */}
           <div className="flex flex-col gap-2">
@@ -205,7 +337,7 @@ export default function EditProfile({
               <select
                 id="prefix"
                 className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-                {...register("prefix")}
+                {...register("user.prefix")}
               >
                 <option value="mr">นาย</option>
                 <option value="ms">นางสาว</option>
@@ -218,15 +350,17 @@ export default function EditProfile({
             <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
               <input
                 id="firstName"
-                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.firstName ? "border-red-500" : ""}`}
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.firstName ? "border-red-500" : ""}`}
                 type="text"
                 placeholder="ชื่อจริง"
-                {...register("firstName", { required: "กรุณากรอกชื่อจริง" })}
+                {...register("user.firstName", {
+                  required: "กรุณากรอกชื่อจริง",
+                })}
               />
             </div>
-            {errors.firstName && (
+            {errors.user?.firstName && (
               <span className="text-xs text-red-400">
-                {errors.firstName.message}
+                {errors.user.firstName.message}
               </span>
             )}
             <label className="text-sm" htmlFor="lastName">
@@ -235,15 +369,15 @@ export default function EditProfile({
             <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
               <input
                 id="lastName"
-                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.lastName ? "border-red-500" : ""}`}
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.lastName ? "border-red-500" : ""}`}
                 type="text"
                 placeholder="นามสกุล"
-                {...register("lastName", { required: "กรุณากรอกนามสกุล" })}
+                {...register("user.lastName", { required: "กรุณากรอกนามสกุล" })}
               />
             </div>
-            {errors.lastName && (
+            {errors.user?.lastName && (
               <span className="text-xs text-red-400">
-                {errors.lastName.message}
+                {errors.user.lastName.message}
               </span>
             )}
             <label className="text-sm" htmlFor="nickname">
@@ -252,15 +386,17 @@ export default function EditProfile({
             <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
               <input
                 id="nickname"
-                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.nickname ? "border-red-500" : ""}`}
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.nickname ? "border-red-500" : ""}`}
                 type="text"
                 placeholder="ชื่อเล่น"
-                {...register("nickname", { required: "กรุณากรอกชื่อเล่น" })}
+                {...register("user.nickname", {
+                  required: "กรุณากรอกชื่อเล่น",
+                })}
               />
             </div>
-            {errors.nickname && (
+            {errors.user?.nickname && (
               <span className="text-xs text-red-400">
-                {errors.nickname.message}
+                {errors.user.nickname.message}
               </span>
             )}
             <label className="text-sm" htmlFor="faculty">
@@ -270,7 +406,7 @@ export default function EditProfile({
               <select
                 id="faculty"
                 className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-                {...register("faculty")}
+                {...register("user.faculty")}
               >
                 {faculties.map((faculty) => (
                   <option key={faculty.value} value={faculty.value}>
@@ -286,7 +422,7 @@ export default function EditProfile({
               <select
                 id="academicYear"
                 className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
-                {...register("academicYear")}
+                {...register("user.academicYear")}
               >
                 <option value="1">ชั้นปีที่ 1</option>
                 <option value="2">ชั้นปีที่ 2</option>
@@ -294,30 +430,7 @@ export default function EditProfile({
                 <option value="4">ชั้นปีที่ 4</option>
               </select>
             </div>
-            <label className="text-sm" htmlFor="studentId">
-              รหัสนิสิต
-            </label>
-            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-              <input
-                id="studentId"
-                className="h-full w-full rounded-sm bg-black p-1 text-sm"
-                type="text"
-                placeholder="รหัสนิสิต"
-                {...register("studentId")}
-              />
-            </div>
-            <label className="text-sm" htmlFor="citizenId">
-              รหัสประชาชน
-            </label>
-            <div className="cut-edge-all-sm w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
-              <input
-                id="citizenId"
-                className="h-full w-full rounded-sm bg-black p-1 text-sm"
-                type="text"
-                placeholder="รหัสประชาชน"
-                {...register("citizenId")}
-              />
-            </div>
+            {/* Removed editable studentId and citizenId fields */}
           </div>
           <img
             src="/firstdate/register/divider.png"
@@ -334,8 +447,8 @@ export default function EditProfile({
                 id="phoneNumber"
                 type="text"
                 placeholder="เบอร์โทรศัพท์"
-                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.phoneNumber ? "border-red-500" : ""}`}
-                {...register("phoneNumber", {
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.phoneNumber ? "border-red-500" : ""}`}
+                {...register("user.phoneNumber", {
                   required: "กรุณากรอกเบอร์โทรศัพท์",
                   pattern: {
                     value: /^[0-9]{10}$/,
@@ -344,9 +457,9 @@ export default function EditProfile({
                 })}
               />
             </div>
-            {errors.phoneNumber && (
+            {errors.user?.phoneNumber && (
               <span className="text-xs text-red-400">
-                {errors.phoneNumber.message}
+                {errors.user.phoneNumber.message}
               </span>
             )}
             <label className="text-sm" htmlFor="parentName">
@@ -357,15 +470,15 @@ export default function EditProfile({
                 id="parentName"
                 type="text"
                 placeholder="ชื่อผู้ปกครอง"
-                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.parentName ? "border-red-500" : ""}`}
-                {...register("parentName", {
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.parentName ? "border-red-500" : ""}`}
+                {...register("user.parentName", {
                   required: "กรุณากรอกชื่อผู้ปกครอง",
                 })}
               />
             </div>
-            {errors.parentName && (
+            {errors.user?.parentName && (
               <span className="text-xs text-red-400">
-                {errors.parentName.message}
+                {errors.user.parentName.message}
               </span>
             )}
             <label className="text-sm" htmlFor="parentRelationship">
@@ -376,8 +489,8 @@ export default function EditProfile({
                 id="parentRelationship"
                 type="text"
                 placeholder="ความสัมพันธ์"
-                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.parentRelationship ? "border-red-500" : ""}`}
-                {...register("parentRelationship", {
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.parentRelationship ? "border-red-500" : ""}`}
+                {...register("user.parentRelationship", {
                   required: "กรุณากรอกความสัมพันธ์",
                   minLength: {
                     value: 2,
@@ -386,9 +499,9 @@ export default function EditProfile({
                 })}
               />
             </div>
-            {errors.parentRelationship && (
+            {errors.user?.parentRelationship && (
               <span className="text-xs text-red-400">
-                {errors.parentRelationship.message}
+                {errors.user.parentRelationship.message}
               </span>
             )}
             <label className="text-sm" htmlFor="parentPhoneNumber">
@@ -399,8 +512,8 @@ export default function EditProfile({
                 id="parentPhoneNumber"
                 type="text"
                 placeholder="เบอร์โทรศัพท์ของผู้ปกครอง"
-                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.parentPhoneNumber ? "border-red-500" : ""}`}
-                {...register("parentPhoneNumber", {
+                className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.parentPhoneNumber ? "border-red-500" : ""}`}
+                {...register("user.parentPhoneNumber", {
                   required: "กรุณากรอกเบอร์โทรศัพท์ของผู้ปกครอง",
                   pattern: {
                     value: /^[0-9]{10}$/,
@@ -409,9 +522,9 @@ export default function EditProfile({
                 })}
               />
             </div>
-            {errors.parentPhoneNumber && (
+            {errors.user?.parentPhoneNumber && (
               <span className="text-xs text-red-400">
-                {errors.parentPhoneNumber.message}
+                {errors.user.parentPhoneNumber.message}
               </span>
             )}
           </div>
@@ -427,7 +540,7 @@ export default function EditProfile({
             </label>
             <div className="flex gap-2">
               <Controller
-                name="hasAllergies"
+                name="user.hasAllergies"
                 control={control}
                 rules={{
                   validate: (v) =>
@@ -449,15 +562,15 @@ export default function EditProfile({
                 )}
               />
             </div>
-            {errors.hasAllergies && (
+            {errors.user?.hasAllergies && (
               <span className="text-xs text-red-400">
-                {errors.hasAllergies.message}
+                {errors.user.hasAllergies.message}
               </span>
             )}
             {watchHasAllergies && (
               <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
                 <Controller
-                  name="foodAllergy"
+                  name="user.foodAllergy"
                   control={control}
                   rules={{ required: "กรุณาระบุอาหารที่แพ้" }}
                   render={({ field }) => (
@@ -465,16 +578,16 @@ export default function EditProfile({
                       id="foodAllergy"
                       type="text"
                       placeholder="อาหารที่แพ้"
-                      className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.foodAllergy ? "border-red-500" : ""}`}
+                      className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.foodAllergy ? "border-red-500" : ""}`}
                       {...field}
                     />
                   )}
                 />
               </div>
             )}
-            {errors.foodAllergy && (
+            {errors.user?.foodAllergy && (
               <span className="text-xs text-red-400">
-                {errors.foodAllergy.message}
+                {errors.user.foodAllergy.message}
               </span>
             )}
             <label className="text-sm" htmlFor="drugAllergy">
@@ -482,7 +595,7 @@ export default function EditProfile({
             </label>
             <div className="flex gap-2">
               <Controller
-                name="hasMedications"
+                name="user.hasMedications"
                 control={control}
                 rules={{
                   validate: (v) =>
@@ -504,15 +617,15 @@ export default function EditProfile({
                 )}
               />
             </div>
-            {errors.hasMedications && (
+            {errors.user?.hasMedications && (
               <span className="text-xs text-red-400">
-                {errors.hasMedications.message}
+                {errors.user.hasMedications.message}
               </span>
             )}
             {watchHasMedications && (
               <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
                 <Controller
-                  name="drugAllergy"
+                  name="user.drugAllergy"
                   control={control}
                   rules={{ required: "กรุณาระบุยาที่แพ้" }}
                   render={({ field }) => (
@@ -520,16 +633,16 @@ export default function EditProfile({
                       id="drugAllergy"
                       type="text"
                       placeholder="ยาที่แพ้"
-                      className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.drugAllergy ? "border-red-500" : ""}`}
+                      className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.drugAllergy ? "border-red-500" : ""}`}
                       {...field}
                     />
                   )}
                 />
               </div>
             )}
-            {errors.drugAllergy && (
+            {errors.user?.drugAllergy && (
               <span className="text-xs text-red-400">
-                {errors.drugAllergy.message}
+                {errors.user.drugAllergy.message}
               </span>
             )}
             <label className="text-sm" htmlFor="illness">
@@ -537,7 +650,7 @@ export default function EditProfile({
             </label>
             <div className="flex gap-2">
               <Controller
-                name="hasChronicDiseases"
+                name="user.hasChronicDiseases"
                 control={control}
                 rules={{
                   validate: (v) =>
@@ -559,15 +672,15 @@ export default function EditProfile({
                 )}
               />
             </div>
-            {errors.hasChronicDiseases && (
+            {errors.user?.hasChronicDiseases && (
               <span className="text-xs text-red-400">
-                {errors.hasChronicDiseases.message}
+                {errors.user.hasChronicDiseases.message}
               </span>
             )}
             {watchHasChronicDiseases && (
               <div className="cut-edge-all-sm mt-2 w-full bg-gradient-to-t from-[#FFB6C1] to-[#121212] p-[2px]">
                 <Controller
-                  name="illness"
+                  name="user.illness"
                   control={control}
                   rules={{ required: "กรุณาระบุโรคประจำตัว" }}
                   render={({ field }) => (
@@ -575,16 +688,16 @@ export default function EditProfile({
                       id="illness"
                       type="text"
                       placeholder="โรคประจำตัว"
-                      className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.illness ? "border-red-500" : ""}`}
+                      className={`h-full w-full rounded-sm bg-black p-1 text-sm ${errors.user?.illness ? "border-red-500" : ""}`}
                       {...field}
                     />
                   )}
                 />
               </div>
             )}
-            {errors.illness && (
+            {errors.user?.illness && (
               <span className="text-xs text-red-400">
-                {errors.illness.message}
+                {errors.user.illness.message}
               </span>
             )}
           </div>
@@ -596,9 +709,21 @@ export default function EditProfile({
           <div className="flex w-full flex-col items-center gap-4">
             <button
               type="submit"
-              className="w-36 rounded-full bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] py-2 text-black"
+              disabled={isUpdateLoading}
+              className={`w-36 rounded-full py-2 transition-colors duration-200 ${
+                isUpdateLoading
+                  ? "cursor-not-allowed bg-gradient-to-t from-gray-400 to-gray-300 text-gray-600"
+                  : "bg-gradient-to-t from-[#FFB6C1] to-[#FFFFF2] text-black hover:from-[#FFB6C1]/80 hover:to-[#FFFFF2]/80"
+              }`}
             >
-              บันทึก
+              {isUpdateLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-600 border-t-transparent" />
+                  กำลังบันทึก...
+                </div>
+              ) : (
+                "บันทึก"
+              )}
             </button>
             <button
               type="button"
@@ -616,32 +741,32 @@ export default function EditProfile({
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>ชื่อ:</span>
               <p>
-                {profileData.prefix === "mr"
+                {profileData.user.prefix === "mr"
                   ? "นาย"
-                  : profileData.prefix === "ms"
+                  : profileData.user.prefix === "ms"
                     ? "นางสาว"
                     : "นาง"}{" "}
-                {profileData.firstName} {profileData.lastName}
+                {profileData.user.firstName} {profileData.user.lastName}
               </p>
             </div>
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>ชื่อเล่น:</span>
-              <p>{profileData.nickname}</p>
+              <p>{profileData.user.nickname}</p>
             </div>
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>คณะ:</span>
               <p>
-                {faculties.find((f) => f.value === profileData.faculty)?.text ||
-                  ""}
+                {faculties.find((f) => f.value === profileData.user.faculty)
+                  ?.text || ""}
               </p>
             </div>
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>รหัสนิสิต:</span>
-              <p>{profileData.studentId}</p>
+              <p>{profileData.user.studentId}</p>
             </div>
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>รหัสประชาชน:</span>
-              <p>{profileData.citizenId}</p>
+              <p>{profileData.user.citizenId}</p>
             </div>
           </div>
           <img
@@ -653,20 +778,20 @@ export default function EditProfile({
           <div className="flex flex-col gap-4">
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>เบอร์โทรศัพท์:</span>
-              <p>{profileData.phoneNumber}</p>
+              <p>{profileData.user.phoneNumber}</p>
             </div>
             <hr className="m-2 w-48 self-center" />
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>ผู้ปกครอง:</span>
-              <p>{profileData.parentName}</p>
+              <p>{profileData.user.parentName}</p>
             </div>
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>ความสัมพันธ์:</span>
-              <p>{profileData.parentRelationship}</p>
+              <p>{profileData.user.parentRelationship}</p>
             </div>
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>เบอร์โทรศัพท์:</span>
-              <p>{profileData.parentPhoneNumber}</p>
+              <p>{profileData.user.parentPhoneNumber}</p>
             </div>
           </div>
           <img
@@ -681,9 +806,9 @@ export default function EditProfile({
                 อาหารที่แพ้ / ข้อจำกัดด้านอาหาร:
               </span>
               <p>
-                {profileData.hasAllergies === true
-                  ? profileData.foodAllergy
-                  : profileData.hasAllergies === false
+                {profileData.user.hasAllergies === true
+                  ? profileData.user.foodAllergy
+                  : profileData.user.hasAllergies === false
                     ? "ไม่มี"
                     : "-"}
               </p>
@@ -691,9 +816,9 @@ export default function EditProfile({
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>ยาที่แพ้:</span>
               <p>
-                {profileData.hasMedications === true
-                  ? profileData.drugAllergy
-                  : profileData.hasMedications === false
+                {profileData.user.hasMedications === true
+                  ? profileData.user.drugAllergy
+                  : profileData.user.hasMedications === false
                     ? "ไม่มี"
                     : "-"}
               </p>
@@ -701,9 +826,9 @@ export default function EditProfile({
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>โรคประจำตัว:</span>
               <p>
-                {profileData.hasChronicDiseases === true
-                  ? profileData.illness
-                  : profileData.hasChronicDiseases === false
+                {profileData.user.hasChronicDiseases === true
+                  ? profileData.user.illness
+                  : profileData.user.hasChronicDiseases === false
                     ? "ไม่มี"
                     : "-"}
               </p>
@@ -740,5 +865,19 @@ export default function EditProfile({
         </>
       )}
     </section>
+  );
+}
+
+export default function EditProfile({
+  userType,
+}: {
+  userType: "FRESHMAN" | "STAFF";
+}): ReactNode {
+  const client = getQueryClient();
+
+  return (
+    <QueryClientProvider client={client}>
+      <EditProfileContent userType={userType} />
+    </QueryClientProvider>
   );
 }

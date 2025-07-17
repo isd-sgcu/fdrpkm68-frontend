@@ -54,7 +54,7 @@ const selectedMap = mapOptions[0];
             style="background-color: #efe7e3;"
             data-current-map={selectedMap.value}
           >
-            <!-- Map SVG -->
+            <!-- Map PNG -->
             <div
               id="map-content"
               class="flex h-full w-full items-center justify-center transition-transform duration-200 ease-out"
@@ -62,7 +62,7 @@ const selectedMap = mapOptions[0];
             >
               <img
                 id="current-map"
-                src={`/images/maps/${selectedMap.value}.svg`}
+                src={`/images/maps/${selectedMap.value}.png`}
                 alt={selectedMap.label}
                 class="max-h-none max-w-none object-contain"
                 style="width: auto; height: auto; min-width: 100%; min-height: 100%;"
@@ -251,7 +251,7 @@ const selectedMap = mapOptions[0];
     // Map switching functionality
     document.addEventListener("mapChanged", (e) => {
       const { value, label } = (e as CustomEvent).detail;
-      (currentMap as HTMLImageElement).src = `/images/maps/${value}.svg`;
+      (currentMap as HTMLImageElement).src = `/images/maps/${value}.png`;
       (currentMap as HTMLImageElement).alt = label;
       mapContainer.setAttribute("data-current-map", value);
 
