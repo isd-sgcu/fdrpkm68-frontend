@@ -1,5 +1,6 @@
 ---
 import { houseDisplayData } from "@rpkm/data/house.js";
+import { colorMap } from "@rpkm/data/sizeColors";
 import HouseConfirmPopup from "@rpkm/elements/house-confirm-popup.astro";
 import HouseDetailCard from "@rpkm/elements/house-detail-card.astro";
 import HouseInfoPopup from "@rpkm/elements/house-info-popup.astro";
@@ -11,7 +12,7 @@ import Frame from "@/components/common/Frame.astro";
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 
 type houseDisplayType = {
-  id: number;
+  id: string;
   thName: string;
   enName: string;
   image: string;
@@ -221,7 +222,7 @@ type houseDisplayType = {
   </Frame>
 
   <!-- Script -->
-  <script define:vars={{ houseData: houseDisplayData }}>
+  <script define:vars={{ houseData: houseDisplayData, colorMap: colorMap }}>
     document.addEventListener("DOMContentLoaded", () => {
       // ===========================================
       // DOM ELEMENTS
@@ -292,16 +293,7 @@ type houseDisplayType = {
           wrapper.setAttribute("data-thname", house.thName);
           wrapper.setAttribute("data-enname", house.enName);
 
-          // Find color data for the house size
-          const colors = [
-            { size: "S", bgColor: "#0FF", textColor: "#000" },
-            { size: "M", bgColor: "#FF1493", textColor: "#fff" },
-            { size: "L", bgColor: "#FFB6C1", textColor: "#000" },
-            { size: "XL", bgColor: "#D38DD8", textColor: "#000" },
-            { size: "XXL", bgColor: "#2B2D42", textColor: "#fff" },
-          ];
-
-          let colorData = colors.find((color) => color.size == house.size);
+          let colorData = colorMap.find((color) => color.size == house.size);
           if (!colorData) {
             colorData = { size: "", bgColor: "#000", textColor: "#fff" };
           }
@@ -779,16 +771,7 @@ type houseDisplayType = {
         if (sizeBadge) {
           sizeBadge.textContent = house.size;
 
-          // Update size badge colors
-          const colors = {
-            S: { bgColor: "#0FF", textColor: "#000" },
-            M: { bgColor: "#FF1493", textColor: "#fff" },
-            L: { bgColor: "#FFB6C1", textColor: "#000" },
-            XL: { bgColor: "#D38DD8", textColor: "#000" },
-            XXL: { bgColor: "#2B2D42", textColor: "#fff" },
-          };
-
-          const colorData = colors[house.size] || {
+          const colorData = colorMap[house.size] || {
             bgColor: "#000",
             textColor: "#fff",
           };
@@ -962,6 +945,7 @@ type houseDisplayType = {
 
           // Update state - เลือกไปที่ rank ที่ user กดไว้
           pickedHouses[currentRank] = {
+            id: houseObj.id,
             name: houseObj.thName,
             imageURL: houseObj.image,
             rank: currentRank,
@@ -1039,6 +1023,7 @@ type houseDisplayType = {
 
         // Update state - เลือกไปที่ rank ที่ user กดไว้
         pickedHouses[currentRank] = {
+          id: selectedHouseData.id,
           name: selectedHouseData.thName,
           imageURL: selectedHouseData.image,
           rank: currentRank,

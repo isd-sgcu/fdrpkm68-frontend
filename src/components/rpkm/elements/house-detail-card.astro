@@ -1,16 +1,10 @@
 ---
+import { colorMap } from "@rpkm/data/sizeColors";
+
 const { houseData = {} } = Astro.props;
 const { thName, image, size, amount, capacity } = houseData;
 
-const colors = [
-  { size: "S", bgColor: "#0FF", textColor: "#000" },
-  { size: "M", bgColor: "#FF1493", textColor: "#fff" },
-  { size: "L", bgColor: "#FFB6C1", textColor: "#000" },
-  { size: "XL", bgColor: "#D38DD8", textColor: "#000" },
-  { size: "XXL", bgColor: "#2B2D42", textColor: "#fff" },
-];
-
-let colorData = colors.find((color) => color.size == size);
+let colorData = colorMap.find((color) => color.size == size);
 if (!colorData) {
   colorData = { size: "", bgColor: "#000", textColor: "#fff" };
 }

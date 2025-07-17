@@ -5,6 +5,7 @@ declare global {
   interface Window {
     showHouseConfirmPopup?: () => void;
     confirmHouseSubmission?: () => void;
+    showSuccessPopup?: () => void; // <-- add this
   }
 }
 ---
@@ -117,6 +118,7 @@ declare global {
         successPopup?.classList.remove("hidden");
         successPopup?.classList.add("flex");
       }
+      window.showSuccessPopup = showSuccessPopup; // <-- expose globally
 
       // Hide success popup function
       function hideSuccessPopup() {

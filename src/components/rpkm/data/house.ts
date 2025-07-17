@@ -1,6 +1,6 @@
 export const houseDisplayData = [
   {
-    id: 1,
+    id: "1",
     thName: "บ้านว้อนท์",
     enName: "Baan Wanted",
     image: "BaanWanted.png",
@@ -16,7 +16,7 @@ export const houseDisplayData = [
     capacity: 96,
   },
   {
-    id: 2,
+    id: "2",
     thName: "บ้านคุณหนู",
     enName: "Baan Khunnoo",
     image: "BaanKhunNoo.png",
@@ -32,7 +32,7 @@ export const houseDisplayData = [
     capacity: 123,
   },
   {
-    id: 3,
+    id: "3",
     thName: "บ้านโคะ",
     enName: "Baan Koh",
     image: "BaanKoh.png",
@@ -47,7 +47,7 @@ export const houseDisplayData = [
     capacity: 123,
   },
   {
-    id: 4,
+    id: "4",
     thName: "บ้านดัง",
     enName: "Baan Dung",
     image: "BaanDung.png",
@@ -62,7 +62,7 @@ export const houseDisplayData = [
     capacity: 90,
   },
   {
-    id: 5,
+    id: "5",
     thName: "บ้านเดอะ",
     enName: "Baan The",
     image: "BaanThe.png",
@@ -77,7 +77,7 @@ export const houseDisplayData = [
     capacity: 114,
   },
   {
-    id: 6,
+    id: "6",
     thName: "บ้านหลายใจ",
     enName: "Baan Laijai",
     image: "BaanLaijai.png",
@@ -93,7 +93,7 @@ export const houseDisplayData = [
     capacity: 135,
   },
   {
-    id: 7,
+    id: "7",
     thName: "บ้านอากาเป้",
     enName: "Baan Agape",
     image: "BaanAgape.png",
@@ -109,7 +109,7 @@ export const houseDisplayData = [
     capacity: 96,
   },
   {
-    id: 8,
+    id: "8",
     thName: "บ้านโบ้",
     enName: "Baan Boe",
     image: "BaanBoe.PNG",
@@ -124,7 +124,7 @@ export const houseDisplayData = [
     capacity: 129,
   },
   {
-    id: 9,
+    id: "9",
     thName: "บ้านนอก",
     enName: "Baan Nork",
     image: "BaanNork.png",
@@ -140,7 +140,7 @@ export const houseDisplayData = [
     capacity: 183,
   },
   {
-    id: 10,
+    id: "10",
     thName: "บ้านจิ๊จ๊ะ",
     enName: "Baan JiJah",
     image: "BaanJiJah.png",
@@ -156,7 +156,7 @@ export const houseDisplayData = [
     capacity: 204,
   },
   {
-    id: 11,
+    id: "11",
     thName: "บ้านเอช้วน",
     enName: "Baan A-Chuan",
     image: "BaanA-Chuan.png",
@@ -172,7 +172,7 @@ export const houseDisplayData = [
     capacity: 246,
   },
   {
-    id: 12,
+    id: "12",
     thName: "บ้านโจ๊ะเด๊ะ ฮือซา",
     enName: "Baan Jodeh Huesa",
     image: "BaanJodehHuesa.png",
@@ -187,7 +187,7 @@ export const houseDisplayData = [
     capacity: 297,
   },
   {
-    id: 13,
+    id: "13",
     thName: "บ้านอะอึ๋ม",
     enName: "Baan A-Aum",
     image: "BaanA-Aum.png",
@@ -203,7 +203,7 @@ export const houseDisplayData = [
     capacity: 252,
   },
   {
-    id: 14,
+    id: "14",
     thName: "บ้านคิดส์",
     enName: "Baan Kids",
     image: "BaanKids.png",
@@ -219,7 +219,7 @@ export const houseDisplayData = [
     capacity: 210,
   },
   {
-    id: 15,
+    id: "15",
     thName: "บ้านแจ๋ว",
     enName: "Baan Jaew",
     image: "BaanJaew.png",
@@ -234,7 +234,7 @@ export const houseDisplayData = [
     capacity: 357,
   },
   {
-    id: 16,
+    id: "16",
     thName: "บ้านสด",
     enName: "Baan Sod",
     image: "BaanSod.png",
@@ -250,7 +250,7 @@ export const houseDisplayData = [
     capacity: 324,
   },
   {
-    id: 17,
+    id: "17",
     thName: "บ้านเฮา",
     enName: "Baan Haaw",
     image: "BaanHaaw.png",
@@ -265,7 +265,7 @@ export const houseDisplayData = [
     capacity: 357,
   },
   {
-    id: 18,
+    id: "18",
     thName: "บ้านคุ้ม",
     enName: "Baan Koom",
     image: "BaanKoom.png",
@@ -280,7 +280,7 @@ export const houseDisplayData = [
     capacity: 532,
   },
   {
-    id: 19,
+    id: "19",
     thName: "บ้านโจ๋",
     enName: "Baan Jo+",
     image: "BaanJo.png",
@@ -296,7 +296,7 @@ export const houseDisplayData = [
     capacity: 792,
   },
   {
-    id: 20,
+    id: "20",
     thName: "บ้านโซ้ยตี๋หลีหมวย",
     enName: "Baan SoeiteeLheemouy",
     image: "BaanSoeiteelheemouy.png",
@@ -312,7 +312,7 @@ export const houseDisplayData = [
     capacity: 784,
   },
   {
-    id: 21,
+    id: "21",
     thName: "บ้านแรงส์",
     enName: "Baan Rangs",
     image: "BaanRangs.png",
@@ -328,7 +328,7 @@ export const houseDisplayData = [
     capacity: 888,
   },
   {
-    id: 22,
+    id: "22",
     thName: "บ้านยิ้ม",
     enName: "Baan Yim",
     image: "BaanYim.png",
