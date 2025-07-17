@@ -1,18 +1,20 @@
 ---
-import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
+import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
 ---
 
-<Layout
+<StaffWithNavbar
   title="About - FreshmenFest 2025"
   description="Learn more about FreshmenFest 2025, the ultimate orientation experience for new students."
 >
   <div class="min-h-screen px-4 py-16">
     <div class="mx-auto max-w-4xl">
-      <h1 class="mb-12 text-center text-4xl font-bold">FreshmenFest 2025</h1>
+      <h1 class="mb-12 text-center text-4xl font-bold">
+        ยังไม่ถึงเวลาลงทะเบียนงาน
+      </h1>
 
       <div class="text-center">
         <a
-          href="/firstdate/home"
+          href="/staff/home"
           class="inline-block rounded-lg bg-white px-8 py-3 text-black transition-colors hover:bg-slate-200"
         >
           back to home
@@ -20,4 +22,4 @@ import Layout from "@/layouts/firstdate/WithoutNavbar.astro";
       </div>
     </div>
   </div>
-</Layout>
+</StaffWithNavbar>
