@@ -106,8 +106,18 @@ export default function ForgotPasswordStep({
               {...register("newPassword", {
                 required: "กรุณากรอกรหัสผ่านใหม่",
                 minLength: {
-                  value: 6,
-                  message: "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+                  value: 8,
+                  message: "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร",
+                },
+                maxLength: {
+                  value: 20,
+                  message: "รหัสผ่านต้องมีไม่เกิน 20 ตัวอักษร",
+                },
+                pattern: {
+                  value:
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.+/-])[A-Za-z\d@$!%*?&.+/-]/,
+                  message:
+                    "รหัสผ่านต้องประกอบด้วยตัวพิมพ์เล็ก ตัวพิมพ์ใหญ่ ตัวเลข และอักขระพิเศษ",
                 },
               })}
             />

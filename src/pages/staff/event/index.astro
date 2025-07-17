@@ -8,7 +8,8 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
 ---
 
 <Layout>
-  <div class="flex w-full flex-col">
+  <!-- QR Scanner Section (shown when events are active) -->
+  <div id="qr-scanner-section" class="flex w-full flex-col">
     <div class="mb-8 flex flex-col items-center justify-center">
       <p class="mt-[26px] text-xl">สแกน QR เข้างาน</p>
       <h1
@@ -203,7 +204,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
                   class="text-[24px] leading-[1.4] font-medium text-[#fffff2]"
                   style="text-shadow: rgba(0,0,0,0.5) 0px 2px 4px, #cb438b 0px 0px 6px; font-family: 'IBM Plex Sans Thai', sans-serif;"
                 >
-                  น้องใหม่ จุฬา
+                  Freshmen
                 </div>
                 <div
                   class="text-[24px] leading-[1.4] font-semibold text-[#fffff2]"
@@ -304,11 +305,33 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       </Popup>
     </div>
   </div>
+
+  <!-- Placeholder Section (shown when no events are active) -->
+  <div
+    id="no-event-section"
+    class="flex hidden min-h-screen flex-col items-center justify-center px-4"
+  >
+    <div class="mx-auto max-w-4xl text-center">
+      <h1 class="mb-12 text-2xl font-bold text-white">
+        ยังไม่ถึงเวลาลงทะเบียนงาน
+      </h1>
+
+      <div>
+        <a
+          href="/staff/home"
+          class="inline-block rounded-lg bg-white px-8 py-3 text-black transition-colors hover:bg-slate-200"
+        >
+          back to home
+        </a>
+      </div>
+    </div>
+  </div>
 </Layout>
 
 <script>
   import { api } from "@/lib/api";
-  import { EVENT_CONFIGS } from "@/lib/eventAPI";
+  import { EVENT_CONFIGS, getEventStatus } from "@/lib/eventAPI";
+  import type { EventType } from "@/lib/eventAPI";
 
   interface QrFormData {
     studentId: string;
@@ -516,36 +539,26 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
   // }
 
   async function determineActiveEvent(): Promise<any> {
-    // Force show FIRSTDATE event for staff scanning
-    return {
-      eventId: "firstdate",
-      eventConfig: EVENT_CONFIGS["firstdate"],
-      eventStatus: {
-        isRegistered: false,
-        isLate: false,
-        isComingSoon: false,
-      },
-    };
+    const events: EventType[] = ["rpkm", "firstdate", "freshmen-night"];
 
-    // Original logic commented out - uncomment when event periods are configured
-    // const events: EventType[] = ["firstdate", "rpkm", "freshmen-night"];
+    for (const eventId of events) {
+      try {
+        const eventStatus = await getEventStatus(eventId);
 
-    // for (const eventId of events) {
-    //   try {
-    //     const eventStatus = await getEventStatus(eventId);
-    //     if (!eventStatus.isComingSoon && !eventStatus.isLate) {
-    //       return {
-    //         eventId,
-    //         eventConfig: EVENT_CONFIGS[eventId],
-    //         eventStatus,
-    //       };
-    //     }
-    //   } catch (error) {
-    //     continue;
-    //   }
-    // }
+        if (eventStatus.isComingSoon || eventStatus.isLate) {
+          continue;
+        }
+        return {
+          eventId,
+          eventConfig: EVENT_CONFIGS[eventId],
+          eventStatus,
+        };
+      } catch (error) {
+        continue;
+      }
+    }
 
-    // return null;
+    return null;
   }
 
   function updateEventUI(activeEventData: any): void {
@@ -559,8 +572,14 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       "manual-no-active-event"
     );
 
+    const qrScannerSection = document.getElementById("qr-scanner-section");
+    const noEventSection = document.getElementById("no-event-section");
+
     if (activeEventData) {
       const { eventConfig, eventStatus } = activeEventData;
+
+      if (qrScannerSection) qrScannerSection.classList.remove("hidden");
+      if (noEventSection) noEventSection.classList.add("hidden");
 
       if (eventTitle) eventTitle.textContent = eventConfig.title;
       if (eventPeriod)
@@ -574,6 +593,10 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       if (manualForm) manualForm.classList.remove("hidden");
       if (manualNoActiveEvent) manualNoActiveEvent.classList.add("hidden");
     } else {
+      // Hide QR scanner section, show placeholder
+      if (qrScannerSection) qrScannerSection.classList.add("hidden");
+      if (noEventSection) noEventSection.classList.remove("hidden");
+
       if (eventTitle) eventTitle.textContent = "ไม่มีงานที่เปิดลงทะเบียน";
       if (eventPeriod)
         eventPeriod.textContent = "กรุณาลองใหม่ในช่วงเวลาที่เปิดลงทะเบียน";
@@ -737,7 +760,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       const { citizenId, studentId } = extractIds(qrData);
 
       if (!citizenId || !studentId) {
-        throw new Error("QR Code ไม่ถูกต้อง: ไม่พบ Citizen ID หรือ Student ID");
+        throw new Error("QR Code ไม่ถูกต้อง");
       }
 
       await onQrSubmit({ studentId, citizenId });
@@ -765,11 +788,17 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
         errorMessage.includes("401") ||
         errorMessage.includes("Unauthorized")
       ) {
-        alert("❌ กรุณาเข้าสู่ระบบก่อนใช้งาน QR Scanner");
+        showErrorModal("กรุณาเข้าสู่ระบบก่อนใช้งาน QR Scanner");
         return;
       }
 
-      alert("❌ เกิดข้อผิดพลาด: " + errorMessage);
+      // Handle specific "Failed to find checkin" error
+      if (errorMessage.includes("Failed to find checkin by studentId")) {
+        showErrorModal("ไม่พบข้อมูลการลงทะเบียน");
+        return;
+      }
+
+      showErrorModal("เกิดข้อผิดพลาด: " + errorMessage);
     }
   };
 
@@ -793,22 +822,22 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       const citizenId = citizenIdInput.value.trim();
 
       if (!studentId) {
-        alert("กรุณากรอกรหัสนิสิต");
+        showErrorModal("กรุณากรอกรหัสนิสิต");
         return;
       }
 
       if (!citizenId) {
-        alert("กรุณากรอกรหัสประชาชน");
+        showErrorModal("กรุณากรอกรหัสประชาชน");
         return;
       }
 
       if (!/^[0-9]{10}$/.test(studentId)) {
-        alert("รหัสนิสิตต้องเป็นตัวเลข 10 หลัก");
+        showErrorModal("รหัสนิสิตต้องเป็นตัวเลข 10 หลัก");
         return;
       }
 
       if (!/^[0-9]{13}$/.test(citizenId)) {
-        alert("รหัสประชาชนต้องเป็นตัวเลข 13 หลัก");
+        showErrorModal("รหัสประชาชนต้องเป็นตัวเลข 13 หลัก");
         return;
       }
 
@@ -820,6 +849,85 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       try {
         submitButton.textContent = "กำลังลงทะเบียน...";
         submitButton.disabled = true;
+
+        // Use the same API call as QR scanner
+        await onQrSubmit({ studentId, citizenId });
+        // Success - show success modal and clear form
+        showSuccessModal(ActualCheckinRecord);
+        studentIdInput.value = "";
+        citizenIdInput.value = "";
+      } catch (error) {
+        const errorMessage = (error as Error)?.message || "";
+        if (
+          errorMessage.includes("already exists") ||
+          errorMessage.includes("Check-in already exists")
+        ) {
+          showAlreadyRegisteredModal();
+        } else if (
+          (errorMessage.includes("400") || errorMessage.includes("404")) &&
+          errorMessage.includes("Bad Request")
+        ) {
+          showAlreadyRegisteredModal();
+        } else if (
+          errorMessage.includes("401") ||
+          errorMessage.includes("Unauthorized")
+        ) {
+          showErrorModal("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+        } else if (errorMessage.includes("User not found")) {
+          showErrorModal(
+            "ไม่พบข้อมูลนิสิต กรุณาตรวจสอบรหัสนิสิตและรหัสประชาชน"
+          );
+        } else {
+          showErrorModal();
+        }
+      } finally {
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+      }
+    });
+  }
+
+  // Add click handler for ButtonFd to handle form submission directly
+  const submitButton = document.getElementById("manual-submit-btn");
+  if (submitButton) {
+    submitButton.addEventListener("click", async (e) => {
+      e.preventDefault();
+
+      const studentIdInput = document.getElementById(
+        "student-id-input"
+      ) as HTMLInputElement;
+      const citizenIdInput = document.getElementById(
+        "citizen-id-input"
+      ) as HTMLInputElement;
+
+      const studentId = studentIdInput.value.trim();
+      const citizenId = citizenIdInput.value.trim();
+
+      if (!studentId) {
+        showErrorModal("กรุณากรอกรหัสนิสิต");
+        return;
+      }
+
+      if (!citizenId) {
+        showErrorModal("กรุณากรอกรหัสประชาชน");
+        return;
+      }
+
+      if (!/^[0-9]{10}$/.test(studentId)) {
+        showErrorModal("รหัสนิสิตต้องเป็นตัวเลข 10 หลัก");
+        return;
+      }
+
+      if (!/^[0-9]{13}$/.test(citizenId)) {
+        showErrorModal("รหัสประชาชนต้องเป็นตัวเลข 13 หลัก");
+        return;
+      }
+
+      const originalText = submitButton.textContent;
+
+      try {
+        submitButton.textContent = "กำลังลงทะเบียน...";
+        submitButton.style.pointerEvents = "none";
 
         // Use the same API call as QR scanner
         await onQrSubmit({ studentId, citizenId });
@@ -854,93 +962,9 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
         }
       } finally {
         submitButton.textContent = originalText;
-        submitButton.disabled = false;
+        submitButton.style.pointerEvents = "auto";
       }
     });
-  } else {
-    const submitButton = document.getElementById(
-      "manual-submit-btn"
-    ) as HTMLButtonElement;
-
-    if (submitButton) {
-      submitButton.addEventListener("click", async (e) => {
-        e.preventDefault();
-
-        const studentIdInput = document.getElementById(
-          "student-id-input"
-        ) as HTMLInputElement;
-        const citizenIdInput = document.getElementById(
-          "citizen-id-input"
-        ) as HTMLInputElement;
-
-        if (!studentIdInput || !citizenIdInput) {
-          return;
-        }
-
-        const studentId = studentIdInput.value.trim();
-        const citizenId = citizenIdInput.value.trim();
-
-        if (!studentId) {
-          alert("กรุณากรอกรหัสนิสิต");
-          return;
-        }
-
-        if (!citizenId) {
-          alert("กรุณากรอกรหัสประชาชน");
-          return;
-        }
-
-        if (!/^[0-9]{10}$/.test(studentId)) {
-          alert("รหัสนิสิตต้องเป็นตัวเลข 10 หลัก");
-          return;
-        }
-
-        if (!/^[0-9]{13}$/.test(citizenId)) {
-          alert("รหัสประชาชนต้องเป็นตัวเลข 13 หลัก");
-          return;
-        }
-
-        const originalText = submitButton.textContent;
-
-        try {
-          submitButton.textContent = "กำลังลงทะเบียน...";
-          submitButton.disabled = true;
-
-          await onQrSubmit({ studentId, citizenId });
-
-          showSuccessModal(ActualCheckinRecord);
-          studentIdInput.value = "";
-          citizenIdInput.value = "";
-        } catch (error) {
-          const errorMessage = (error as Error)?.message || "";
-          if (
-            errorMessage.includes("already exists") ||
-            errorMessage.includes("Check-in already exists")
-          ) {
-            showAlreadyRegisteredModal();
-          } else if (
-            (errorMessage.includes("400") || errorMessage.includes("404")) &&
-            errorMessage.includes("Bad Request")
-          ) {
-            showAlreadyRegisteredModal();
-          } else if (
-            errorMessage.includes("401") ||
-            errorMessage.includes("Unauthorized")
-          ) {
-            showErrorModal("กรุณาเข้าสู่ระบบก่อนใช้งาน");
-          } else if (errorMessage.includes("User not found")) {
-            showErrorModal(
-              "ไม่พบข้อมูลนิสิต กรุณาตรวจสอบรหัสนิสิตและรหัสประชาชน"
-            );
-          } else {
-            showErrorModal();
-          }
-        } finally {
-          submitButton.textContent = originalText;
-          submitButton.disabled = false;
-        }
-      });
-    }
   }
 
   document

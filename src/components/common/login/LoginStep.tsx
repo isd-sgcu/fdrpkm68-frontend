@@ -23,6 +23,7 @@ export default function LoginStep({
   onSubmit,
   onForgot,
   userType,
+  isLoading = false,
 }: {
   register: UseFormRegister<LoginFormData>;
   errors: FieldErrors<LoginFormData>;
@@ -31,6 +32,7 @@ export default function LoginStep({
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   onForgot: () => void;
   userType: "FRESHMAN" | "STAFF";
+  isLoading?: boolean;
 }): ReactNode {
   const globUrl =
     userType === "FRESHMAN"
@@ -125,9 +127,21 @@ export default function LoginStep({
 
         <button
           type="submit"
-          className="flex items-center justify-center bg-white py-2 text-black transition-colors duration-200 hover:bg-gray-100"
+          disabled={isLoading}
+          className={`flex items-center justify-center py-2 text-black transition-colors duration-200 ${
+            isLoading
+              ? "cursor-not-allowed bg-gray-300"
+              : "bg-white hover:bg-gray-100"
+          }`}
         >
-          เข้าสู่ระบบ
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-600 border-t-transparent" />
+              กำลังเข้าสู่ระบบ...
+            </div>
+          ) : (
+            "เข้าสู่ระบบ"
+          )}
         </button>
 
         <a

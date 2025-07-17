@@ -77,12 +77,12 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, onError }) => {
           finalQRData =
             "id=7137ec7e-0f4b-4d65-88c4-982d36f7692f&userId=a8e7e644-ed12-4748-89fc-4599f868ab5d";
         } else {
-          const error = new Error("QR Code ไม่ถูกต้อง: ไม่ใช่ QR Code ของระบบ");
+          const error = new Error("QR Code ไม่ถูกต้อง");
           if (onError) {
             onError(error);
           }
           if (window.showErrorModal) {
-            window.showErrorModal("QR Code ไม่ถูกต้อง: ไม่ใช่ QR Code ของระบบ");
+            window.showErrorModal("QR Code ไม่ถูกต้อง");
           }
           return;
         }
