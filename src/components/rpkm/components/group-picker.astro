@@ -367,7 +367,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 
 <!-- Script -->
 <script>
-  import { getGroupByInviteCode } from "@/lib/groupAPI";
+  import { getGroupByInviteCode, joinGroup, leaveGroup } from "@/lib/groupAPI";
   import { AvatarMap } from "@rpkm/data/profile";
 
   const input = document.getElementById("room-id-insert") as HTMLInputElement;
@@ -413,9 +413,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
   const errorRoomMessage = document.getElementById(
     "error-room-message"
   ) as HTMLParagraphElement;
-  const targetHeadImage = document.getElementById(
-    "target-head-image"
-  ) as HTMLImageElement;
+
   const targetHeadName = document.getElementById(
     "target-head-name"
   ) as HTMLParagraphElement;
@@ -428,6 +426,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
   ) as HTMLParagraphElement;
 
   let targetGroupData: any = null;
+  let inviteCode = "";
 
   function formatRoomId(raw: string): string {
     return raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -488,7 +487,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
   joinGroupButton?.addEventListener("click", async () => {
     if (!input.value) return;
 
-    const inviteCode = formatRoomId(input.value);
+    inviteCode = formatRoomId(input.value);
     if (inviteCode.length !== 6) return;
 
     errorRoomMessage.innerHTML = "";
@@ -542,7 +541,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 
         groupPopupView?.classList.remove("hidden");
       } else {
-        errorRoomMessage.innerHTML = "ไม่พบห้องที่ต้องการ";
+        errorRoomMessage.innerHTML = response.error || "ไม่พบห้องที่ระบุ";
       }
     } catch (error) {
       console.error("Unexpected error:", error);
@@ -556,19 +555,24 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
     }
   });
 
-  submitGroupButton?.addEventListener("click", () => {
-    if (!targetGroupData) return;
-    targetHeadNamePopup.innerHTML =
-      targetGroupData.owner.firstName +
-      " " +
-      targetGroupData.owner.lastName +
-      " (" +
-      targetGroupData.owner.nickname +
-      ")";
-    groupPopupView?.classList.add("hidden");
-    groupPopupSuccessView?.classList.remove("hidden");
-    groupDefaultView?.classList.add("hidden");
-    groupMemberView?.classList.remove("hidden");
+  submitGroupButton?.addEventListener("click", async () => {
+    const response = await joinGroup(inviteCode);
+
+    if (response.success) {
+      targetHeadNamePopup.innerHTML =
+        targetGroupData.owner.firstName +
+        " " +
+        targetGroupData.owner.lastName +
+        " (" +
+        targetGroupData.owner.nickname +
+        ")";
+      groupPopupView?.classList.add("hidden");
+      groupPopupSuccessView?.classList.remove("hidden");
+      groupDefaultView?.classList.add("hidden");
+      groupMemberView?.classList.remove("hidden");
+    } else {
+      console.error("Failed to leave group before:", response.error);
+    }
   });
 
   cancelGroupButton?.addEventListener("click", () => {
