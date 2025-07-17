@@ -246,3 +246,57 @@ export const registerForEvent = async (
     }
   }
 };
+
+export const staffQRScanRegister = async (
+  studentId: string,
+  citizenId: string
+): Promise<{
+  success: boolean;
+  data?: CheckinResponse;
+  error?: string;
+  needsLogin?: boolean;
+}> => {
+  const token = getAuthToken();
+  if (!token) {
+    return {
+      success: false,
+      error: "กรุณาเข้าสู่ระบบก่อน",
+      needsLogin: true,
+    };
+  }
+
+  const response = await api.post<CheckinResponse>(
+    `/checkin/registerByStudentId`,
+    {
+      studentId,
+      citizenId,
+    },
+    { headers: getAuthHeaders() }
+  );
+
+  if (response.success && response.data) {
+    return { success: true, data: response.data };
+  } else {
+    const errorMessage = response.error || "QR scan registration failed";
+
+    if (errorMessage.includes("already exists")) {
+      return { success: false, error: "นิสิตคนนี้ได้ลงทะเบียนไปแล้ว" };
+    } else if (errorMessage.includes("before register period")) {
+      return { success: false, error: "ยังไม่ถึงเวลาลงทะเบียน" };
+    } else if (errorMessage.includes("after register period")) {
+      return { success: false, error: "หมดเวลาลงทะเบียนแล้ว" };
+    } else if (
+      errorMessage.includes("401") ||
+      errorMessage.includes("unauthorized")
+    ) {
+      return { success: false, error: "กรุณาเข้าสู่ระบบก่อน" };
+    } else if (
+      errorMessage.includes("404") ||
+      errorMessage.includes("not found")
+    ) {
+      return { success: false, error: "ไม่พบข้อมูลนิสิต" };
+    } else {
+      return { success: false, error: errorMessage };
+    }
+  }
+};

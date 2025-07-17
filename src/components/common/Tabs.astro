@@ -1,0 +1,145 @@
+<div>
+  <div class="relative my-8 flex w-full px-4">
+    <!-- QR Code Tab with Border -->
+    <div class="tab-container-qr active relative flex-1">
+      <!-- Border layer -->
+      <div
+        class="border-layer cut-edge-l absolute -top-[2px] -right-[2px] -bottom-[3px] -left-[2px]"
+      >
+      </div>
+      <!-- Tab button -->
+      <button
+        class="tab-button tab-qr active cut-edge-l relative mx-0 h-full w-full bg-white px-0 py-2 transition-all duration-300"
+        data-tab="qr"
+      >
+        <span class="relative z-10 text-base font-semibold">ใช้ QR Code</span>
+      </button>
+    </div>
+
+    <!-- Student ID Tab with Border -->
+    <div class="tab-container-student relative -ml-[40px] flex-1">
+      <!-- Border layer -->
+      <div
+        class="border-layer cut-edge-r absolute -top-[2px] -right-[2px] -bottom-[3px] -left-[2px]"
+      >
+      </div>
+      <!-- Tab button -->
+      <button
+        class="tab-button tab-student cut-edge-r relative mx-0 h-full w-full bg-transparent px-0 py-2 transition-all duration-300"
+        data-tab="student"
+      >
+        <span class="relative z-10 text-base font-semibold">ใช้รหัสนิสิต</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content mt-4">
+    <div class="tab-pane tab-pane-qr active">
+      <slot name="qr-content" />
+    </div>
+    <div class="tab-pane tab-pane-student">
+      <slot name="student-content" />
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Tab container glow effect like ButtonFd */
+  .tab-qr.active {
+    background: white;
+    color: #121212;
+  }
+
+  .tab-qr:not(.active) {
+    background: transparent;
+    color: #fffff2;
+  }
+
+  .tab-student.active {
+    background: white;
+    color: #121212;
+  }
+
+  .tab-student:not(.active) {
+    background: transparent;
+    color: #fffff2;
+  }
+
+  /* Container glow effects - applied to the wrapper div */
+  .tab-container-qr.active {
+    filter: drop-shadow(0px 0px 6px #ffb6c1);
+  }
+
+  .tab-container-student.active {
+    filter: drop-shadow(0px 0px 6px #ffb6c1);
+  }
+
+  /* Border layer - only visible when container is active */
+  .border-layer {
+    background: #ffb6c1;
+    display: none;
+  }
+
+  .tab-container-qr.active .border-layer,
+  .tab-container-student.active .border-layer {
+    display: block;
+  }
+
+  /* Tab Content Visibility */
+  .tab-pane {
+    display: none;
+  }
+
+  .tab-pane.active {
+    display: block;
+  }
+
+  /* Hover Effects */
+  .tab-button:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.1);
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const qrTab = document.querySelector(".tab-qr");
+    const studentTab = document.querySelector(".tab-student");
+    const qrContainer = document.querySelector(".tab-container-qr");
+    const studentContainer = document.querySelector(".tab-container-student");
+    const qrPane = document.querySelector(".tab-pane-qr");
+    const studentPane = document.querySelector(".tab-pane-student");
+
+    function switchToQR() {
+      // Update tab states
+      qrTab?.classList.add("active");
+      studentTab?.classList.remove("active");
+
+      // Update container glow states
+      qrContainer?.classList.add("active");
+      studentContainer?.classList.remove("active");
+
+      // Update content visibility
+      qrPane?.classList.add("active");
+      studentPane?.classList.remove("active");
+    }
+
+    function switchToStudent() {
+      // Update tab states
+      studentTab?.classList.add("active");
+      qrTab?.classList.remove("active");
+
+      // Update container glow states
+      studentContainer?.classList.add("active");
+      qrContainer?.classList.remove("active");
+
+      // Update content visibility
+      studentPane?.classList.add("active");
+      qrPane?.classList.remove("active");
+    }
+
+    // Add event listeners
+    qrTab?.addEventListener("click", switchToQR);
+    studentTab?.addEventListener("click", switchToStudent);
+  });
+</script>
