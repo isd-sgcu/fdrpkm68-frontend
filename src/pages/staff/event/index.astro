@@ -4,10 +4,10 @@ import Popup from "@/components/common/Popup.astro";
 import Tabs from "@/components/common/Tabs.astro";
 import Box from "@/components/firstdate/Box.astro";
 import QRScanner from "@/components/staff/QRScanner.tsx";
-import Layout from "@/layouts/staff/WithNavbar.astro";
+import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
 ---
 
-<Layout>
+<StaffWithNavbar>
   <!-- QR Scanner Section (shown when events are active) -->
   <div id="qr-scanner-section" class="flex w-full flex-col">
     <div class="mb-8 flex flex-col items-center justify-center">
@@ -326,7 +326,7 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
       </div>
     </div>
   </div>
-</Layout>
+</StaffWithNavbar>
 
 <script>
   import { api } from "@/lib/api";
@@ -539,26 +539,41 @@ import Layout from "@/layouts/staff/WithNavbar.astro";
   // }
 
   async function determineActiveEvent(): Promise<any> {
-    const events: EventType[] = ["rpkm", "firstdate", "freshmen-night"];
+    const currentDate = new Date(); // Uses local timezone
 
-    for (const eventId of events) {
-      try {
-        const eventStatus = await getEventStatus(eventId);
+    // Date ranges for events
+    const firstdateStart = new Date("2025-07-19T00:00:00+07:00");
+    const firstdateEnd = new Date("2025-07-19T23:59:59+07:00");
 
-        if (eventStatus.isComingSoon || eventStatus.isLate) {
-          continue;
-        }
-        return {
-          eventId,
-          eventConfig: EVENT_CONFIGS[eventId],
-          eventStatus,
-        };
-      } catch (error) {
-        continue;
-      }
+    const rpkmStart = new Date("2025-08-02T00:00:00+07:00");
+    const rpkmEnd = new Date("2025-08-02T23:59:59+07:00");
+
+    let activeEventId: EventType | null = null;
+
+    // Check if current date falls within firstdate period
+    if (currentDate >= firstdateStart && currentDate <= firstdateEnd) {
+      activeEventId = "firstdate";
+    }
+    // Check if current date falls within rpkm period
+    else if (currentDate >= rpkmStart && currentDate <= rpkmEnd) {
+      activeEventId = "rpkm";
     }
 
-    return null;
+    // If no active event found, return null
+    if (!activeEventId) {
+      return null;
+    }
+
+    // Return the active event data
+    return {
+      eventId: activeEventId,
+      eventConfig: EVENT_CONFIGS[activeEventId],
+      eventStatus: {
+        isRegistered: false,
+        isLate: false,
+        isComingSoon: false,
+      },
+    };
   }
 
   function updateEventUI(activeEventData: any): void {

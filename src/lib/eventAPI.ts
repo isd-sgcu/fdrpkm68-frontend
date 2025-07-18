@@ -72,8 +72,8 @@ export const EVENT_CONFIGS: Record<EventType, EventConfig> = {
     title: "Festival",
     description:
       "เทศกาลแห่งความสนุกสนาน ที่รวมการแสดง กิจกรรม และความบันเทิงต่าง ๆ ไว้ในงานเดียว",
-    schedule: "พร้อมให้ลงทะเบียนในวันที่ 20 กรกฎาคม 2568 ",
-    registrationInfo: "📝 ลงทะเบียนเข้าร่วมงานได้ตั้งแต่วันนี้",
+    schedule: "พร้อมให้ลงทะเบียนในวันที่ 18 กรกฎาคม 2568 19.00",
+    registrationInfo: "📝 เลือกดูกิจกรรมในงานได้เลย",
     additionalInfo: "",
     popupColors: {
       notRegistered: "vivid-pink",
@@ -122,13 +122,25 @@ export const getEventStatus = async (
 ): Promise<EventStatus> => {
   const apiEventName = API_EVENT_NAMES[eventType];
 
-  // Handle events that don't have API mapping
-  if (!apiEventName || eventType === "cufest") {
+  if (!apiEventName) {
     return {
       isRegistered: false,
       isLate: false,
       isComingSoon: true,
     };
+  }
+
+  if (eventType === "cufest") {
+    const targetDate = new Date("2025-07-18T19:00:00+07:00");
+    const currentDate = new Date();
+
+    if (currentDate >= targetDate) {
+      return {
+        isRegistered: false,
+        isLate: false,
+        isComingSoon: false,
+      };
+    }
   }
 
   // Check if authenticated

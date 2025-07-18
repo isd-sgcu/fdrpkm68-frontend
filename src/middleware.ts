@@ -1,7 +1,11 @@
 import { defineMiddleware } from "astro:middleware";
 import jwt from "jsonwebtoken";
 
-import { nonProtectRoutes, nonStartedRoutes } from "@/constants/Routes";
+import {
+  nonProtectRoutes,
+  nonStartedRoutes,
+  nonStartedRoutesTimeWhitelist,
+} from "@/constants/Routes";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = context.url;
@@ -10,7 +14,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  if (nonStartedRoutes.some((route) => url.pathname.startsWith(route))) {
+  const matchedRoute = nonStartedRoutes.find((route) =>
+    url.pathname.startsWith(route)
+  );
+  if (matchedRoute) {
+    const matchedTime = nonStartedRoutesTimeWhitelist[matchedRoute];
+
+    if (matchedTime && new Date() > matchedTime) {
+      return next();
+    }
+
     return new Response(null, {
       status: 302,
       headers: {
