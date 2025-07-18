@@ -841,7 +841,9 @@ const isConfirmed = groupData ? groupData.isConfirmed || false : false;
         if (sizeBadge) {
           sizeBadge.textContent = house.sizeLetter;
 
-          const colorData = colorMap[house.sizeLetter] || {
+          const colorData = colorMap.find(
+            (item) => item.sizeLetter === house.sizeLetter
+          ) || {
             bgColor: "#000",
             textColor: "#fff",
           };
