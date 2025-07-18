@@ -1,5 +1,10 @@
 ---
-import { getHouses, type HouseDisplayType } from "@rpkm/data/house";
+import {
+  getHouses,
+  getPrefHouses,
+  type HouseDisplayType,
+  type HousePrefType,
+} from "@rpkm/data/house";
 import { colorMap } from "@rpkm/data/sizeColors";
 import HouseConfirmPopup from "@rpkm/elements/house-confirm-popup.astro";
 import HouseDetailCard from "@rpkm/elements/house-detail-card.astro";
@@ -12,12 +17,24 @@ import Frame from "@/components/common/Frame.astro";
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 
 let houseDisplayData: HouseDisplayType[] = [];
+let housePrefData: HousePrefType = {
+  houseRank1: null,
+  houseRank2: null,
+  houseRank3: null,
+  houseRank4: null,
+  houseRank5: null,
+  houseRankSub: null,
+};
+
 const token = Astro.cookies.get("token")?.value;
 if (!token) {
   Astro.redirect("/login");
 } else {
   houseDisplayData = await getHouses(token);
+  housePrefData = await getPrefHouses(token);
 }
+
+console.log("House Preferences:", housePrefData);
 ---
 
 <!-- Not Picking Wrapper -->
@@ -230,7 +247,8 @@ if (!token) {
   <!-- Script -->
   <script
     define:vars={{
-      houseData: houseDisplayData,
+      houseDisplayData: houseDisplayData,
+      housePrefData: housePrefData,
       colorMap: colorMap,
       token: token || "",
     }}
@@ -568,7 +586,7 @@ if (!token) {
         pickedHouseElements.forEach((element) => {
           const rank = element.getAttribute("data-house-rank");
           const houseId = pickedHouses[rank];
-          const house = houseData.find((h) => h.id === houseId);
+          const house = houseDisplayData.find((h) => h.id === houseId);
 
           // Clear existing content
           while (element.firstChild) {
@@ -933,7 +951,7 @@ if (!token) {
         currentRank = btn.getAttribute("data-rank");
 
         // Shuffle houses before showing popup
-        const shuffledHouses = shuffleHouses(houseData);
+        const shuffledHouses = shuffleHouses(houseDisplayData);
         displayShuffledHouses(shuffledHouses);
 
         // Filter houses based on rank
@@ -1005,7 +1023,9 @@ if (!token) {
             return;
 
           const nameThai = wrapper.getAttribute("data-thname");
-          const houseObj = houseData.find((h) => h.nameThai === nameThai);
+          const houseObj = houseDisplayData.find(
+            (h) => h.nameThai === nameThai
+          );
 
           // Prevent selection of already selected houses
           if (!houseObj || selectedHouses.has(houseObj.id)) return;
@@ -1065,7 +1085,9 @@ if (!token) {
         e.stopPropagation();
 
         const nameThai = wrapper.getAttribute("data-thname");
-        selectedHouseData = houseData.find((h) => h.nameThai === nameThai);
+        selectedHouseData = houseDisplayData.find(
+          (h) => h.nameThai === nameThai
+        );
 
         // Prevent showing popup for already selected houses
         if (!selectedHouseData || selectedHouses.has(selectedHouseData.id))
@@ -1087,7 +1109,7 @@ if (!token) {
         if (!selectedHouseData || !currentRank) return;
 
         const nameThai = selectedHouseData.nameThai;
-        const houseObj = houseData.find((h) => h.nameThai === nameThai);
+        const houseObj = houseDisplayData.find((h) => h.nameThai === nameThai);
 
         // Prevent adding already selected houses
         if (selectedHouses.has(houseObj.id)) return;

@@ -1,9 +1,22 @@
-import { type HouseResponse, getAllHouses } from "@/lib/houseAPI";
+import {
+  type HouseResponse,
+  getAllHouses,
+  getHousePreferences,
+} from "@/lib/houseAPI";
 
-type extraHouseType = {
+type ExtraHouseType = {
   nameThai: string;
   image: string;
   instagramName: string;
+};
+
+export type HousePrefType = {
+  houseRank1: string | null;
+  houseRank2: string | null;
+  houseRank3: string | null;
+  houseRank4: string | null;
+  houseRank5: string | null;
+  houseRankSub: string | null;
 };
 
 export type HouseDisplayType = {
@@ -22,7 +35,7 @@ export type HouseDisplayType = {
   image: string;
 };
 
-const extraHouseData: extraHouseType[] = [
+const extraHouseData: ExtraHouseType[] = [
   {
     nameThai: "บ้านว้อนท์",
     image: "BaanWanted.png",
@@ -166,4 +179,45 @@ export async function getHouses(token?: string): Promise<HouseDisplayType[]> {
     };
   });
   return houses;
+}
+
+export async function getPrefHouses(token?: string): Promise<HousePrefType> {
+  const houseResult: HousePrefType = {
+    houseRank1: null,
+    houseRank2: null,
+    houseRank3: null,
+    houseRank4: null,
+    houseRank5: null,
+    houseRankSub: null,
+  };
+
+  const response = await getHousePreferences(token);
+  console.log("Response from getHousePreferences:", response);
+  if (!response.success || !response.data) {
+    console.error("Failed to fetch house data:", response.error);
+    return houseResult;
+  }
+
+  const houseData = response.data.data;
+
+  houseResult.houseRank1 = houseData.houseRank1
+    ? (houseData.houseRank1.id ?? null)
+    : null;
+  houseResult.houseRank2 = houseData.houseRank2
+    ? (houseData.houseRank2.id ?? null)
+    : null;
+  houseResult.houseRank3 = houseData.houseRank3
+    ? (houseData.houseRank3.id ?? null)
+    : null;
+  houseResult.houseRank4 = houseData.houseRank4
+    ? (houseData.houseRank4.id ?? null)
+    : null;
+  houseResult.houseRank5 = houseData.houseRank5
+    ? (houseData.houseRank5.id ?? null)
+    : null;
+  houseResult.houseRankSub = houseData.houseRankSub
+    ? (houseData.houseRankSub.id ?? null)
+    : null;
+
+  return houseResult;
 }

@@ -10,6 +10,15 @@ export interface SetHousePreferencesRequest {
   houseRankSub?: string;
 }
 
+export interface GetHousePreferencesRequest {
+  houseRank1: HouseResponse;
+  houseRank2: HouseResponse;
+  houseRank3: HouseResponse;
+  houseRank4: HouseResponse;
+  houseRank5: HouseResponse;
+  houseRankSub?: HouseResponse;
+}
+
 export type HouseResponse = {
   id: string;
   nameThai: string;
@@ -58,7 +67,7 @@ export async function setHousePreferences(
 
 export async function getHousePreferences(
   authToken?: string
-): Promise<ApiResponse<{ data: SetHousePreferencesRequest }>> {
+): Promise<ApiResponse<{ data: GetHousePreferencesRequest }>> {
   const token = authToken || getAuthToken();
   if (!token) {
     return {
@@ -67,7 +76,7 @@ export async function getHousePreferences(
     };
   }
 
-  const response = await api.get<{ data: SetHousePreferencesRequest }>(
+  const response = await api.get<{ data: GetHousePreferencesRequest }>(
     "/group/house-preferences",
     {
       headers: getAuthHeaders(token),
