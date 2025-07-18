@@ -388,20 +388,26 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
   import { getGroupData } from "@/lib/groupAPI";
   import { getProfile } from "@/lib/profileAPI";
 
-  let user = null;
-  let groupData = null;
-
   async function getInformation() {
     const resProfile = await getProfile();
     const resGroup = await getGroupData();
-    user = resProfile.data ?? null;
-    groupData = resGroup.data ?? null;
+    const user = resProfile.data?.user ?? null;
+    const groupData = resGroup.data?.data ?? null;
+    return { user, groupData };
   }
 
-  await getInformation();
+  const { user, groupData } = await getInformation();
 
   console.log("Group Data:", groupData);
   console.log("User Data:", user);
+
+  const isConfirmed = groupData ? groupData.isConfirmed : undefined;
+  const isOwner = groupData && user ? groupData.ownerId === user.id : undefined;
+  const memberCount = groupData ? groupData.memberCount : -1;
+
+  console.log("isConfirmed:", isConfirmed);
+  console.log("isOwner:", isOwner);
+  console.log("memberCount:", memberCount);
 
   const input = document.getElementById("room-id-insert") as HTMLInputElement;
 
@@ -650,13 +656,26 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
     }
   });
 
+  if (isConfirmed) {
+    exitButton?.classList.add("hidden");
+    backBtn?.classList.add("hidden");
+  } else {
+    exitButton?.classList.remove("hidden");
+    backBtn?.classList.remove("hidden");
+  }
+
   backBtn?.addEventListener("click", () => {
-    groupDefaultView?.classList.remove("hidden");
-    groupHeadView?.classList.add("hidden");
+    if (!isConfirmed) {
+      groupDefaultView?.classList.remove("hidden");
+      groupHeadView?.classList.add("hidden");
+    }
   });
 
   exitButton?.addEventListener("click", () => {
-    groupMemberView?.classList.add("hidden");
-    groupHeadView?.classList.remove("hidden");
+    if (!isConfirmed) {
+      groupMemberView?.classList.add("hidden");
+      groupDefaultView?.classList.remove("hidden");
+      return;
+    }
   });
 </script>
