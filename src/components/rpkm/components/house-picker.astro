@@ -953,14 +953,29 @@ if (!token) {
         const binBtn = e.target.closest('img[src*="bin-icon.svg"]');
         if (!binBtn) return;
 
+        // Disable all bin buttons to avoid removing multiple houses at once
+        const allBins = document.querySelectorAll('img[src*="bin-icon.svg"]');
+        allBins.forEach((bin) => (bin.style.pointerEvents = "none"));
+
         e.preventDefault();
         e.stopPropagation();
 
         const houseCard = binBtn.closest("[data-house-rank]");
-        if (!houseCard) return;
+        if (!houseCard) {
+          allBins.forEach((bin) => (bin.style.pointerEvents = ""));
+          return;
+        }
 
         const rank = houseCard.getAttribute("data-house-rank");
-        removeHouse(rank);
+
+        setTimeout(() => {
+          removeHouse(rank);
+
+          const binsAfter = document.querySelectorAll(
+            'img[src*="bin-icon.svg"]'
+          );
+          binsAfter.forEach((bin) => (bin.style.pointerEvents = ""));
+        }, 1000);
       });
 
       // Close popup events
