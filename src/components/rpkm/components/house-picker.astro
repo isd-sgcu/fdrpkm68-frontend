@@ -550,7 +550,7 @@ const isOwner =
             });
           } else {
             submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ยืนยันการเลือกบ้าน</p>`;
-            submitBtn.disabled = false;
+            submitBtn.disabled = !allMainRanksFilled;
           }
 
           // If there are picked houses, show picking view
@@ -956,7 +956,7 @@ const isOwner =
     // Handle house picking card click
     document.addEventListener("click", (e) => {
       if (!isOwner) return;
-
+      if (isSubmitted) return;
       if (isConfirmed) return;
 
       const btn = e.target.closest("[data-rank]");
@@ -981,6 +981,7 @@ const isOwner =
     // Handle bin icon click
     document.addEventListener("click", (e) => {
       if (!isOwner) return;
+      if (isSubmitted) return;
       if (isConfirmed) return;
 
       const binBtn = e.target.closest('img[src*="bin-icon.svg"]');
@@ -995,7 +996,8 @@ const isOwner =
         if (!loadingIcon) {
           loadingIcon = document.createElement("img");
           loadingIcon.src = "/images/rpkm/loading-icon.png";
-          loadingIcon.className = "loading-icon w-5 h-5 animate-spin";
+          loadingIcon.className =
+            "loading-icon w-5 h-5 animate-spin cursor-default";
           bin.parentNode.appendChild(loadingIcon);
         }
         loadingIcon.style.display = "inline-block";
