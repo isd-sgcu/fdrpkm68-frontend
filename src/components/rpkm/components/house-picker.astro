@@ -965,16 +965,32 @@ const isConfirmed = groupData ? groupData.isConfirmed || false : false;
         const binBtn = e.target.closest('img[src*="bin-icon.svg"]');
         if (!binBtn) return;
 
-        // Disable all bin buttons to avoid removing multiple houses at once
+        // Disable and show loading for all bins
         const allBins = document.querySelectorAll('img[src*="bin-icon.svg"]');
-        allBins.forEach((bin) => (bin.style.pointerEvents = "none"));
+        allBins.forEach((bin) => {
+          bin.style.pointerEvents = "none";
+          bin.style.display = "none";
+          let loadingIcon = bin.parentNode.querySelector(".loading-icon");
+          if (!loadingIcon) {
+            loadingIcon = document.createElement("img");
+            loadingIcon.src = "/images/rpkm/loading-icon.png";
+            loadingIcon.className = "loading-icon w-5 h-5 animate-spin";
+            bin.parentNode.appendChild(loadingIcon);
+          }
+          loadingIcon.style.display = "inline-block";
+        });
 
         e.preventDefault();
         e.stopPropagation();
 
         const houseCard = binBtn.closest("[data-house-rank]");
         if (!houseCard) {
-          allBins.forEach((bin) => (bin.style.pointerEvents = ""));
+          allBins.forEach((bin) => {
+            bin.style.pointerEvents = "";
+            bin.style.display = "inline-block";
+            const loadingIcon = bin.parentNode.querySelector(".loading-icon");
+            if (loadingIcon) loadingIcon.style.display = "none";
+          });
           return;
         }
 
@@ -983,10 +999,16 @@ const isConfirmed = groupData ? groupData.isConfirmed || false : false;
         setTimeout(() => {
           removeHouse(rank);
 
+          // Restore all bins
           const binsAfter = document.querySelectorAll(
             'img[src*="bin-icon.svg"]'
           );
-          binsAfter.forEach((bin) => (bin.style.pointerEvents = ""));
+          binsAfter.forEach((bin) => {
+            bin.style.pointerEvents = "";
+            bin.style.display = "inline-block";
+            const loadingIcon = bin.parentNode.querySelector(".loading-icon");
+            if (loadingIcon) loadingIcon.style.display = "none";
+          });
         }, 1000);
       });
 
