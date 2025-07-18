@@ -2,18 +2,18 @@
 import { colorMap } from "@rpkm/data/sizeColors";
 
 const { houseData = {} } = Astro.props;
-const { thName, image, size, amount, capacity } = houseData;
+const { nameThai, image, sizeLetter, chosenCount, capacity } = houseData;
 
-let colorData = colorMap.find((color) => color.size == size);
+let colorData = colorMap.find((color) => color.sizeLetter == sizeLetter);
 if (!colorData) {
-  colorData = { size: "", bgColor: "#000", textColor: "#fff" };
+  colorData = { sizeLetter: "", bgColor: "#000", textColor: "#fff" };
 }
 ---
 
 <div
   class="relative h-[120px] w-[80px] cursor-pointer bg-white p-1"
-  data-name={thName}
-  id={`house-card-${thName}`}
+  data-name={nameThai}
+  id={`house-card-${nameThai}`}
 >
   <img
     src={image
@@ -26,14 +26,14 @@ if (!colorData) {
     <p
       class="w-auto overflow-hidden text-xs font-semibold text-ellipsis whitespace-nowrap text-[#2B2D42]"
     >
-      {thName}
+      {nameThai}
     </p>
 
     <p
       class="flex aspect-square w-[18px] items-center justify-center rounded-full px-[3px] py-[1px] text-[8px] font-semibold"
       style={`background-color: ${colorData.bgColor}; color: ${colorData.textColor};`}
     >
-      {size}
+      {sizeLetter}
     </p>
   </div>
 
@@ -41,8 +41,9 @@ if (!colorData) {
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-[1px] text-[8px]">
       <p class="text-[#313131E5]">
-        <span style={`color: ${amount == capacity ? "#FF1493" : "#68A987"};`}
-          >{amount}</span
+        <span
+          style={`color: ${chosenCount == capacity ? "#FF1493" : "#68A987"};`}
+          >{chosenCount}</span
         >/{capacity}
       </p>
       <img src="/images/rpkm/person-icon.svg" width="12" height="12" />

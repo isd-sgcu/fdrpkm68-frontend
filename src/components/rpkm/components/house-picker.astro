@@ -1,5 +1,5 @@
 ---
-import { houseDisplayData } from "@rpkm/data/house.js";
+import { getHouses, type HouseDisplayType } from "@rpkm/data/house";
 import { colorMap } from "@rpkm/data/sizeColors";
 import HouseConfirmPopup from "@rpkm/elements/house-confirm-popup.astro";
 import HouseDetailCard from "@rpkm/elements/house-detail-card.astro";
@@ -11,19 +11,13 @@ import Frame from "@/components/common/Frame.astro";
 
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 
-type houseDisplayType = {
-  id: string;
-  thName: string;
-  enName: string;
-  image: string;
-  thDescription: string;
-  enDescription: string;
-  instagram: string;
-  instagramURL: string;
-  size: string;
-  amount: number;
-  capacity: number;
-};
+let houseDisplayData: HouseDisplayType[] = [];
+const token = Astro.cookies.get("token")?.value;
+if (!token) {
+  Astro.redirect("/login");
+} else {
+  houseDisplayData = await getHouses(token);
+}
 ---
 
 <!-- Not Picking Wrapper -->
@@ -178,13 +172,13 @@ type houseDisplayType = {
       id="house-card-container"
     >
       {
-        houseDisplayData.map((house: houseDisplayType) => (
+        houseDisplayData.map((house: HouseDisplayType) => (
           <div
             class="house-card-wrapper"
             data-id={house.id}
-            data-size={house.size}
-            data-thname={house.thName}
-            data-enname={house.enName}
+            data-size={house.sizeLetter}
+            data-thname={house.nameThai}
+            data-enname={house.nameEng}
           >
             <HouseDetailCard houseData={house} />
           </div>
@@ -234,7 +228,13 @@ type houseDisplayType = {
   </Frame>
 
   <!-- Script -->
-  <script define:vars={{ houseData: houseDisplayData, colorMap: colorMap }}>
+  <script
+    define:vars={{
+      houseData: houseDisplayData,
+      colorMap: colorMap,
+      token: token || "",
+    }}
+  >
     document.addEventListener("DOMContentLoaded", () => {
       // ===========================================
       // DOM ELEMENTS
@@ -302,11 +302,13 @@ type houseDisplayType = {
           const wrapper = document.createElement("div");
           wrapper.className = "house-card-wrapper";
           wrapper.setAttribute("data-id", house.id);
-          wrapper.setAttribute("data-size", house.size);
-          wrapper.setAttribute("data-thname", house.thName);
-          wrapper.setAttribute("data-enname", house.enName);
+          wrapper.setAttribute("data-size", house.sizeLetter);
+          wrapper.setAttribute("data-thname", house.nameThai);
+          wrapper.setAttribute("data-enname", house.nameEng);
 
-          let colorData = colorMap.find((color) => color.size == house.size);
+          let colorData = colorMap.find(
+            (color) => color.sizeLetter == house.sizeLetter
+          );
           if (!colorData) {
             colorData = { size: "", bgColor: "#000", textColor: "#fff" };
           }
@@ -314,8 +316,8 @@ type houseDisplayType = {
           wrapper.innerHTML = `
           <div
             class="relative w-[80px] h-[120px] bg-white p-1 cursor-pointer"
-            data-name="${house.thName}"
-            id="house-card-${house.thName}"
+            data-name="${house.nameThai}"
+            id="house-card-${house.nameThai}"
           >
             <img 
               src="${house.image ? "/images/rpkm/houses/" + house.image : "/images/rpkm/house-blank.png"}" 
@@ -324,14 +326,14 @@ type houseDisplayType = {
             <!-- Upper Content -->
             <div class="flex justify-between items-center gap-[6px] pb-1">
               <p class="w-auto text-xs text-[#2B2D42] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
-                ${house.thName}
+                ${house.nameThai}
               </p>
 
               <p 
                 class="rounded-full text-[8px] w-[18px] px-[3px] py-[1px] aspect-square flex items-center justify-center font-semibold"
                 style="background-color: ${colorData.bgColor}; color: ${colorData.textColor};"
               >
-                ${house.size}
+                ${house.sizeLetter}
               </p>
             </div>
 
@@ -339,7 +341,7 @@ type houseDisplayType = {
             <div class="flex justify-between items-center">
               <div class="flex items-center text-[8px] gap-[1px]">
                 <p class="text-[#313131E5]">
-                  <span style="color: ${house.amount == house.capacity ? "#FF1493" : "#68A987"};">${house.amount}</span>/${house.capacity}
+                  <span style="color: ${house.chosenCount == house.capacity ? "#FF1493" : "#68A987"};">${house.chosenCount}</span>/${house.capacity}
                 </p>
                 <img src="/images/rpkm/person-icon.svg" width="12" height="12" />
               </div>
@@ -369,9 +371,9 @@ type houseDisplayType = {
             cards?.forEach((card) => {
               const id = card.getAttribute("data-id");
               const cardSize = card.getAttribute("data-size");
-              const thName = card.getAttribute("data-thname");
-              const thNameLower = thName?.toLowerCase() || "";
-              const enName =
+              const nameThai = card.getAttribute("data-thname");
+              const nameThaiLower = nameThai?.toLowerCase() || "";
+              const nameEng =
                 card.getAttribute("data-enname")?.toLowerCase() || "";
 
               // Skip if house is already selected
@@ -380,8 +382,8 @@ type houseDisplayType = {
               // Check name match and rank restrictions
               const nameMatch =
                 !searchValue ||
-                thNameLower.includes(searchValue) ||
-                enName.includes(searchValue);
+                nameThaiLower.includes(searchValue) ||
+                nameEng.includes(searchValue);
               let rankMatch = true;
 
               if (currentRank === "houseRankSub") {
@@ -397,9 +399,9 @@ type houseDisplayType = {
             cards?.forEach((card) => {
               const id = card.getAttribute("data-id");
               const cardSize = card.getAttribute("data-size");
-              const thName = card.getAttribute("data-thname");
-              const thNameLower = thName?.toLowerCase() || "";
-              const enName =
+              const nameThai = card.getAttribute("data-thname");
+              const nameThaiLower = nameThai?.toLowerCase() || "";
+              const nameEng =
                 card.getAttribute("data-enname")?.toLowerCase() || "";
 
               // Skip if house is already selected
@@ -409,8 +411,8 @@ type houseDisplayType = {
               const sizeMatch = cardSize === size;
               const nameMatch =
                 !searchValue ||
-                thNameLower.includes(searchValue) ||
-                enName.includes(searchValue);
+                nameThaiLower.includes(searchValue) ||
+                nameEng.includes(searchValue);
               let rankMatch = true;
 
               if (currentRank === "houseRankSub") {
@@ -430,7 +432,7 @@ type houseDisplayType = {
       // ===========================================
       // LOCALSTORAGE FUNCTIONS
       // ===========================================
-      function saveHouseSelection() {
+      async function saveHouseSelection() {
         const selectionData = {
           pickedHouses: pickedHouses,
           selectedHouses: Array.from(selectedHouses),
@@ -441,6 +443,31 @@ type houseDisplayType = {
           "rpkm-house-selection",
           JSON.stringify(selectionData)
         );
+
+        // Save Houses
+        await fetch("/api/group/house-preferences", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            houseRank1: pickedHouses.houseRank1,
+            houseRank2: pickedHouses.houseRank2,
+            houseRank3: pickedHouses.houseRank3,
+            houseRank4: pickedHouses.houseRank4,
+            houseRank5: pickedHouses.houseRank5,
+            houseRankSub: pickedHouses.houseRankSub,
+          }),
+        })
+          .then((res) => res.json())
+          .then((response) => {
+            if (!response.success) {
+              // Handle error
+              console.error("Failed to set house preferences:", response.error);
+            }
+            console.log("Saved");
+          });
       }
 
       function loadHouseSelection() {
@@ -565,7 +592,7 @@ type houseDisplayType = {
                   src="/images/rpkm/houses/${house.image}"
                   class="relative h-[73.442px] w-[73.442px] object-cover pb-1"
                 />
-                <p class="text-xs text-[#2B2D42] font-semibold text-center overflow-hidden whitespace-nowrap text-ellipsis">${house.thName}</p>
+                <p class="text-xs text-[#2B2D42] font-semibold text-center overflow-hidden whitespace-nowrap text-ellipsis">${house.nameThai}</p>
               </div>
               ${
                 !isSubmitted
@@ -693,14 +720,15 @@ type houseDisplayType = {
 
         cards.forEach((card) => {
           const cardSize = card.getAttribute("data-size");
-          const thName = card.getAttribute("data-thname")?.toLowerCase() || "";
-          const enName = card.getAttribute("data-enname")?.toLowerCase() || "";
+          const nameThai =
+            card.getAttribute("data-thname")?.toLowerCase() || "";
+          const nameEng = card.getAttribute("data-enname")?.toLowerCase() || "";
 
           const sizeMatch = size === "ทั้งหมด" || cardSize === size;
           const nameMatch =
             !searchLower ||
-            thName.includes(searchLower) ||
-            enName.includes(searchLower);
+            nameThai.includes(searchLower) ||
+            nameEng.includes(searchLower);
 
           // เพิ่มการตรวจสอบ rank สำหรับอันดับสำรอง
           let rankMatch = true;
@@ -739,7 +767,7 @@ type houseDisplayType = {
         // Update Thai title
         const houseThaiTitle = housePopup?.querySelector("#house-thai-title");
         if (houseThaiTitle) {
-          houseThaiTitle.textContent = house.thName;
+          houseThaiTitle.textContent = house.nameThai;
         }
 
         // Update Thai description
@@ -747,13 +775,13 @@ type houseDisplayType = {
           "#house-thai-description"
         );
         if (houseThaiDescription) {
-          houseThaiDescription.textContent = house.thDescription;
+          houseThaiDescription.textContent = house.descriptionThai;
         }
 
         // Update English title
         const houseEngTitle = housePopup?.querySelector("#house-eng-title");
         if (houseEngTitle) {
-          houseEngTitle.textContent = house.enName;
+          houseEngTitle.textContent = house.nameEng;
         }
 
         // Update English description
@@ -761,12 +789,12 @@ type houseDisplayType = {
           "#house-eng-description"
         );
         if (houseEngDescription) {
-          houseEngDescription.textContent = house.enDescription;
+          houseEngDescription.textContent = house.descriptionEng;
         }
 
         // Update instagram
         if (houseInstagram) {
-          houseInstagram.textContent = house.instagram;
+          houseInstagram.textContent = house.instagramName;
         }
 
         // Update instagram link
@@ -798,9 +826,9 @@ type houseDisplayType = {
         // Update size badge
         const sizeBadge = housePopup?.querySelector("#house-size-badge");
         if (sizeBadge) {
-          sizeBadge.textContent = house.size;
+          sizeBadge.textContent = house.sizeLetter;
 
-          const colorData = colorMap[house.size] || {
+          const colorData = colorMap[house.sizeLetter] || {
             bgColor: "#000",
             textColor: "#fff",
           };
@@ -812,7 +840,7 @@ type houseDisplayType = {
         const houseAmount = housePopup?.querySelector("#house-amount");
         const houseCapacity = housePopup?.querySelector("#house-capacity");
         if (houseAmount && houseCapacity) {
-          houseAmount.textContent = house.amount;
+          houseAmount.textContent = house.chosenCount;
           houseCapacity.textContent = house.capacity;
           houseAmount.style.color =
             house.amount == house.capacity ? "#FF1493" : "#68A987";
@@ -961,8 +989,8 @@ type houseDisplayType = {
           )
             return;
 
-          const thName = wrapper.getAttribute("data-thname");
-          const houseObj = houseData.find((h) => h.thName === thName);
+          const nameThai = wrapper.getAttribute("data-thname");
+          const houseObj = houseData.find((h) => h.nameThai === nameThai);
 
           // Prevent selection of already selected houses
           if (!houseObj || selectedHouses.has(houseObj.id)) return;
@@ -1021,8 +1049,8 @@ type houseDisplayType = {
         e.preventDefault();
         e.stopPropagation();
 
-        const thName = wrapper.getAttribute("data-thname");
-        selectedHouseData = houseData.find((h) => h.thName === thName);
+        const nameThai = wrapper.getAttribute("data-thname");
+        selectedHouseData = houseData.find((h) => h.nameThai === nameThai);
 
         // Prevent showing popup for already selected houses
         if (!selectedHouseData || selectedHouses.has(selectedHouseData.id))
@@ -1043,8 +1071,8 @@ type houseDisplayType = {
       btnAddHouse?.addEventListener("click", () => {
         if (!selectedHouseData || !currentRank) return;
 
-        const thName = selectedHouseData.thName;
-        const houseObj = houseData.find((h) => h.thName === thName);
+        const nameThai = selectedHouseData.nameThai;
+        const houseObj = houseData.find((h) => h.nameThai === nameThai);
 
         // Prevent adding already selected houses
         if (selectedHouses.has(houseObj.id)) return;

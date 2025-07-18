@@ -10,12 +10,20 @@ export interface SetHousePreferencesRequest {
   houseRankSub?: string;
 }
 
-/**
- * Updates house preferences for the current user's group.
- * @param preferences - The house ranking preferences to set.
- * @param authToken - Optional authentication token for server-side use.
- * @returns ApiResponse containing the updated group and preferences.
- */
+export type HouseResponse = {
+  id: string;
+  nameThai: string;
+  nameEnglish: string;
+  descriptionThai: string;
+  descriptionEnglish: string;
+  sizeLetter: string;
+  chosenCount: number;
+  capacity: number;
+  instagram: string;
+  facebook: string;
+  tiktok: string;
+};
+
 export async function setHousePreferences(
   preferences: SetHousePreferencesRequest,
   authToken?: string
@@ -48,11 +56,6 @@ export async function setHousePreferences(
   return response;
 }
 
-/**
- * Fetches house preferences for the current user's group.
- * @param authToken - Optional authentication token for server-side use.
- * @returns ApiResponse containing the house preferences.
- */
 export async function getHousePreferences(
   authToken?: string
 ): Promise<ApiResponse<{ data: SetHousePreferencesRequest }>> {
@@ -73,6 +76,27 @@ export async function getHousePreferences(
 
   if (!response.success) {
     console.error("Failed to fetch house preferences:", response.error);
+  }
+  return response;
+}
+
+export async function getAllHouses(
+  authToken?: string
+): Promise<ApiResponse<{ data: HouseResponse[] }>> {
+  const token = authToken || getAuthToken();
+  if (!token) {
+    return {
+      success: false,
+      error: "กรุณาเข้าสู่ระบบก่อนลงทะเบียน",
+    };
+  }
+
+  const response = await api.get<{ data: HouseResponse[] }>("/houses", {
+    headers: getAuthHeaders(token),
+  });
+
+  if (!response.success && !response.data) {
+    console.error("Failed to fetch house data:", response.error);
   }
   return response;
 }
