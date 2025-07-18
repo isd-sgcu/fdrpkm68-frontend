@@ -151,8 +151,18 @@ function EditProfileContent({
           Authorization: `Bearer ${getAuthToken()}`,
         },
       });
+      const raw_data = reponse.data as EditProfileFormData;
 
-      return reponse.data as EditProfileFormData;
+      const data = {
+        user: {
+          ...raw_data.user,
+          hasAllergies: raw_data.user.foodAllergy !== "",
+          hasMedications: raw_data.user.drugAllergy !== "",
+          hasChronicDiseases: raw_data.user.illness !== "",
+        },
+      };
+
+      return data as EditProfileFormData;
     },
   });
 
@@ -184,9 +194,9 @@ function EditProfileContent({
         parentName: data.user.parentName,
         parentPhoneNumber: data.user.parentPhoneNumber,
         parentRelationship: data.user.parentRelationship,
-        foodAllergy: data.user.hasAllergies ? data.user.foodAllergy : null,
-        drugAllergy: data.user.hasMedications ? data.user.drugAllergy : null,
-        illness: data.user.hasChronicDiseases ? data.user.illness : null,
+        foodAllergy: data.user.hasAllergies ? data.user.foodAllergy : "",
+        drugAllergy: data.user.hasMedications ? data.user.drugAllergy : "",
+        illness: data.user.hasChronicDiseases ? data.user.illness : "",
       };
 
       const reponse = await api.patch("/user/update", formData, {
