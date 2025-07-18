@@ -5,8 +5,13 @@ declare global {
   interface Window {
     showHouseConfirmPopup?: () => void;
     confirmHouseSubmission?: () => void;
-    showSuccessPopup?: () => void; // <-- add this
+    showSuccessPopup?: () => void;
   }
+}
+
+const token = Astro.cookies.get("token")?.value;
+if (!token) {
+  Astro.redirect("/login");
 }
 ---
 
@@ -93,7 +98,7 @@ declare global {
     </button>
   </div>
 
-  <script>
+  <script define:vars={{ token: token || "" }}>
     document.addEventListener("DOMContentLoaded", () => {
       const confirmPopup = document.getElementById("view-house-confirm-popup");
       const successPopup = document.getElementById("view-house-success-popup");
@@ -118,7 +123,7 @@ declare global {
         successPopup?.classList.remove("hidden");
         successPopup?.classList.add("flex");
       }
-      window.showSuccessPopup = showSuccessPopup; // <-- expose globally
+      window.showSuccessPopup = showSuccessPopup;
 
       // Hide success popup function
       function hideSuccessPopup() {
@@ -132,13 +137,31 @@ declare global {
       });
 
       // Confirm button - hide confirm popup and show success popup
-      btnConfirm?.addEventListener("click", () => {
+      btnConfirm?.addEventListener("click", async () => {
         hideConfirmPopup();
         showSuccessPopup();
 
         // Trigger the actual submission in the parent component
         if (window.confirmHouseSubmission) {
           window.confirmHouseSubmission();
+        }
+
+        // Submit houses
+        try {
+          const response = await fetch("/api/group/confirm", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({}),
+          });
+          const result = await response.json();
+          if (!result.success) {
+            console.error("Failed to submit houses:", result.error);
+          }
+        } catch (err) {
+          console.error("Network error submitting houses:", err);
         }
       });
 

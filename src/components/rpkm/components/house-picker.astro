@@ -13,6 +13,8 @@ import HousePickingCard from "@rpkm/elements/house-picking-card.astro";
 
 import Divider from "@/components/common/Divider.astro";
 import Frame from "@/components/common/Frame.astro";
+import { getGroupData } from "@/lib/groupAPI";
+import type { Group } from "@/types/common";
 
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 
@@ -25,6 +27,7 @@ let housePrefData: HousePrefType = {
   houseRank5: null,
   houseRankSub: null,
 };
+let groupData: Group | null = null;
 
 const token = Astro.cookies.get("token")?.value;
 if (!token) {
@@ -32,7 +35,12 @@ if (!token) {
 } else {
   houseDisplayData = await getHouses(token);
   housePrefData = await getPrefHouses(token);
+  const groupDataResponse = await getGroupData(token);
+  if (groupDataResponse.success && groupDataResponse.data) {
+    groupData = groupDataResponse.data.data as Group;
+  }
 }
+const isConfirmed = groupData ? groupData.isConfirmed || false : false;
 ---
 
 <!-- Not Picking Wrapper -->
@@ -122,7 +130,6 @@ if (!token) {
     >
       <button
         id="btn-submit-house"
-        disabled
         class="cut-edge-all flex cursor-pointer items-center justify-center gap-2 bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] disabled:cursor-not-allowed disabled:opacity-50"
         type="button"
         style={`width: 260px; height: 48px;`}
@@ -249,6 +256,7 @@ if (!token) {
       housePrefData: housePrefData,
       colorMap: colorMap,
       token: token || "",
+      isConfirmed: isConfirmed,
     }}
   >
     document.addEventListener("DOMContentLoaded", () => {
@@ -280,7 +288,8 @@ if (!token) {
       const pickedHouses = housePrefData;
       let selectedHouses = new Set();
       let currentRank = null;
-      let isSubmitted = false;
+      let isSubmitted = isConfirmed;
+
       let selectedHouseData = null;
 
       // ===========================================
@@ -442,19 +451,6 @@ if (!token) {
       // STORAGE FUNCTIONS
       // ===========================================
       async function saveHouseSelection() {
-        const selectionData = {
-          pickedHouses: pickedHouses,
-          selectedHouses: Array.from(selectedHouses),
-          isSubmitted: isSubmitted,
-          timestamp: new Date().toISOString(),
-        };
-
-        // Save to localStorage
-        localStorage.setItem(
-          "rpkm-house-selection",
-          JSON.stringify(selectionData)
-        );
-
         // Save To API
         await fetch("/api/group/house-preferences", {
           method: "POST",
@@ -477,7 +473,6 @@ if (!token) {
               // Handle error
               console.error("Failed to set house preferences:", response.error);
             }
-            console.log("Saved");
           });
       }
 
@@ -490,14 +485,10 @@ if (!token) {
             selectionData = {
               pickedHouses: housePrefData,
               selectedHouses: Object.values(housePrefData).filter(Boolean),
-              isSubmitted: false,
+              isConfirmed: false,
             };
-          } else {
-            const saved = localStorage.getItem("rpkm-house-selection");
-            if (saved) {
-              selectionData = JSON.parse(saved);
-            }
           }
+          // Removed localStorage fallback
 
           if (selectionData) {
             // Restore picked houses
@@ -509,7 +500,7 @@ if (!token) {
             selectedHouses = new Set(selectionData.selectedHouses);
 
             // Restore submission state
-            isSubmitted = selectionData.isSubmitted || false;
+            isSubmitted = selectionData.isConfirmed || false;
 
             // Update UI
             updatePickedHousesDisplay();
@@ -529,12 +520,14 @@ if (!token) {
             submitBtn.disabled = !allMainRanksFilled;
 
             // If submitted, update button and disable interactions
-            if (isSubmitted) {
+            if (isConfirmed) {
               submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ส่งการเลือกบ้านแล้ว</p>`;
               submitBtn.disabled = true;
               document.querySelectorAll("[data-rank]").forEach((card) => {
                 card.classList.add("pointer-events-none");
               });
+            } else {
+              submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ยืนยันการเลือกบ้าน</p>`;
             }
 
             // If there are picked houses, show picking view
@@ -546,10 +539,6 @@ if (!token) {
         } catch (error) {
           console.error("Error loading house selection:", error);
         }
-      }
-
-      function clearHouseSelection() {
-        localStorage.removeItem("rpkm-house-selection");
       }
 
       // ===========================================
@@ -602,7 +591,6 @@ if (!token) {
           // Create new house picking card
           const card = document.createElement("div");
           if (house) {
-            // console.log("Updating house card for:", house);
             card.innerHTML = `
             <div class="relative h-fit w-fit flex flex-col gap-2">
               <div class="relative h-[100px] w-[80px] bg-white p-1">
@@ -619,7 +607,7 @@ if (!token) {
                 <p class="text-xs text-[#2B2D42] font-semibold text-center overflow-hidden whitespace-nowrap text-ellipsis">${house.nameThai}</p>
               </div>
               ${
-                !isSubmitted
+                !isConfirmed && !isSubmitted
                   ? `
                 <div class="flex justify-center">
                   <button class="cursor-pointer flex justify-center items-center">
@@ -643,9 +631,10 @@ if (!token) {
                 width="${rank === "houseRankSub" ? 55 : rank === "houseRank1" || rank === "houseRank2" ? 30 : 24}"
                 height="${rank === "houseRankSub" ? 55 : rank === "houseRank1" || rank === "houseRank2" ? 30 : 24}"
               />
+
               <img 
                 src="/images/rpkm/plus-icon.svg"
-                class="w-5 h-5" 
+                class="w-5 h-5 ${isConfirmed ? "hidden" : ""}" 
               />
             </button>
           `;
@@ -884,8 +873,7 @@ if (!token) {
 
       // Add reset function for development/testing
       window.resetHouseSelection = function () {
-        clearHouseSelection();
-        location.reload();
+        // Removed clearHouseSelection and reload
       };
 
       // Add confirmation function for popup
@@ -902,7 +890,7 @@ if (!token) {
         // Update display to hide trash bins
         updatePickedHousesDisplay();
 
-        // Save final state to localStorage
+        // Save final state to API
         saveHouseSelection();
       };
 
@@ -949,7 +937,7 @@ if (!token) {
 
       // Handle house picking card click
       document.addEventListener("click", (e) => {
-        if (isSubmitted) return;
+        if (isConfirmed) return;
 
         const btn = e.target.closest("[data-rank]");
         if (!btn) return;
@@ -972,7 +960,7 @@ if (!token) {
 
       // Handle bin icon click
       document.addEventListener("click", (e) => {
-        if (isSubmitted) return;
+        if (isConfirmed) return;
 
         const binBtn = e.target.closest('img[src*="bin-icon.svg"]');
         if (!binBtn) return;
@@ -1074,7 +1062,7 @@ if (!token) {
 
       // Submit button handler
       submitBtn?.addEventListener("click", () => {
-        if (isSubmitted) return;
+        if (isConfirmed) return;
 
         // Show confirmation popup
         if (window.showHouseConfirmPopup) {
