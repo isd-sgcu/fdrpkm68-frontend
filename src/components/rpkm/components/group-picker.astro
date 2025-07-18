@@ -122,12 +122,17 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
   <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
     <div class="relative w-full pt-2 text-center">
-      <p
-        class={`absolute left-0 cursor-pointer text-2xl font-semibold text-white ${memberCount === 1 ? "" : "hidden"}`}
-        id="btn-back"
-      >
-        {"<"}
-      </p>
+      {
+        !isConfirmed && memberCount === 1 && (
+          <p
+            class="absolute left-0 cursor-pointer text-2xl font-semibold text-white"
+            id="btn-back"
+          >
+            {"<"}
+          </p>
+        )
+      }
+
       <p class="text-2xl font-semibold text-white">
         {`จับกลุ่มเพื่อน (${memberCount}/3)`}
       </p>
@@ -390,163 +395,169 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
   import { getGroupData } from "@/lib/groupAPI";
   import { getProfile } from "@/lib/profileAPI";
 
-  async function getInformation() {
-    const resProfile = await getProfile();
-    const resGroup = await getGroupData();
-    const user = resProfile.data?.user ?? null;
-    const groupData = resGroup.data?.data ?? null;
-    return { user, groupData };
-  }
-
-  const { user, groupData } = await getInformation();
-
-  const isConfirmed = groupData ? groupData.isConfirmed : undefined;
-  const isOwner = groupData && user ? groupData.ownerId === user.id : undefined;
-  const memberCount = groupData ? groupData.memberCount : -1;
-
-  const input = document.getElementById("room-id-insert") as HTMLInputElement;
-
-  const headGroupBtn = document.getElementById(
-    "btn-head-group"
-  ) as HTMLButtonElement;
-  const backBtn = document.getElementById("btn-back") as HTMLButtonElement;
-  const joinGroupButton = document.getElementById(
-    "btn-join-group"
-  ) as HTMLButtonElement;
-  const submitGroupButton = document.getElementById(
-    "btn-submit-group"
-  ) as HTMLButtonElement;
-  const cancelGroupButton = document.getElementById(
-    "btn-cancel-group"
-  ) as HTMLButtonElement;
-  const closeGroupPopupButton = document.getElementById(
-    "btn-close-popup"
-  ) as HTMLButtonElement;
-  const exitButton = document.getElementById("btn-exit") as HTMLButtonElement;
-
-  const groupDefaultView = document.getElementById("view-group-default");
-  const groupHeadView = document.getElementById("view-group-head");
-  const groupMemberView = document.getElementById("view-group-member");
-  const groupPopupView = document.getElementById("view-group-popup");
-  const groupPopupSuccessView = document.getElementById(
-    "view-group-success-popup"
-  );
-
-  const roomInviteHeadContainer = document.getElementById(
-    "room-invite-url-head-container"
-  );
-  const roomCodeHeadContainer = document.getElementById(
-    "room-code-head-container"
-  );
-  const roomInviteMemberContainer = document.getElementById(
-    "room-invite-url-member-container"
-  );
-  const roomCodeMemberContainer = document.getElementById(
-    "room-code-member-container"
-  );
-  const errorRoomMessage = document.getElementById(
-    "error-room-message"
-  ) as HTMLParagraphElement;
-
-  const targetHeadName = document.getElementById(
-    "target-head-name"
-  ) as HTMLParagraphElement;
-  const targetHeadId = document.getElementById(
-    "target-head-id"
-  ) as HTMLParagraphElement;
-
-  const targetHeadNamePopup = document.getElementById(
-    "target-head-name-popup"
-  ) as HTMLParagraphElement;
-
-  let targetGroupData: any = null;
-  let inviteCode = "";
-
-  function formatRoomId(raw: string): string {
-    return raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
-  }
-
-  function toggleSubmitButton() {
-    if (!input || !joinGroupButton || !errorRoomMessage) return;
-
-    if (document.activeElement === input) {
-      errorRoomMessage.innerHTML = "";
+  document.addEventListener("DOMContentLoaded", async () => {
+    async function getInformation() {
+      const resProfile = await getProfile();
+      const resGroup = await getGroupData();
+      const user = resProfile.data?.user ?? null;
+      const groupData = resGroup.data?.data ?? null;
+      return { user, groupData };
     }
 
-    // Input Validation
-    const formattedRoomId = formatRoomId(input.value);
-    input.value = formattedRoomId;
+    const { user, groupData } = await getInformation();
 
-    const isValid = formattedRoomId.length === 6;
+    const isConfirmed = groupData ? groupData.isConfirmed : undefined;
+    const isOwner =
+      groupData && user ? groupData.ownerId === user.id : undefined;
+    const memberCount = groupData ? groupData.memberCount : -1;
 
-    joinGroupButton.disabled = !isValid;
+    const input = document.getElementById("room-id-insert") as HTMLInputElement;
 
-    if (isValid) {
-      joinGroupButton.classList.remove(
-        "brightness-75",
-        "opacity-50",
-        "cursor-not-allowed"
-      );
-      joinGroupButton.classList.add("cursor-pointer");
+    const headGroupBtn = document.getElementById(
+      "btn-head-group"
+    ) as HTMLButtonElement;
+    const backBtn = document.getElementById("btn-back") as HTMLButtonElement;
+    const joinGroupButton = document.getElementById(
+      "btn-join-group"
+    ) as HTMLButtonElement;
+    const submitGroupButton = document.getElementById(
+      "btn-submit-group"
+    ) as HTMLButtonElement;
+    const cancelGroupButton = document.getElementById(
+      "btn-cancel-group"
+    ) as HTMLButtonElement;
+    const closeGroupPopupButton = document.getElementById(
+      "btn-close-popup"
+    ) as HTMLButtonElement;
+    const exitButton = document.getElementById("btn-exit") as HTMLButtonElement;
 
-      const outputURL = document.getElementById(
-        "room-invite-url-member"
-      ) as HTMLSpanElement;
-      const outputCode = document.getElementById(
-        "room-code-member"
-      ) as HTMLSpanElement;
+    const groupDefaultView = document.getElementById("view-group-default");
+    const groupHeadView = document.getElementById("view-group-head");
+    const groupMemberView = document.getElementById("view-group-member");
+    const groupPopupView = document.getElementById("view-group-popup");
+    const groupPopupSuccessView = document.getElementById(
+      "view-group-success-popup"
+    );
 
-      outputURL.textContent = "rpkm.sgcu.in.th/" + input.value;
-      outputCode.textContent = input.value;
-    } else {
-      joinGroupButton.classList.add(
-        "brightness-75",
-        "opacity-50",
-        "cursor-not-allowed"
-      );
-      joinGroupButton.classList.remove("cursor-pointer");
+    const roomInviteHeadContainer = document.getElementById(
+      "room-invite-url-head-container"
+    );
+    const roomCodeHeadContainer = document.getElementById(
+      "room-code-head-container"
+    );
+    const roomInviteMemberContainer = document.getElementById(
+      "room-invite-url-member-container"
+    );
+    const roomCodeMemberContainer = document.getElementById(
+      "room-code-member-container"
+    );
+    const errorRoomMessage = document.getElementById(
+      "error-room-message"
+    ) as HTMLParagraphElement;
+
+    const targetHeadName = document.getElementById(
+      "target-head-name"
+    ) as HTMLParagraphElement;
+    const targetHeadId = document.getElementById(
+      "target-head-id"
+    ) as HTMLParagraphElement;
+
+    const targetHeadNamePopup = document.getElementById(
+      "target-head-name-popup"
+    ) as HTMLParagraphElement;
+
+    let targetGroupData: any = null;
+    let inviteCode = "";
+
+    function formatRoomId(raw: string): string {
+      return raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
     }
-  }
 
-  input?.addEventListener("input", toggleSubmitButton);
-  toggleSubmitButton();
+    function toggleSubmitButton() {
+      if (!input || !joinGroupButton || !errorRoomMessage) return;
 
-  headGroupBtn?.addEventListener("click", () => {
-    groupDefaultView?.classList.add("hidden");
-    groupHeadView?.classList.remove("hidden");
-    input.value = "";
+      if (document.activeElement === input) {
+        errorRoomMessage.innerHTML = "";
+      }
+
+      // Input Validation
+      const formattedRoomId = formatRoomId(input.value);
+      input.value = formattedRoomId;
+
+      const isValid = formattedRoomId.length === 6;
+
+      joinGroupButton.disabled = !isValid;
+
+      if (isValid) {
+        joinGroupButton.classList.remove(
+          "brightness-75",
+          "opacity-50",
+          "cursor-not-allowed"
+        );
+        joinGroupButton.classList.add("cursor-pointer");
+
+        const outputURL = document.getElementById(
+          "room-invite-url-member"
+        ) as HTMLSpanElement;
+        const outputCode = document.getElementById(
+          "room-code-member"
+        ) as HTMLSpanElement;
+
+        outputURL.textContent = "rpkm.sgcu.in.th/" + input.value;
+        outputCode.textContent = input.value;
+      } else {
+        joinGroupButton.classList.add(
+          "brightness-75",
+          "opacity-50",
+          "cursor-not-allowed"
+        );
+        joinGroupButton.classList.remove("cursor-pointer");
+      }
+    }
+
+    input?.addEventListener("input", toggleSubmitButton);
     toggleSubmitButton();
-  });
 
-  joinGroupButton?.addEventListener("click", async () => {
-    if (!input.value) return;
+    headGroupBtn?.addEventListener("click", () => {
+      groupDefaultView?.classList.add("hidden");
+      groupHeadView?.classList.remove("hidden");
+      input.value = "";
+      toggleSubmitButton();
+    });
 
-    inviteCode = formatRoomId(input.value);
-    if (inviteCode.length !== 6) return;
+    joinGroupButton?.addEventListener("click", async () => {
+      if (!input.value) return;
 
-    errorRoomMessage.innerHTML = "";
+      inviteCode = formatRoomId(input.value);
+      if (inviteCode.length !== 6) return;
 
-    // Add loading state
-    joinGroupButton.disabled = true;
-    joinGroupButton.textContent = "กำลังค้นหา...";
+      errorRoomMessage.innerHTML = "";
 
-    try {
-      const response = await getGroupByInviteCode(inviteCode);
-      if (response.success && response.data) {
-        targetGroupData = response.data.data;
+      // Add loading state
+      joinGroupButton.disabled = true;
+      joinGroupButton.textContent = "กำลังค้นหา...";
 
-        const profileContainer = document.getElementById("target-head-profile");
+      try {
+        const response = await getGroupByInviteCode(inviteCode);
+        if (response.success && response.data) {
+          targetGroupData = response.data.data;
 
-        if (profileContainer && targetGroupData.owner) {
-          const avatarSrc =
-            targetGroupData.owner?.avatarId &&
-            AvatarMap[targetGroupData.owner.avatarId as keyof typeof AvatarMap]
-              ? AvatarMap[
-                  targetGroupData.owner.avatarId as keyof typeof AvatarMap
-                ]
-              : "/images/rpkm/profile/profile-unknown.png";
+          const profileContainer = document.getElementById(
+            "target-head-profile"
+          );
 
-          profileContainer.innerHTML = `
+          if (profileContainer && targetGroupData.owner) {
+            const avatarSrc =
+              targetGroupData.owner?.avatarId &&
+              AvatarMap[
+                targetGroupData.owner.avatarId as keyof typeof AvatarMap
+              ]
+                ? AvatarMap[
+                    targetGroupData.owner.avatarId as keyof typeof AvatarMap
+                  ]
+                : "/images/rpkm/profile/profile-unknown.png";
+
+            profileContainer.innerHTML = `
           <div class="user-profile flex flex-col items-center justify-center">
             <div class="relative flex h-[80px] w-[80px]">
               <img
@@ -562,121 +573,122 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
             </div>
           </div>
         `;
-        }
+          }
 
-        targetHeadName.innerHTML =
+          targetHeadName.innerHTML =
+            targetGroupData.owner.firstName +
+            " " +
+            targetGroupData.owner.lastName +
+            " (" +
+            targetGroupData.owner.nickname +
+            ")";
+          targetHeadId.innerHTML = targetGroupData.owner.studentId;
+
+          groupPopupView?.classList.remove("hidden");
+        } else {
+          errorRoomMessage.innerHTML = response.error || "ไม่พบห้องที่ระบุ";
+        }
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        errorRoomMessage.innerHTML = "เกิดข้อผิดพลาดในการค้นหาห้อง";
+      } finally {
+        joinGroupButton.disabled = false;
+        joinGroupButton.innerHTML =
+          '<p class="text-lg font-medium text-white">ยืนยัน</p>';
+        input.value = "";
+        toggleSubmitButton();
+      }
+    });
+
+    submitGroupButton?.addEventListener("click", async () => {
+      const response = await joinGroup(inviteCode);
+
+      if (response.success) {
+        targetHeadNamePopup.innerHTML =
           targetGroupData.owner.firstName +
           " " +
           targetGroupData.owner.lastName +
           " (" +
           targetGroupData.owner.nickname +
           ")";
-        targetHeadId.innerHTML = targetGroupData.owner.studentId;
-
-        groupPopupView?.classList.remove("hidden");
+        groupPopupView?.classList.add("hidden");
+        groupPopupSuccessView?.classList.remove("hidden");
+        groupDefaultView?.classList.add("hidden");
+        groupMemberView?.classList.remove("hidden");
       } else {
-        errorRoomMessage.innerHTML = response.error || "ไม่พบห้องที่ระบุ";
+        console.error("Failed to leave group before:", response.error);
       }
-    } catch (error) {
-      console.error("Unexpected error:", error);
-      errorRoomMessage.innerHTML = "เกิดข้อผิดพลาดในการค้นหาห้อง";
-    } finally {
-      joinGroupButton.disabled = false;
-      joinGroupButton.innerHTML =
-        '<p class="text-lg font-medium text-white">ยืนยัน</p>';
+    });
+
+    cancelGroupButton?.addEventListener("click", () => {
+      groupPopupView?.classList.add("hidden");
       input.value = "";
       toggleSubmitButton();
-    }
-  });
+    });
 
-  submitGroupButton?.addEventListener("click", async () => {
-    const response = await joinGroup(inviteCode);
+    closeGroupPopupButton?.addEventListener("click", () => {
+      groupPopupSuccessView?.classList.add("hidden");
+    });
 
-    if (response.success) {
-      targetHeadNamePopup.innerHTML =
-        targetGroupData.owner.firstName +
-        " " +
-        targetGroupData.owner.lastName +
-        " (" +
-        targetGroupData.owner.nickname +
-        ")";
-      groupPopupView?.classList.add("hidden");
-      groupPopupSuccessView?.classList.remove("hidden");
-      groupDefaultView?.classList.add("hidden");
-      groupMemberView?.classList.remove("hidden");
+    roomInviteHeadContainer?.addEventListener("click", () => {
+      const urlElement = document.getElementById("room-invite-url-head");
+      if (urlElement && urlElement.textContent) {
+        const url = urlElement.textContent.trim();
+        navigator.clipboard.writeText(url);
+      }
+    });
+
+    roomCodeHeadContainer?.addEventListener("click", () => {
+      const codeElement = document.getElementById("room-code-head");
+      if (codeElement && codeElement.textContent) {
+        const code = codeElement.textContent.trim();
+        navigator.clipboard.writeText(code);
+      }
+    });
+
+    roomInviteMemberContainer?.addEventListener("click", () => {
+      const urlElement = document.getElementById("room-invite-url-member");
+      if (urlElement && urlElement.textContent) {
+        const url = urlElement.textContent.trim();
+        navigator.clipboard.writeText(url);
+      }
+    });
+
+    roomCodeMemberContainer?.addEventListener("click", () => {
+      const codeElement = document.getElementById("room-code-member");
+      if (codeElement && codeElement.textContent) {
+        const code = codeElement.textContent.trim();
+        navigator.clipboard.writeText(code);
+      }
+    });
+
+    if (isConfirmed) {
+      exitButton?.classList.add("hidden");
+      backBtn?.classList.add("hidden");
     } else {
-      console.error("Failed to leave group before:", response.error);
+      exitButton?.classList.remove("hidden");
+      backBtn?.classList.remove("hidden");
     }
-  });
 
-  cancelGroupButton?.addEventListener("click", () => {
-    groupPopupView?.classList.add("hidden");
-    input.value = "";
-    toggleSubmitButton();
-  });
-
-  closeGroupPopupButton?.addEventListener("click", () => {
-    groupPopupSuccessView?.classList.add("hidden");
-  });
-
-  roomInviteHeadContainer?.addEventListener("click", () => {
-    const urlElement = document.getElementById("room-invite-url-head");
-    if (urlElement && urlElement.textContent) {
-      const url = urlElement.textContent.trim();
-      navigator.clipboard.writeText(url);
+    if (memberCount !== 1) {
+      backBtn?.classList.add("hidden");
+    } else {
+      backBtn?.classList.remove("hidden");
     }
-  });
 
-  roomCodeHeadContainer?.addEventListener("click", () => {
-    const codeElement = document.getElementById("room-code-head");
-    if (codeElement && codeElement.textContent) {
-      const code = codeElement.textContent.trim();
-      navigator.clipboard.writeText(code);
-    }
-  });
+    backBtn?.addEventListener("click", () => {
+      if (!isConfirmed) {
+        groupDefaultView?.classList.remove("hidden");
+        groupHeadView?.classList.add("hidden");
+      }
+    });
 
-  roomInviteMemberContainer?.addEventListener("click", () => {
-    const urlElement = document.getElementById("room-invite-url-member");
-    if (urlElement && urlElement.textContent) {
-      const url = urlElement.textContent.trim();
-      navigator.clipboard.writeText(url);
-    }
-  });
-
-  roomCodeMemberContainer?.addEventListener("click", () => {
-    const codeElement = document.getElementById("room-code-member");
-    if (codeElement && codeElement.textContent) {
-      const code = codeElement.textContent.trim();
-      navigator.clipboard.writeText(code);
-    }
-  });
-
-  if (isConfirmed) {
-    exitButton?.classList.add("hidden");
-    backBtn?.classList.add("hidden");
-  } else {
-    exitButton?.classList.remove("hidden");
-    backBtn?.classList.remove("hidden");
-  }
-
-  if (memberCount !== 1) {
-    backBtn?.classList.add("hidden");
-  } else {
-    backBtn?.classList.remove("hidden");
-  }
-
-  backBtn?.addEventListener("click", () => {
-    if (!isConfirmed) {
-      groupDefaultView?.classList.remove("hidden");
-      groupHeadView?.classList.add("hidden");
-    }
-  });
-
-  exitButton?.addEventListener("click", () => {
-    if (!isConfirmed) {
-      groupMemberView?.classList.add("hidden");
-      groupDefaultView?.classList.remove("hidden");
-      return;
-    }
+    exitButton?.addEventListener("click", () => {
+      if (!isConfirmed) {
+        groupMemberView?.classList.add("hidden");
+        groupDefaultView?.classList.remove("hidden");
+        return;
+      }
+    });
   });
 </script>
