@@ -103,7 +103,7 @@ function EditProfileContent({
   const [isUpdateLoading, setIsUpdateLoading] = useState<boolean>(false);
   const [profileData, setProfileData] = useState<EditProfileFormData>({
     user: {
-      prefix: "mr",
+      prefix: "MR",
       firstName: "นาย",
       lastName: "บลา ๆ บลา ๆ",
       nickname: "น",
@@ -156,9 +156,14 @@ function EditProfileContent({
       const data = {
         user: {
           ...raw_data.user,
-          hasAllergies: raw_data.user.foodAllergy !== "",
-          hasMedications: raw_data.user.drugAllergy !== "",
-          hasChronicDiseases: raw_data.user.illness !== "",
+          hasAllergies:
+            raw_data.user.foodAllergy !== "" &&
+            raw_data.user.foodAllergy !== null,
+          hasMedications:
+            raw_data.user.drugAllergy !== "" &&
+            raw_data.user.drugAllergy !== null,
+          hasChronicDiseases:
+            raw_data.user.illness !== "" && raw_data.user.illness !== null,
         },
       };
 
@@ -349,9 +354,9 @@ function EditProfileContent({
                 className="h-full w-full rounded-sm bg-black p-1 text-sm text-white"
                 {...register("user.prefix")}
               >
-                <option value="mr">นาย</option>
-                <option value="ms">นางสาว</option>
-                <option value="mrs">นาง</option>
+                <option value="MR">นาย</option>
+                <option value="MS">นางสาว</option>
+                <option value="MRS">นาง</option>
               </select>
             </div>
             <label className="text-sm" htmlFor="firstName">
@@ -751,9 +756,9 @@ function EditProfileContent({
             <div className="flex justify-between">
               <span className={`text-[${themeColor}]`}>ชื่อ:</span>
               <p>
-                {profileData.user.prefix === "mr"
+                {profileData.user.prefix === "MR"
                   ? "นาย"
-                  : profileData.user.prefix === "ms"
+                  : profileData.user.prefix === "MS"
                     ? "นางสาว"
                     : "นาง"}{" "}
                 {profileData.user.firstName} {profileData.user.lastName}
