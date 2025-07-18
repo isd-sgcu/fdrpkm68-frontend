@@ -192,7 +192,6 @@ export async function getPrefHouses(token?: string): Promise<HousePrefType> {
   };
 
   const response = await getHousePreferences(token);
-  console.log("Response from getHousePreferences:", response);
   if (!response.success || !response.data) {
     console.error("Failed to fetch house data:", response.error);
     return houseResult;

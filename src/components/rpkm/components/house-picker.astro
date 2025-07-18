@@ -33,8 +33,6 @@ if (!token) {
   houseDisplayData = await getHouses(token);
   housePrefData = await getPrefHouses(token);
 }
-
-console.log("House Preferences:", housePrefData);
 ---
 
 <!-- Not Picking Wrapper -->
@@ -279,14 +277,7 @@ console.log("House Preferences:", housePrefData);
       // ===========================================
       // STATE VARIABLES
       // ===========================================
-      const pickedHouses = {
-        houseRank1: null,
-        houseRank2: null,
-        houseRank3: null,
-        houseRank4: null,
-        houseRank5: null,
-        houseRankSub: null,
-      };
+      const pickedHouses = housePrefData;
       let selectedHouses = new Set();
       let currentRank = null;
       let isSubmitted = false;
@@ -448,7 +439,7 @@ console.log("House Preferences:", housePrefData);
       }
 
       // ===========================================
-      // LOCALSTORAGE FUNCTIONS
+      // STORAGE FUNCTIONS
       // ===========================================
       async function saveHouseSelection() {
         const selectionData = {
@@ -457,12 +448,14 @@ console.log("House Preferences:", housePrefData);
           isSubmitted: isSubmitted,
           timestamp: new Date().toISOString(),
         };
+
+        // Save to localStorage
         localStorage.setItem(
           "rpkm-house-selection",
           JSON.stringify(selectionData)
         );
 
-        // Save Houses
+        // Save To API
         await fetch("/api/group/house-preferences", {
           method: "POST",
           headers: {
@@ -490,10 +483,23 @@ console.log("House Preferences:", housePrefData);
 
       function loadHouseSelection() {
         try {
-          const saved = localStorage.getItem("rpkm-house-selection");
-          if (saved) {
-            const selectionData = JSON.parse(saved);
+          let selectionData = null;
+          const hasPref = Object.values(housePrefData).some((v) => v !== null);
 
+          if (hasPref) {
+            selectionData = {
+              pickedHouses: housePrefData,
+              selectedHouses: Object.values(housePrefData).filter(Boolean),
+              isSubmitted: false,
+            };
+          } else {
+            const saved = localStorage.getItem("rpkm-house-selection");
+            if (saved) {
+              selectionData = JSON.parse(saved);
+            }
+          }
+
+          if (selectionData) {
             // Restore picked houses
             Object.keys(selectionData.pickedHouses).forEach((rank) => {
               pickedHouses[rank] = selectionData.pickedHouses[rank];
