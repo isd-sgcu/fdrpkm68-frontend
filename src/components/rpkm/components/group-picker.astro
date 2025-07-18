@@ -60,7 +60,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 >
   <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
-    <p class="pt-2 text-2xl font-semibold text-white">
+    <p class="pt-2 text-2xl font-semibold text-white" id="member-count-default">
       {`จับกลุ่มเพื่อน (${memberCount}/3)`}
     </p>
 
@@ -139,13 +139,16 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
         )
       }
 
-      <p class="text-2xl font-semibold text-white">
+      <p class="text-2xl font-semibold text-white" id="member-count-head">
         {`จับกลุ่มเพื่อน (${memberCount}/3)`}
       </p>
     </div>
 
     <!-- Profile -->
-    <div class="flex w-full justify-center gap-[10px] pt-6">
+    <div
+      class="flex w-full justify-center gap-[10px] pt-6"
+      id="member-profile-head"
+    >
       <GroupProfile user={groupData.owner} variant="red-star" />
       <GroupProfile user={member1} variant="blue" />
       <GroupProfile user={member2} variant="blue" />
@@ -221,7 +224,10 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
   <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
     <div class="relative w-full pt-2 text-center">
-      <p class="z-20 text-center text-2xl font-semibold text-white">
+      <p
+        class="z-20 text-center text-2xl font-semibold text-white"
+        id="member-count-member"
+      >
         {`จับกลุ่มเพื่อน (${memberCount}/3)`}
       </p>
       {
@@ -238,7 +244,10 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
     </div>
 
     <!-- Profile -->
-    <div class="z-20 flex w-full justify-center gap-[10px] pt-6">
+    <div
+      class="z-20 flex w-full justify-center gap-[10px] pt-6"
+      id="member-profile-member"
+    >
       <GroupProfile user={groupData.owner} variant="red-star" />
       <GroupProfile user={member1} variant="blue" />
       <GroupProfile user={member2} variant="blue" />
@@ -634,14 +643,93 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
         const user: User = userResponse.data.user as User;
         const groupResponse = await getGroupByGroupId(user.groupId);
         if (groupResponse.success && groupResponse.data) {
-          const groupData = groupResponse.data.data as Group;
+          const updatedGroupData = groupResponse.data.data as Group;
           targetHeadNamePopup.innerHTML =
-            groupData.owner.firstName +
+            updatedGroupData.owner.firstName +
             " " +
-            groupData.owner.lastName +
+            updatedGroupData.owner.lastName +
             " (" +
-            groupData.owner.nickname +
+            updatedGroupData.owner.nickname +
             ")";
+
+          const owner = updatedGroupData.owner;
+          const member1 =
+            updatedGroupData.memberCount > 1 ? updatedGroupData.users[1] : null;
+          const member2 =
+            updatedGroupData.memberCount > 2 ? updatedGroupData.users[2] : null;
+
+          // Update Member View UI
+          const memberCountText = document.getElementById(
+            "member-count-member"
+          );
+          if (memberCountText) {
+            memberCountText.innerHTML = `จับกลุ่มเพื่อน (${updatedGroupData.memberCount}/3)`;
+          }
+
+          const memberProfilesContainer = document.querySelectorAll(
+            "#member-profile-member > div"
+          );
+
+          memberProfilesContainer[0].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${owner.avatarId ? AvatarMap[owner.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${owner.firstName} ${owner.lastName} avatar"
+                    class="h-full w-full object-cover"
+                  />
+                  <img 
+                    src="/images/frame-profile-image/frame-profile-image-red-star.svg" 
+                    alt="Frame" 
+                    class="absolute h-full w-full"
+                  />
+                </div>
+              </div>
+            `;
+
+          memberProfilesContainer[1].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${member1 ? AvatarMap[member1.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${member1 ? member1.firstName + " " + member1.lastName : "Unknown"} avatar"
+                      class="h-full w-full object-cover"
+                    />
+                    <img 
+                      src="/images/frame-profile-image/frame-profile-image-blue.svg" 
+                      alt="Frame" 
+                      class="absolute h-full w-full"
+                    />
+                  </div>
+                </div>`;
+
+          memberProfilesContainer[2].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${member2 ? AvatarMap[member2.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${member2 ? member2.firstName + " " + member2.lastName : "Unknown"} avatar"
+                    class="h-full w-full object-cover"
+                  />
+                  <img 
+                    src="/images/frame-profile-image/frame-profile-image-blue.svg" 
+                    alt="Frame" 
+                    class="absolute h-full w-full"
+                  />
+                </div>
+              </div>`;
+
+          const inviteUrlSpan = document.getElementById(
+            "room-invite-url-member"
+          );
+          if (inviteUrlSpan) {
+            inviteUrlSpan.textContent =
+              "rpkm.sgcu.in.th/" + groupData.inviteCode;
+          }
+          const roomCodeSpan = document.getElementById("room-code-member");
+          if (roomCodeSpan) {
+            roomCodeSpan.textContent = groupData.inviteCode;
+          }
         }
 
         groupPopupView?.classList.add("hidden");
@@ -659,6 +747,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 
     closeGroupPopupButton?.addEventListener("click", () => {
       groupPopupSuccessView?.classList.add("hidden");
+      window.location.reload();
     });
 
     roomInviteHeadContainer?.addEventListener("click", () => {
@@ -727,15 +816,111 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
         const user: User = userResponse.data.user as User;
         const groupResponse = await getGroupByGroupId(user.groupId);
         if (groupResponse.success && groupResponse.data) {
-          const groupData = groupResponse.data.data as Group;
+          const updatedGroupData = groupResponse.data.data as Group;
           const urlElement = document.getElementById("room-invite-url-head");
           const codeElement = document.getElementById("room-code-head");
           if (urlElement) {
-            urlElement.textContent = "rpkm.sgcu.in.th/" + groupData.inviteCode;
+            urlElement.textContent =
+              "rpkm.sgcu.in.th/" + updatedGroupData.inviteCode;
           }
           if (codeElement) {
-            codeElement.textContent = groupData.inviteCode;
+            codeElement.textContent = updatedGroupData.inviteCode;
           }
+          // Update Default View
+          const defaultCountText = document.getElementById(
+            "member-count-default"
+          );
+          if (defaultCountText) {
+            defaultCountText.innerHTML = `จับกลุ่มเพื่อน (${updatedGroupData.memberCount}/3)`;
+          }
+
+          input.value = "";
+          joinGroupButton.disabled = true;
+          joinGroupButton.classList.add("cursor-not-allowed");
+          joinGroupButton.classList.remove("cursor-pointer");
+
+          const errorRoomMessage =
+            document.getElementById("error-room-message");
+          if (errorRoomMessage) errorRoomMessage.innerHTML = "";
+
+          const owner = updatedGroupData.owner;
+          const member1 =
+            updatedGroupData.memberCount > 1 ? updatedGroupData.users[1] : null;
+          const member2 =
+            updatedGroupData.memberCount > 2 ? updatedGroupData.users[2] : null;
+
+          // Update Head View
+          const headCountText = document.getElementById("member-count-member");
+          if (headCountText) {
+            headCountText.innerHTML = `จับกลุ่มเพื่อน (${updatedGroupData.memberCount}/3)`;
+          }
+
+          const headProfileContainer = document.querySelectorAll(
+            "#member-profile-head > div"
+          );
+
+          headProfileContainer[0].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${owner.avatarId ? AvatarMap[owner.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${owner.firstName} ${owner.lastName} avatar"
+                    class="h-full w-full object-cover"
+                  />
+                  <img 
+                    src="/images/frame-profile-image/frame-profile-image-red-star.svg" 
+                    alt="Frame" 
+                    class="absolute h-full w-full"
+                  />
+                </div>
+              </div>
+            `;
+
+          headProfileContainer[1].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${member1 ? AvatarMap[member1.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${member1 ? member1.firstName + " " + member1.lastName : "Unknown"} avatar"
+                      class="h-full w-full object-cover"
+                    />
+                    <img 
+                      src="/images/frame-profile-image/frame-profile-image-blue.svg" 
+                      alt="Frame" 
+                      class="absolute h-full w-full"
+                    />
+                  </div>
+                </div>`;
+
+          headProfileContainer[2].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${member2 ? AvatarMap[member2.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${member2 ? member2.firstName + " " + member2.lastName : "Unknown"} avatar"
+                    class="h-full w-full object-cover"
+                  />
+                  <img 
+                    src="/images/frame-profile-image/frame-profile-image-blue.svg" 
+                    alt="Frame" 
+                    class="absolute h-full w-full"
+                  />
+                </div>
+              </div>`;
+
+          const inviteUrlSpan = document.getElementById(
+            "room-invite-url-member"
+          );
+          if (inviteUrlSpan) {
+            inviteUrlSpan.textContent =
+              "rpkm.sgcu.in.th/" + updatedGroupData.inviteCode;
+          }
+          const roomCodeSpan = document.getElementById("room-code-member");
+          if (roomCodeSpan) {
+            roomCodeSpan.textContent = updatedGroupData.inviteCode;
+          }
+
+          window.location.reload();
         }
       }
       if (!isConfirmed) {

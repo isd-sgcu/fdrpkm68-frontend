@@ -114,8 +114,6 @@ export async function leaveGroup(
     }
   );
 
-  console.log("Response from leaveGroup:", response);
-
   if (!response.success) {
     console.error("Failed to leave group:", response.error);
   }
