@@ -3,31 +3,36 @@ import GroupProfile from "@rpkm/rubpuen/GroupProfile";
 
 import Divider from "@/components/common/Divider.astro";
 import Frame from "@/components/common/Frame.astro";
-import { getGroupData } from "@/lib/groupAPI";
+import { getGroupByGroupId } from "@/lib/groupAPI";
 import { getProfile } from "@/lib/profileAPI";
 import type { Group, User } from "@/types/common";
 
 const token = Astro.cookies.get("token")?.value;
 
-let groupData = null;
-let user = null;
+let groupData: Group | null = null;
+let user: User | null = null;
 
 if (token) {
-  const response = await getGroupData(token);
-  if (response.success && response.data) {
-    groupData = response.data.data as Group;
-  }
-
-  try {
-    const userResponse = await getProfile(token);
-    if (userResponse.success && userResponse.data) {
-      user = userResponse.data.user as User;
+  let groupID = "";
+  const userResponse = await getProfile(token);
+  if (userResponse.success && userResponse.data) {
+    user = userResponse.data.user as User;
+    groupID = user.groupId ? user.groupId : "";
+    if (groupID) {
+      const groupResponse = await getGroupByGroupId(groupID, token);
+      if (groupResponse.success && groupResponse.data) {
+        groupData = groupResponse.data.data as Group;
+      } else {
+        return Astro.redirect("/login");
+      }
     } else {
-      console.error("Failed to fetch user data:", userResponse.error);
+      return Astro.redirect("/login");
     }
-  } catch (error) {
-    console.error("Error fetching user data:", error);
+  } else {
+    console.error("Failed to fetch user data:", userResponse.error);
   }
+} else {
+  return Astro.redirect("/login");
 }
 
 if (!groupData || !user) {
@@ -40,7 +45,8 @@ const isConfirmed = groupData.isConfirmed;
 const memberCount = groupData.memberCount;
 
 const canDisplayDefault = !isConfirmed && memberCount === 1 && isOwner;
-const canDisplayHead = (isConfirmed && isOwner) || memberCount != 1;
+const canDisplayHead =
+  (isConfirmed && isOwner) || (!isConfirmed && isOwner && memberCount != 1);
 const canDisplayMember = !isOwner;
 
 const member1 = groupData.memberCount > 1 ? groupData.users[1] : null;
@@ -218,13 +224,17 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
       <p class="z-20 text-center text-2xl font-semibold text-white">
         {`จับกลุ่มเพื่อน (${memberCount}/3)`}
       </p>
-      <img
-        src="/images/rpkm/exit-icon.svg"
-        width="24px"
-        height="24px"
-        class="absolute top-3 right-0 cursor-pointer"
-        id="btn-exit"
-      />
+      {
+        !isConfirmed && (
+          <img
+            src="/images/rpkm/exit-icon.svg"
+            width="24px"
+            height="24px"
+            class="absolute top-3 right-0 cursor-pointer"
+            id="btn-exit"
+          />
+        )
+      }
     </div>
 
     <!-- Profile -->
@@ -251,6 +261,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
               id="room-invite-url-member"
               class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
             >
+              {"rpkm.sgcu.in.th/" + inviteCode}
             </span>
             <img
               src="/images/rpkm/link-icon.svg"
@@ -280,6 +291,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
               id="room-code-member"
               class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
             >
+              {inviteCode}
             </span>
             <img
               src="/images/rpkm/link-icon.svg"
@@ -390,21 +402,29 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 
 <!-- Script -->
 <script>
-  import { getGroupByInviteCode, joinGroup, leaveGroup } from "@/lib/groupAPI";
+  import {
+    getGroupByGroupId,
+    getGroupByInviteCode,
+    joinGroup,
+    leaveGroup,
+  } from "@/lib/groupAPI";
   import { AvatarMap } from "@rpkm/data/profile";
-  import { getGroupData } from "@/lib/groupAPI";
   import { getProfile } from "@/lib/profileAPI";
+  import type { Group, User } from "@/types/common";
 
   document.addEventListener("DOMContentLoaded", async () => {
-    async function getInformation() {
-      const resProfile = await getProfile();
-      const resGroup = await getGroupData();
-      const user = resProfile.data?.user ?? null;
-      const groupData = resGroup.data?.data ?? null;
-      return { user, groupData };
+    const userResponse = await getProfile();
+    if (!userResponse.success || !userResponse.data) {
+      console.error("User not found or not logged in.");
+      return;
     }
-
-    const { user, groupData } = await getInformation();
+    const user: User = userResponse.data.user as User;
+    const groupResponse = await getGroupByGroupId(user.groupId);
+    if (!groupResponse.success || !groupResponse.data) {
+      console.error("Group not found or user is not in a group.");
+      return;
+    }
+    const groupData = groupResponse.data.data as Group;
 
     const isConfirmed = groupData ? groupData.isConfirmed : undefined;
     const isOwner =
@@ -604,13 +624,27 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
       const response = await joinGroup(inviteCode);
 
       if (response.success) {
-        targetHeadNamePopup.innerHTML =
-          targetGroupData.owner.firstName +
-          " " +
-          targetGroupData.owner.lastName +
-          " (" +
-          targetGroupData.owner.nickname +
-          ")";
+        // ดึงข้อมูลกลุ่มล่าสุดหลัง join สำเร็จ
+        const userResponse = await getProfile();
+        if (!userResponse.success || !userResponse.data) {
+          console.error("Failed to fetch user data after joining group.");
+          return;
+        }
+        const user: User = userResponse.data.user as User;
+        const groupResponse = await getGroupByGroupId(user.groupId);
+        if (groupResponse.success && groupResponse.data) {
+          const groupData = groupResponse.data.data as Group;
+
+          // อัปเดตชื่อหัวกลุ่มใน popup success
+          targetHeadNamePopup.innerHTML =
+            groupData.owner.firstName +
+            " " +
+            groupData.owner.lastName +
+            " (" +
+            groupData.owner.nickname +
+            ")";
+        }
+
         groupPopupView?.classList.add("hidden");
         groupPopupSuccessView?.classList.remove("hidden");
         groupDefaultView?.classList.add("hidden");

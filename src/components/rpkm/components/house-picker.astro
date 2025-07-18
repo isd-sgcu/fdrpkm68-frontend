@@ -1,7 +1,6 @@
 ---
 import {
   getHouses,
-  getPrefHouses,
   type HouseDisplayType,
   type HousePrefType,
 } from "@rpkm/data/house";
@@ -13,9 +12,9 @@ import HousePickingCard from "@rpkm/elements/house-picking-card.astro";
 
 import Divider from "@/components/common/Divider.astro";
 import Frame from "@/components/common/Frame.astro";
-import { getGroupData } from "@/lib/groupAPI";
+import { getGroupByGroupId } from "@/lib/groupAPI";
 import { getProfile } from "@/lib/profileAPI";
-import type { Group } from "@/types/common";
+import type { Group, User } from "@/types/common";
 
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 
@@ -34,19 +33,42 @@ let user: User | null = null;
 
 const token = Astro.cookies.get("token")?.value;
 if (!token) {
-  Astro.redirect("/login");
-} else {
-  houseDisplayData = await getHouses(token);
-  housePrefData = await getPrefHouses(token);
-  const userResponse = await getProfile(token);
-  if (userResponse.success && userResponse.data) {
-    user = userResponse.data.user as User;
-  }
-  const groupDataResponse = await getGroupData(token);
-  if (groupDataResponse.success && groupDataResponse.data) {
-    groupData = groupDataResponse.data.data as Group;
-  }
+  return Astro.redirect("/login");
 }
+
+let groupID = "";
+const userResponse = await getProfile(token);
+if (userResponse.success && userResponse.data) {
+  user = userResponse.data.user as User;
+  groupID = user.groupId ? user.groupId : "";
+  if (groupID) {
+    const groupResponse = await getGroupByGroupId(groupID, token);
+    if (groupResponse.success && groupResponse.data) {
+      groupData = groupResponse.data.data as Group;
+    } else {
+      return Astro.redirect("/login");
+    }
+  } else {
+    return Astro.redirect("/login");
+  }
+} else {
+  console.error("Failed to fetch user data:", userResponse.error);
+}
+
+if (!groupData || !user) {
+  return Astro.redirect("/login");
+}
+
+houseDisplayData = await getHouses(token);
+housePrefData = {
+  houseRank1: groupData.houseRank1 || null,
+  houseRank2: groupData.houseRank2 || null,
+  houseRank3: groupData.houseRank3 || null,
+  houseRank4: groupData.houseRank4 || null,
+  houseRank5: groupData.houseRank5 || null,
+  houseRankSub: groupData.houseRankSub || null,
+};
+
 const isConfirmed = groupData ? groupData.isConfirmed || false : false;
 const isOwner =
   groupData && user ? groupData.ownerId == user.id || false : false;
@@ -663,8 +685,9 @@ const isPickAllMainHouses =
         } else {
           card.innerHTML = `
             <button 
-              class="relative h-[100px] w-[80px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] hover:bg-[#D38DD8]/20 transition-colors cursor-pointer"
+              class="relative h-[100px] w-[80px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] ${isOwner && !isConfirmed && !isSubmitted ? "hover:bg-[#D38DD8]/20 transition-colors cursor-pointer" : "cursor-default"}"
               data-rank="${rank}"
+              ${!isOwner ? "disabled" : ""}
             >
               <img 
                 src="/images/rpkm/rank-${rank}.svg"
@@ -672,10 +695,9 @@ const isPickAllMainHouses =
                 width="${rank === "houseRankSub" ? 55 : rank === "houseRank1" || rank === "houseRank2" ? 30 : 24}"
                 height="${rank === "houseRankSub" ? 55 : rank === "houseRank1" || rank === "houseRank2" ? 30 : 24}"
               />
-
               <img 
                 src="/images/rpkm/plus-icon.svg"
-                class="w-5 h-5 ${isConfirmed || isSubmitted ? "hidden" : ""}" 
+                class="w-5 h-5 ${isOwner && !isConfirmed && !isSubmitted ? "" : "hidden"}" 
               />
             </button>
           `;

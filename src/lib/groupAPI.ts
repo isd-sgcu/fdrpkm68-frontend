@@ -2,12 +2,8 @@ import { type ApiResponse, api } from "@/lib/api";
 import { getAuthHeaders, getAuthToken } from "@/lib/auth";
 import type { Group } from "@/types/common";
 
-/**
- * Fetches group data from the backend.
- * @param authToken - Optional authentication token for server-side use.
- * @returns ApiResponse from the backend.
- */
-export async function getGroupData(
+export async function getGroupByGroupId(
+  groupId?: string,
   authToken?: string
 ): Promise<ApiResponse<{ data: Group }>> {
   const token = authToken || getAuthToken();
@@ -18,21 +14,27 @@ export async function getGroupData(
     };
   }
 
-  const response = await api.get<{ data: Group }>("/group", {
-    headers: getAuthHeaders(token),
-  });
+  if (!groupId) {
+    return {
+      success: false,
+      error: "กรุณาใส่รหัสกลุ่ม",
+    };
+  }
+
+  const response = await api.post<{ data: Group }>(
+    "/group/getGroupByGroupId",
+    { groupId },
+    {
+      headers: getAuthHeaders(token),
+    }
+  );
+
   if (!response.success) {
-    console.error("Failed to fetch group data:", response.error);
+    console.error("Failed to fetch group by group ID:", response.error);
   }
   return response;
 }
 
-/**
- * Fetches group data by invite code from the backend.
- * @param inviteCode - The invite code to search for.
- * @param authToken - Optional authentication token for server-side use.
- * @returns ApiResponse from the backend.
- */
 export async function getGroupByInviteCode(
   inviteCode: string,
   authToken?: string
@@ -59,12 +61,6 @@ export async function getGroupByInviteCode(
   return response;
 }
 
-/**
- * Join group data by invite code from the backend.
- * @param inviteCode - The invite code to search for.
- * @param authToken - Optional authentication token for server-side use.
- * @returns ApiResponse from the backend.
- */
 export async function joinGroup(
   inviteCode: string,
   authToken?: string
