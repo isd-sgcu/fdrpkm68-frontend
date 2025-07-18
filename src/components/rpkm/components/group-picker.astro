@@ -54,7 +54,9 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 >
   <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
-    <p class="pt-2 text-2xl font-semibold text-white">จับกลุ่มเพื่อน (1/3)</p>
+    <p class="pt-2 text-2xl font-semibold text-white">
+      {`จับกลุ่มเพื่อน (${memberCount}/3)`}
+    </p>
 
     <!-- Room Code Input -->
     <div class="flex w-full flex-col items-center gap-[14px] pt-9">
@@ -121,7 +123,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
     <!-- Title -->
     <div class="relative w-full pt-2 text-center">
       <p
-        class="absolute left-0 cursor-pointer text-2xl font-semibold text-white"
+        class={`absolute left-0 cursor-pointer text-2xl font-semibold text-white ${memberCount === 1 ? "" : "hidden"}`}
         id="btn-back"
       >
         {"<"}
@@ -398,16 +400,9 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 
   const { user, groupData } = await getInformation();
 
-  console.log("Group Data:", groupData);
-  console.log("User Data:", user);
-
   const isConfirmed = groupData ? groupData.isConfirmed : undefined;
   const isOwner = groupData && user ? groupData.ownerId === user.id : undefined;
   const memberCount = groupData ? groupData.memberCount : -1;
-
-  console.log("isConfirmed:", isConfirmed);
-  console.log("isOwner:", isOwner);
-  console.log("memberCount:", memberCount);
 
   const input = document.getElementById("room-id-insert") as HTMLInputElement;
 
@@ -661,6 +656,12 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
     backBtn?.classList.add("hidden");
   } else {
     exitButton?.classList.remove("hidden");
+    backBtn?.classList.remove("hidden");
+  }
+
+  if (memberCount !== 1) {
+    backBtn?.classList.add("hidden");
+  } else {
     backBtn?.classList.remove("hidden");
   }
 

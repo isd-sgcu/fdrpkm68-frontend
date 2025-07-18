@@ -50,6 +50,15 @@ if (!token) {
 const isConfirmed = groupData ? groupData.isConfirmed || false : false;
 const isOwner =
   groupData && user ? groupData.ownerId == user.id || false : false;
+
+const isPickAllMainHouses =
+  housePrefData.houseRank1 &&
+  housePrefData.houseRank2 &&
+  housePrefData.houseRank3 &&
+  housePrefData.houseRank4 &&
+  housePrefData.houseRank5;
+
+console.log("Is Confirmed:", isConfirmed);
 ---
 
 <!-- Not Picking Wrapper -->
@@ -141,6 +150,7 @@ const isOwner =
         id="btn-submit-house"
         class="cut-edge-all flex cursor-pointer items-center justify-center gap-2 bg-[linear-gradient(90deg,_#8A2BE4_0%,_#2B2D42_50%,_#8A2BE4_100%)] disabled:cursor-not-allowed disabled:opacity-50"
         type="button"
+        disabled={!isPickAllMainHouses}
         style={`width: 260px; height: 48px;`}
       >
         <p class="text-xl font-medium text-white">ยืนยันการเลือกบ้าน</p>
@@ -510,7 +520,6 @@ const isOwner =
             isConfirmed: false,
           };
         }
-        // Removed localStorage fallback
 
         if (selectionData) {
           // Restore picked houses
@@ -541,6 +550,10 @@ const isOwner =
           );
           submitBtn.disabled = !allMainRanksFilled;
 
+          const hasAnyMainHouse = mainRanks.some(
+            (rank) => pickedHouses[rank] !== null
+          );
+
           // If submitted, update button and disable interactions
           if (isConfirmed) {
             submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ส่งการเลือกบ้านแล้ว</p>`;
@@ -548,15 +561,22 @@ const isOwner =
             document.querySelectorAll("[data-rank]").forEach((card) => {
               card.classList.add("pointer-events-none");
             });
+            submitBtn.classList.add("cursor-not-allowed", "opacity-50");
+            submitBtn.classList.remove("cursor-pointer", "opacity-100");
           } else {
             submitBtn.innerHTML = `<p class="text-xl text-white font-medium">ยืนยันการเลือกบ้าน</p>`;
             submitBtn.disabled = !allMainRanksFilled;
           }
 
           // If there are picked houses, show picking view
-          if (Object.values(pickedHouses).some((house) => house !== null)) {
+          if (hasAnyMainHouse) {
             notPickingView?.classList.add("hidden");
             pickingView?.classList.remove("hidden");
+            submitBtn.disabled = !allMainRanksFilled;
+          } else {
+            notPickingView?.classList.remove("hidden");
+            pickingView?.classList.add("hidden");
+            submitBtn.disabled = true;
           }
         }
       } catch (error) {
@@ -888,11 +908,6 @@ const isOwner =
     setTimeout(() => {
       updateHouseCounts();
     }, 100);
-
-    // Add reset function for development/testing
-    window.resetHouseSelection = function () {
-      // Removed clearHouseSelection and reload
-    };
 
     // Add confirmation function for popup
     window.confirmHouseSubmission = function () {
