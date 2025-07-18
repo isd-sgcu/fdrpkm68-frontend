@@ -597,8 +597,8 @@ const isConfirmed = groupData ? groupData.isConfirmed || false : false;
                 <img 
                   src="/images/rpkm/rank-${rank}.svg"
                   class="absolute z-20 left-1/2 top-0 transform -translate-x-1/2 -translate-y-1/2"
-                  width="${rank === "HouseRankSub" ? 55 : rank === "houseRank1" || rank === "houseRank2" ? 30 : 24}"
-                  height="${rank === "HouseRankSub" ? 55 : rank === "houseRank1" || rank === "houseRank2" ? 30 : 24}"
+                  width="${rank === "houseRankSub" ? 55 : rank === "houseRank1" || rank === "houseRank2" ? 30 : 24}"
+                  height="${rank === "houseRankSub" ? 55 : rank === "houseRank1" || rank === "houseRank2" ? 30 : 24}"
                 />
                 <img 
                   src="/images/rpkm/houses/${house.image}"
@@ -634,7 +634,7 @@ const isConfirmed = groupData ? groupData.isConfirmed || false : false;
 
               <img 
                 src="/images/rpkm/plus-icon.svg"
-                class="w-5 h-5 ${isConfirmed ? "hidden" : ""}" 
+                class="w-5 h-5 ${isConfirmed || isSubmitted ? "hidden" : ""}" 
               />
             </button>
           `;
