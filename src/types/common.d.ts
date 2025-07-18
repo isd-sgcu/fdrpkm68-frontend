@@ -50,7 +50,7 @@ export interface User {
 export interface Group {
   id: string;
   ownerId: string;
-  isconfirmed: boolean;
+  isConfirmed: boolean;
   inviteCode: string;
   memberCount: number;
   houseRank1: House | null;

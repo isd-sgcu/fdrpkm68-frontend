@@ -1,16 +1,10 @@
 ---
+import { colorMap } from "@rpkm/data/sizeColors";
+
 import Frame from "@/components/common/Frame.astro";
 
-const colors = [
-  { size: "S", bgColor: "#0FF", textColor: "#000" },
-  { size: "M", bgColor: "#FF1493", textColor: "#fff" },
-  { size: "L", bgColor: "#FFB6C1", textColor: "#000" },
-  { size: "XL", bgColor: "#D38DD8", textColor: "#000" },
-  { size: "XXL", bgColor: "#2B2D42", textColor: "#fff" },
-];
-
 // Default color
-const defaultColor = colors[0];
+const defaultColor = colorMap[0];
 ---
 
 <!-- House Popup Overlay -->
