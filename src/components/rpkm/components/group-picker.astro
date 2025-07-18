@@ -231,7 +231,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
             width="24px"
             height="24px"
             class="absolute top-3 right-0 cursor-pointer"
-            id="btn-exit"
+            id="btn-exit-group"
           />
         )
       }
@@ -449,7 +449,9 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
     const closeGroupPopupButton = document.getElementById(
       "btn-close-popup"
     ) as HTMLButtonElement;
-    const exitButton = document.getElementById("btn-exit") as HTMLButtonElement;
+    const exitButton = document.getElementById(
+      "btn-exit-group"
+    ) as HTMLButtonElement;
 
     const groupDefaultView = document.getElementById("view-group-default");
     const groupHeadView = document.getElementById("view-group-head");
@@ -624,7 +626,6 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
       const response = await joinGroup(inviteCode);
 
       if (response.success) {
-        // ดึงข้อมูลกลุ่มล่าสุดหลัง join สำเร็จ
         const userResponse = await getProfile();
         if (!userResponse.success || !userResponse.data) {
           console.error("Failed to fetch user data after joining group.");
@@ -634,8 +635,6 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
         const groupResponse = await getGroupByGroupId(user.groupId);
         if (groupResponse.success && groupResponse.data) {
           const groupData = groupResponse.data.data as Group;
-
-          // อัปเดตชื่อหัวกลุ่มใน popup success
           targetHeadNamePopup.innerHTML =
             groupData.owner.firstName +
             " " +
@@ -649,8 +648,6 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
         groupPopupSuccessView?.classList.remove("hidden");
         groupDefaultView?.classList.add("hidden");
         groupMemberView?.classList.remove("hidden");
-      } else {
-        console.error("Failed to leave group before:", response.error);
       }
     });
 
@@ -717,7 +714,30 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
       }
     });
 
-    exitButton?.addEventListener("click", () => {
+    exitButton?.addEventListener("click", async () => {
+      const response = await leaveGroup(groupData.id);
+      if (response.success) {
+        groupMemberView?.classList.add("hidden");
+        groupDefaultView?.classList.remove("hidden");
+        const userResponse = await getProfile();
+        if (!userResponse.success || !userResponse.data) {
+          console.error("Failed to fetch user data after joining group.");
+          return;
+        }
+        const user: User = userResponse.data.user as User;
+        const groupResponse = await getGroupByGroupId(user.groupId);
+        if (groupResponse.success && groupResponse.data) {
+          const groupData = groupResponse.data.data as Group;
+          const urlElement = document.getElementById("room-invite-url-head");
+          const codeElement = document.getElementById("room-code-head");
+          if (urlElement) {
+            urlElement.textContent = "rpkm.sgcu.in.th/" + groupData.inviteCode;
+          }
+          if (codeElement) {
+            codeElement.textContent = groupData.inviteCode;
+          }
+        }
+      }
       if (!isConfirmed) {
         groupMemberView?.classList.add("hidden");
         groupDefaultView?.classList.remove("hidden");

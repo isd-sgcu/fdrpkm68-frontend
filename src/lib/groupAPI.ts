@@ -87,12 +87,8 @@ export async function joinGroup(
   return response;
 }
 
-/**
- * Leave the current group.
- * @param authToken - Optional authentication token for server-side use.
- * @returns ApiResponse from the backend.
- */
 export async function leaveGroup(
+  groupId: string,
   authToken?: string
 ): Promise<ApiResponse<{ message: string }>> {
   const token = authToken || getAuthToken();
@@ -103,9 +99,22 @@ export async function leaveGroup(
     };
   }
 
-  const response = await api.delete<{ message: string }>("/group/leave", {
-    headers: getAuthHeaders(token),
-  });
+  if (!groupId) {
+    return {
+      success: false,
+      error: "กรุณาใส่รหัสกลุ่ม",
+    };
+  }
+
+  const response = await api.patch<{ message: string }>(
+    "/group/leave",
+    { groupId },
+    {
+      headers: getAuthHeaders(token),
+    }
+  );
+
+  console.log("Response from leaveGroup:", response);
 
   if (!response.success) {
     console.error("Failed to leave group:", response.error);
