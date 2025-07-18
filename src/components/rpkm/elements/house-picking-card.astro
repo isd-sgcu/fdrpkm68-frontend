@@ -2,8 +2,18 @@
 const { house = {} } = Astro.props;
 const { name, imageURL, rank } = house;
 
-const rankWidth = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
-const rankHeight = rank === "sub" ? "55" : rank == 1 || rank == 2 ? "30" : "24";
+const rankWidth =
+  rank === "houseRankSub"
+    ? "55"
+    : rank == "houseRank1" || rank == "houseRank2"
+      ? "30"
+      : "24";
+const rankHeight =
+  rank === "houseRankSub"
+    ? "55"
+    : rank == "houseRank1" || rank == "houseRank2"
+      ? "30"
+      : "24";
 ---
 
 {
