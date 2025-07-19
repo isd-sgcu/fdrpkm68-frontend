@@ -63,10 +63,17 @@ export async function getWorkshopsOfUserId(): Promise<
  * Retrieves participant counts for all RPKM workshops.
  * @returns ApiResponse containing an array of participant count objects.
  */
-export async function getWorkshopsParticipantCounts(): Promise<
-  ApiResponse<workshopParticipantCountType[]>
-> {
-  const response = await api.get("/workshop/counts");
+export async function getWorkshopsParticipantCounts(
+  token?: string
+): Promise<ApiResponse<workshopParticipantCountType[]>> {
+  const response = await api.get<{ data: workshopParticipantCountType[] }>(
+    "/workshop/counts",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   if (!response.success) {
     console.error(
       "Failed to fetch workshop participant counts:",
@@ -76,6 +83,6 @@ export async function getWorkshopsParticipantCounts(): Promise<
   }
   return {
     success: true,
-    data: response.data as workshopParticipantCountType[],
+    data: response.data?.data as workshopParticipantCountType[],
   };
 }

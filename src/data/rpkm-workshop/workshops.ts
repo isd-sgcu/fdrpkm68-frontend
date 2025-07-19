@@ -86,3 +86,15 @@ export function getMyWorkshopByRpkmWorkshop(
 }
 
 export const workshops: WorkshopData[] = [keychainWorkshop, diffuserWorkshop];
+
+export function updateWorkshopParticipation(
+  workshop: WorkshopData,
+  current: number,
+  total: number
+): WorkshopData {
+  return {
+    ...workshop,
+    current,
+    total,
+  };
+}
