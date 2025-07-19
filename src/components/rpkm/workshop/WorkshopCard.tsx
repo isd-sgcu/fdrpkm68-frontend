@@ -111,7 +111,10 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
             <RegisterSuccess
               {...workshop}
               workshopForm={formData}
-              onDismiss={dialogSuccess.closeAll}
+              onDismiss={() => {
+                dialogSuccess.closeAll();
+                window.location.reload();
+              }}
             />
           </DialogBody>
         </Dialog>

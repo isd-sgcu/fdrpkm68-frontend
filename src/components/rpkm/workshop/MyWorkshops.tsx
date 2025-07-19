@@ -40,7 +40,7 @@ export default function MyWorkshops({
               <h1 className="text-center text-3xl font-bold text-nowrap">
                 รอบกิจกรรมของคุณ
               </h1>
-              <div className="flex gap-2">
+              <div className="flex gap-4">
                 {myWorkshopsData
                   .map((workshop) => getMyWorkshopByRpkmWorkshop(workshop))
                   .map((workshop, index) => (
