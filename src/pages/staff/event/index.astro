@@ -330,8 +330,6 @@ import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
 
 <script>
   import { api } from "@/lib/api";
-  import { EVENT_CONFIGS, getEventStatus } from "@/lib/eventAPI";
-  import type { EventType } from "@/lib/eventAPI";
 
   interface QrFormData {
     studentId: string;
@@ -539,41 +537,74 @@ import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
   // }
 
   async function determineActiveEvent(): Promise<any> {
-    const currentDate = new Date(); // Uses local timezone
-
-    // Date ranges for events
-    const firstdateStart = new Date("2025-07-19T00:00:00+07:00");
-    const firstdateEnd = new Date("2025-07-19T23:59:59+07:00");
-
-    const rpkmStart = new Date("2025-08-02T00:00:00+07:00");
-    const rpkmEnd = new Date("2025-08-02T23:59:59+07:00");
-
-    let activeEventId: EventType | null = null;
-
-    // Check if current date falls within firstdate period
-    if (currentDate >= firstdateStart && currentDate <= firstdateEnd) {
-      activeEventId = "firstdate";
-    }
-    // Check if current date falls within rpkm period
-    else if (currentDate >= rpkmStart && currentDate <= rpkmEnd) {
-      activeEventId = "rpkm";
-    }
-
-    // If no active event found, return null
-    if (!activeEventId) {
-      return null;
-    }
-
-    // Return the active event data
-    return {
-      eventId: activeEventId,
-      eventConfig: EVENT_CONFIGS[activeEventId],
-      eventStatus: {
-        isRegistered: false,
-        isLate: false,
-        isComingSoon: false,
-      },
+    const events = ["FRESHMENNIGHT", "RPKM", "FIRSTDATE"] as const;
+    const eventTitles: Record<string, string> = {
+      FRESHMENNIGHT: "Freshmen Night",
+      RPKM: "รับเพื่อนก้าวใหม่",
+      FIRSTDATE: "First Date",
     };
+
+    for (const eventId of events) {
+      try {
+        const eventResponse = await api.get(`/checkin/${eventId}`);
+
+        if (eventResponse.success) {
+          return {
+            eventId: eventId,
+            eventConfig: {
+              title: eventTitles[eventId] || eventId,
+              schedule: "กำลังเปิดให้ลงทะเบียน",
+            },
+            eventStatus: {
+              isRegistered: true,
+              isLate: false,
+              isComingSoon: false,
+            },
+          };
+        } else if (eventResponse.error === "Check-in not found") {
+          return {
+            eventId: eventId,
+            eventConfig: {
+              title: eventTitles[eventId] || eventId,
+              schedule: "กำลังเปิดให้ลงทะเบียน",
+            },
+            eventStatus: {
+              isRegistered: false,
+              isLate: false,
+              isComingSoon: false,
+            },
+          };
+        }
+      } catch (eventError: any) {
+        const eventErrorMessage = eventError?.message || "";
+
+        if (
+          eventError?.status === 400 ||
+          eventErrorMessage.includes("not allowed before") ||
+          eventErrorMessage.includes("not allowed after") ||
+          eventErrorMessage.includes("Checking is not allowed")
+        ) {
+          continue;
+        }
+
+        if (eventError?.status !== 404) {
+          return {
+            eventId: eventId,
+            eventConfig: {
+              title: eventTitles[eventId] || eventId,
+              schedule: "กำลังเปิดให้ลงทะเบียน",
+            },
+            eventStatus: {
+              isRegistered: false,
+              isLate: false,
+              isComingSoon: false,
+            },
+          };
+        }
+      }
+    }
+
+    return null;
   }
 
   function updateEventUI(activeEventData: any): void {
