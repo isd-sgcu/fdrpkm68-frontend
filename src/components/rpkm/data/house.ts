@@ -1,8 +1,4 @@
-import {
-  type HouseResponse,
-  getAllHouses,
-  getHousePreferences,
-} from "@/lib/houseAPI";
+import { type HouseResponse, getAllHouses } from "@/lib/houseAPI";
 
 type ExtraHouseType = {
   nameThai: string;
@@ -179,44 +175,4 @@ export async function getHouses(token?: string): Promise<HouseDisplayType[]> {
     };
   });
   return houses;
-}
-
-export async function getPrefHouses(token?: string): Promise<HousePrefType> {
-  const houseResult: HousePrefType = {
-    houseRank1: null,
-    houseRank2: null,
-    houseRank3: null,
-    houseRank4: null,
-    houseRank5: null,
-    houseRankSub: null,
-  };
-
-  const response = await getHousePreferences(token);
-  if (!response.success || !response.data) {
-    console.error("Failed to fetch house data:", response.error);
-    return houseResult;
-  }
-
-  const houseData = response.data.data;
-
-  houseResult.houseRank1 = houseData.houseRank1
-    ? (houseData.houseRank1.id ?? null)
-    : null;
-  houseResult.houseRank2 = houseData.houseRank2
-    ? (houseData.houseRank2.id ?? null)
-    : null;
-  houseResult.houseRank3 = houseData.houseRank3
-    ? (houseData.houseRank3.id ?? null)
-    : null;
-  houseResult.houseRank4 = houseData.houseRank4
-    ? (houseData.houseRank4.id ?? null)
-    : null;
-  houseResult.houseRank5 = houseData.houseRank5
-    ? (houseData.houseRank5.id ?? null)
-    : null;
-  houseResult.houseRankSub = houseData.houseRankSub
-    ? (houseData.houseRankSub.id ?? null)
-    : null;
-
-  return houseResult;
 }

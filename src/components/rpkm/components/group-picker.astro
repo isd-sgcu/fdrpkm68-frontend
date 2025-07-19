@@ -3,31 +3,36 @@ import GroupProfile from "@rpkm/rubpuen/GroupProfile";
 
 import Divider from "@/components/common/Divider.astro";
 import Frame from "@/components/common/Frame.astro";
-import { getGroupData } from "@/lib/groupAPI";
+import { getGroupByGroupId } from "@/lib/groupAPI";
 import { getProfile } from "@/lib/profileAPI";
 import type { Group, User } from "@/types/common";
 
 const token = Astro.cookies.get("token")?.value;
 
-let groupData = null;
-let user = null;
+let groupData: Group | null = null;
+let user: User | null = null;
 
 if (token) {
-  const response = await getGroupData(token);
-  if (response.success && response.data) {
-    groupData = response.data.data as Group;
-  }
-
-  try {
-    const userResponse = await getProfile(token);
-    if (userResponse.success && userResponse.data) {
-      user = userResponse.data.user as User;
+  let groupID = "";
+  const userResponse = await getProfile(token);
+  if (userResponse.success && userResponse.data) {
+    user = userResponse.data.user as User;
+    groupID = user.groupId ? user.groupId : "";
+    if (groupID) {
+      const groupResponse = await getGroupByGroupId(groupID, token);
+      if (groupResponse.success && groupResponse.data) {
+        groupData = groupResponse.data.data as Group;
+      } else {
+        return Astro.redirect("/login");
+      }
     } else {
-      console.error("Failed to fetch user data:", userResponse.error);
+      return Astro.redirect("/login");
     }
-  } catch (error) {
-    console.error("Error fetching user data:", error);
+  } else {
+    console.error("Failed to fetch user data:", userResponse.error);
   }
+} else {
+  return Astro.redirect("/login");
 }
 
 if (!groupData || !user) {
@@ -35,16 +40,29 @@ if (!groupData || !user) {
 }
 
 const inviteCode = groupData.inviteCode;
+const isOwner = groupData.ownerId === user.id;
+const isConfirmed = groupData.isConfirmed;
+const memberCount = groupData.memberCount;
+
+const canDisplayDefault = !isConfirmed && memberCount === 1 && isOwner;
+const canDisplayHead =
+  (isConfirmed && isOwner) || (!isConfirmed && isOwner && memberCount != 1);
+const canDisplayMember = !isOwner;
 
 const member1 = groupData.memberCount > 1 ? groupData.users[1] : null;
 const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 ---
 
 <!-- Default Wrapper -->
-<div class="block h-full w-full" id="view-group-default">
+<div
+  class=`${canDisplayDefault ? "block" : "hidden"} h-full w-full`
+  id="view-group-default"
+>
   <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
-    <p class="pt-2 text-2xl font-semibold text-white">จับกลุ่มเพื่อน (1/3)</p>
+    <p class="pt-2 text-2xl font-semibold text-white" id="member-count-default">
+      {`จับกลุ่มเพื่อน (${memberCount}/3)`}
+    </p>
 
     <!-- Room Code Input -->
     <div class="flex w-full flex-col items-center gap-[14px] pt-9">
@@ -103,23 +121,34 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 </div>
 
 <!-- Head Wrapper -->
-<div class="hidden h-full w-full" id="view-group-head">
+<div
+  class=`${canDisplayHead ? "block" : "hidden"} h-full w-full`
+  id="view-group-head"
+>
   <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
     <div class="relative w-full pt-2 text-center">
-      <p
-        class="absolute left-0 cursor-pointer text-2xl font-semibold text-white"
-        id="btn-back"
-      >
-        {"<"}
-      </p>
-      <p class="text-2xl font-semibold text-white">
-        {`จับกลุ่มเพื่อน (${groupData.memberCount}/3)`}
+      {
+        !isConfirmed && memberCount === 1 && (
+          <p
+            class="absolute left-0 cursor-pointer text-2xl font-semibold text-white"
+            id="btn-back"
+          >
+            {"<"}
+          </p>
+        )
+      }
+
+      <p class="text-2xl font-semibold text-white" id="member-count-head">
+        {`จับกลุ่มเพื่อน (${memberCount}/3)`}
       </p>
     </div>
 
     <!-- Profile -->
-    <div class="flex w-full justify-center gap-[10px] pt-6">
+    <div
+      class="flex w-full justify-center gap-[10px] pt-6"
+      id="member-profile-head"
+    >
       <GroupProfile user={groupData.owner} variant="red-star" />
       <GroupProfile user={member1} variant="blue" />
       <GroupProfile user={member2} variant="blue" />
@@ -188,24 +217,37 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 </div>
 
 <!-- Member Wrapper -->
-<div class="hidden h-full w-full" id="view-group-member">
+<div
+  class={`${canDisplayMember ? "block" : "hidden"} h-full w-full`}
+  id="view-group-member"
+>
   <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
     <!-- Title -->
     <div class="relative w-full pt-2 text-center">
-      <p class="z-20 text-center text-2xl font-semibold text-white">
-        {`จับกลุ่มเพื่อน (${groupData.memberCount}/3)`}
+      <p
+        class="z-20 text-center text-2xl font-semibold text-white"
+        id="member-count-member"
+      >
+        {`จับกลุ่มเพื่อน (${memberCount}/3)`}
       </p>
-      <img
-        src="/images/rpkm/exit-icon.svg"
-        width="24px"
-        height="24px"
-        class="absolute top-3 right-0 cursor-pointer"
-        id="btn-exit"
-      />
+      {
+        !isConfirmed && (
+          <img
+            src="/images/rpkm/exit-icon.svg"
+            width="24px"
+            height="24px"
+            class="absolute top-3 right-0 cursor-pointer"
+            id="btn-exit-group"
+          />
+        )
+      }
     </div>
 
     <!-- Profile -->
-    <div class="z-20 flex w-full justify-center gap-[10px] pt-6">
+    <div
+      class="z-20 flex w-full justify-center gap-[10px] pt-6"
+      id="member-profile-member"
+    >
       <GroupProfile user={groupData.owner} variant="red-star" />
       <GroupProfile user={member1} variant="blue" />
       <GroupProfile user={member2} variant="blue" />
@@ -228,6 +270,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
               id="room-invite-url-member"
               class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
             >
+              {"rpkm.sgcu.in.th/" + inviteCode}
             </span>
             <img
               src="/images/rpkm/link-icon.svg"
@@ -257,6 +300,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
               id="room-code-member"
               class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
             >
+              {inviteCode}
             </span>
             <img
               src="/images/rpkm/link-icon.svg"
@@ -367,152 +411,184 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
 
 <!-- Script -->
 <script>
-  import { getGroupByInviteCode, joinGroup, leaveGroup } from "@/lib/groupAPI";
+  import {
+    getGroupByGroupId,
+    getGroupByInviteCode,
+    joinGroup,
+    leaveGroup,
+  } from "@/lib/groupAPI";
   import { AvatarMap } from "@rpkm/data/profile";
+  import { getProfile } from "@/lib/profileAPI";
+  import type { Group, User } from "@/types/common";
 
-  const input = document.getElementById("room-id-insert") as HTMLInputElement;
+  document.addEventListener("DOMContentLoaded", async () => {
+    const userResponse = await getProfile();
+    if (!userResponse.success || !userResponse.data) {
+      console.error("User not found or not logged in.");
+      return;
+    }
+    const user: User = userResponse.data.user as User;
+    const groupResponse = await getGroupByGroupId(user.groupId);
+    if (!groupResponse.success || !groupResponse.data) {
+      console.error("Group not found or user is not in a group.");
+      return;
+    }
+    const groupData = groupResponse.data.data as Group;
 
-  const headGroupBtn = document.getElementById(
-    "btn-head-group"
-  ) as HTMLButtonElement;
-  const backBtn = document.getElementById("btn-back") as HTMLButtonElement;
-  const joinGroupButton = document.getElementById(
-    "btn-join-group"
-  ) as HTMLButtonElement;
-  const submitGroupButton = document.getElementById(
-    "btn-submit-group"
-  ) as HTMLButtonElement;
-  const cancelGroupButton = document.getElementById(
-    "btn-cancel-group"
-  ) as HTMLButtonElement;
-  const closeGroupPopupButton = document.getElementById(
-    "btn-close-popup"
-  ) as HTMLButtonElement;
-  const exitButton = document.getElementById("btn-exit") as HTMLButtonElement;
+    const isConfirmed = groupData ? groupData.isConfirmed : undefined;
+    const isOwner =
+      groupData && user ? groupData.ownerId === user.id : undefined;
+    const memberCount = groupData ? groupData.memberCount : -1;
 
-  const groupDefaultView = document.getElementById("view-group-default");
-  const groupHeadView = document.getElementById("view-group-head");
-  const groupMemberView = document.getElementById("view-group-member");
-  const groupPopupView = document.getElementById("view-group-popup");
-  const groupPopupSuccessView = document.getElementById(
-    "view-group-success-popup"
-  );
+    const input = document.getElementById("room-id-insert") as HTMLInputElement;
 
-  const roomInviteHeadContainer = document.getElementById(
-    "room-invite-url-head-container"
-  );
-  const roomCodeHeadContainer = document.getElementById(
-    "room-code-head-container"
-  );
-  const roomInviteMemberContainer = document.getElementById(
-    "room-invite-url-member-container"
-  );
-  const roomCodeMemberContainer = document.getElementById(
-    "room-code-member-container"
-  );
-  const errorRoomMessage = document.getElementById(
-    "error-room-message"
-  ) as HTMLParagraphElement;
+    const headGroupBtn = document.getElementById(
+      "btn-head-group"
+    ) as HTMLButtonElement;
+    const backBtn = document.getElementById("btn-back") as HTMLButtonElement;
+    const joinGroupButton = document.getElementById(
+      "btn-join-group"
+    ) as HTMLButtonElement;
+    const submitGroupButton = document.getElementById(
+      "btn-submit-group"
+    ) as HTMLButtonElement;
+    const cancelGroupButton = document.getElementById(
+      "btn-cancel-group"
+    ) as HTMLButtonElement;
+    const closeGroupPopupButton = document.getElementById(
+      "btn-close-popup"
+    ) as HTMLButtonElement;
+    const exitButton = document.getElementById(
+      "btn-exit-group"
+    ) as HTMLButtonElement;
 
-  const targetHeadName = document.getElementById(
-    "target-head-name"
-  ) as HTMLParagraphElement;
-  const targetHeadId = document.getElementById(
-    "target-head-id"
-  ) as HTMLParagraphElement;
+    const groupDefaultView = document.getElementById("view-group-default");
+    const groupHeadView = document.getElementById("view-group-head");
+    const groupMemberView = document.getElementById("view-group-member");
+    const groupPopupView = document.getElementById("view-group-popup");
+    const groupPopupSuccessView = document.getElementById(
+      "view-group-success-popup"
+    );
 
-  const targetHeadNamePopup = document.getElementById(
-    "target-head-name-popup"
-  ) as HTMLParagraphElement;
+    const roomInviteHeadContainer = document.getElementById(
+      "room-invite-url-head-container"
+    );
+    const roomCodeHeadContainer = document.getElementById(
+      "room-code-head-container"
+    );
+    const roomInviteMemberContainer = document.getElementById(
+      "room-invite-url-member-container"
+    );
+    const roomCodeMemberContainer = document.getElementById(
+      "room-code-member-container"
+    );
+    const errorRoomMessage = document.getElementById(
+      "error-room-message"
+    ) as HTMLParagraphElement;
 
-  let targetGroupData: any = null;
-  let inviteCode = "";
+    const targetHeadName = document.getElementById(
+      "target-head-name"
+    ) as HTMLParagraphElement;
+    const targetHeadId = document.getElementById(
+      "target-head-id"
+    ) as HTMLParagraphElement;
 
-  function formatRoomId(raw: string): string {
-    return raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
-  }
+    const targetHeadNamePopup = document.getElementById(
+      "target-head-name-popup"
+    ) as HTMLParagraphElement;
 
-  function toggleSubmitButton() {
-    if (!input || !joinGroupButton || !errorRoomMessage) return;
+    let targetGroupData: any = null;
+    let inviteCode = "";
 
-    if (document.activeElement === input) {
-      errorRoomMessage.innerHTML = "";
+    function formatRoomId(raw: string): string {
+      return raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
     }
 
-    // Input Validation
-    const formattedRoomId = formatRoomId(input.value);
-    input.value = formattedRoomId;
+    function toggleSubmitButton() {
+      if (!input || !joinGroupButton || !errorRoomMessage) return;
 
-    const isValid = formattedRoomId.length === 6;
+      if (document.activeElement === input) {
+        errorRoomMessage.innerHTML = "";
+      }
 
-    joinGroupButton.disabled = !isValid;
+      // Input Validation
+      const formattedRoomId = formatRoomId(input.value);
+      input.value = formattedRoomId;
 
-    if (isValid) {
-      joinGroupButton.classList.remove(
-        "brightness-75",
-        "opacity-50",
-        "cursor-not-allowed"
-      );
-      joinGroupButton.classList.add("cursor-pointer");
+      const isValid = formattedRoomId.length === 6;
 
-      const outputURL = document.getElementById(
-        "room-invite-url-member"
-      ) as HTMLSpanElement;
-      const outputCode = document.getElementById(
-        "room-code-member"
-      ) as HTMLSpanElement;
+      joinGroupButton.disabled = !isValid;
 
-      outputURL.textContent = "rpkm.sgcu.in.th/" + input.value;
-      outputCode.textContent = input.value;
-    } else {
-      joinGroupButton.classList.add(
-        "brightness-75",
-        "opacity-50",
-        "cursor-not-allowed"
-      );
-      joinGroupButton.classList.remove("cursor-pointer");
+      if (isValid) {
+        joinGroupButton.classList.remove(
+          "brightness-75",
+          "opacity-50",
+          "cursor-not-allowed"
+        );
+        joinGroupButton.classList.add("cursor-pointer");
+
+        const outputURL = document.getElementById(
+          "room-invite-url-member"
+        ) as HTMLSpanElement;
+        const outputCode = document.getElementById(
+          "room-code-member"
+        ) as HTMLSpanElement;
+
+        outputURL.textContent = "rpkm.sgcu.in.th/" + input.value;
+        outputCode.textContent = input.value;
+      } else {
+        joinGroupButton.classList.add(
+          "brightness-75",
+          "opacity-50",
+          "cursor-not-allowed"
+        );
+        joinGroupButton.classList.remove("cursor-pointer");
+      }
     }
-  }
 
-  input?.addEventListener("input", toggleSubmitButton);
-  toggleSubmitButton();
-
-  headGroupBtn?.addEventListener("click", () => {
-    groupDefaultView?.classList.add("hidden");
-    groupHeadView?.classList.remove("hidden");
-    input.value = "";
+    input?.addEventListener("input", toggleSubmitButton);
     toggleSubmitButton();
-  });
 
-  joinGroupButton?.addEventListener("click", async () => {
-    if (!input.value) return;
+    headGroupBtn?.addEventListener("click", () => {
+      groupDefaultView?.classList.add("hidden");
+      groupHeadView?.classList.remove("hidden");
+      input.value = "";
+      toggleSubmitButton();
+    });
 
-    inviteCode = formatRoomId(input.value);
-    if (inviteCode.length !== 6) return;
+    joinGroupButton?.addEventListener("click", async () => {
+      if (!input.value) return;
 
-    errorRoomMessage.innerHTML = "";
+      inviteCode = formatRoomId(input.value);
+      if (inviteCode.length !== 6) return;
 
-    // Add loading state
-    joinGroupButton.disabled = true;
-    joinGroupButton.textContent = "กำลังค้นหา...";
+      errorRoomMessage.innerHTML = "";
 
-    try {
-      const response = await getGroupByInviteCode(inviteCode);
-      if (response.success && response.data) {
-        targetGroupData = response.data.data;
+      // Add loading state
+      joinGroupButton.disabled = true;
+      joinGroupButton.textContent = "กำลังค้นหา...";
 
-        const profileContainer = document.getElementById("target-head-profile");
+      try {
+        const response = await getGroupByInviteCode(inviteCode);
+        if (response.success && response.data) {
+          targetGroupData = response.data.data;
 
-        if (profileContainer && targetGroupData.owner) {
-          const avatarSrc =
-            targetGroupData.owner?.avatarId &&
-            AvatarMap[targetGroupData.owner.avatarId as keyof typeof AvatarMap]
-              ? AvatarMap[
-                  targetGroupData.owner.avatarId as keyof typeof AvatarMap
-                ]
-              : "/images/rpkm/profile/profile-unknown.png";
+          const profileContainer = document.getElementById(
+            "target-head-profile"
+          );
 
-          profileContainer.innerHTML = `
+          if (profileContainer && targetGroupData.owner) {
+            const avatarSrc =
+              targetGroupData.owner?.avatarId &&
+              AvatarMap[
+                targetGroupData.owner.avatarId as keyof typeof AvatarMap
+              ]
+                ? AvatarMap[
+                    targetGroupData.owner.avatarId as keyof typeof AvatarMap
+                  ]
+                : "/images/rpkm/profile/profile-unknown.png";
+
+            profileContainer.innerHTML = `
           <div class="user-profile flex flex-col items-center justify-center">
             <div class="relative flex h-[80px] w-[80px]">
               <img
@@ -528,102 +604,330 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
             </div>
           </div>
         `;
+          }
+
+          targetHeadName.innerHTML =
+            targetGroupData.owner.firstName +
+            " " +
+            targetGroupData.owner.lastName +
+            " (" +
+            targetGroupData.owner.nickname +
+            ")";
+          targetHeadId.innerHTML = targetGroupData.owner.studentId;
+
+          groupPopupView?.classList.remove("hidden");
+        } else {
+          errorRoomMessage.innerHTML = response.error || "ไม่พบห้องที่ระบุ";
+        }
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        errorRoomMessage.innerHTML = "เกิดข้อผิดพลาดในการค้นหาห้อง";
+      } finally {
+        joinGroupButton.disabled = false;
+        joinGroupButton.innerHTML =
+          '<p class="text-lg font-medium text-white">ยืนยัน</p>';
+        input.value = "";
+        toggleSubmitButton();
+      }
+    });
+
+    submitGroupButton?.addEventListener("click", async () => {
+      const response = await joinGroup(inviteCode);
+
+      if (response.success) {
+        const userResponse = await getProfile();
+        if (!userResponse.success || !userResponse.data) {
+          console.error("Failed to fetch user data after joining group.");
+          return;
+        }
+        const user: User = userResponse.data.user as User;
+        const groupResponse = await getGroupByGroupId(user.groupId);
+        if (groupResponse.success && groupResponse.data) {
+          const updatedGroupData = groupResponse.data.data as Group;
+          targetHeadNamePopup.innerHTML =
+            updatedGroupData.owner.firstName +
+            " " +
+            updatedGroupData.owner.lastName +
+            " (" +
+            updatedGroupData.owner.nickname +
+            ")";
+
+          const owner = updatedGroupData.owner;
+          const member1 =
+            updatedGroupData.memberCount > 1 ? updatedGroupData.users[1] : null;
+          const member2 =
+            updatedGroupData.memberCount > 2 ? updatedGroupData.users[2] : null;
+
+          // Update Member View UI
+          const memberCountText = document.getElementById(
+            "member-count-member"
+          );
+          if (memberCountText) {
+            memberCountText.innerHTML = `จับกลุ่มเพื่อน (${updatedGroupData.memberCount}/3)`;
+          }
+
+          const memberProfilesContainer = document.querySelectorAll(
+            "#member-profile-member > div"
+          );
+
+          memberProfilesContainer[0].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${owner.avatarId ? AvatarMap[owner.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${owner.firstName} ${owner.lastName} avatar"
+                    class="h-full w-full object-cover"
+                  />
+                  <img 
+                    src="/images/frame-profile-image/frame-profile-image-red-star.svg" 
+                    alt="Frame" 
+                    class="absolute h-full w-full"
+                  />
+                </div>
+              </div>
+            `;
+
+          memberProfilesContainer[1].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${member1 ? AvatarMap[member1.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${member1 ? member1.firstName + " " + member1.lastName : "Unknown"} avatar"
+                      class="h-full w-full object-cover"
+                    />
+                    <img 
+                      src="/images/frame-profile-image/frame-profile-image-blue.svg" 
+                      alt="Frame" 
+                      class="absolute h-full w-full"
+                    />
+                  </div>
+                </div>`;
+
+          memberProfilesContainer[2].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${member2 ? AvatarMap[member2.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${member2 ? member2.firstName + " " + member2.lastName : "Unknown"} avatar"
+                    class="h-full w-full object-cover"
+                  />
+                  <img 
+                    src="/images/frame-profile-image/frame-profile-image-blue.svg" 
+                    alt="Frame" 
+                    class="absolute h-full w-full"
+                  />
+                </div>
+              </div>`;
+
+          const inviteUrlSpan = document.getElementById(
+            "room-invite-url-member"
+          );
+          if (inviteUrlSpan) {
+            inviteUrlSpan.textContent =
+              "rpkm.sgcu.in.th/" + groupData.inviteCode;
+          }
+          const roomCodeSpan = document.getElementById("room-code-member");
+          if (roomCodeSpan) {
+            roomCodeSpan.textContent = groupData.inviteCode;
+          }
         }
 
-        targetHeadName.innerHTML =
-          targetGroupData.owner.firstName +
-          " " +
-          targetGroupData.owner.lastName +
-          " (" +
-          targetGroupData.owner.nickname +
-          ")";
-        targetHeadId.innerHTML = targetGroupData.owner.studentId;
-
-        groupPopupView?.classList.remove("hidden");
-      } else {
-        errorRoomMessage.innerHTML = response.error || "ไม่พบห้องที่ระบุ";
+        groupPopupView?.classList.add("hidden");
+        groupPopupSuccessView?.classList.remove("hidden");
+        groupDefaultView?.classList.add("hidden");
+        groupMemberView?.classList.remove("hidden");
       }
-    } catch (error) {
-      console.error("Unexpected error:", error);
-      errorRoomMessage.innerHTML = "เกิดข้อผิดพลาดในการค้นหาห้อง";
-    } finally {
-      joinGroupButton.disabled = false;
-      joinGroupButton.innerHTML =
-        '<p class="text-lg font-medium text-white">ยืนยัน</p>';
+    });
+
+    cancelGroupButton?.addEventListener("click", () => {
+      groupPopupView?.classList.add("hidden");
       input.value = "";
       toggleSubmitButton();
-    }
-  });
+    });
 
-  submitGroupButton?.addEventListener("click", async () => {
-    const response = await joinGroup(inviteCode);
+    closeGroupPopupButton?.addEventListener("click", () => {
+      groupPopupSuccessView?.classList.add("hidden");
+      window.location.reload();
+    });
 
-    if (response.success) {
-      targetHeadNamePopup.innerHTML =
-        targetGroupData.owner.firstName +
-        " " +
-        targetGroupData.owner.lastName +
-        " (" +
-        targetGroupData.owner.nickname +
-        ")";
-      groupPopupView?.classList.add("hidden");
-      groupPopupSuccessView?.classList.remove("hidden");
-      groupDefaultView?.classList.add("hidden");
-      groupMemberView?.classList.remove("hidden");
+    roomInviteHeadContainer?.addEventListener("click", () => {
+      const urlElement = document.getElementById("room-invite-url-head");
+      if (urlElement && urlElement.textContent) {
+        const url = urlElement.textContent.trim();
+        navigator.clipboard.writeText(url);
+      }
+    });
+
+    roomCodeHeadContainer?.addEventListener("click", () => {
+      const codeElement = document.getElementById("room-code-head");
+      if (codeElement && codeElement.textContent) {
+        const code = codeElement.textContent.trim();
+        navigator.clipboard.writeText(code);
+      }
+    });
+
+    roomInviteMemberContainer?.addEventListener("click", () => {
+      const urlElement = document.getElementById("room-invite-url-member");
+      if (urlElement && urlElement.textContent) {
+        const url = urlElement.textContent.trim();
+        navigator.clipboard.writeText(url);
+      }
+    });
+
+    roomCodeMemberContainer?.addEventListener("click", () => {
+      const codeElement = document.getElementById("room-code-member");
+      if (codeElement && codeElement.textContent) {
+        const code = codeElement.textContent.trim();
+        navigator.clipboard.writeText(code);
+      }
+    });
+
+    if (isConfirmed) {
+      exitButton?.classList.add("hidden");
+      backBtn?.classList.add("hidden");
     } else {
-      console.error("Failed to leave group before:", response.error);
+      exitButton?.classList.remove("hidden");
+      backBtn?.classList.remove("hidden");
     }
-  });
 
-  cancelGroupButton?.addEventListener("click", () => {
-    groupPopupView?.classList.add("hidden");
-    input.value = "";
-    toggleSubmitButton();
-  });
-
-  closeGroupPopupButton?.addEventListener("click", () => {
-    groupPopupSuccessView?.classList.add("hidden");
-  });
-
-  roomInviteHeadContainer?.addEventListener("click", () => {
-    const urlElement = document.getElementById("room-invite-url-head");
-    if (urlElement && urlElement.textContent) {
-      const url = urlElement.textContent.trim();
-      navigator.clipboard.writeText(url);
+    if (memberCount !== 1) {
+      backBtn?.classList.add("hidden");
+    } else {
+      backBtn?.classList.remove("hidden");
     }
-  });
 
-  roomCodeHeadContainer?.addEventListener("click", () => {
-    const codeElement = document.getElementById("room-code-head");
-    if (codeElement && codeElement.textContent) {
-      const code = codeElement.textContent.trim();
-      navigator.clipboard.writeText(code);
-    }
-  });
+    backBtn?.addEventListener("click", () => {
+      if (!isConfirmed) {
+        groupDefaultView?.classList.remove("hidden");
+        groupHeadView?.classList.add("hidden");
+      }
+    });
 
-  roomInviteMemberContainer?.addEventListener("click", () => {
-    const urlElement = document.getElementById("room-invite-url-member");
-    if (urlElement && urlElement.textContent) {
-      const url = urlElement.textContent.trim();
-      navigator.clipboard.writeText(url);
-    }
-  });
+    exitButton?.addEventListener("click", async () => {
+      const response = await leaveGroup(groupData.id);
+      if (response.success) {
+        groupMemberView?.classList.add("hidden");
+        groupDefaultView?.classList.remove("hidden");
+        const userResponse = await getProfile();
+        if (!userResponse.success || !userResponse.data) {
+          console.error("Failed to fetch user data after joining group.");
+          return;
+        }
+        const user: User = userResponse.data.user as User;
+        const groupResponse = await getGroupByGroupId(user.groupId);
+        if (groupResponse.success && groupResponse.data) {
+          const updatedGroupData = groupResponse.data.data as Group;
+          const urlElement = document.getElementById("room-invite-url-head");
+          const codeElement = document.getElementById("room-code-head");
+          if (urlElement) {
+            urlElement.textContent =
+              "rpkm.sgcu.in.th/" + updatedGroupData.inviteCode;
+          }
+          if (codeElement) {
+            codeElement.textContent = updatedGroupData.inviteCode;
+          }
+          // Update Default View
+          const defaultCountText = document.getElementById(
+            "member-count-default"
+          );
+          if (defaultCountText) {
+            defaultCountText.innerHTML = `จับกลุ่มเพื่อน (${updatedGroupData.memberCount}/3)`;
+          }
 
-  roomCodeMemberContainer?.addEventListener("click", () => {
-    const codeElement = document.getElementById("room-code-member");
-    if (codeElement && codeElement.textContent) {
-      const code = codeElement.textContent.trim();
-      navigator.clipboard.writeText(code);
-    }
-  });
+          input.value = "";
+          joinGroupButton.disabled = true;
+          joinGroupButton.classList.add("cursor-not-allowed");
+          joinGroupButton.classList.remove("cursor-pointer");
 
-  backBtn?.addEventListener("click", () => {
-    groupDefaultView?.classList.remove("hidden");
-    groupHeadView?.classList.add("hidden");
-  });
+          const errorRoomMessage =
+            document.getElementById("error-room-message");
+          if (errorRoomMessage) errorRoomMessage.innerHTML = "";
 
-  exitButton?.addEventListener("click", () => {
-    groupMemberView?.classList.add("hidden");
-    groupHeadView?.classList.remove("hidden");
+          const owner = updatedGroupData.owner;
+          const member1 =
+            updatedGroupData.memberCount > 1 ? updatedGroupData.users[1] : null;
+          const member2 =
+            updatedGroupData.memberCount > 2 ? updatedGroupData.users[2] : null;
+
+          // Update Head View
+          const headCountText = document.getElementById("member-count-member");
+          if (headCountText) {
+            headCountText.innerHTML = `จับกลุ่มเพื่อน (${updatedGroupData.memberCount}/3)`;
+          }
+
+          const headProfileContainer = document.querySelectorAll(
+            "#member-profile-head > div"
+          );
+
+          headProfileContainer[0].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${owner.avatarId ? AvatarMap[owner.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${owner.firstName} ${owner.lastName} avatar"
+                    class="h-full w-full object-cover"
+                  />
+                  <img 
+                    src="/images/frame-profile-image/frame-profile-image-red-star.svg" 
+                    alt="Frame" 
+                    class="absolute h-full w-full"
+                  />
+                </div>
+              </div>
+            `;
+
+          headProfileContainer[1].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${member1 ? AvatarMap[member1.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${member1 ? member1.firstName + " " + member1.lastName : "Unknown"} avatar"
+                      class="h-full w-full object-cover"
+                    />
+                    <img 
+                      src="/images/frame-profile-image/frame-profile-image-blue.svg" 
+                      alt="Frame" 
+                      class="absolute h-full w-full"
+                    />
+                  </div>
+                </div>`;
+
+          headProfileContainer[2].innerHTML = `
+              <div class="user-profile flex flex-col items-center justify-center">
+                <div class="relative flex h-[80px] w-[80px]">
+                  <img
+                    src="${member2 ? AvatarMap[member2.avatarId] : "/images/rpkm/profile/profile-unknown.png"}"
+                    alt="${member2 ? member2.firstName + " " + member2.lastName : "Unknown"} avatar"
+                    class="h-full w-full object-cover"
+                  />
+                  <img 
+                    src="/images/frame-profile-image/frame-profile-image-blue.svg" 
+                    alt="Frame" 
+                    class="absolute h-full w-full"
+                  />
+                </div>
+              </div>`;
+
+          const inviteUrlSpan = document.getElementById(
+            "room-invite-url-member"
+          );
+          if (inviteUrlSpan) {
+            inviteUrlSpan.textContent =
+              "rpkm.sgcu.in.th/" + updatedGroupData.inviteCode;
+          }
+          const roomCodeSpan = document.getElementById("room-code-member");
+          if (roomCodeSpan) {
+            roomCodeSpan.textContent = updatedGroupData.inviteCode;
+          }
+
+          window.location.reload();
+        }
+      }
+      if (!isConfirmed) {
+        groupMemberView?.classList.add("hidden");
+        groupDefaultView?.classList.remove("hidden");
+        return;
+      }
+    });
   });
 </script>
