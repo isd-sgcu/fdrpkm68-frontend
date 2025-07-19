@@ -65,7 +65,7 @@ export function getMyWorkshopByRpkmWorkshop(
     case WorkshopType.KEYCHAIN:
       return {
         title: "Keychain",
-        imgUrl: "/images/rpkm/house-blank.png",
+        imgUrl: "/images/rpkm/keychain-workshop.png",
         date: keychainWorkshop.metaDate,
         location: keychainWorkshop.metaLocation,
         time:
@@ -74,7 +74,7 @@ export function getMyWorkshopByRpkmWorkshop(
     case WorkshopType.DIFFUSER:
       return {
         title: "Diffuser",
-        imgUrl: "/images/rpkm/house-blank.png",
+        imgUrl: "/images/rpkm/diffuser-workshop.png",
         date: diffuserWorkshop.metaDate,
         location: diffuserWorkshop.metaLocation,
         time:
