@@ -419,7 +419,7 @@ const isPickAllMainHouses =
             <div class="flex justify-between items-center">
               <div class="flex items-center text-[8px] gap-[1px]">
                 <p class="text-[#313131E5]">
-                  <span style="color: ${house.chosenCount == house.capacity ? "#FF1493" : "#68A987"};">${house.chosenCount}</span>/${house.capacity}
+                  <span style="color: ${house.chosenCount * 2 >= house.capacity ? "#FF1493" : "#68A987"};">${house.chosenCount * 2}</span>/${house.capacity}
                 </p>
                 <img src="/images/rpkm/person-icon.svg" width="12" height="12" />
               </div>
@@ -917,7 +917,7 @@ const isPickAllMainHouses =
       const houseAmount = housePopup?.querySelector("#house-amount");
       const houseCapacity = housePopup?.querySelector("#house-capacity");
       if (houseAmount && houseCapacity) {
-        houseAmount.textContent = house.chosenCount;
+        houseAmount.textContent = house.chosenCount * 2;
         houseCapacity.textContent = house.capacity;
         houseAmount.style.color =
           house.amount == house.capacity ? "#FF1493" : "#68A987";

@@ -42,8 +42,8 @@ if (!colorData) {
     <div class="flex items-center gap-[1px] text-[8px]">
       <p class="text-[#313131E5]">
         <span
-          style={`color: ${chosenCount == capacity ? "#FF1493" : "#68A987"};`}
-          >{chosenCount}</span
+          style={`color: ${chosenCount * 2 >= capacity ? "#FF1493" : "#68A987"};`}
+          >{chosenCount * 2}</span
         >/{capacity}
       </p>
       <img src="/images/rpkm/person-icon.svg" width="12" height="12" />
