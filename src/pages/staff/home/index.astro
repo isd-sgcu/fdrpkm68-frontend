@@ -1,4 +1,5 @@
 ---
+import ButtonFd from "@/components/common/ButtonFd.astro";
 import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
 ---
 
@@ -23,19 +24,23 @@ import StaffWithNavbar from "@/layouts/firstdate/StaffWithNavbar.astro";
       >
       </div>
 
-      <div class="flex flex-col items-center">
-        <button
-          class="mb-4 w-full max-w-sm rounded-md bg-white px-10 py-3 text-xl font-medium text-black transition duration-200"
-          onclick="window.location.href='/staff/event'"
+      <div class="flex flex-col items-center gap-8">
+        <ButtonFd
+          variant="fill"
+          color="white"
+          href="/staff/event/"
+          class="w-full"
         >
           ลงทะเบียนน้องเข้างาน
-        </button>
-        <button
-          class="mb-4 w-full max-w-sm rounded-md bg-white px-10 py-3 text-xl font-medium text-black transition duration-200"
-          onclick="window.location.href='/staff/profile'"
+        </ButtonFd>
+        <ButtonFd
+          variant="fill"
+          color="white"
+          href="/staff/profile/"
+          class="w-full"
         >
           หน้าโปรไฟล์
-        </button>
+        </ButtonFd>
       </div>
     </div>
   </div>
