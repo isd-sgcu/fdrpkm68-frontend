@@ -1,5 +1,12 @@
 import { type ApiResponse, api } from "@/lib/api";
-import type { RegisterFormData } from "@/types/rpkm-workshop/schema";
+import type { WorkshopType } from "@/types/rpkm-workshop/schema";
+
+export type SubmitWorkshopResponse = {
+  id: string;
+  userId: string;
+  workshopType: WorkshopType;
+  workshopTime: number;
+};
 
 /**
  * Submits workshop registration data to the backend.
@@ -8,16 +15,16 @@ import type { RegisterFormData } from "@/types/rpkm-workshop/schema";
  * @returns ApiResponse from the backend.
  */
 export async function submitWorkshopRegistration(
-  workshopId: string,
-  formData: RegisterFormData
-): Promise<ApiResponse<unknown>> {
+  workshopType: WorkshopType,
+  timeSlot: number
+): Promise<ApiResponse<SubmitWorkshopResponse>> {
   const response = await api.post("/workshop", {
-    ...formData,
-    workshopId,
+    workshopType,
+    workshopTime: timeSlot,
   });
   if (!response.success) {
     console.error("Failed to submit workshop registration:", response.error);
-    return response;
+    return { success: false, error: response.error };
   }
-  return { success: true };
+  return { success: true, data: response.data as SubmitWorkshopResponse };
 }

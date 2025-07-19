@@ -20,8 +20,8 @@ import type { WorkshopData } from "@/types/rpkm-workshop/workshop";
 
 export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
   // const dialogOverview = useDialog(`workshop-overview-${workshopId}`);
-  const dialogConfirm = useDialog(`workshop-confirm-${workshop.workshopId}`);
-  const dialogSuccess = useDialog(`workshop-success-${workshop.workshopId}`);
+  const dialogConfirm = useDialog(`workshop-confirm-${workshop.workshopType}`);
+  const dialogSuccess = useDialog(`workshop-success-${workshop.workshopType}`);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<RegisterFormData | null>(null);
 
@@ -29,9 +29,11 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
     registerFormData: RegisterFormData
   ): Promise<void> => {
     setIsLoading(true);
+    const timeSlot = workshop.details.times.indexOf(registerFormData.time) + 1; // +1 because backend expects 1-based index
+
     const response = await submitWorkshopRegistration(
-      workshop.workshopId,
-      registerFormData
+      workshop.workshopType,
+      timeSlot
     );
 
     if (!response.success) {
@@ -93,7 +95,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
         </DialogBody>
       </Dialog> */}
 
-      <Dialog id={`workshop-confirm-${workshop.workshopId}`}>
+      <Dialog id={`workshop-confirm-${workshop.workshopType}`}>
         <DialogBody>
           <RegisterConfirm
             onConfirm={handleConfirm}
@@ -104,7 +106,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
       </Dialog>
 
       {formData && (
-        <Dialog id={`workshop-success-${workshop.workshopId}`}>
+        <Dialog id={`workshop-success-${workshop.workshopType}`}>
           <DialogBody>
             <RegisterSuccess
               {...workshop}

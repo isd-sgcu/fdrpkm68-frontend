@@ -1,7 +1,8 @@
 ---
 import WorkshopList from "@/components/rpkm/workshop/WorkshopList";
 import Layout from "@/layouts/rpkm/WithNavbar.astro";
-import type { WorkshopData } from "@/types/rpkm-workshop/workshop";
+import { WorkshopType } from "@/types/rpkm-workshop/schema";
+import { type WorkshopData } from "@/types/rpkm-workshop/workshop";
 
 export const keychainWorkshop: WorkshopData = {
   title: "Keychain Workshop",
@@ -27,7 +28,7 @@ export const keychainWorkshop: WorkshopData = {
   },
   current: 300,
   total: 600,
-  workshopId: "1",
+  workshopType: WorkshopType.KEYCHAIN,
 };
 export const diffuserWorkshop: WorkshopData = {
   title: "Diffuser Workshop",
@@ -53,7 +54,7 @@ export const diffuserWorkshop: WorkshopData = {
   },
   current: 120,
   total: 600,
-  workshopId: "2",
+  workshopType: WorkshopType.DIFFUSER,
 };
 
 export const workshops: WorkshopData[] = [keychainWorkshop, diffuserWorkshop];

@@ -5,3 +5,8 @@ export const registerSchema = z.object({
   time: z.string().min(1, "กรุณาเลือกเวลาให้ถูกต้อง"),
 });
 export type RegisterFormData = z.infer<typeof registerSchema>;
+
+export enum WorkshopType {
+  KEYCHAIN = "KEYCHAIN",
+  DIFFUSER = "DIFFUSER",
+}
