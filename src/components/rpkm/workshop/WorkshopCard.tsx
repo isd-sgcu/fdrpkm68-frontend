@@ -37,7 +37,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
     );
 
     if (!response.success) {
-      showSnackbar("เกิดข้อผิดพลาดในการลงทะเบียน", "error");
+      showSnackbar(response.error ?? "เกิดข้อผิดผลาด โปรดลองอีกครั้ง", "error");
       setIsLoading(false);
       return;
     }

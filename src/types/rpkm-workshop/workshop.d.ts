@@ -17,3 +17,11 @@ export interface WorkshopData {
   total: number;
   workshopType: WorkshopType;
 }
+
+export interface MyWorkshopData {
+  title: string;
+  imgUrl: string;
+  date: string;
+  location: string;
+  time: string;
+}

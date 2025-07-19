@@ -1,12 +1,24 @@
 import { type ApiResponse, api } from "@/lib/api";
 import type { WorkshopType } from "@/types/rpkm-workshop/schema";
 
-export type SubmitWorkshopResponse = {
+export interface SubmitWorkshopResponse {
   id: string;
   userId: string;
   workshopType: WorkshopType;
   workshopTime: number;
-};
+}
+
+export interface workshopParticipantCountType {
+  workshopType: WorkshopType;
+  count: number;
+}
+
+export interface RPKMworkshop {
+  id: string;
+  workshopType: WorkshopType;
+  userId: string;
+  workshopTime: number;
+}
 
 /**
  * Submits workshop registration data to the backend.
@@ -27,4 +39,43 @@ export async function submitWorkshopRegistration(
     return { success: false, error: response.error };
   }
   return { success: true, data: response.data as SubmitWorkshopResponse };
+}
+
+/**
+ * Retrieves all RPKM workshops registered by the current user.
+ * @returns ApiResponse containing an array of registered workshops.
+ */
+export async function getWorkshopsOfUserId(): Promise<
+  ApiResponse<RPKMworkshop[]>
+> {
+  const response = await api.get<{ data: RPKMworkshop[] }>("/workshop/me");
+  if (!response.success) {
+    console.error(
+      "Failed to fetch user's registered workshops:",
+      response.error
+    );
+    return { success: false, error: response.error };
+  }
+  return { success: true, data: response.data?.data as RPKMworkshop[] };
+}
+
+/**
+ * Retrieves participant counts for all RPKM workshops.
+ * @returns ApiResponse containing an array of participant count objects.
+ */
+export async function getWorkshopsParticipantCounts(): Promise<
+  ApiResponse<workshopParticipantCountType[]>
+> {
+  const response = await api.get("/workshop/counts");
+  if (!response.success) {
+    console.error(
+      "Failed to fetch workshop participant counts:",
+      response.error
+    );
+    return { success: false, error: response.error };
+  }
+  return {
+    success: true,
+    data: response.data as workshopParticipantCountType[],
+  };
 }
