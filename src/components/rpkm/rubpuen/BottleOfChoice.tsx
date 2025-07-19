@@ -16,6 +16,7 @@ import { bottleOfChoiceSchema } from "@/types/rpkm-bottole-of-choice/schema";
 
 interface BottleOfChoiceProps {
   initialVariant?: ThemeVariant;
+  isChoosen: boolean;
 }
 
 interface Choice {
@@ -47,10 +48,12 @@ const BOTTLE_OPTIONS: Choice[] = [
 
 export default function BottleOfChoice({
   initialVariant,
+  isChoosen,
 }: BottleOfChoiceProps): JSX.Element {
   // State
   const [choice, setChoice] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [specialMessage, setSpecialMessage] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Dialogs
@@ -59,12 +62,21 @@ export default function BottleOfChoice({
 
   // Open dialog on mount
   useEffect(() => {
+    if (isChoosen) {
+      return; // Do not open dialog if already chosen
+    }
     mainDialog.open();
   }, []);
 
   // Handlers
   const handleChoiceChange = (value: string): void => {
     setChoice(value);
+    if (value === "C") {
+      setSpecialMessage(true);
+    } else {
+      setSpecialMessage(false);
+    }
+
     setError(null); // Clear error when user makes selection
   };
 
@@ -173,6 +185,12 @@ export default function BottleOfChoice({
                 {error && (
                   <div className="w-full text-center text-sm text-red-500">
                     {error}
+                  </div>
+                )}
+
+                {specialMessage && (
+                  <div className="w-full text-center text-xs text-white">
+                    *สามารถรับกระติกน้ำได้ที่บ้านรับเพื่อนในวันรับเพื่อนก้าวใหม่
                   </div>
                 )}
 
