@@ -64,13 +64,13 @@ const MapDropdown: React.FC<MapDropdownProps> = ({
         aria-expanded={open}
         aria-haspopup="true"
         type="button"
-        onClick={handleTriggerClick}
+        onClick={options.length > 1 ? handleTriggerClick : undefined}
       >
         <span className={cn("px-2 text-white drop-shadow-lg", liClassName)}>
           {selectedOption.label}
         </span>
         <div className="flex h-10 w-10 items-center justify-center">
-          <ChevronDown size={18} color="white" />
+          {options.length > 1 ? <ChevronDown size={18} color="white" /> : null}
         </div>
       </button>
       <div

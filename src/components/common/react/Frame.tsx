@@ -1,6 +1,6 @@
 
-import React from "react";
 import type { ReactNode } from "react";
+import React from "react";
 
 import { X } from "lucide-react";
 
@@ -42,6 +42,7 @@ export interface FrameProps {
   noWrapper?: boolean;
   children: ReactNode;
   frameId?: string;
+  noScroll?: boolean; // Optional prop to disable scrolling
   onClickX?: () => void;
 }
 
@@ -52,6 +53,7 @@ const Frame: React.FC<FrameProps> = ({
   noWrapper = false,
   children,
   frameId: propFrameId,
+  noScroll = false,
   onClickX,
 }) => {
   const { theme } = useTheme();
@@ -158,7 +160,7 @@ const Frame: React.FC<FrameProps> = ({
 
         {/* Content area with proper clipping */}
         <div
-          className={`content-area absolute inset-0 flex ${contentClipClass} overflow-auto`}
+          className={`content-area absolute inset-0 flex ${contentClipClass} ${noScroll ? "overflow-visible" : "overflow-auto"}`}
         >
           {noWrapper ? (
             children
