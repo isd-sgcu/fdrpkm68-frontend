@@ -32,7 +32,7 @@ if (!user) {
   <BottleOfChoice
     client:load
     initialVariant="rpkm_home"
-    isChoosen={user?.bottleChoice !== "NONE"}
+    isChosen={user.bottleChoice !== "NONE"}
   />
   <UserProfile user={user} className="profile-avatar" />
 </>

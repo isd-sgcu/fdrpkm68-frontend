@@ -16,7 +16,7 @@ import { bottleOfChoiceSchema } from "@/types/rpkm-bottole-of-choice/schema";
 
 interface BottleOfChoiceProps {
   initialVariant?: ThemeVariant;
-  isChoosen: boolean;
+  isChosen: boolean;
 }
 
 interface Choice {
@@ -48,7 +48,7 @@ const BOTTLE_OPTIONS: Choice[] = [
 
 export default function BottleOfChoice({
   initialVariant,
-  isChoosen,
+  isChosen,
 }: BottleOfChoiceProps): JSX.Element {
   // State
   const [choice, setChoice] = useState<string>("");
@@ -62,7 +62,7 @@ export default function BottleOfChoice({
 
   // Open dialog on mount
   useEffect(() => {
-    if (isChoosen) {
+    if (isChosen) {
       return; // Do not open dialog if already chosen
     }
     mainDialog.open();
