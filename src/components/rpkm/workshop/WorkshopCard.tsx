@@ -52,7 +52,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
   return (
     <>
       {isLoading && <Loading />}
-      <Frame size="sm" noWrapper>
+      <Frame size="sm" noWrapper noScroll>
         <div className="flex h-full w-full flex-col justify-between px-8 pt-8 pb-5">
           <h1 className="text-center text-4xl font-bold text-nowrap">
             {workshop.title}
