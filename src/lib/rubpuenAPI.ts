@@ -9,7 +9,9 @@ import type { BottleOfChoiceFormData } from "@/types/rpkm-bottole-of-choice/sche
 export async function submitBottleOfChoice(
   formData: BottleOfChoiceFormData
 ): Promise<ApiResponse<unknown>> {
-  const response = await api.put("/water-bottle", formData);
+  const response = await api.patch("/user/water-bottle", {
+    bottleChoice: formData.choice,
+  });
   if (!response.success) {
     console.error("Failed to submit bottle of choice:", response.error);
     return response;
