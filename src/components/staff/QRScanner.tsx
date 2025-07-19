@@ -23,6 +23,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, onError }) => {
     "environment"
   );
   const [hasCamera, setHasCamera] = useState(true);
+  const [isScanning, setIsScanning] = useState(true);
+  const [lastScannedData, setLastScannedData] = useState<string | null>(null);
 
   const checkCameraAvailability = useCallback(async (): Promise<void> => {
     try {
@@ -62,48 +64,76 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, onError }) => {
 
   const handleScan = useCallback(
     async (result: unknown): Promise<void> => {
-      if (result && Array.isArray(result) && result.length > 0) {
-        const qrData = (result[0] as { rawValue: string }).rawValue;
+      if (
+        !isScanning ||
+        !result ||
+        !Array.isArray(result) ||
+        result.length === 0
+      ) {
+        return;
+      }
 
-        // Accept QR codes with studentId and citizenId format
-        let finalQRData = qrData;
-        if (qrData.includes("studentId=") && qrData.includes("citizenId=")) {
-          finalQRData = qrData;
+      const qrData = (result[0] as { rawValue: string }).rawValue;
+
+      // Prevent scanning the same QR code immediately
+      if (qrData === lastScannedData) {
+        return;
+      }
+
+      // Temporarily disable scanning to prevent multiple rapid scans
+      setIsScanning(false);
+      setLastScannedData(qrData);
+
+      // Accept QR codes with studentId and citizenId format
+      let finalQRData = qrData;
+      if (qrData.includes("studentId=") && qrData.includes("citizenId=")) {
+        finalQRData = qrData;
+      } else if (
+        qrData.includes("id=7137ec7e-0f4b-4d65-88c4-982d36f7692f") &&
+        qrData.includes("userId=a8e7e644-ed12-4748-89fc-4599f868ab5d")
+      ) {
+        // Keep the old test QR support
+        finalQRData =
+          "id=7137ec7e-0f4b-4d65-88c4-982d36f7692f&userId=a8e7e644-ed12-4748-89fc-4599f868ab5d";
+      } else {
+        const error = new Error("QR Code ไม่ถูกต้อง");
+        if (onError) {
+          onError(error);
+        }
+        if (window.showErrorModal) {
+          window.showErrorModal("QR Code ไม่ถูกต้อง");
+        }
+
+        // Re-enable scanning after error
+        setTimeout(() => {
+          setIsScanning(true);
+          setLastScannedData(null);
+        }, 1000);
+        return;
+      }
+
+      try {
+        if (typeof onScan === "function") {
+          onScan(finalQRData);
         } else if (
-          qrData.includes("id=7137ec7e-0f4b-4d65-88c4-982d36f7692f") &&
-          qrData.includes("userId=a8e7e644-ed12-4748-89fc-4599f868ab5d")
+          window.handleQRScan &&
+          typeof window.handleQRScan === "function"
         ) {
-          // Keep the old test QR support
-          finalQRData =
-            "id=7137ec7e-0f4b-4d65-88c4-982d36f7692f&userId=a8e7e644-ed12-4748-89fc-4599f868ab5d";
-        } else {
-          const error = new Error("QR Code ไม่ถูกต้อง");
-          if (onError) {
-            onError(error);
-          }
-          if (window.showErrorModal) {
-            window.showErrorModal("QR Code ไม่ถูกต้อง");
-          }
-          return;
+          await window.handleQRScan(finalQRData);
         }
-
-        try {
-          if (typeof onScan === "function") {
-            onScan(finalQRData);
-          } else if (
-            window.handleQRScan &&
-            typeof window.handleQRScan === "function"
-          ) {
-            await window.handleQRScan(finalQRData);
-          }
-        } catch (scanError) {
-          if (onError) {
-            onError(scanError as Error);
-          }
+      } catch (scanError) {
+        if (onError) {
+          onError(scanError as Error);
         }
+      } finally {
+        // Re-enable scanning after processing (with delay to prevent immediate re-scan)
+        setTimeout(() => {
+          setIsScanning(true);
+          setLastScannedData(null);
+        }, 2000); // 2-second delay before allowing next scan
       }
     },
-    [onScan, onError]
+    [isScanning, lastScannedData, onScan, onError]
   );
 
   const handleError = useCallback(
@@ -192,14 +222,23 @@ const QRScanner: React.FC<QRScannerProps> = ({ onScan, onError }) => {
   return (
     <div className="mx-auto w-full max-w-sm">
       <div className="relative">
-        <Scanner
-          onScan={handleScan}
-          onError={handleError}
-          allowMultiple={false}
-          scanDelay={500}
-          formats={["qr_code"]}
-          constraints={getCameraConstraints()}
-        />
+        {isScanning ? (
+          <Scanner
+            onScan={handleScan}
+            onError={handleError}
+            allowMultiple={false}
+            scanDelay={500}
+            formats={["qr_code"]}
+            constraints={getCameraConstraints()}
+          />
+        ) : (
+          <div className="flex h-64 items-center justify-center">
+            <div className="flex flex-col justify-center p-4 text-center">
+              <div className="mb-2 text-lg">กำลังประมวลผล...</div>
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-pink-500 border-t-transparent" />
+            </div>
+          </div>
+        )}
 
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="h-48 w-48 rounded-lg border-2 border-dashed border-white" />
