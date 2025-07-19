@@ -318,9 +318,15 @@ const isPickAllMainHouses =
     }
     const pickBtn = document.getElementById("btn-picking-house");
     if (!isOwner) {
-      pickBtn.classList.add("hidden");
+      pickBtn.disabled = true;
+      pickBtn.classList.add("cursor-not-allowed", "opacity-50");
+      pickBtn.classList.remove("cursor-pointer", "opacity-100");
+      pickBtn.innerHTML = `<p class="text-xl text-white font-medium">ไม่สามารถเลือกบ้านได้</p>`;
     } else {
-      pickBtn.classList.remove("hidden");
+      pickBtn.disabled = false;
+      pickBtn.classList.remove("cursor-not-allowed", "opacity-50");
+      pickBtn.classList.add("cursor-pointer", "opacity-100");
+      pickBtn.innerHTML = `<p class="text-xl text-white font-medium">เลือกบ้าน</p>`;
     }
     const submitBtn = document.getElementById("btn-submit-house");
     if (!isOwner) {
