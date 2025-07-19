@@ -7,6 +7,7 @@ export const rpkmThemeConfigs: Record<RpkmVariant, ThemeConfig> = {
       "bg-[radial-gradient(50%_50%_at_50%_50%,_#8A2BE4_0%,_#2B2D42_100%)]",
     backgroundImage: "/images/rpkm/bg/home.png",
     primaryColor: "#8A2BE4",
+    colorVariants: "purple",
   },
   rpkm_workshops: {
     gradientType: "linear",

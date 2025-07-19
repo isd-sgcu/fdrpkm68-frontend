@@ -270,7 +270,7 @@ export default function ButtonRpkm({
       aria-disabled={disabled}
       {...restProps}
     >
-      <div className="overflow-hidde relative z-10 flex w-full cursor-pointer items-center">
+      <div className="overflow-hidde relative z-10 flex w-full cursor-pointer items-center drop-shadow-[0_0_6px_white] filter">
         {icon && <div className="flex-shrink-0">{icon}</div>}
         <div className="flex flex-1 justify-center overflow-hidden">
           <div className="text-center leading-tight">{children}</div>
