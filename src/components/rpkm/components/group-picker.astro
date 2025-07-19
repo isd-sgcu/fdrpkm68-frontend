@@ -125,7 +125,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
   class=`${canDisplayHead ? "block" : "hidden"} h-full w-full`
   id="view-group-head"
 >
-  <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
+  <Frame color="purple" size="sp" contentContainerClass="!h-full !px-4">
     <!-- Title -->
     <div class="relative w-full pt-2 text-center">
       {
@@ -154,40 +154,10 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
       <GroupProfile user={member2} variant="blue" />
     </div>
 
-    <!-- Invite URL -->
-    <div class="flex w-full flex-col items-center gap-1 pt-6">
-      <!-- Header -->
-      <p class="text-xs font-semibold text-white">Invite Link</p>
-      <!-- URL -->
-      <div
-        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
-        id="room-invite-url-head-container"
-      >
-        <div
-          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
-        >
-          <div class="cut-input-1 relative flex bg-[#2B2D42]">
-            <span
-              id="room-invite-url-head"
-              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
-            >
-              {"rpkm.sgcu.in.th/" + inviteCode}
-            </span>
-            <img
-              src="/images/rpkm/link-icon.svg"
-              width="18"
-              height="18"
-              class="absolute top-1/2 right-2 -translate-y-1/2"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Room Code -->
-    <div class="flex w-full flex-col items-center gap-1 pt-3 pb-5">
+    <div class="flex w-full flex-col items-center gap-1 pt-5 pb-5">
       <!-- Header -->
-      <p class="text-xs font-semibold text-white">Room Code</p>
+      <p class="text-base font-semibold text-white">Room Code</p>
       <!-- Code -->
       <div
         class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
@@ -199,7 +169,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
           <div class="cut-input-1 relative flex bg-[#2B2D42]">
             <span
               id="room-code-head"
-              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
+              class="letter h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-[15px] text-[#0FF] outline-none"
             >
               {inviteCode}
             </span>
@@ -221,7 +191,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
   class={`${canDisplayMember ? "block" : "hidden"} h-full w-full`}
   id="view-group-member"
 >
-  <Frame color="purple" size="sm" contentContainerClass="!h-full !px-4">
+  <Frame color="purple" size="sp" contentContainerClass="!h-full !px-4">
     <!-- Title -->
     <div class="relative w-full pt-2 text-center">
       <p
@@ -253,40 +223,10 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
       <GroupProfile user={member2} variant="blue" />
     </div>
 
-    <!-- Invite URL -->
-    <div class="flex w-full flex-col items-center gap-1 pt-6">
-      <!-- Header -->
-      <p class="text-xs font-semibold text-white">Invite Link</p>
-      <!-- URL -->
-      <div
-        class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
-        id="room-invite-url-member-container"
-      >
-        <div
-          class="cut-input-1 bg-gradient-to-r from-[#8A2BE4] via-[#D38DD8] to-[#8A2BE4] px-[6px] py-[3px]"
-        >
-          <div class="cut-input-1 relative flex bg-[#2B2D42]">
-            <span
-              id="room-invite-url-member"
-              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-lg font-medium text-[#0FF] outline-none"
-            >
-              {"rpkm.sgcu.in.th/" + inviteCode}
-            </span>
-            <img
-              src="/images/rpkm/link-icon.svg"
-              width="18"
-              height="18"
-              class="absolute top-1/2 right-2 -translate-y-1/2"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Room Code -->
-    <div class="flex w-full flex-col items-center gap-1 pt-3 pb-5">
+    <div class="flex w-full flex-col items-center gap-1 pt-5 pb-5">
       <!-- Header -->
-      <p class="text-xs font-semibold text-white">Room Code</p>
+      <p class="text-base font-semibold text-white">Room Code</p>
       <!-- Code -->
       <div
         class="w-full cursor-pointer drop-shadow-[0_0_2px_white] filter"
@@ -298,7 +238,7 @@ const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
           <div class="cut-input-1 relative flex bg-[#2B2D42]">
             <span
               id="room-code-member"
-              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-widest text-[#0FF] outline-none"
+              class="h-[36px] w-full bg-transparent px-3 py-1 text-center text-2xl font-semibold tracking-[15px] text-[#0FF] outline-none"
             >
               {inviteCode}
             </span>

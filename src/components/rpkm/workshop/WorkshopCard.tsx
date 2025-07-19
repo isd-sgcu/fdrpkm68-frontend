@@ -79,7 +79,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
               color="blue"
               onClick={dialogConfirm.open}
             >
-              ดูรายละอียด
+              ดูรายละเอียด
             </ButtonRpkm>
             <CapacityBar current={workshop.current} total={workshop.total} />
           </div>

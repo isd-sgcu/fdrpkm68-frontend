@@ -27,7 +27,7 @@
  */
 
 export interface Props {
-  size?: "lg" | "md" | "sm" | "xs";
+  size?: "lg" | "md" | "sm" | "xs" | "sp";
   color?: "blue" | "purple";
   class?: string;
   contentContainerClass?: string;
@@ -44,6 +44,10 @@ const frameSvg = `/images/frame/frame-${color}-${size}.svg`;
 
 // Size configuration with aspect ratios and minimum heights
 const sizeConfig = {
+  sp: {
+    aspectRatio: "346/300",
+    minHeight: "300px",
+  },
   lg: {
     aspectRatio: "346/550",
     minHeight: "550px",
@@ -108,6 +112,10 @@ const config = sizeConfig[size];
 
   .frame-container[data-size="xs"] .frame-content-clip {
     margin: 4% 7%;
+  }
+
+  .frame-container[data-size="sp"] .frame-content-clip {
+    margin: 3% 5%;
   }
 
   /* Custom scrollbar styling */
