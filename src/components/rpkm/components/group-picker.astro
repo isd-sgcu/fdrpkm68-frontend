@@ -49,8 +49,12 @@ const canDisplayHead =
   (isConfirmed && isOwner) || (!isConfirmed && isOwner && memberCount != 1);
 const canDisplayMember = !isOwner;
 
-const member1 = groupData.memberCount > 1 ? groupData.users[1] : null;
-const member2 = groupData.memberCount > 2 ? groupData.users[2] : null;
+const members = groupData.users.filter(
+  (user: User) => user.id !== groupData.ownerId
+);
+
+const member1 = members.length > 0 ? members[0] : null;
+const member2 = members.length > 1 ? members[1] : null;
 ---
 
 <!-- Default Wrapper -->
