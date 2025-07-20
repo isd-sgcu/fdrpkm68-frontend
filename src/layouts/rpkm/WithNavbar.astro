@@ -11,9 +11,15 @@ interface Props {
   title?: string;
   description?: string;
   variant?: RpkmVariant;
+  navigateBackHref?: string;
 }
 
-const { title, description, variant = "rpkm_home" } = Astro.props;
+const {
+  title,
+  description,
+  variant = "rpkm_home",
+  navigateBackHref = "/rpkm/home",
+} = Astro.props;
 const backgroundImage = rpkmThemeConfigs[variant]?.backgroundImage;
 ---
 
@@ -35,7 +41,7 @@ const backgroundImage = rpkmThemeConfigs[variant]?.backgroundImage;
     >
       <Navbar
         variant="rpkm"
-        navigateBackHref="/rpkm/home"
+        navigateBackHref={navigateBackHref}
         hideLogo
         bgTransparent={variant === "rpkm_home"}
       />
