@@ -37,7 +37,19 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
     );
 
     if (!response.success) {
-      showSnackbar(response.error ?? "เกิดข้อผิดผลาด โปรดลองอีกครั้ง", "error");
+      const msg = response.error || "";
+      let errMsg: string;
+      if (msg.includes("already registered for workshop")) {
+        errMsg = "You have already registered for this workshop";
+      } else if (msg.includes("already registered for time slot")) {
+        errMsg = "You have already registered for this time slot";
+      } else if (msg.includes("at time slot")) {
+        errMsg =
+          "The selected time slot is not available. Please choose another time slot.";
+      } else {
+        errMsg = "Unable to register. Please try again.";
+      }
+      showSnackbar(errMsg, "error");
       setIsLoading(false);
       return;
     }
