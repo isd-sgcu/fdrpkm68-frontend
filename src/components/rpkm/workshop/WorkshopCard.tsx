@@ -20,8 +20,8 @@ import type { WorkshopData } from "@/types/rpkm-workshop/workshop";
 
 export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
   // const dialogOverview = useDialog(`workshop-overview-${workshopId}`);
-  const dialogConfirm = useDialog(`workshop-confirm-${workshop.workshopId}`);
-  const dialogSuccess = useDialog(`workshop-success-${workshop.workshopId}`);
+  const dialogConfirm = useDialog(`workshop-confirm-${workshop.workshopType}`);
+  const dialogSuccess = useDialog(`workshop-success-${workshop.workshopType}`);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<RegisterFormData | null>(null);
 
@@ -29,13 +29,15 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
     registerFormData: RegisterFormData
   ): Promise<void> => {
     setIsLoading(true);
+    const timeSlot = workshop.details.times.indexOf(registerFormData.time) + 1; // +1 because backend expects 1-based index
+
     const response = await submitWorkshopRegistration(
-      workshop.workshopId,
-      registerFormData
+      workshop.workshopType,
+      timeSlot
     );
 
     if (!response.success) {
-      showSnackbar("เกิดข้อผิดพลาดในการลงทะเบียน", "error");
+      showSnackbar(response.error ?? "เกิดข้อผิดผลาด โปรดลองอีกครั้ง", "error");
       setIsLoading(false);
       return;
     }
@@ -52,7 +54,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
   return (
     <>
       {isLoading && <Loading />}
-      <Frame size="sm" noWrapper>
+      <Frame size="sm" noWrapper noScroll>
         <div className="flex h-full w-full flex-col justify-between px-8 pt-8 pb-5">
           <h1 className="text-center text-4xl font-bold text-nowrap">
             {workshop.title}
@@ -79,7 +81,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
               color="blue"
               onClick={dialogConfirm.open}
             >
-              ดูรายละอียด
+              ดูรายละเอียด
             </ButtonRpkm>
             <CapacityBar current={workshop.current} total={workshop.total} />
           </div>
@@ -93,7 +95,7 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
         </DialogBody>
       </Dialog> */}
 
-      <Dialog id={`workshop-confirm-${workshop.workshopId}`}>
+      <Dialog id={`workshop-confirm-${workshop.workshopType}`}>
         <DialogBody>
           <RegisterConfirm
             onConfirm={handleConfirm}
@@ -104,12 +106,15 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
       </Dialog>
 
       {formData && (
-        <Dialog id={`workshop-success-${workshop.workshopId}`}>
+        <Dialog id={`workshop-success-${workshop.workshopType}`}>
           <DialogBody>
             <RegisterSuccess
               {...workshop}
               workshopForm={formData}
-              onDismiss={dialogSuccess.closeAll}
+              onDismiss={() => {
+                dialogSuccess.closeAll();
+                window.location.reload();
+              }}
             />
           </DialogBody>
         </Dialog>

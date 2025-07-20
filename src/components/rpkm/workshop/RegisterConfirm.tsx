@@ -42,7 +42,7 @@ export default function RegisterConfirm({
   };
 
   return (
-    <Frame size="sm" noWrapper>
+    <Frame size="sm" noWrapper noScroll>
       <div className="flex h-full w-full flex-col items-center justify-between gap-1 px-4 py-2">
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-center text-4xl font-bold text-nowrap">

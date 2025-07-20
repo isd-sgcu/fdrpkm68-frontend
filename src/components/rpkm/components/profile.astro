@@ -1,6 +1,7 @@
 ---
 import UserProfile from "@rpkm/rubpuen/UserProfile";
 
+import BottleOfChoice from "@/components/rpkm/rubpuen/BottleOfChoice";
 import { getProfile } from "@/lib/profileAPI";
 import type { User } from "@/types/common";
 
@@ -10,7 +11,7 @@ if (!token) {
   return Astro.redirect("/login");
 }
 
-let user = null;
+let user: User | null = null;
 try {
   const response = await getProfile(token);
   if (response.success && response.data) {
@@ -27,4 +28,11 @@ if (!user) {
 }
 ---
 
-<UserProfile user={user} className="profile-avatar" />
+<>
+  <BottleOfChoice
+    client:load
+    initialVariant="rpkm_home"
+    isChosen={user.bottleChoice !== "NONE"}
+  />
+  <UserProfile user={user} className="profile-avatar" />
+</>

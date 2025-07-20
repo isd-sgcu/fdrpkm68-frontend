@@ -1,70 +1,61 @@
 ---
+import MyWorkshops from "@/components/rpkm/workshop/MyWorkshops";
 import WorkshopList from "@/components/rpkm/workshop/WorkshopList";
+import { workshops } from "@/data/rpkm-workshop/workshops";
 import Layout from "@/layouts/rpkm/WithNavbar.astro";
+import { getWorkshopsParticipantCounts } from "@/lib/workshopAPI";
 import type { WorkshopData } from "@/types/rpkm-workshop/workshop";
 
-export const keychainWorkshop: WorkshopData = {
-  title: "Keychain Workshop",
-  description:
-    "ออกแบบพวงกุญแจหรือที่ห้อยกระเป๋าเฉพาะตัว สำหรับนิสิตรุ่น CU 109",
-  metaDate: "1 สิงหาคม 2568",
-  metaLocation: "อาคารจามจุรี 9 / ลานพระบรมรูปสองรัชกาล",
-  metaTime: "6 รอบ รอบละ 50 คน",
-  details: {
-    date: "1 สิงหาคม 2568",
-    locations: [
-      "ลานพระบรมรูปสองรัชกาล (บ้านรับเพื่อนฝั่งใหญ่)",
-      "อาคารจามจุรี 9",
-    ],
-    times: [
-      "รอบที่ 1 : 13.00-13.30",
-      "รอบที่ 2 : 13.40-14.10",
-      "รอบที่ 3 : 14.20-14.50",
-      "รอบที่ 4 : 15.10-15.40",
-      "รอบที่ 5 : 15.50-16.20",
-      "รอบที่ 6 : 16.30-17.00",
-    ],
-  },
-  current: 300,
-  total: 600,
-  workshopId: "1",
-};
-export const diffuserWorkshop: WorkshopData = {
-  title: "Diffuser Workshop",
-  description:
-    "ออกแบบ Diffuser โดยสามารถเลือกกลิ่นประจำตัวได้ สำหรับนิสิตรุ่น CU 109",
-  metaDate: "1 สิงหาคม 2568",
-  metaLocation: "อาคารจามจุรี 9 / ลานพระบรมรูปสองรัชกาล",
-  metaTime: "6 รอบ รอบละ 50 คน",
-  details: {
-    date: "1 สิงหาคม 2568",
-    locations: [
-      "ลานพระบรมรูปสองรัชกาล (บ้านรับเพื่อนฝั่งใหญ่)",
-      "อาคารจามจุรี 9",
-    ],
-    times: [
-      "รอบที่ 1 : 13.00-13.30",
-      "รอบที่ 2 : 13.40-14.10",
-      "รอบที่ 3 : 14.20-14.50",
-      "รอบที่ 4 : 15.10-15.40",
-      "รอบที่ 5 : 15.50-16.20",
-      "รอบที่ 6 : 16.30-17.00",
-    ],
-  },
-  current: 120,
-  total: 600,
-  workshopId: "2",
-};
+let updatedWorkshops: WorkshopData[] = workshops;
+const token = Astro.cookies.get("token")?.value;
 
-export const workshops: WorkshopData[] = [keychainWorkshop, diffuserWorkshop];
+if (!token) {
+  return Astro.redirect("/rpkm/login");
+}
+
+try {
+  const workshopsParticipantCountsResponse =
+    await getWorkshopsParticipantCounts(token);
+  if (
+    !workshopsParticipantCountsResponse.success ||
+    !workshopsParticipantCountsResponse.data
+  ) {
+    throw new Error("No participant counts data available");
+  }
+  const workshopsParticipantCounts = workshopsParticipantCountsResponse.data;
+
+  updatedWorkshops = workshops.map((workshop) => {
+    const workshopParticipantCount =
+      workshopsParticipantCounts.find(
+        (count) => count.workshopType === workshop.workshopType
+      )?.count || 0;
+    return {
+      ...workshop,
+      current: workshopParticipantCount,
+    };
+  });
+} catch (error) {
+  console.error("Error fetching workshops participant counts:", error);
+  // Fallback to original workshops data if API fails
+  updatedWorkshops = workshops.map((workshop) => {
+    return {
+      ...workshop,
+      current: 0, // Default to 0 if we can't fetch counts
+    };
+  });
+}
 ---
 
 <Layout variant="rpkm_workshops">
+  <!-- My workshops -->
+  <div class="pb-8">
+    <MyWorkshops client:load initialVariant="rpkm_workshops" />
+  </div>
   <div class="pb-10">
     <WorkshopList
       client:load
       initialVariant="rpkm_workshops"
-      workshops={workshops}
+      workshops={updatedWorkshops}
     />
   </div>
 </Layout>

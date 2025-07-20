@@ -18,7 +18,7 @@ export default function WorkshopList({
     <ThemeProvider initialVariant={initialVariant}>
       <div className="flex flex-col gap-8">
         {workshops.map((workshop) => (
-          <WorkshopCard key={workshop.workshopId} {...workshop} />
+          <WorkshopCard key={workshop.workshopType} {...workshop} />
         ))}
       </div>
     </ThemeProvider>

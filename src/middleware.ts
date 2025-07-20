@@ -14,24 +14,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  const matchedRoute = nonStartedRoutes.find((route) =>
-    url.pathname.startsWith(route)
-  );
-  if (matchedRoute) {
-    const matchedTime = nonStartedRoutesTimeWhitelist[matchedRoute];
-
-    if (matchedTime && new Date() > matchedTime) {
-      return next();
-    }
-
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: "/firstdate/home",
-      },
-    });
-  }
-
   const cookie = context.request.headers.get("cookie") ?? "";
   const token = parseCookie(cookie).token;
 
@@ -70,6 +52,25 @@ export const onRequest = defineMiddleware(async (context, next) => {
     });
   }
 
+  // Note: Route handling should happen after user is set
+
+  const matchedRoute = nonStartedRoutes.find((route) =>
+    url.pathname.startsWith(route)
+  );
+  if (matchedRoute) {
+    const matchedTime = nonStartedRoutesTimeWhitelist[matchedRoute];
+
+    if (matchedTime && new Date() > matchedTime) {
+      return next();
+    }
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/firstdate/home",
+      },
+    });
+  }
   return next();
 });
 

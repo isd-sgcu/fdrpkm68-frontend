@@ -94,7 +94,26 @@ const wrapperClasses = cn(
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     class="flex-shrink-0"
+    style="overflow: visible;"
   >
-    <path d={generatePath()} fill={fillColor}></path>
+    <defs>
+      <filter
+        id="white-drop-shadow"
+        x="-40%"
+        y="-40%"
+        width="180%"
+        height="180%"
+        filterUnits="userSpaceOnUse"
+      >
+        <feDropShadow
+          dx="0"
+          dy="0"
+          stdDeviation="3"
+          flood-color="var(--FDWhite, #fff)"
+          flood-opacity="1"></feDropShadow>
+      </filter>
+    </defs>
+    <path d={generatePath()} fill={fillColor} filter="url(#white-drop-shadow)"
+    ></path>
   </svg>
 </div>

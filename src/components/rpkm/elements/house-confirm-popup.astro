@@ -168,6 +168,7 @@ if (!token) {
       // Close button - hide success popup
       btnClose?.addEventListener("click", () => {
         hideSuccessPopup();
+        window.location.reload();
       });
 
       // Click outside to close success popup

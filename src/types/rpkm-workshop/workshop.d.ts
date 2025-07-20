@@ -1,3 +1,5 @@
+import type { WorkshopType } from "@/types/rpkm-workshop/schema";
+
 export interface WorkshopDetails {
   date: string;
   locations: string[];
@@ -13,5 +15,13 @@ export interface WorkshopData {
   details: WorkshopDetails;
   current: number;
   total: number;
-  workshopId: string;
+  workshopType: WorkshopType;
+}
+
+export interface MyWorkshopData {
+  title: string;
+  imgUrl: string;
+  date: string;
+  location: string;
+  time: string;
 }
