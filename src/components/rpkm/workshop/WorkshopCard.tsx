@@ -40,14 +40,13 @@ export default function WorkshopCard(workshop: WorkshopData): JSX.Element {
       const msg = response.error || "";
       let errMsg: string;
       if (msg.includes("already registered for workshop")) {
-        errMsg = "You have already registered for this workshop";
+        errMsg = "คุณได้ลงทะเบียนเข้าร่วมกิจกรรมนี้แล้ว";
       } else if (msg.includes("already registered for time slot")) {
-        errMsg = "You have already registered for this time slot";
+        errMsg = "คุณได้ลงทะเบียนในช่วงเวลานี้แล้ว";
       } else if (msg.includes("at time slot")) {
-        errMsg =
-          "The selected time slot is not available. Please choose another time slot.";
+        errMsg = "ช่วงเวลาที่เลือกไม่ว่าง กรุณาเลือกช่วงเวลาอื่น";
       } else {
-        errMsg = "Unable to register. Please try again.";
+        errMsg = "ไม่สามารถลงทะเบียนได้ กรุณาลองใหม่อีกครั้ง";
       }
       showSnackbar(errMsg, "error");
       setIsLoading(false);
