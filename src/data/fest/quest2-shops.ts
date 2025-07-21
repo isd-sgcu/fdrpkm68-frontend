@@ -194,7 +194,7 @@ export const quest2Shops: Shop[] = [
     description:
       "ร้านอาหารตามสั่งเมนูหลากหลาย รสชาติเข้มข้น ราคาเอาใจนิสิต และคนวัยทำงาน เป็น Comfort Food ที่มัดใจคนในย่าน เด่นดังเรื่องการทำเมนูไข่ข้นผงกะหรี่ ไข่นุ่ม ๆ ผัดผงกะหรี่ นัว ๆ เหยาะพริกน้ำปลาเพิ่มความกลมกล่อม หรือจะเป็นเมนูคั่วพริกเกลือหอม ๆ ข้าวสวยร้อน ๆ ก็อร่อยไม่แพ้ใคร",
     time: "วันจันทร์ - วันศุกร์ 9:00 - 20:30 (หยุดทุกวันเสาร์ - วันอาทิตย์)",
-    maps: "https://maps.app.goo.gl/t7CkuRXfpNEKQoSS8",
+    maps: "https://maps.app.goo.gl/GKVPQzq9M1GuQqa78",
     image: "/fest/shop-images/shop-17.webp",
   },
   {
@@ -370,7 +370,7 @@ export const quest2Shops: Shop[] = [
     description:
       "เปิดให้บริการมานาน คู่กับตลาดสามย่าน สเต็กเนื้อถูกปรุงมาอย่างดี รสชาติเข้มข้น ให้เยอะพร้อมเครื่องเคียงแน่น ๆ ในราคาที่ย่อมเยา",
     time: "เปิดให้บริการทุกวัน 10:00 – 21:00",
-    maps: "https://maps.app.goo.gl/8y6jLsJpws4F4hdUA",
+    maps: "https://maps.app.goo.gl/3GxCr3r54QhhYive9",
     image: "/fest/shop-images/shop-33.webp",
   },
   {
