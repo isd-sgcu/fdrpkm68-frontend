@@ -364,6 +364,10 @@ const member2 = members.length > 1 ? members[1] : null;
   import { AvatarMap } from "@rpkm/data/profile";
   import { getProfile } from "@/lib/profileAPI";
   import type { Group, User } from "@/types/common";
+  import { disablePickingDate } from "@rpkm/data/date";
+
+  const currentDate = new Date();
+  const isPickingDisabled = currentDate >= disablePickingDate;
 
   document.addEventListener("DOMContentLoaded", async () => {
     const userResponse = await getProfile();
@@ -380,8 +384,6 @@ const member2 = members.length > 1 ? members[1] : null;
     const groupData = groupResponse.data.data as Group;
 
     const isConfirmed = groupData ? groupData.isConfirmed : undefined;
-    const isOwner =
-      groupData && user ? groupData.ownerId === user.id : undefined;
     const memberCount = groupData ? groupData.memberCount : -1;
 
     const input = document.getElementById("room-id-insert") as HTMLInputElement;
@@ -488,6 +490,34 @@ const member2 = members.length > 1 ? members[1] : null;
         );
         joinGroupButton.classList.remove("cursor-pointer");
       }
+    }
+
+    if (isPickingDisabled) {
+      input.disabled = true;
+      input.placeholder = "ไม่สามารถกรอกเลขห้องได้";
+      headGroupBtn.disabled = true;
+      headGroupBtn.classList.add(
+        "cursor-not-allowed",
+        "opacity-50",
+        "brightness-75"
+      );
+      headGroupBtn.classList.remove("cursor-pointer");
+      backBtn?.classList.add("hidden");
+      exitButton?.classList.add("hidden");
+      joinGroupButton.disabled = true;
+    } else {
+      input.disabled = false;
+      input.placeholder = "โปรดกรอกรหัสห้อง";
+      headGroupBtn.disabled = false;
+      headGroupBtn.classList.remove(
+        "cursor-not-allowed",
+        "opacity-50",
+        "brightness-75"
+      );
+      headGroupBtn.classList.add("cursor-pointer");
+      backBtn?.classList.remove("hidden");
+      exitButton?.classList.remove("hidden");
+      joinGroupButton.disabled = false;
     }
 
     input?.addEventListener("input", toggleSubmitButton);

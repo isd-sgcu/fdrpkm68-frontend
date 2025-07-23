@@ -4,7 +4,6 @@ import { getGroupByGroupId } from "@/lib/groupAPI";
 import { getProfile } from "@/lib/profileAPI";
 import type { Group, User } from "@/types/common";
 
-
 const token = Astro.cookies.get("token")?.value;
 
 let groupData: Group | null = null;
@@ -42,7 +41,7 @@ const assignedHouse = null; // Replace with actual house attribute
 
 <div class="h-full w-full" id="view-house-final">
   {
-    assignedHouse ? (
+    !assignedHouse ? (
       <Frame size="xs" color="purple" contentContainerClass="!h-full">
         {/* Title */}
         <p class="text-2xl font-semibold text-white">
@@ -50,10 +49,8 @@ const assignedHouse = null; // Replace with actual house attribute
         </p>
 
         {/* Empty Houses */}
-        <div class="pt-5">
-          <p class="text-[28px] font-semibold text-white">
-            คุณยังไม่ได้เลือกบ้าน
-          </p>
+        <div class="pt-8">
+          <p class="text-[28px] font-semibold text-white">คุณไม่ได้เลือกบ้าน</p>
         </div>
       </Frame>
     ) : (

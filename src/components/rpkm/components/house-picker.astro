@@ -1,4 +1,5 @@
 ---
+import { disablePickingDate } from "@rpkm/data/date";
 import {
   getHouses,
   type HouseDisplayType,
@@ -15,6 +16,9 @@ import Frame from "@/components/common/Frame.astro";
 import { getGroupByGroupId } from "@/lib/groupAPI";
 import { getProfile } from "@/lib/profileAPI";
 import type { Group, User } from "@/types/common";
+
+const currentDate = new Date();
+const isHousePickingDisabled = currentDate >= disablePickingDate;
 
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 
@@ -262,6 +266,7 @@ const isPickAllMainHouses =
     token: token || "",
     isConfirmed: isConfirmed,
     isOwner: isOwner,
+    isHousePickingDisabled: isHousePickingDisabled,
   }}
 >
   document.addEventListener("DOMContentLoaded", () => {
@@ -273,15 +278,17 @@ const isPickAllMainHouses =
     const houseSearchInput = document.getElementById("house-search");
     const houseSizeFilter = document.getElementById("house-size-filter");
     const houseSizeOptions = document.querySelectorAll(".size-option");
+
     const houseCardContainer = document.getElementById("house-card-container");
     const closeBtn = document.getElementById("popup-close-btn");
-    if (!isOwner) {
+    if (!isOwner || isHousePickingDisabled) {
       closeBtn.classList.add("hidden");
     } else {
       closeBtn.classList.remove("hidden");
     }
+
     const pickBtn = document.getElementById("btn-picking-house");
-    if (!isOwner) {
+    if (!isOwner || isHousePickingDisabled) {
       pickBtn.disabled = true;
       pickBtn.classList.add("cursor-not-allowed", "opacity-50");
       pickBtn.classList.remove("cursor-pointer", "opacity-100");
@@ -292,12 +299,14 @@ const isPickAllMainHouses =
       pickBtn.classList.add("cursor-pointer", "opacity-100");
       pickBtn.innerHTML = `<p class="text-xl text-white font-medium">เลือกบ้าน</p>`;
     }
+
     const submitBtn = document.getElementById("btn-submit-house");
-    if (!isOwner) {
+    if (!isOwner || isHousePickingDisabled) {
       submitBtn.classList.add("hidden");
     } else {
       submitBtn.classList.remove("hidden");
     }
+
     const notPickingView = document.getElementById("view-not-picking");
     const pickingView = document.getElementById("view-picking");
 
@@ -640,7 +649,10 @@ const isPickAllMainHouses =
                 <p class="text-xs text-[#2B2D42] font-semibold text-center overflow-hidden whitespace-nowrap text-ellipsis">${house.nameThai}</p>
               </div>
               ${
-                isOwner && !isConfirmed && !isSubmitted
+                isOwner &&
+                !isConfirmed &&
+                !isSubmitted &&
+                !isHousePickingDisabled
                   ? `
                 <div class="flex justify-center">
                   <button class="cursor-pointer flex justify-center items-center">
@@ -655,9 +667,9 @@ const isPickAllMainHouses =
         } else {
           card.innerHTML = `
             <button 
-              class="relative h-[100px] w-[80px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] ${isOwner && !isConfirmed && !isSubmitted ? "hover:bg-[#D38DD8]/20 transition-colors cursor-pointer" : "cursor-default"}"
+              class="relative h-[100px] w-[80px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] ${isOwner && !isConfirmed && !isSubmitted && !isHousePickingDisabled ? "hover:bg-[#D38DD8]/20 transition-colors cursor-pointer" : "cursor-default"}"
               data-rank="${rank}"
-              ${!isOwner ? "disabled" : ""}
+              ${!isOwner || isHousePickingDisabled ? "disabled" : ""}
             >
               <img 
                 src="/images/rpkm/rank-${rank}.svg"
@@ -667,7 +679,7 @@ const isPickAllMainHouses =
               />
               <img 
                 src="/images/rpkm/plus-icon.svg"
-                class="w-5 h-5 ${isOwner && !isConfirmed && !isSubmitted ? "" : "hidden"}" 
+                class="w-5 h-5 ${!isHousePickingDisabled && isOwner && !isConfirmed && !isSubmitted ? "" : "hidden"}" 
               />
             </button>
           `;
