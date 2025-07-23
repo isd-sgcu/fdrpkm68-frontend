@@ -504,7 +504,20 @@ const member2 = members.length > 1 ? members[1] : null;
       headGroupBtn.classList.remove("cursor-pointer");
       backBtn?.classList.add("hidden");
       exitButton?.classList.add("hidden");
+      submitGroupButton.disabled = true;
+      submitGroupButton.classList.add(
+        "cursor-not-allowed",
+        "opacity-50",
+        "brightness-75"
+      );
+      submitGroupButton.classList.remove("cursor-pointer");
       joinGroupButton.disabled = true;
+      joinGroupButton.classList.add(
+        "cursor-not-allowed",
+        "opacity-50",
+        "brightness-75"
+      );
+      joinGroupButton.classList.remove("cursor-pointer");
     } else {
       input.disabled = false;
       input.placeholder = "โปรดกรอกรหัสห้อง";
@@ -517,7 +530,20 @@ const member2 = members.length > 1 ? members[1] : null;
       headGroupBtn.classList.add("cursor-pointer");
       backBtn?.classList.remove("hidden");
       exitButton?.classList.remove("hidden");
+      submitGroupButton.disabled = false;
+      submitGroupButton.classList.remove(
+        "cursor-not-allowed",
+        "opacity-50",
+        "brightness-75"
+      );
+      submitGroupButton.classList.add("cursor-pointer");
       joinGroupButton.disabled = false;
+      joinGroupButton.classList.remove(
+        "cursor-not-allowed",
+        "opacity-50",
+        "brightness-75"
+      );
+      joinGroupButton.classList.add("cursor-pointer");
     }
 
     input?.addEventListener("input", toggleSubmitButton);

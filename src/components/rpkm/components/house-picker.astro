@@ -93,7 +93,13 @@ const isPickAllMainHouses =
 
     <!-- Empty Houses -->
     <div class="pt-5">
-      <p class="text-[28px] font-semibold text-white">คุณยังไม่ได้เลือกบ้าน</p>
+      <p class="text-[28px] font-semibold text-white">
+        {
+          !isHousePickingDisabled
+            ? "คุณยังไม่ได้เลือกบ้าน"
+            : "คุณไม่ได้เลือกบ้าน"
+        }
+      </p>
     </div>
 
     <!-- Button -->
@@ -288,7 +294,7 @@ const isPickAllMainHouses =
     }
 
     const pickBtn = document.getElementById("btn-picking-house");
-    if (!isOwner || isHousePickingDisabled) {
+    if (!isOwner || isConfirmed || isHousePickingDisabled) {
       pickBtn.disabled = true;
       pickBtn.classList.add("cursor-not-allowed", "opacity-50");
       pickBtn.classList.remove("cursor-pointer", "opacity-100");
@@ -301,7 +307,7 @@ const isPickAllMainHouses =
     }
 
     const submitBtn = document.getElementById("btn-submit-house");
-    if (!isOwner || isHousePickingDisabled) {
+    if (!isOwner || isHousePickingDisabled || isConfirmed) {
       submitBtn.classList.add("hidden");
     } else {
       submitBtn.classList.remove("hidden");
