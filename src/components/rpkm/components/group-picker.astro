@@ -782,7 +782,7 @@ const member2 = members.length > 1 ? members[1] : null;
       }
     });
 
-    if (isConfirmed) {
+    if (isConfirmed || isPickingDisabled) {
       exitButton?.classList.add("hidden");
       backBtn?.classList.add("hidden");
     } else {
