@@ -1,4 +1,5 @@
 ---
+import { disablePickingDate } from "@rpkm/data/date";
 import {
   getHouses,
   type HouseDisplayType,
@@ -15,6 +16,9 @@ import Frame from "@/components/common/Frame.astro";
 import { getGroupByGroupId } from "@/lib/groupAPI";
 import { getProfile } from "@/lib/profileAPI";
 import type { Group, User } from "@/types/common";
+
+const currentDate = new Date();
+const isHousePickingDisabled = currentDate >= disablePickingDate;
 
 const houseSizes = ["ทั้งหมด", "S", "M", "L", "XL", "XXL"];
 
@@ -89,7 +93,13 @@ const isPickAllMainHouses =
 
     <!-- Empty Houses -->
     <div class="pt-5">
-      <p class="text-[28px] font-semibold text-white">คุณยังไม่ได้เลือกบ้าน</p>
+      <p class="text-[28px] font-semibold text-white">
+        {
+          !isHousePickingDisabled
+            ? "คุณยังไม่ได้เลือกบ้าน"
+            : "คุณไม่ได้เลือกบ้าน"
+        }
+      </p>
     </div>
 
     <!-- Button -->
@@ -253,42 +263,6 @@ const isPickAllMainHouses =
 
 <HouseConfirmPopup />
 
-<!-- House Final Wrapper -->
-<div class="hidden h-full w-full" id="view-house-final">
-  <Frame
-    size="md"
-    color="purple"
-    contentContainerClass="!h-full !items-center !flex !flex-col"
-  >
-    <!-- Title -->
-    <p class="text-2xl font-semibold text-white">บ้านรับเพื่อนที่ได้</p>
-
-    <!-- House Image -->
-    <img
-      src="/images/rpkm/house-demo.png"
-      width={160}
-      height={160}
-      class="mt-5 border-4 border-white"
-    />
-
-    <!-- House Name -->
-    <p class="pt-5 text-3xl font-semibold text-white">บ้าน xxx</p>
-
-    <!-- House Instagram -->
-    <a
-      id="house-instagram-link-final"
-      href="https://youtu.be/dQw4w9WgXcQ?si=To9bwNaRw7cl03NT"
-      target="_blank"
-      class="flex cursor-pointer items-center gap-1 pt-4 pb-8"
-    >
-      <img src="/images/rpkm/instagram-icon.svg" width="20" height="20" />
-      <p id="house-instagram-final" class="font-medium text-white">
-        baan.something
-      </p>
-    </a>
-  </Frame>
-</div>
-
 <!-- Script -->
 <script
   define:vars={{
@@ -298,6 +272,7 @@ const isPickAllMainHouses =
     token: token || "",
     isConfirmed: isConfirmed,
     isOwner: isOwner,
+    isHousePickingDisabled: isHousePickingDisabled,
   }}
 >
   document.addEventListener("DOMContentLoaded", () => {
@@ -309,15 +284,17 @@ const isPickAllMainHouses =
     const houseSearchInput = document.getElementById("house-search");
     const houseSizeFilter = document.getElementById("house-size-filter");
     const houseSizeOptions = document.querySelectorAll(".size-option");
+
     const houseCardContainer = document.getElementById("house-card-container");
     const closeBtn = document.getElementById("popup-close-btn");
-    if (!isOwner) {
+    if (!isOwner || isHousePickingDisabled) {
       closeBtn.classList.add("hidden");
     } else {
       closeBtn.classList.remove("hidden");
     }
+
     const pickBtn = document.getElementById("btn-picking-house");
-    if (!isOwner) {
+    if (!isOwner || isConfirmed || isHousePickingDisabled) {
       pickBtn.disabled = true;
       pickBtn.classList.add("cursor-not-allowed", "opacity-50");
       pickBtn.classList.remove("cursor-pointer", "opacity-100");
@@ -328,12 +305,14 @@ const isPickAllMainHouses =
       pickBtn.classList.add("cursor-pointer", "opacity-100");
       pickBtn.innerHTML = `<p class="text-xl text-white font-medium">เลือกบ้าน</p>`;
     }
+
     const submitBtn = document.getElementById("btn-submit-house");
-    if (!isOwner) {
+    if (!isOwner || isHousePickingDisabled || isConfirmed) {
       submitBtn.classList.add("hidden");
     } else {
       submitBtn.classList.remove("hidden");
     }
+
     const notPickingView = document.getElementById("view-not-picking");
     const pickingView = document.getElementById("view-picking");
 
@@ -676,7 +655,10 @@ const isPickAllMainHouses =
                 <p class="text-xs text-[#2B2D42] font-semibold text-center overflow-hidden whitespace-nowrap text-ellipsis">${house.nameThai}</p>
               </div>
               ${
-                isOwner && !isConfirmed && !isSubmitted
+                isOwner &&
+                !isConfirmed &&
+                !isSubmitted &&
+                !isHousePickingDisabled
                   ? `
                 <div class="flex justify-center">
                   <button class="cursor-pointer flex justify-center items-center">
@@ -691,9 +673,9 @@ const isPickAllMainHouses =
         } else {
           card.innerHTML = `
             <button 
-              class="relative h-[100px] w-[80px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] ${isOwner && !isConfirmed && !isSubmitted ? "hover:bg-[#D38DD8]/20 transition-colors cursor-pointer" : "cursor-default"}"
+              class="relative h-[100px] w-[80px] border-dashed border-2 flex justify-center items-center border-[#D38DD8] ${isOwner && !isConfirmed && !isSubmitted && !isHousePickingDisabled ? "hover:bg-[#D38DD8]/20 transition-colors cursor-pointer" : "cursor-default"}"
               data-rank="${rank}"
-              ${!isOwner ? "disabled" : ""}
+              ${!isOwner || isHousePickingDisabled ? "disabled" : ""}
             >
               <img 
                 src="/images/rpkm/rank-${rank}.svg"
@@ -703,7 +685,7 @@ const isPickAllMainHouses =
               />
               <img 
                 src="/images/rpkm/plus-icon.svg"
-                class="w-5 h-5 ${isOwner && !isConfirmed && !isSubmitted ? "" : "hidden"}" 
+                class="w-5 h-5 ${!isHousePickingDisabled && isOwner && !isConfirmed && !isSubmitted ? "" : "hidden"}" 
               />
             </button>
           `;
@@ -877,7 +859,7 @@ const isPickAllMainHouses =
       // Update instagram link
       const instagramLink = housePopup?.querySelector("#house-instagram-link");
       if (instagramLink) {
-        instagramLink.href = house.instagramURL;
+        instagramLink.href = house.instagram;
       }
 
       // Update button texts
