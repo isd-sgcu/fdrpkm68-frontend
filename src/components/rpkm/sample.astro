@@ -1,8 +1,12 @@
 ---
 import "@rpkm/styles/styles.css";
 import GroupPicker from "@rpkm/components/group-picker.astro";
+import HouseDisplay from "@rpkm/components/house-display.astro";
 import HousePicker from "@rpkm/components/house-picker.astro";
 import Profile from "@rpkm/components/profile.astro";
+import { displayHouseDate } from "@rpkm/data/date";
+
+const currentDate = new Date();
 ---
 
 <div
@@ -12,7 +16,7 @@ import Profile from "@rpkm/components/profile.astro";
   <Profile />
 
   <!-- House -->
-  <HousePicker />
+  {currentDate >= displayHouseDate ? <HouseDisplay /> : <HousePicker />}
 
   <!-- Group -->
   <GroupPicker />

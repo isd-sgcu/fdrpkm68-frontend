@@ -1,0 +1,91 @@
+---
+import Frame from "@/components/common/Frame.astro";
+import { getGroupByGroupId } from "@/lib/groupAPI";
+import { getProfile } from "@/lib/profileAPI";
+import type { Group, User } from "@/types/common";
+
+const token = Astro.cookies.get("token")?.value;
+
+let groupData: Group | null = null;
+let user: User | null = null;
+
+if (token) {
+  let groupID = "";
+  const userResponse = await getProfile(token);
+  if (userResponse.success && userResponse.data) {
+    user = userResponse.data.user as User;
+    groupID = user.groupId ? user.groupId : "";
+    if (groupID) {
+      const groupResponse = await getGroupByGroupId(groupID, token);
+      if (groupResponse.success && groupResponse.data) {
+        groupData = groupResponse.data.data as Group;
+      } else {
+        return Astro.redirect("/login");
+      }
+    } else {
+      return Astro.redirect("/login");
+    }
+  } else {
+    console.error("Failed to fetch user data:", userResponse.error);
+  }
+} else {
+  return Astro.redirect("/login");
+}
+
+if (!groupData || !user) {
+  return Astro.redirect("/login");
+}
+
+const assignedHouse = null; // Replace with actual house attribute
+---
+
+<div class="h-full w-full" id="view-house-final">
+  {
+    !assignedHouse ? (
+      <Frame size="xs" color="purple" contentContainerClass="!h-full">
+        {/* Title */}
+        <p class="text-2xl font-semibold text-white">
+          บ้านรับเพื่อนที่เลือกไว้
+        </p>
+
+        {/* Empty Houses */}
+        <div class="pt-8">
+          <p class="text-[28px] font-semibold text-white">คุณไม่ได้เลือกบ้าน</p>
+        </div>
+      </Frame>
+    ) : (
+      <Frame
+        size="md"
+        color="purple"
+        contentContainerClass="!h-full !items-center !flex !flex-col"
+      >
+        {/* Title */}
+        <p class="text-2xl font-semibold text-white">บ้านรับเพื่อนที่ได้</p>
+
+        {/* House Image */}
+        <img
+          src="/images/rpkm/house-demo.png"
+          width={160}
+          height={160}
+          class="mt-5 border-4 border-white"
+        />
+
+        {/* House Name */}
+        <p class="pt-5 text-3xl font-semibold text-white">บ้าน xxx</p>
+
+        {/* House Instagram */}
+        <a
+          id="house-instagram-link-final"
+          href="#"
+          target="_blank"
+          class="flex cursor-pointer items-center gap-1 pt-4 pb-8"
+        >
+          <img src="/images/rpkm/instagram-icon.svg" width="20" height="20" />
+          <p id="house-instagram-final" class="font-medium text-white">
+            baan.something
+          </p>
+        </a>
+      </Frame>
+    )
+  }
+</div>
