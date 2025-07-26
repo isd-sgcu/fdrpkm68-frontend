@@ -43,7 +43,7 @@ if (!groupData || !user) {
 const houses = await getHouses(token);
 let resultHouse: HouseDisplayType | null = null;
 
-const resultHouseId = groupData.result_house_id;
+const resultHouseId = groupData.resultHouseId;
 if (resultHouseId) {
   resultHouse = houses.find((house) => house.id === resultHouseId) || null;
 }
