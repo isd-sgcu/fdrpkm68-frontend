@@ -59,6 +59,7 @@ export interface Group {
   houseRank4: House | null;
   houseRank5: House | null;
   houseRankSub: House | null;
+  resultHouseId: string | null;
   owner: User;
   users: User[];
   house1: House | null;
