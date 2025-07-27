@@ -1,8 +1,12 @@
 ---
+import { getHouses } from "@rpkm/data/house";
+
 import Frame from "@/components/common/Frame.astro";
 import { getGroupByGroupId } from "@/lib/groupAPI";
 import { getProfile } from "@/lib/profileAPI";
 import type { Group, User } from "@/types/common";
+
+import type { HouseDisplayType } from "../data/house";
 
 const token = Astro.cookies.get("token")?.value;
 
@@ -36,20 +40,24 @@ if (!groupData || !user) {
   return Astro.redirect("/login");
 }
 
-const assignedHouse = null; // Replace with actual house attribute
+const houses = await getHouses(token);
+let resultHouse: HouseDisplayType | null = null;
+
+const resultHouseId = groupData.resultHouseId;
+if (resultHouseId) {
+  resultHouse = houses.find((house) => house.id === resultHouseId) || null;
+}
 ---
 
 <div class="h-full w-full" id="view-house-final">
   {
-    !assignedHouse ? (
+    !resultHouse ? (
       <Frame size="xs" color="purple" contentContainerClass="!h-full">
         {/* Title */}
-        <p class="text-2xl font-semibold text-white">
-          บ้านรับเพื่อนที่เลือกไว้
-        </p>
+        <p class="text-2xl font-semibold text-white">บ้านรับเพื่อนที่ได้</p>
 
         {/* Empty Houses */}
-        <div class="pt-8">
+        <div class="pt-12">
           <p class="text-[28px] font-semibold text-white">คุณไม่ได้เลือกบ้าน</p>
         </div>
       </Frame>
@@ -64,25 +72,32 @@ const assignedHouse = null; // Replace with actual house attribute
 
         {/* House Image */}
         <img
-          src="/images/rpkm/house-demo.png"
+          src={`/images/rpkm/houses/${resultHouse.image}`}
           width={160}
           height={160}
-          class="mt-5 border-4 border-white"
+          class="mt-5 border-4 border-white bg-white"
         />
 
-        {/* House Name */}
-        <p class="pt-5 text-3xl font-semibold text-white">บ้าน xxx</p>
+        {/* House TH Name */}
+        <p class="pt-5 text-3xl font-semibold text-white">
+          {resultHouse.nameThai}
+        </p>
+
+        {/* House EN Name */}
+        <p class="pt-2 text-xl font-semibold text-white">
+          ({resultHouse.nameEng})
+        </p>
 
         {/* House Instagram */}
         <a
           id="house-instagram-link-final"
-          href="#"
+          href={resultHouse.instagram}
           target="_blank"
-          class="flex cursor-pointer items-center gap-1 pt-4 pb-8"
+          class="flex cursor-pointer items-center gap-1 py-8 pb-8"
         >
           <img src="/images/rpkm/instagram-icon.svg" width="20" height="20" />
           <p id="house-instagram-final" class="font-medium text-white">
-            baan.something
+            {resultHouse.instagramName}
           </p>
         </a>
       </Frame>
