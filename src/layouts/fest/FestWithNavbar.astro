@@ -1,14 +1,13 @@
 ---
 import "@/styles/global.css";
 import Footer from "@firstdate/Footer.astro";
-import Navbar from "@firstdate/Navbar.astro";
 
 interface Props {
   title?: string;
   description?: string;
 }
 
-const { title, description } = Astro.props;
+const { description } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,7 +24,7 @@ const { title, description } = Astro.props;
     <div
       class="mx-auto flex min-h-screen max-w-[440px] flex-col bg-[url(/fest/BG-Fest.png)] bg-cover bg-center bg-no-repeat text-white"
     >
-      <Navbar />
+      <!-- <Navbar /> -->
       <main class="flex-grow px-3">
         <slot />
       </main>
